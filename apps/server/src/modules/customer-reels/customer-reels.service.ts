@@ -1,0 +1,113 @@
+import { Injectable, NotFoundException } from "@nestjs/common";
+import { PrismaService } from "../../prisma/prisma.service";
+
+@Injectable()
+export class CustomerReelsService {
+  constructor(private readonly prisma: PrismaService) {}
+
+  async findAll(userId: string) {
+    const reels = await this.prisma.reel.findMany({
+      where: { isActive: true },
+      include: {
+        user: {
+          select: {
+            id: true,
+            name: true,
+            image: true,
+            vendorProfile: { select: { shopName: true, slug: true } },
+          },
+        },
+        product: {
+          select: {
+            id: true,
+            name: true,
+            price: true,
+            images: { take: 1, orderBy: { order: "asc" } },
+          },
+        },
+        likes: {
+          where: { userId },
+          select: { id: true },
+        },
+      },
+      orderBy: { createdAt: "desc" },
+      take: 20,
+    });
+
+    return reels.map(({ likes, ...rest }) => ({ ...rest, liked: likes.length > 0 }));
+  }
+
+  async toggleLike(userId: string, reelId: string) {
+    const reel = await this.prisma.reel.findUnique({ where: { id: reelId }, select: { id: true } });
+    if (!reel) throw new NotFoundException("Reel not found");
+
+    const existing = await this.prisma.reelLike.findUnique({
+      where: { userId_reelId: { userId, reelId } },
+    });
+
+    if (existing) {
+      await this.prisma.$transaction([
+        this.prisma.reelLike.delete({ where: { id: existing.id } }),
+        this.prisma.reel.update({ where: { id: reelId }, data: { likesCount: { decrement: 1 } } }),
+      ]);
+      return { liked: false };
+    }
+
+    await this.prisma.$transaction([
+      this.prisma.reelLike.create({ data: { userId, reelId } }),
+      this.prisma.reel.update({ where: { id: reelId }, data: { likesCount: { increment: 1 } } }),
+    ]);
+    return { liked: true };
+  }
+
+  async incrementView(reelId: string) {
+    const reel = await this.prisma.reel.update({
+      where: { id: reelId },
+      data: { viewsCount: { increment: 1 } },
+      select: { viewsCount: true },
+    });
+    return { viewsCount: reel.viewsCount };
+  }
+
+  async findFollowing(userId: string) {
+    const follows = await this.prisma.vendorFollow.findMany({
+      where: { userId },
+      select: { vendorId: true },
+    });
+
+    const vendorIds = follows.map((f) => f.vendorId);
+
+    const reels = await this.prisma.reel.findMany({
+      where: {
+        isActive: true,
+        user: { vendorProfile: { id: { in: vendorIds } } },
+      },
+      include: {
+        user: {
+          select: {
+            id: true,
+            name: true,
+            image: true,
+            vendorProfile: { select: { shopName: true, slug: true } },
+          },
+        },
+        product: {
+          select: {
+            id: true,
+            name: true,
+            price: true,
+            images: { take: 1, orderBy: { order: "asc" } },
+          },
+        },
+        likes: {
+          where: { userId },
+          select: { id: true },
+        },
+      },
+      orderBy: { createdAt: "desc" },
+      take: 20,
+    });
+
+    return reels.map(({ likes, ...rest }) => ({ ...rest, liked: likes.length > 0 }));
+  }
+}

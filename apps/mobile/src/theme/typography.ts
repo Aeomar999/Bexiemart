@@ -1,0 +1,35 @@
+export const typography = {
+  fontFamily: {
+    heading: "Raleway",
+    body: "Nunito",
+  },
+  fontSize: {
+    displayLg: 32,
+    displayMd: 24,
+    displaySm: 20,
+    headingMd: 18,
+    headingSm: 16,
+    bodyLg: 16,
+    bodyMd: 14,
+    bodySm: 12,
+    caption: 11,
+  },
+  lineHeight: {
+    displayLg: 40,
+    displayMd: 32,
+    displaySm: 28,
+    headingMd: 26,
+    headingSm: 24,
+    bodyLg: 24,
+    bodyMd: 20,
+    bodySm: 16,
+    caption: 14,
+  },
+  fontWeight: {
+    light: "300" as const,
+    regular: "400" as const,
+    medium: "500" as const,
+    semibold: "600" as const,
+    bold: "700" as const,
+  },
+} as const;
