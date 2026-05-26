@@ -16,7 +16,8 @@
       "bundleIdentifier": "com.bexiemart.app",
       "infoPlist": {
         "NSCameraUsageDescription": "Take photos of products to sell on BexieMart.",
-        "NSPhotoLibraryUsageDescription": "Select product images from your photo library."
+        "NSPhotoLibraryUsageDescription": "Select product images from your photo library.",
+        "NSLocationWhenInUseUsageDescription": "BexieMart needs your location to track deliveries and riders."
       }
     },
     "android": {

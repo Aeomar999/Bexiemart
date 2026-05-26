@@ -3,10 +3,12 @@ import { useRouter } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Icon } from "@/components/ui/Icon";
 import { useState } from "react";
-import { useAddCard, WALLET_KEYS } from "@/lib/hooks/use-wallet";
+import { useVerifyAndSaveCard, WALLET_KEYS } from "@/lib/hooks/use-wallet";
 import { getCardColors } from "@/lib/utils/wallet";
 import { useQueryClient } from "@tanstack/react-query";
 import { LinearGradient } from "expo-linear-gradient";
+import { usePaystack } from 'react-native-paystack-webview';
+import { useAuthStore } from "@/lib/stores/auth-store";
 
 // Helper to format card number
 const formatCardNumber = (value: string) => {
@@ -29,8 +31,10 @@ const formatCardNumber = (value: string) => {
 export default function AddCardScreen() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
-  const addCard = useAddCard();
+  const addCard = useVerifyAndSaveCard();
   const queryClient = useQueryClient();
+  const { user } = useAuthStore();
+  const paystack = usePaystack();
   
   const [name, setName] = useState("");
   const [number, setNumber] = useState("");
@@ -39,32 +43,34 @@ export default function AddCardScreen() {
   const [isDefault, setIsDefault] = useState(false);
 
   const handleAdd = () => {
-    const rawNumber = number.replace(/\s+/g, '');
-    if (!name || rawNumber.length < 15 || expiry.length < 5 || cvv.length < 3) {
-      Alert.alert("Error", "Please fill out all fields correctly.");
+    if (!name) {
+      Alert.alert("Error", "Please enter the cardholder name.");
       return;
     }
-
-    const last4 = rawNumber.slice(-4);
-    const type = rawNumber.startsWith("4") ? "VISA" : "MASTERCARD";
-    const [expiryMonth, expiryYear] = expiry.split("/");
-
-    addCard.mutate({
-      cardholderName: name,
-      last4,
-      type,
-      expiryMonth,
-      expiryYear: expiryYear.length === 2 ? "20" + expiryYear : expiryYear,
-      isDefault
-    }, {
-      onSuccess: async () => {
-        await queryClient.invalidateQueries({ queryKey: WALLET_KEYS.cards });
-        router.back();
+    
+    paystack.startTransaction({
+      amount: 1,
+      billingEmail: user?.email || "customer@bexiemart.com",
+      billingName: name || user?.name || "Customer",
+      channels: ["card"],
+      currency: "GHS",
+      onSuccess: (res: any) => {
+        const reference = res.data?.transactionRef?.reference || res.transactionRef?.reference || res.reference;
+        addCard.mutate({
+          reference,
+          cardholderName: name || user?.name || "Customer",
+          isDefault
+        }, {
+          onSuccess: () => {
+            router.back();
+          },
+          onError: (err: any) => {
+            Alert.alert("Verification Error", err?.message || "Failed to save card");
+          }
+        });
       },
-      onError: (err: any) => {
-        const serverMessage = err.response?.data?.message;
-        const msg = Array.isArray(serverMessage) ? serverMessage.join(", ") : serverMessage;
-        Alert.alert("Validation Error", msg || err?.message || "Failed to add card");
+      onCancel: () => {
+        // User cancelled the flow
       }
     });
   };
@@ -233,9 +239,10 @@ export default function AddCardScreen() {
                 </>
               )}
             </Pressable>
-            <Text className="text-center text-gray-400 text-xs mt-4">Your card data is securely encrypted.</Text>
+            <Text className="text-center text-gray-400 text-xs mt-4">Your card data is securely captured by Paystack.</Text>
           </View>
         </View>
+
       </ScrollView>
     </KeyboardAvoidingView>
   );

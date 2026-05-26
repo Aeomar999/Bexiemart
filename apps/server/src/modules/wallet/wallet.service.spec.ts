@@ -9,7 +9,7 @@ describe("WalletService", () => {
 
   beforeEach(() => {
     prisma = mockPrisma();
-    service = new WalletService(prisma as any);
+    service = new WalletService(prisma as any, { get: jest.fn() } as any);
   });
 
   afterEach(() => {

@@ -1,10 +1,53 @@
-import { Injectable, BadRequestException, NotFoundException, ForbiddenException } from "@nestjs/common";
+import { Injectable, BadRequestException, NotFoundException, ForbiddenException, InternalServerErrorException, Logger } from "@nestjs/common";
+import { ConfigService } from "@nestjs/config";
 import { PrismaService } from "../../prisma/prisma.service";
 import * as bcrypt from "bcryptjs";
 
 @Injectable()
 export class WalletService {
-  constructor(private readonly prisma: PrismaService) {}
+  private readonly logger = new Logger(WalletService.name);
+  private readonly paystackBaseUrl = "https://api.paystack.co";
+
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly config: ConfigService,
+  ) {}
+
+  /* ─── Paystack Helpers ─── */
+
+  private get paystackSecretKey(): string {
+    return this.config.get<string>("PAYSTACK_SECRET_KEY", "");
+  }
+
+  private async paystackPost<T = any>(path: string, body: Record<string, any>): Promise<T> {
+    const response = await fetch(`${this.paystackBaseUrl}${path}`, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${this.paystackSecretKey}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(body),
+    });
+    const data = await response.json();
+    if (!response.ok || !data.status) {
+      this.logger.error(`Paystack POST ${path} failed: ${JSON.stringify(data)}`);
+      throw new BadRequestException(data.message || "Paystack request failed");
+    }
+    return data.data;
+  }
+
+  private async paystackGet<T = any>(path: string): Promise<T> {
+    const response = await fetch(`${this.paystackBaseUrl}${path}`, {
+      method: "GET",
+      headers: { Authorization: `Bearer ${this.paystackSecretKey}` },
+    });
+    const data = await response.json();
+    if (!response.ok || !data.status) {
+      this.logger.error(`Paystack GET ${path} failed: ${JSON.stringify(data)}`);
+      throw new BadRequestException(data.message || "Paystack request failed");
+    }
+    return data.data;
+  }
 
   async getWallet(userId: string) {
     let wallet = await this.prisma.wallet.findUnique({
@@ -204,6 +247,70 @@ export class WalletService {
       failuresRemaining: Math.max(0, 5 - wallet.pinFailures),
     };
   }
+
+  async verifyAndSaveCard(userId: string, reference: string, cardholderName: string, isDefault: boolean = false) {
+    const wallet = await this.getWallet(userId);
+    const secretKey = process.env.PAYSTACK_SECRET_KEY;
+    if (!secretKey) throw new Error("PAYSTACK_SECRET_KEY not configured");
+
+    const response = await fetch(`https://api.paystack.co/transaction/verify/${reference}`, {
+      method: 'GET',
+      headers: { Authorization: `Bearer ${secretKey}` },
+    });
+    const data = await response.json();
+
+    if (!data.status || data.data.status !== 'success') {
+      throw new BadRequestException("Card verification failed");
+    }
+
+    const auth = data.data.authorization;
+    if (!auth || !auth.authorization_code) {
+      throw new BadRequestException("Card authorization code not found");
+    }
+
+    // 1 GHS is 100 pesewas
+    const amountPaid = data.data.amount / 100;
+
+    return this.prisma.$transaction(async (tx) => {
+      // 1. Credit wallet with the charge amount
+      if (amountPaid > 0) {
+        await tx.wallet.update({
+          where: { id: wallet.id },
+          data: { balance: { increment: amountPaid } },
+        });
+
+        await tx.transaction.create({
+          data: {
+            walletId: wallet.id,
+            type: "TOPUP",
+            status: "COMPLETED",
+            amount: amountPaid,
+            netAmount: amountPaid,
+            reference: `card_bind_${reference}`,
+            description: "Card Validation Top-up",
+          },
+        });
+      }
+
+      // 2. Save card
+      const newCard = await tx.card.create({
+        data: {
+          walletId: wallet.id,
+          cardholderName,
+          type: auth.card_type ? auth.card_type.toUpperCase() : "CARD",
+          last4: auth.last4,
+          expiryMonth: auth.exp_month,
+          expiryYear: auth.exp_year,
+          isDefault,
+          authorizationCode: auth.authorization_code,
+          bin: auth.bin,
+          bank: auth.bank,
+        },
+      });
+      return newCard;
+    });
+  }
+
   async getCards(userId: string) {
     const wallet = await this.getWallet(userId);
     return this.prisma.card.findMany({
@@ -290,6 +397,121 @@ export class WalletService {
       })
     ]);
 
+    return { success: true };
+  }
+
+  /* ─── Bank Accounts ─── */
+
+  async getBankAccounts(userId: string) {
+    const wallet = await this.getWallet(userId);
+    return this.prisma.bankAccount.findMany({
+      where: { walletId: wallet.id },
+      orderBy: { createdAt: "desc" },
+    });
+  }
+
+  async resolveBankAccount(bankCode: string, accountNumber: string) {
+    const result = await this.paystackGet(
+      `/bank/resolve?account_number=${accountNumber}&bank_code=${bankCode}`,
+    );
+    return {
+      accountNumber: result.account_number,
+      accountName: result.account_name,
+      bankId: result.bank_id,
+    };
+  }
+
+  async linkBankAccount(userId: string, data: { bankCode: string; accountNumber: string; accountName: string; bankName?: string }) {
+    const wallet = await this.getWallet(userId);
+
+    // Check for duplicates
+    const existing = await this.prisma.bankAccount.findFirst({
+      where: { walletId: wallet.id, accountNumber: data.accountNumber, bankCode: data.bankCode },
+    });
+    if (existing) throw new BadRequestException("This bank account is already linked");
+
+    // Create Paystack transfer recipient
+    const recipient = await this.paystackPost("/transferrecipient", {
+      type: "nuban",
+      name: data.accountName,
+      account_number: data.accountNumber,
+      bank_code: data.bankCode,
+      currency: "GHS",
+    });
+
+    const existingCount = await this.prisma.bankAccount.count({ where: { walletId: wallet.id } });
+
+    return this.prisma.bankAccount.create({
+      data: {
+        walletId: wallet.id,
+        bankName: data.bankName || recipient.details?.bank_name || "Bank",
+        bankCode: data.bankCode,
+        accountNumber: data.accountNumber,
+        accountName: data.accountName,
+        paystackRecipientCode: recipient.recipient_code,
+        isDefault: existingCount === 0,
+        isVerified: true,
+      },
+    });
+  }
+
+  async deleteBankAccount(userId: string, accountId: string) {
+    const wallet = await this.getWallet(userId);
+    const account = await this.prisma.bankAccount.findUnique({ where: { id: accountId } });
+    if (!account || account.walletId !== wallet.id) throw new NotFoundException("Bank account not found");
+
+    await this.prisma.bankAccount.delete({ where: { id: accountId } });
+    return { success: true };
+  }
+
+  /* ─── Mobile Money Accounts ─── */
+
+  async getMomoAccounts(userId: string) {
+    const wallet = await this.getWallet(userId);
+    return this.prisma.momoAccount.findMany({
+      where: { walletId: wallet.id },
+      orderBy: { createdAt: "desc" },
+    });
+  }
+
+  async linkMomoAccount(userId: string, data: { provider: string; phoneNumber: string; accountName: string; isDefault?: boolean }) {
+    const wallet = await this.getWallet(userId);
+
+    // Check for duplicates
+    const existing = await this.prisma.momoAccount.findFirst({
+      where: { walletId: wallet.id, phoneNumber: data.phoneNumber, provider: data.provider as any },
+    });
+    if (existing) throw new BadRequestException("This mobile money account is already linked");
+
+    // Create Paystack transfer recipient for mobile money
+    const recipient = await this.paystackPost("/transferrecipient", {
+      type: "mobile_money",
+      name: data.accountName,
+      account_number: data.phoneNumber,
+      bank_code: data.provider === "MTN" ? "MTN" : data.provider === "VODAFONE" ? "VOD" : "ATL",
+      currency: "GHS",
+    });
+
+    const existingCount = await this.prisma.momoAccount.count({ where: { walletId: wallet.id } });
+
+    return this.prisma.momoAccount.create({
+      data: {
+        walletId: wallet.id,
+        provider: data.provider as any,
+        phoneNumber: data.phoneNumber,
+        accountName: data.accountName,
+        isDefault: data.isDefault ?? (existingCount === 0),
+        isVerified: true,
+      },
+    });
+  }
+
+  async deleteMomoAccount(userId: string, accountId: string) {
+    const wallet = await this.getWallet(userId);
+    const account = await this.prisma.momoAccount.findUnique({ where: { id: accountId } });
+    if (!account || account.walletId !== wallet.id) throw new NotFoundException("Mobile money account not found");
+
+    await this.prisma.momoAccount.delete({ where: { id: accountId } });
     return { success: true };
   }
 }

@@ -18,6 +18,7 @@ import {
 const QUICK_ACTIONS = [
   { id: "topup", label: "Top Up", icon: "plus", color: "#004CFF", route: "/(customer)/wallet/topup" },
   { id: "send", label: "Send", icon: "send", color: "#7c3aed", route: "/(customer)/wallet/transfer" },
+  { id: "cards", label: "Cards", icon: "credit-card", color: "#e11d48", route: "/(customer)/wallet/cards" },
   { id: "request", label: "Request", icon: "arrow-down-left", color: "#059669", route: "/(customer)/wallet/request" },
 ];
 
@@ -51,25 +52,25 @@ export default function WalletScreen() {
         refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
       >
          <View className="px-5 pt-4">
-          <View className="mb-8 mt-2 items-center" style={{ height: (cards?.length ?? 0) >= 3 ? 260 : (cards?.length ?? 0) === 2 ? 246 : 220, width: "100%", position: "relative" }}>
-            {/* Layer 1: Back-most strip — only show when 3+ cards */}
-            {(cards?.length ?? 0) >= 3 && (
+          <View className="mb-8 mt-2 items-center" style={{ height: (cards?.length ?? 0) >= 2 ? 260 : (cards?.length ?? 0) === 1 ? 246 : 220, width: "100%", position: "relative" }}>
+            {/* Layer 1: Back-most strip — only show when 2+ cards */}
+            {(cards?.length ?? 0) >= 2 && (
               <LinearGradient
-                colors={getCardColors(cards[2]?.id, cards[2]?.type) as any}
+                colors={getCardColors(cards[1]?.id, cards[1]?.type) as any}
                 start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }}
                 style={{ position: "absolute", top: 0, left: "8%", width: "84%", height: 40, borderTopLeftRadius: 20, borderTopRightRadius: 20, borderTopWidth: 1, borderColor: "rgba(255,255,255,0.3)", borderLeftWidth: 1, borderRightWidth: 1, opacity: 0.7 }}
               />
             )}
 
-            {/* Layer 2: Middle Card — only show when 2+ cards */}
-            {(cards?.length ?? 0) >= 2 ? (
+            {/* Layer 2: Middle Card — only show when 1+ cards */}
+            {(cards?.length ?? 0) >= 1 ? (
               <Pressable 
                 onPress={() => router.push("/(customer)/wallet/cards")}
                 className="absolute z-10"
-                style={{ top: (cards?.length ?? 0) >= 3 ? 14 : 0, left: "4%", width: "92%", height: 130, zIndex: 10, elevation: 10 }}
+                style={{ top: (cards?.length ?? 0) >= 2 ? 14 : 0, left: "4%", width: "92%", height: 130, zIndex: 10, elevation: 10 }}
               >
                 <LinearGradient
-                  colors={getCardColors(cards[1]?.id, cards[1]?.type) as any}
+                  colors={getCardColors(cards[0]?.id, cards[0]?.type) as any}
                   start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }}
                   style={{ 
                     flex: 1,
@@ -81,9 +82,9 @@ export default function WalletScreen() {
                 >
                   <View className="flex-row justify-between items-start">
                     <View className="flex-1 pr-4">
-                      <Text className="text-white text-[15px] font-bold tracking-wide" numberOfLines={1}>{cards[1]?.cardholderName}</Text>
+                      <Text className="text-white text-[15px] font-bold tracking-wide" numberOfLines={1}>{cards[0]?.cardholderName}</Text>
                       <Text className="text-white/80 text-[13px] mt-1.5 font-mono tracking-[0.15em]">
-                        •••• •••• •••• {cards[1]?.last4}
+                        •••• •••• •••• {cards[0]?.last4}
                       </Text>
                     </View>
                     <View className="items-end">
@@ -91,9 +92,9 @@ export default function WalletScreen() {
                         <View style={{ transform: [{ rotate: '90deg' }], marginRight: 8, marginTop: 4 }}>
                           <Icon name="wifi" size={16} color="rgba(255,255,255,0.7)" />
                         </View>
-                        <Text className="text-white text-[24px] font-black italic tracking-widest">{cards[1]?.type?.toUpperCase() || 'CARD'}</Text>
+                        <Text className="text-white text-[24px] font-black italic tracking-widest">{cards[0]?.type?.toUpperCase() || 'CARD'}</Text>
                       </View>
-                      <Text className="text-white/60 text-[9px] mt-0.5 font-bold uppercase tracking-widest">Valid {cards[1]?.expiryMonth}/{cards[1]?.expiryYear?.slice(-2)}</Text>
+                      <Text className="text-white/60 text-[9px] mt-0.5 font-bold uppercase tracking-widest">Valid {cards[0]?.expiryMonth}/{cards[0]?.expiryYear?.slice(-2)}</Text>
                     </View>
                   </View>
                 </LinearGradient>
@@ -104,7 +105,7 @@ export default function WalletScreen() {
             <View
               className="z-20"
               style={{
-                position: "absolute", top: (cards?.length ?? 0) >= 3 ? 82 : (cards?.length ?? 0) === 2 ? 68 : 42, left: 0, width: "100%", height: 178,
+                position: "absolute", top: (cards?.length ?? 0) >= 2 ? 82 : (cards?.length ?? 0) === 1 ? 68 : 42, left: 0, width: "100%", height: 178,
                 zIndex: 20, shadowColor: "#2d1b73", shadowOffset: { width: 0, height: -6 }, shadowOpacity: 0.6, shadowRadius: 20, elevation: 15
               }}
             >
@@ -132,11 +133,11 @@ export default function WalletScreen() {
 
                 <View className="flex-row justify-between items-center absolute bottom-7 left-6 right-6">
                   <Pressable 
-                    onPress={() => router.push("/(customer)/wallet/topup")}
+                    onPress={() => router.push("/(customer)/wallet/link-account")}
                     className="bg-white/20 px-6 py-3.5 rounded-full flex-row items-center border border-white/10"
                   >
-                    <Icon name="plus" size={18} color="#fff" />
-                    <Text className="text-white font-bold ml-2 tracking-wide">Add Balance</Text>
+                    <Icon name="link" size={18} color="#fff" />
+                    <Text className="text-white font-bold ml-2 tracking-wide">Link Account</Text>
                   </Pressable>
                   
                   <View className="flex-row gap-3">

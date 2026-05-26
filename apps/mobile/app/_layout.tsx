@@ -8,6 +8,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { useAuthStore } from "../src/lib/stores/auth-store";
 import { LoadingSpinner } from "../src/components/ui/LoadingSpinner";
 import { GlobalPopup } from "../src/components/ui/GlobalPopup";
+import { PaystackProvider } from 'react-native-paystack-webview';
 import {
   Raleway_400Regular,
   Raleway_600SemiBold,
@@ -71,13 +72,15 @@ export default function RootLayout() {
   return (
     <SafeAreaProvider>
       <QueryClientProvider client={queryClient}>
-        <StatusBar style="dark" />
-        <Stack screenOptions={{ headerShown: false }}>
-          <Stack.Screen name="(auth)" />
-          <Stack.Screen name="(customer)" />
-          <Stack.Screen name="(vendor)" />
-        </Stack>
-        <GlobalPopup />
+        <PaystackProvider publicKey={process.env.EXPO_PUBLIC_PAYSTACK_PUBLIC_KEY || "pk_test_placeholder"}>
+          <StatusBar style="dark" />
+          <Stack screenOptions={{ headerShown: false }}>
+            <Stack.Screen name="(auth)" />
+            <Stack.Screen name="(customer)" />
+            <Stack.Screen name="(vendor)" />
+          </Stack>
+          <GlobalPopup />
+        </PaystackProvider>
       </QueryClientProvider>
     </SafeAreaProvider>
   );

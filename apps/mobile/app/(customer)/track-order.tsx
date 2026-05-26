@@ -4,7 +4,9 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Icon } from "@/components/ui/Icon";
 import { useRiderStore } from "@/lib/stores/rider-store";
 import { usePopupStore } from "@/lib/stores/popup-store";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
+import MapView, { Marker, Polyline, PROVIDER_DEFAULT } from 'react-native-maps';
+import { darkMapStyle } from "@/lib/constants/map-style";
 
 export default function TrackOrderScreen() {
   const router = useRouter();
@@ -14,6 +16,11 @@ export default function TrackOrderScreen() {
   const showPopup = usePopupStore((s) => s.showPopup);
 
   const [timeRemaining, setTimeRemaining] = useState(14);
+  const mapRef = useRef<MapView>(null);
+  
+  // Starting Coordinates
+  const dropoffCoords = { latitude: 5.6037, longitude: -0.1870 }; 
+  const [riderCoords, setRiderCoords] = useState({ latitude: 5.6145, longitude: -0.2057 });
 
   // Simulation effect for a live tracking feel
   useEffect(() => {
@@ -35,20 +42,41 @@ export default function TrackOrderScreen() {
         setTimeRemaining((prev) => {
           if (prev <= 1) {
             clearInterval(timer);
-            updateStatus("arrived");
-            showPopup({ type: "success", title: "Rider Arrived", message: "Your rider is outside!"});
             return 0;
           }
           return prev - 1;
         });
-      }, 60000); // decrement every minute for demo (or speed up for testing)
+
+        // Move rider slightly closer to dropoff
+        setRiderCoords(prevCoords => {
+          const newCoords = {
+            latitude: prevCoords.latitude + (dropoffCoords.latitude - prevCoords.latitude) * 0.1,
+            longitude: prevCoords.longitude + (dropoffCoords.longitude - prevCoords.longitude) * 0.1,
+          };
+          // Animate map camera to keep both in view
+          mapRef.current?.animateToRegion({
+            latitude: (newCoords.latitude + dropoffCoords.latitude) / 2,
+            longitude: (newCoords.longitude + dropoffCoords.longitude) / 2,
+            latitudeDelta: Math.abs(newCoords.latitude - dropoffCoords.latitude) * 2 + 0.01,
+            longitudeDelta: Math.abs(newCoords.longitude - dropoffCoords.longitude) * 2 + 0.01,
+          }, 1000);
+          return newCoords;
+        });
+      }, 5000); // decrement every 5 seconds for fast demo
     }
 
     return () => {
-      clearTimeout(timer);
-      clearInterval(timer);
+      if (timer) clearInterval(timer);
     };
   }, [activeRide?.status]);
+
+  // Watch for time remaining to arrive
+  useEffect(() => {
+    if (activeRide?.status === "on_the_way" && timeRemaining <= 0) {
+      updateStatus("arrived");
+      showPopup({ type: "success", title: "Rider Arrived", message: "Your rider is outside!"});
+    }
+  }, [timeRemaining, activeRide?.status]);
 
   if (!activeRide) {
     return (
@@ -72,7 +100,7 @@ export default function TrackOrderScreen() {
   const handleCancel = () => {
     cancelRide();
     showPopup({ type: "error", title: "Ride Cancelled", message: "Your request was cancelled successfully." });
-    router.replace("/(customer)/(tabs)/home");
+    router.replace("/(customer)/(tabs)/(home)");
   };
 
   const getStatusColor = () => {
@@ -95,41 +123,59 @@ export default function TrackOrderScreen() {
 
   return (
     <View className="flex-1 bg-background">
-      {/* Mock Map Background */}
-      <View className="absolute inset-0 bg-blue-50/50 items-center justify-center">
-        <View className="w-full h-full opacity-40">
-          <View className="flex-1 border-r border-b border-border" />
-          <View className="flex-1 border-r border-b border-border" />
-          <View className="flex-1 border-r border-border" />
-        </View>
-        
-        {/* Mock Rider Pin */}
-        <View className="absolute" style={{ top: '35%', left: '40%' }}>
-          <View className="w-12 h-12 bg-brand-600 rounded-full items-center justify-center border-4 border-card shadow-sm">
-            <Icon name={activeRide.riderType === "Motorbike" ? "truck" : activeRide.riderType === "Car" ? "car" : "package"} size={20} color="#fff" />
-          </View>
-          <View className="bg-card px-3 py-1 rounded-full mt-2 border border-border shadow-sm">
-            <Text className="text-[12px] font-bold text-foreground text-center">Rider</Text>
-          </View>
-        </View>
+      {/* Real Map Background */}
+      <MapView
+        ref={mapRef}
+        style={{ width: '100%', height: '100%', position: 'absolute' }}
+        provider={PROVIDER_DEFAULT}
+        customMapStyle={darkMapStyle}
+        initialRegion={{
+          latitude: (riderCoords.latitude + dropoffCoords.latitude) / 2,
+          longitude: (riderCoords.longitude + dropoffCoords.longitude) / 2,
+          latitudeDelta: 0.05,
+          longitudeDelta: 0.05,
+        }}
+      >
+        {/* Route Line */}
+        {activeRide.status !== "searching" && (
+          <Polyline
+            coordinates={[riderCoords, dropoffCoords]}
+            strokeColor="#004CFF" // brand-600
+            strokeWidth={4}
+            lineDashPattern={[10, 10]}
+          />
+        )}
 
-        {/* Mock Destination Pin */}
-        <View className="absolute" style={{ top: '65%', left: '60%' }}>
-          <View className="w-6 h-6 bg-rose-500 rounded-full items-center justify-center border-2 border-card shadow-sm">
-            <View className="w-2 h-2 bg-card rounded-full" />
+        {/* Drop-off Marker */}
+        <Marker coordinate={dropoffCoords} anchor={{ x: 0.5, y: 0.5 }}>
+          <View className="items-center">
+            <View className="w-6 h-6 bg-rose-500 rounded-full items-center justify-center border-2 border-white shadow-sm">
+              <View className="w-2 h-2 bg-white rounded-full" />
+            </View>
+            <View className="bg-white px-2 py-0.5 rounded mt-1 shadow-sm">
+              <Text className="text-[10px] font-bold text-gray-900">Drop-off</Text>
+            </View>
           </View>
-          <View className="bg-card px-3 py-1 rounded-full mt-2 border border-border shadow-sm">
-            <Text className="text-[12px] font-bold text-foreground text-center">Drop-off</Text>
-          </View>
-        </View>
-      </View>
+        </Marker>
+
+        {/* Rider Marker */}
+        {activeRide.status !== "searching" && (
+          <Marker coordinate={riderCoords} anchor={{ x: 0.5, y: 0.5 }}>
+            <View className="items-center">
+              <View className="w-10 h-10 bg-brand-600 rounded-full items-center justify-center border-4 border-white shadow-sm">
+                <Icon name={activeRide.riderType === "Motorbike" ? "truck" : activeRide.riderType === "Car" ? "car" : "package"} size={16} color="#fff" />
+              </View>
+            </View>
+          </Marker>
+        )}
+      </MapView>
 
       {/* Floating Header */}
       <View className="px-5 w-full absolute z-10" style={{ top: Math.max(insets.top, 12) + 12 }}>
         <View className="flex-row items-center justify-between">
           <Pressable style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
             className="w-12 h-12 rounded-full bg-card items-center justify-center border border-border shadow-sm"
-            onPress={() => router.replace("/(customer)/(tabs)/home")}
+            onPress={() => router.replace("/(customer)/(tabs)/(home)")}
           >
             <Icon name="arrow-left" size={20} color="#0f172a" />
           </Pressable>
