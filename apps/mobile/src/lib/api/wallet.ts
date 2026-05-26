@@ -16,4 +16,18 @@ export const walletApi = {
   updateCard: (id: string, data: any) => apiClient.put(`/wallet/cards/${id}`, data),
   deleteCard: (id: string) => apiClient.delete(`/wallet/cards/${id}`),
   setDefaultCard: (id: string) => apiClient.post(`/wallet/cards/${id}/default`),
+
+  // Bank Accounts
+  getBankAccounts: () => apiClient.get("/wallet/bank-accounts"),
+  linkBankAccount: (data: { bankCode: string; accountNumber: string; accountName: string; bankName?: string }) =>
+    apiClient.post("/wallet/bank-accounts", data),
+  deleteBankAccount: (id: string) => apiClient.delete(`/wallet/bank-accounts/${id}`),
+  resolveAccount: (bankCode: string, accountNumber: string) =>
+    apiClient.get(`/wallet/resolve-account?bankCode=${bankCode}&accountNumber=${accountNumber}`),
+
+  // Mobile Money Accounts
+  getMomoAccounts: () => apiClient.get("/wallet/momo-accounts"),
+  linkMomoAccount: (data: { provider: string; phoneNumber: string; accountName: string }) =>
+    apiClient.post("/wallet/momo-accounts", data),
+  deleteMomoAccount: (id: string) => apiClient.delete(`/wallet/momo-accounts/${id}`),
 };

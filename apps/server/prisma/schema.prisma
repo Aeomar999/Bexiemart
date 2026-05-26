@@ -664,10 +664,17 @@ model Card {
   expiryMonth     String
   expiryYear      String
   isDefault       Boolean  @default(false)
+  
+  // Paystack Tokenization Fields
+  authorizationCode String? 
+  bin               String?
+  bank              String?
+
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
 
   @@unique([walletId, last4, type])
+  @@unique([walletId, authorizationCode])
 }
 
 // ─── Escrow Model ──────────────────────────────────────────────────────────────

@@ -1,5 +1,6 @@
-import { View, Text, ScrollView, TextInput, Pressable, Modal, TouchableOpacity } from "react-native";
+import { View, Text, ScrollView, TextInput, Pressable, Modal, TouchableOpacity, ActivityIndicator } from "react-native";
 import { useState } from "react";
+import * as Location from 'expo-location';
 import { useRouter } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Icon } from "@/components/ui/Icon";
@@ -33,6 +34,36 @@ export default function BookRiderScreen() {
     if (selectingField === "pickup") setPickup(addressStr);
     if (selectingField === "dropoff") setDropoff(addressStr);
     setSelectingField(null);
+  };
+
+  const [isLocating, setIsLocating] = useState(false);
+
+  const handleUseCurrentLocation = async () => {
+    setIsLocating(true);
+    try {
+      const { status } = await Location.requestForegroundPermissionsAsync();
+      if (status !== 'granted') {
+        showPopup({ type: 'error', title: 'Permission denied', message: 'We need location permission to find you.' });
+        return;
+      }
+
+      const location = await Location.getCurrentPositionAsync({});
+      const [address] = await Location.reverseGeocodeAsync({
+        latitude: location.coords.latitude,
+        longitude: location.coords.longitude,
+      });
+
+      if (address) {
+        const addressString = [address.streetNumber, address.street, address.city].filter(Boolean).join(' ');
+        handleSelectAddress(addressString || "Current Location");
+      } else {
+        handleSelectAddress("Current Location");
+      }
+    } catch (error) {
+      showPopup({ type: 'error', title: 'Location Error', message: 'Could not fetch your current location.' });
+    } finally {
+      setIsLocating(false);
+    }
   };
 
   const handleBook = () => {
@@ -155,6 +186,28 @@ export default function BookRiderScreen() {
             </View>
             
             <ScrollView showsVerticalScrollIndicator={false}>
+              
+              {/* Current Location Button */}
+              {selectingField === "pickup" && (
+                <TouchableOpacity 
+                  className="flex-row items-center gap-4 py-4 border-b border-border mb-2"
+                  onPress={handleUseCurrentLocation}
+                  disabled={isLocating}
+                >
+                  <View className="w-10 h-10 rounded-full bg-brand-50 items-center justify-center border border-brand-100">
+                    {isLocating ? (
+                      <ActivityIndicator size="small" color="#004CFF" />
+                    ) : (
+                      <Icon name="navigation" size={18} color="#004CFF" />
+                    )}
+                  </View>
+                  <View className="flex-1">
+                    <Text className="text-[16px] font-bold text-brand-600 font-heading">Use Current Location</Text>
+                    <Text className="text-[13px] text-muted-foreground mt-1">Get pickup spot from GPS</Text>
+                  </View>
+                </TouchableOpacity>
+              )}
+
               <Text className="text-[14px] font-bold text-muted-foreground mb-3">Saved Addresses</Text>
               {savedAddresses.map((addr: any) => (
                 <TouchableOpacity key={addr.id} 

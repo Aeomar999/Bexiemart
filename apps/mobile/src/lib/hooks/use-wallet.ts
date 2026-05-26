@@ -6,6 +6,8 @@ export const WALLET_KEYS = {
   transactions: (page?: number) => ["transactions", page] as const,
   pinStatus: ["wallet", "pin", "status"] as const,
   cards: ["wallet", "cards"] as const,
+  bankAccounts: ["wallet", "bank-accounts"] as const,
+  momoAccounts: ["wallet", "momo-accounts"] as const,
 };
 
 export function useWallet() {
@@ -103,6 +105,17 @@ export function useAddCard() {
   });
 }
 
+export function useVerifyAndSaveCard() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (data: any) => walletApi.verifyAndSaveCard(data).then((r) => r.data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: WALLET_KEYS.cards });
+      queryClient.invalidateQueries({ queryKey: WALLET_KEYS.wallet });
+    },
+  });
+}
+
 export function useUpdateCard() {
   const qc = useQueryClient();
   return useMutation({
@@ -124,5 +137,57 @@ export function useSetDefaultCard() {
   return useMutation({
     mutationFn: (id: string) => walletApi.setDefaultCard(id).then((r) => r.data),
     onSuccess: () => qc.invalidateQueries({ queryKey: WALLET_KEYS.cards }),
+  });
+}
+
+/* ─── Bank Accounts ─── */
+
+export function useBankAccounts() {
+  return useQuery({
+    queryKey: WALLET_KEYS.bankAccounts,
+    queryFn: () => walletApi.getBankAccounts().then((r) => r.data),
+  });
+}
+
+export function useLinkBankAccount() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: (data: { bankCode: string; accountNumber: string; accountName: string; bankName?: string }) =>
+      walletApi.linkBankAccount(data).then((r) => r.data),
+    onSuccess: () => qc.invalidateQueries({ queryKey: WALLET_KEYS.bankAccounts }),
+  });
+}
+
+export function useDeleteBankAccount() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: (id: string) => walletApi.deleteBankAccount(id).then((r) => r.data),
+    onSuccess: () => qc.invalidateQueries({ queryKey: WALLET_KEYS.bankAccounts }),
+  });
+}
+
+/* ─── Mobile Money Accounts ─── */
+
+export function useMomoAccounts() {
+  return useQuery({
+    queryKey: WALLET_KEYS.momoAccounts,
+    queryFn: () => walletApi.getMomoAccounts().then((r) => r.data),
+  });
+}
+
+export function useLinkMomoAccount() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: (data: { provider: string; phoneNumber: string; accountName: string }) =>
+      walletApi.linkMomoAccount(data).then((r) => r.data),
+    onSuccess: () => qc.invalidateQueries({ queryKey: WALLET_KEYS.momoAccounts }),
+  });
+}
+
+export function useDeleteMomoAccount() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: (id: string) => walletApi.deleteMomoAccount(id).then((r) => r.data),
+    onSuccess: () => qc.invalidateQueries({ queryKey: WALLET_KEYS.momoAccounts }),
   });
 }
