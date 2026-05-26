@@ -1,0 +1,49 @@
+{
+  "expo": {
+    "name": "BexieMart",
+    "slug": "bexiemart",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/images/icon.png",
+    "scheme": "bexiemart",
+    "userInterfaceStyle": "light",
+    "newArchEnabled": true,
+    "splash": {
+      "backgroundColor": "#004CFF"
+    },
+    "ios": {
+      "supportsTablet": false,
+      "bundleIdentifier": "com.bexiemart.app",
+      "infoPlist": {
+        "NSCameraUsageDescription": "Take photos of products to sell on BexieMart.",
+        "NSPhotoLibraryUsageDescription": "Select product images from your photo library."
+      }
+    },
+    "android": {
+      "adaptiveIcon": {
+        "backgroundColor": "#004CFF"
+      },
+      "package": "com.bexiemart.app",
+      "edgeToEdgeEnabled": true
+    },
+    "web": {
+      "bundler": "metro",
+      "output": "static"
+    },
+    "plugins": [
+      "expo-router",
+      "expo-font",
+      "expo-secure-store",
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "Select product images for your BexieMart listings.",
+          "cameraPermission": "Take photos of your products for BexieMart."
+        }
+      ]
+    ],
+    "experiments": {
+      "typedRoutes": true
+    }
+  }
+}

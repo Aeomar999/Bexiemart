@@ -1,0 +1,13 @@
+node_modules/
+dist/
+.expo/
+android/
+ios/
+*.tsbuildinfo
+.env
+.env.local
+.env.production
+*.db
+*.db-journal
+coverage/
+.turbo/

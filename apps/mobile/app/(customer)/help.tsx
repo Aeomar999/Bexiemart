@@ -1,0 +1,51 @@
+import { View, Text, ScrollView, Pressable } from "react-native";
+import { useState } from "react";
+import { useRouter } from "expo-router";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { Icon } from "@/components/ui/Icon";
+
+export default function HelpCenterScreen() {
+  const router = useRouter();
+  const insets = useSafeAreaInsets();
+
+  const faqs = [
+    { q: "How do I track my order?", a: "You can track your order in the 'Order History' section." },
+    { q: "What is your return policy?", a: "We accept returns within 7 days of delivery for unused items." },
+    { q: "How do I use BexieCoins?", a: "You can apply BexieCoins during checkout for a discount." }
+  ];
+
+  const [expandedIndex, setExpandedIndex] = useState<number | null>(0);
+
+  return (
+    <ScrollView className="flex-1 bg-background" style={{ paddingTop: insets.top }}>
+      <View className="px-5 pt-4 pb-4 flex-row items-center gap-3">
+        <Pressable style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]} className="w-10 h-10 rounded-full bg-card border border-border items-center justify-center" onPress={() => router.back()}>
+          <Icon name="arrow-left" size={18} color="#475569" />
+        </Pressable>
+        <Text className="text-display-sm font-heading font-bold text-foreground">Help Center</Text>
+      </View>
+      <View className="px-5 gap-4 mt-4 pb-12">
+        {faqs.map((faq, i) => {
+          const isExpanded = expandedIndex === i;
+          return (
+            <Pressable 
+              key={i} 
+              className={`bg-card p-5 rounded-[24px] border ${isExpanded ? 'border-brand-200 shadow-sm' : 'border-border'}`}
+              onPress={() => setExpandedIndex(isExpanded ? null : i)}
+            >
+              <View className="flex-row justify-between items-center">
+                <Text className="text-heading-sm font-bold text-foreground font-heading flex-1 pr-4">{faq.q}</Text>
+                <Icon name={isExpanded ? "chevron-up" : "chevron-down"} size={20} color={isExpanded ? "#004CFF" : "#64748b"} />
+              </View>
+              {isExpanded && (
+                <View className="mt-3 pt-3 border-t border-border">
+                  <Text className="text-body-md text-muted-foreground font-body leading-relaxed">{faq.a}</Text>
+                </View>
+              )}
+            </Pressable>
+          );
+        })}
+      </View>
+    </ScrollView>
+  );
+}

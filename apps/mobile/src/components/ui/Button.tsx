@@ -1,0 +1,104 @@
+import {
+  TouchableOpacity,
+  Text,
+  ActivityIndicator,
+  View,
+  type TouchableOpacityProps,
+} from "react-native";
+import { forwardRef } from "react";
+
+interface ButtonProps extends TouchableOpacityProps {
+  title: string;
+  variant?: "primary" | "secondary" | "outline" | "ghost" | "danger";
+  size?: "sm" | "md" | "lg";
+  loading?: boolean;
+  leftIcon?: React.ReactNode;
+}
+
+const variantStyles: Record<string, string> = {
+  primary: "bg-brand-600 active:bg-brand-700",
+  secondary: "bg-accent-600 active:bg-accent-700",
+  outline: "bg-transparent border border-surface-300 active:bg-muted",
+  ghost: "bg-transparent active:bg-muted",
+  danger: "bg-error active:bg-red-600",
+};
+
+const textColors: Record<string, string> = {
+  primary: "text-white",
+  secondary: "text-white",
+  outline: "text-foreground",
+  ghost: "text-brand-600",
+  danger: "text-white",
+};
+
+const sizeStyles: Record<string, string> = {
+  sm: "h-[40px] px-5 rounded-full",
+  md: "h-[48px] px-6 rounded-full",
+  lg: "h-[56px] px-8 rounded-full",
+};
+
+const textSizes: Record<string, string> = {
+  sm: "text-[13px]",
+  md: "text-[15px]",
+  lg: "text-[16px]",
+};
+
+export const Button = forwardRef<View, ButtonProps>(
+  (
+    {
+      title,
+      variant = "primary",
+      size = "md",
+      loading = false,
+      disabled,
+      leftIcon,
+      className = "",
+      ...props
+    },
+    ref
+  ) => {
+    const isDisabled = disabled || loading;
+
+    return (
+      <TouchableOpacity
+        ref={ref}
+        activeOpacity={0.92}
+        disabled={isDisabled}
+        className={`
+          flex-row items-center justify-center gap-2
+          ${variantStyles[variant]}
+          ${sizeStyles[size]}
+          ${isDisabled ? "opacity-50" : "active:scale-[0.98]"}
+          ${className}
+        `}
+        accessibilityRole="button"
+        accessibilityState={{ disabled: isDisabled }}
+        {...props}
+      >
+        {loading ? (
+          <ActivityIndicator
+            color={
+              variant === "outline" || variant === "ghost" ? "#004CFF" : "#FFFFFF"
+            }
+            size="small"
+          />
+        ) : (
+          <>
+            {leftIcon}
+            <Text
+              className={`
+                font-heading font-semibold
+                ${textColors[variant]}
+                ${textSizes[size]}
+              `}
+            >
+              {title}
+            </Text>
+          </>
+        )}
+      </TouchableOpacity>
+    );
+  }
+);
+
+Button.displayName = "Button";
