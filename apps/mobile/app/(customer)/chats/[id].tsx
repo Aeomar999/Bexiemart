@@ -24,7 +24,7 @@ export default function ChatDetailScreen() {
   const { data: conversations } = useConversations();
   const onlineUsers = useSocketStore(s => s.onlineUsers);
 
-  const conversation = conversations?.find(c => c.id === id);
+  const conversation = conversations?.find((c: any) => c.id === id);
   const otherParticipant = conversation?.participants.find((p: any) => p.id !== user?.id);
   const isOnline = otherParticipant ? onlineUsers[otherParticipant.id] : false;
   const isTyping = otherParticipant ? typingUsers[otherParticipant.id] : false;
@@ -53,7 +53,7 @@ export default function ChatDetailScreen() {
           uri: asset.uri,
           name: filename,
           type: "image/jpeg"
-        }, "chats");
+        });
         
         // send message
         sendMessage.mutate({ type: 'IMAGE', mediaUrl: url });

@@ -29,7 +29,7 @@ export default function EditCardScreen() {
 
   useEffect(() => {
     if (cards && cards.length > 0) {
-      const card = cards.find(c => c.id === id);
+      const card = cards.find((c: any) => c.id === id);
       if (card) {
         setName(card.cardholderName || "");
         setExpiry(`${card.expiryMonth}/${card.expiryYear.slice(-2)}`);

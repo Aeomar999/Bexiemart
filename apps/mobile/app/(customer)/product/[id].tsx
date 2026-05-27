@@ -79,7 +79,7 @@ export default function ProductDetailsScreen() {
             renderItem={({ item }) => (
               <View style={{ width: SCREEN_WIDTH }} className="h-[320px] bg-muted">
                 <Image 
-                  source={{ uri: item }} 
+                  source={{ uri: item.url }} 
                   style={{ width: '100%', height: '100%' }} 
                   contentFit="cover" 
                   transition={200}
@@ -185,7 +185,7 @@ export default function ProductDetailsScreen() {
         </View>
 
         {/* ===== SELLER INFO ===== */}
-        <Pressable style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]} className="mx-5 mt-6 bg-card rounded-[24px] p-5 border border-border" onPress={() => router.push({ pathname: "/(customer)/chat", params: { contact: product.seller.name, role: "Seller" } })}>
+        <Pressable style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]} className="mx-5 mt-6 bg-card rounded-[24px] p-5 border border-border" onPress={() => router.push(`/(customer)/store/${product.seller.id}`)}>
           <Text className="text-caption text-muted-foreground font-body uppercase tracking-wider mb-3 font-bold">Sold by</Text>
           <View className="flex-row items-center gap-3">
             <View className="w-12 h-12 rounded-full bg-muted items-center justify-center">

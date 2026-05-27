@@ -3,6 +3,7 @@ import { useState } from "react";
 import { useRouter } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { EmptyState } from "@/components/ui/EmptyState";
+import { Image } from "expo-image";
 import { Icon } from "@/components/ui/Icon";
 import { useCartStore } from "@/lib/stores/cart-store";
 import { useWishlist, useToggleWishlist } from "@/lib/hooks/use-wishlist";
@@ -103,8 +104,12 @@ export default function FavoritesScreen() {
               
               onPress={() => router.push(`/(customer)/product/${item.id}`)}
             >
-              <View className="w-full aspect-[4/5] bg-muted items-center justify-center relative">
-                <Icon name="image" size={32} color="#cbd5e1" />
+              <View className="w-full aspect-[4/5] bg-muted items-center justify-center relative overflow-hidden">
+                {item.image ? (
+                  <Image source={{ uri: item.image }} style={{ width: '100%', height: '100%' }} contentFit="cover" />
+                ) : (
+                  <Icon name="image" size={32} color="#cbd5e1" />
+                )}
                 <Pressable style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
                   className="absolute top-2 right-2 w-8 h-8 rounded-full bg-card/90 items-center justify-center shadow-sm"
                   onPress={() => removeFavorite(item.id)}

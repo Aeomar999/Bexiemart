@@ -5,12 +5,14 @@ export const PRODUCT_KEYS = {
   all: ["products"] as const,
   list: (params?: object) => ["products", "list", params] as const,
   detail: (id: string) => ["products", "detail", id] as const,
+  store: (id: string) => ["products", "store", id] as const,
   categories: ["products", "categories"] as const,
 };
 
 export function useProducts(params?: {
   category?: string;
   search?: string;
+  vendorId?: string;
   page?: number;
   limit?: number;
 }) {
@@ -25,6 +27,14 @@ export function useProduct(id: string) {
   return useQuery({
     queryKey: PRODUCT_KEYS.detail(id),
     queryFn: () => productsApi.getProduct(id).then((r) => r.data),
+    enabled: !!id,
+  });
+}
+
+export function useStoreProfile(id: string) {
+  return useQuery({
+    queryKey: PRODUCT_KEYS.store(id),
+    queryFn: () => productsApi.getStore(id).then((r) => r.data),
     enabled: !!id,
   });
 }

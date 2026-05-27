@@ -27,4 +27,10 @@ export class ProductsController {
   findOne(@Param("id") id: string) {
     return this.productsService.findOne(id);
   }
+
+  @ApiOperation({ summary: "Get store profile by vendor ID" })
+  @Get("store/:id")
+  getStore(@Param("id") id: string) {
+    return this.productsService.getStore(id);
+  }
 }

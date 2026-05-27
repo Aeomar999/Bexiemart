@@ -8,16 +8,20 @@ interface SocketState {
   socket: Socket | null;
   isConnected: boolean;
   onlineUsers: Record<string, boolean>;
+  offlineMessages: any[];
   connect: () => void;
   disconnect: () => void;
   subscribePresence: (userIds: string[]) => void;
   unsubscribePresence: (userIds: string[]) => void;
+  enqueueMessage: (message: any) => void;
+  flushOfflineMessages: () => void;
 }
 
 export const useSocketStore = create<SocketState>((set, get) => ({
   socket: null,
   isConnected: false,
   onlineUsers: {},
+  offlineMessages: [],
   
   connect: () => {
     const { token } = useAuthStore.getState();
@@ -32,6 +36,7 @@ export const useSocketStore = create<SocketState>((set, get) => ({
 
     socket.on('connect', () => {
       set({ isConnected: true });
+      get().flushOfflineMessages();
     });
 
     socket.on('disconnect', () => {
@@ -71,4 +76,24 @@ export const useSocketStore = create<SocketState>((set, get) => ({
       socket.emit('unsubscribe_presence', { userIds });
     }
   },
+
+  enqueueMessage: (message: any) => {
+    set((state) => ({ offlineMessages: [...state.offlineMessages, message] }));
+    const { isConnected } = get();
+    if (isConnected) {
+      get().flushOfflineMessages();
+    }
+  },
+
+  flushOfflineMessages: () => {
+    const { socket, offlineMessages } = get();
+    if (socket?.connected && offlineMessages.length > 0) {
+      offlineMessages.forEach((msg) => {
+        socket.emit('send_message', msg);
+      });
+      set({ offlineMessages: [] });
+    }
+  },
+
+
 }));

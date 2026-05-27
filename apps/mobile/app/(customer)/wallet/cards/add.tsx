@@ -49,7 +49,7 @@ export default function AddCardScreen() {
       return;
     }
     
-    paystack.startTransaction({
+    paystack.popup.newTransaction({
       amount: 1,
       billingEmail: user?.email || "customer@bexiemart.com",
       billingName: name || user?.name || "Customer",
@@ -73,7 +73,7 @@ export default function AddCardScreen() {
       onCancel: () => {
         // User cancelled the flow
       }
-    });
+    } as any);
   };
 
   const cardType = number.startsWith("4") ? "VISA" : number.startsWith("5") ? "MASTERCARD" : "CARD";

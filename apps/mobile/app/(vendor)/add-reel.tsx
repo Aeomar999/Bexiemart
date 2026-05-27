@@ -112,7 +112,7 @@ export default function AddReelScreen() {
           >
             {videoUrl ? (
               <>
-                <Image source={{ uri: videoUrl }} className="w-full h-full opacity-90" resizeMode="cover" />
+                <Image source={{ uri: videoUrl }} style={{ width: '100%', height: '100%', opacity: 0.9 }} contentFit="cover" />
                 <View className="absolute inset-0 items-center justify-center bg-black/20">
                   <View className="w-16 h-16 rounded-full bg-white/20 backdrop-blur-xl items-center justify-center border border-white/30">
                     <Icon name="play" size={24} color="#fff" style={{ marginLeft: 4 }} />

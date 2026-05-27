@@ -1,5 +1,6 @@
 import { BackButton } from "@/components/ui/BackButton";
 import { View, Text, TextInput, ScrollView, FlatList, Pressable, ActivityIndicator } from "react-native";
+import { Image } from "expo-image";
 import { useState } from "react";
 import { useRouter } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -105,8 +106,12 @@ export default function SearchScreen() {
                   className="flex-row items-center bg-card rounded-[24px] p-4 border border-border shadow-[0_10px_20px_rgba(0,0,0,0.03)]"
                   onPress={() => router.push(`/(customer)/product/${item.id}` as any)}
                 >
-                  <View className="w-20 h-20 rounded-[16px] bg-muted items-center justify-center">
-                    <Icon name="image" size={24} color="#cbd5e1" />
+                  <View className="w-20 h-20 rounded-[16px] bg-muted items-center justify-center overflow-hidden">
+                    {item.image ? (
+                      <Image source={{ uri: item.image }} style={{ width: '100%', height: '100%' }} contentFit="cover" />
+                    ) : (
+                      <Icon name="image" size={24} color="#cbd5e1" />
+                    )}
                   </View>
                   <View className="flex-1 ml-4 justify-center">
                     <Text className="text-caption text-brand-600 font-bold uppercase tracking-wide mb-1">{item.vendor}</Text>

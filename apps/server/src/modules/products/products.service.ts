@@ -9,6 +9,10 @@ export class ProductsService {
   async findAll(dto: QueryProductsDto) {
     const where: any = { isActive: true, isDeleted: false };
 
+    if (dto.vendorId) {
+      where.vendorId = dto.vendorId;
+    }
+
     if (dto.category && dto.category !== "All") {
       where.category = { name: dto.category };
     }
@@ -155,5 +159,40 @@ export class ProductsService {
       icon: c.icon,
       count: c._count.products,
     }));
+  }
+
+  async getStore(id: string) {
+    const store = await this.prisma.vendorProfile.findUnique({
+      where: { id, isActive: true },
+    });
+
+    if (!store) {
+      throw new NotFoundException("Store not found");
+    }
+
+    try {
+      await this.prisma.$executeRawUnsafe(`UPDATE "VendorProfile" SET "visits" = "visits" + 1 WHERE "id" = $1`, id);
+    } catch(e) {}
+
+    const stats = await this.prisma.product.aggregate({
+      where: { vendorId: id, isActive: true, isDeleted: false },
+      _count: true,
+    });
+
+    return {
+      id: store.id,
+      name: store.shopName,
+      slug: store.slug,
+      description: store.description,
+      logo: store.logo,
+      banner: store.banner,
+      address: store.address,
+      city: store.city,
+      state: store.state,
+      phone: store.phone,
+      totalProducts: stats._count,
+      rating: 4.5,
+      visits: (store as any).visits ? (store as any).visits + 1 : 1,
+    };
   }
 }

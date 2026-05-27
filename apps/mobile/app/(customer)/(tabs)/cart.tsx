@@ -82,55 +82,61 @@ export default function CartScreen() {
         contentContainerClassName="px-5 pt-4 pb-72"
         showsVerticalScrollIndicator={false}
       >
-        {/* Fake grouping for UI demo */}
-        {[
-          { vendor: "TechHub Ghana", items: items.slice(0, Math.max(1, Math.ceil(items.length / 2))) },
-          { vendor: "StylePlug", items: items.slice(Math.max(1, Math.ceil(items.length / 2))) }
-        ].filter(g => g.items.length > 0).map((group, gIdx) => (
+        {/* Dynamic Vendor Grouping */}
+        {Object.values(
+          items.reduce((acc: any, item: any) => {
+            if (!acc[item.vendorId]) {
+              acc[item.vendorId] = { vendorId: item.vendorId, vendor: item.vendorName, items: [] };
+            }
+            acc[item.vendorId].items.push(item);
+            return acc;
+          }, {})
+        ).map((group: any, gIdx: number) => (
           <View key={gIdx} className="mb-6">
             {/* Vendor Header */}
             <View className="flex-row items-center justify-between mb-3 px-1">
               <View className="flex-row items-center gap-2">
-                <View className="w-5 h-5 rounded bg-brand-600 items-center justify-center">
+                <View className="w-[22px] h-[22px] rounded-[6px] bg-brand-600 items-center justify-center">
                   <Icon name="check" size={14} color="#fff" />
                 </View>
                 <Icon name="store" size={16} color="#475569" />
                 <Text className="text-[16px] font-heading font-bold text-foreground">{group.vendor}</Text>
               </View>
-              <Pressable style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]} onPress={() => router.push("/(customer)/(shop)")}>
-                <Text className="text-[12px] font-bold text-brand-600">Visit Store</Text>
-              </Pressable>
+              {group.vendorId && (
+                <Pressable style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]} onPress={() => router.push(`/(customer)/store/${group.vendorId}`)}>
+                  <Text className="text-[12px] font-bold text-brand-600">Visit Store</Text>
+                </Pressable>
+              )}
             </View>
 
             {/* Items */}
             {group.items.map((item: any, idx: number) => (
               <Pressable style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
                 key={item.productId}
-                className="flex-row bg-card rounded-[24px] p-4 border border-border gap-4 mb-3 shadow-[0_4px_10px_rgba(0,0,0,0.02)]"
-                
+                className="flex-row bg-card rounded-[24px] p-4 border border-border gap-3 mb-3 shadow-[0_4px_10px_rgba(0,0,0,0.02)]"
                 onPress={() => router.push(`/(customer)/product/${item.productId}`)}
               >
-                <View className="flex-row items-center mr-2">
-                  <View className="w-5 h-5 rounded border border-surface-300 items-center justify-center">
-                    <View className="w-3 h-3 rounded-sm bg-brand-600" />
+                <View className="flex-row items-center mr-1">
+                  <View className="w-[22px] h-[22px] rounded-[6px] bg-brand-600 items-center justify-center">
+                    <Icon name="check" size={14} color="#fff" />
                   </View>
                 </View>
 
                 <View className="w-[84px] h-[84px] rounded-[16px] bg-background items-center justify-center overflow-hidden border border-border">
                   {item.imageUrl ? (
-                    <Image source={{ uri: item.imageUrl }} className="w-full h-full" contentFit="cover" />
+                    <Image source={{ uri: item.imageUrl }} style={{ width: '100%', height: '100%' }} contentFit="cover" />
                   ) : (
                     <Icon name="image" size={24} color="#cbd5e1" />
                   )}
                 </View>
 
-                <View className="flex-1 justify-between">
+                <View className="flex-1 justify-between py-0.5">
                   <View className="flex-row justify-between items-start">
-                    <Text className="text-body-md font-semibold text-foreground font-body flex-1 mr-2" numberOfLines={2}>
+                    <Text className="text-[15px] font-semibold text-foreground font-body flex-1 pr-2" numberOfLines={2}>
                       {item.name}
                     </Text>
                     <Pressable style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
-                      className="w-8 h-8 rounded-full bg-rose-50 items-center justify-center"
+                      className="w-8 h-8 rounded-full bg-rose-50 items-center justify-center -mt-1 -mr-1"
                       onPress={() => handleRemoveItem(item.productId, item.name)}
                     >
                       <Icon name="trash-2" size={15} color="#f43f5e" />
@@ -138,9 +144,13 @@ export default function CartScreen() {
                   </View>
 
                   <View className="flex-row items-center justify-between mt-2">
-                    <View>
-                      <Text className="text-[16px] font-black text-brand-600 font-heading">
-                        GHS {item.price.toFixed(2)}
+                    <View className="flex-1 mr-2">
+                      <Text 
+                        className="text-[16px] font-black text-brand-600 font-heading" 
+                        numberOfLines={1} 
+                        adjustsFontSizeToFit
+                      >
+                        GHS {item.price.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}
                       </Text>
                       {item.stock <= 5 && (
                         <Text className="text-[10px] text-amber-600 font-body mt-0.5">
@@ -178,14 +188,14 @@ export default function CartScreen() {
 
       {/* Bottom Checkout Bar */}
       <View className="absolute bottom-0 left-0 right-0">
-        <BlurView intensity={90} tint="light" className="px-5 py-5 rounded-t-[32px] border-t border-border/50 shadow-2xl">
+        <BlurView intensity={90} tint="light" className="px-5 py-5 rounded-t-[32px] border-t border-border/50 shadow-2xl bg-white/80">
           {/* Coupon Section */}
           {!couponApplied ? (
             <View className="flex-row gap-2 mb-4">
                 <View className="flex-1 flex-row items-center gap-2 bg-background rounded-full px-4 h-11 border border-border">
                   <Icon name="ticket-percent" size={16} color="#94a3b8" />
                   <TextInput
-                    className="flex-1 font-body text-body-sm text-foreground"
+                    className="flex-1 font-body text-[14px] text-foreground"
                     placeholder="Enter coupon code"
                     placeholderTextColor="#94a3b8"
                     value={couponCode}
@@ -196,7 +206,7 @@ export default function CartScreen() {
                 className="bg-brand-600 rounded-full px-5 h-11 items-center justify-center active:scale-95"
                 onPress={handleApplyCoupon}
               >
-                <Text className="text-body-sm font-bold text-white font-body">Apply</Text>
+                <Text className="text-[14px] font-bold text-white font-body">Apply</Text>
               </Pressable>
             </View>
           ) : (
@@ -206,44 +216,50 @@ export default function CartScreen() {
                   <Icon name="ticket-percent" size={16} color="#fff" />
                 </View>
                 <View>
-                  <Text className="text-body-sm font-bold text-emerald-700 font-body">CAMPUS10 applied</Text>
-                  <Text className="text-caption text-emerald-600 font-body">10% off your order</Text>
+                  <Text className="text-[14px] font-bold text-emerald-700 font-body">CAMPUS10 applied</Text>
+                  <Text className="text-[12px] text-emerald-600 font-body">10% off your order</Text>
                 </View>
               </View>
               <Pressable style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]} onPress={handleRemoveCoupon}>
-                <Text className="text-body-sm font-bold text-rose-600 font-body">Remove</Text>
+                <Text className="text-[14px] font-bold text-rose-600 font-body">Remove</Text>
               </Pressable>
             </View>
           )}
 
           {/* Price Breakdown */}
-          <View className="gap-2 mb-4">
+          <View className="gap-2 mb-5">
             <View className="flex-row justify-between">
-              <Text className="text-body-sm text-muted-foreground font-body">Subtotal ({itemCount} items)</Text>
-              <Text className="text-body-sm font-semibold text-foreground font-body">GHS {subtotal.toFixed(2)}</Text>
+              <Text className="text-[14px] text-muted-foreground font-body">Subtotal ({itemCount} items)</Text>
+              <Text className="text-[14px] font-semibold text-foreground font-body" numberOfLines={1} adjustsFontSizeToFit>GHS {subtotal.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</Text>
             </View>
             <View className="flex-row justify-between">
-              <Text className="text-body-sm text-muted-foreground font-body">Delivery fee</Text>
-              <Text className="text-body-sm font-medium text-muted-foreground font-body">Calculated at checkout</Text>
+              <Text className="text-[14px] text-muted-foreground font-body">Delivery fee</Text>
+              <Text className="text-[14px] font-medium text-muted-foreground font-body">Calculated at checkout</Text>
             </View>
             {couponApplied && (
               <View className="flex-row justify-between">
-                <Text className="text-body-sm text-emerald-600 font-body">Discount (10%)</Text>
-                <Text className="text-body-sm font-semibold text-emerald-600 font-body">- GHS {discount.toFixed(2)}</Text>
+                <Text className="text-[14px] text-emerald-600 font-body">Discount (10%)</Text>
+                <Text className="text-[14px] font-semibold text-emerald-600 font-body">- GHS {discount.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</Text>
               </View>
             )}
             <View className="flex-row justify-between pt-3 border-t border-border/50">
-              <Text className="text-body-lg font-bold text-foreground font-heading">Total</Text>
-              <Text className="text-display-sm font-bold text-brand-600 font-heading">GHS {total.toFixed(2)}</Text>
+              <Text className="text-[18px] font-bold text-foreground font-heading">Total</Text>
+              <View className="flex-1 items-end pl-4">
+                <Text className="text-[24px] font-bold text-brand-600 font-heading" numberOfLines={1} adjustsFontSizeToFit>GHS {total.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</Text>
+              </View>
             </View>
           </View>
 
-          <Button
-            title={`Proceed to Checkout  GHS ${total.toFixed(2)}`}
-            size="lg"
+          <Pressable 
+            style={({ pressed }) => [{ opacity: pressed ? 0.8 : 1 }]}
             onPress={handleCheckout}
-            className="w-full rounded-full"
-          />
+            className="w-full h-14 bg-brand-600 rounded-full flex-row items-center justify-between px-6 active:scale-[0.98]"
+          >
+            <Text className="text-[16px] font-bold text-white font-heading">Proceed to Checkout</Text>
+            <Text className="text-[16px] font-black text-white font-heading" numberOfLines={1} adjustsFontSizeToFit>
+              GHS {total.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}
+            </Text>
+          </Pressable>
         </BlurView>
       </View>
     </View>

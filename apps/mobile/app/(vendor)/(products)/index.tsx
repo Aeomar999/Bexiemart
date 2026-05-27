@@ -156,6 +156,7 @@ export default function ListingsScreen() {
                 id={item.id}
                 name={item.name}
                 price={item.price}
+                imageUrl={item.images?.[0]?.url}
                 subtitle={subtitle}
                 variant="horizontal"
                 onPress={() => router.push(`/(vendor)/(products)/${item.id}`)}

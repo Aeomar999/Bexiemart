@@ -1,5 +1,6 @@
 import { BackButton } from "@/components/ui/BackButton";
 import { View, Text, ScrollView, Alert, Pressable, ActivityIndicator } from "react-native";
+import { Image } from "expo-image";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useVendorProducts, useDeleteProduct } from "@/lib/hooks/use-vendor";
@@ -29,7 +30,8 @@ export default function ListingDetailsScreen() {
           { label: "SKU", value: p.sku ?? "-" },
           { label: "Shipping", value: p.shippingRequired ? "Required" : "Not Required" }
         ],
-        description: p.description ?? ""
+        description: p.description ?? "",
+        images: p.images ?? []
       };
     }
     if (id?.startsWith?.("FOOD")) {
@@ -41,7 +43,8 @@ export default function ListingDetailsScreen() {
           { label: "Prep Time", value: f.prepTime ?? "-" },
           { label: "Dietary", value: f.dietaryTags?.join?.(", ") ?? "-" }
         ],
-        description: f.description ?? ""
+        description: f.description ?? "",
+        images: f.imageUrl ? [{ url: f.imageUrl }] : []
       };
     }
     if (id?.startsWith?.("SERV")) {
@@ -54,7 +57,8 @@ export default function ListingDetailsScreen() {
           { label: "Pricing Model", value: s.pricingModel ?? "Fixed" },
           { label: "Location", value: s.locationType === "remote" ? "Remote" : "In-Person" }
         ],
-        description: s.description ?? ""
+        description: s.description ?? "",
+        images: s.imageUrl ? [{ url: s.imageUrl }] : []
       };
     }
     return null;
@@ -140,10 +144,26 @@ export default function ListingDetailsScreen() {
         contentContainerClassName="pb-12 pt-6"
         showsVerticalScrollIndicator={false}
       >
-        {/* Placeholder Image */}
-        <View className="w-full h-64 bg-accent rounded-[24px] items-center justify-center mb-6">
-          <Icon name="image" size={48} color="#94a3b8" />
-        </View>
+        {/* Product Images */}
+        {item.images && item.images.length > 0 ? (
+          <ScrollView 
+            horizontal 
+            showsHorizontalScrollIndicator={false}
+            className="mb-6"
+            contentContainerStyle={{ gap: 12 }}
+          >
+            {item.images.map((img: any, idx: number) => (
+              <View key={idx} className="w-64 h-64 bg-accent rounded-[24px] overflow-hidden border border-border">
+                <Image source={{ uri: img.url }} style={{ width: '100%', height: '100%' }} contentFit="cover" />
+              </View>
+            ))}
+          </ScrollView>
+        ) : (
+          <View className="w-full h-64 bg-accent rounded-[24px] items-center justify-center mb-6 border border-border">
+            <Icon name="image" size={48} color="#94a3b8" />
+            <Text className="text-[14px] text-muted-foreground mt-4">No images available</Text>
+          </View>
+        )}
 
         {/* Basic Info */}
         <View className="mb-8">

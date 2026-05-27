@@ -101,7 +101,11 @@ export default function FlashSalesScreen() {
             onPress={() => router.push(`/(customer)/product/${item.product.id}`)}
           >
             <View className="w-[110px] h-[110px] rounded-[16px] bg-background items-center justify-center overflow-hidden border border-border relative">
-              <Icon name="image" size={32} color="#cbd5e1" />
+              {item.product?.image ? (
+                <Image source={{ uri: item.product.image }} style={{ width: '100%', height: '100%' }} contentFit="cover" />
+              ) : (
+                <Icon name="image" size={32} color="#cbd5e1" />
+              )}
               <View className="absolute top-0 left-0 bg-rose-500 px-2 py-1 rounded-br-[12px] rounded-tl-[16px]">
                 <Text className="text-[10px] font-bold text-white uppercase">{item.discountPercent}% OFF</Text>
               </View>

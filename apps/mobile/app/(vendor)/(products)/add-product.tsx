@@ -129,7 +129,7 @@ export default function AddProductScreen() {
         <View className="mb-8 flex-row flex-wrap gap-3">
           {localImages.map((img, idx) => (
             <View key={idx} className="w-[30%] aspect-square relative rounded-[16px] overflow-hidden border border-border">
-              <Image source={{ uri: img.uri }} className="w-full h-full" resizeMode="cover" />
+              <Image source={{ uri: img.uri }} style={{ width: '100%', height: '100%' }} contentFit="cover" />
               <Pressable 
                 onPress={() => removeImage(idx)}
                 className="absolute top-1 right-1 w-6 h-6 bg-black/50 rounded-full items-center justify-center"

@@ -8,13 +8,13 @@ export class CartService {
   private async getOrCreateCart(userId: string) {
     let cart = await this.prisma.cart.findUnique({
       where: { userId },
-      include: { items: { include: { product: { include: { images: { take: 1, orderBy: { order: "asc" } } } } } } },
+      include: { items: { include: { product: { include: { vendor: { select: { id: true, shopName: true } }, images: { take: 1, orderBy: { order: "asc" } } } } } } },
     });
 
     if (!cart) {
       cart = await this.prisma.cart.create({
         data: { userId },
-        include: { items: { include: { product: { include: { images: { take: 1, orderBy: { order: "asc" } } } } } } },
+        include: { items: { include: { product: { include: { vendor: { select: { id: true, shopName: true } }, images: { take: 1, orderBy: { order: "asc" } } } } } } },
       });
     }
 
@@ -30,6 +30,8 @@ export class CartService {
       quantity: item.quantity,
       imageUrl: item.product?.images?.[0]?.url ?? null,
       stock: item.product?.stock ?? 0,
+      vendorId: item.product?.vendor?.id ?? null,
+      vendorName: item.product?.vendor?.shopName ?? "Unknown Store",
     }));
 
     return {

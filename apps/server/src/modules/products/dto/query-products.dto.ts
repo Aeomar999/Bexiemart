@@ -11,6 +11,8 @@ export enum ProductSort {
 export class QueryProductsDto {
   @IsOptional() @IsString() category?: string;
 
+  @IsOptional() @IsString() vendorId?: string;
+
   @IsOptional() @IsString() search?: string;
 
   @IsOptional() @IsEnum(ProductSort) sort?: ProductSort;

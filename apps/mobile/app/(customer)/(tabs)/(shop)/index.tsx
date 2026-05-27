@@ -1,4 +1,5 @@
 import { View, Text, FlatList, ActivityIndicator, TextInput, Modal, Pressable } from "react-native";
+import { Image } from "expo-image";
 import { useState, useMemo } from "react";
 import { useRouter, useLocalSearchParams } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -176,8 +177,12 @@ export default function ShopScreen() {
                 
                 onPress={() => router.push(`/(customer)/product/${item.id}`)}
               >
-                <View className="w-full aspect-[4/5] bg-muted items-center justify-center relative">
-                  <Icon name="image" size={32} color="#cbd5e1" />
+                <View className="w-full aspect-[4/5] bg-muted items-center justify-center relative overflow-hidden">
+                  {item.image ? (
+                    <Image source={{ uri: item.image }} style={{ width: '100%', height: '100%' }} contentFit="cover" />
+                  ) : (
+                    <Icon name="image" size={32} color="#cbd5e1" />
+                  )}
                   {discount > 0 && (
                     <View className="absolute top-2 left-2 bg-rose-500 px-2 py-0.5 rounded-lg">
                       <Text className="text-[10px] font-bold text-white font-body">-{discount}%</Text>

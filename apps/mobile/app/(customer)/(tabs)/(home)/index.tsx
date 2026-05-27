@@ -259,10 +259,15 @@ export default function HomeScreen() {
                 onPress={() => goToShopWithCategory(cat.name)}
               >
                 <View className="w-full aspect-square rounded-[16px] bg-background mb-2 overflow-hidden flex-row flex-wrap">
-                  <View className="w-1/2 h-1/2 bg-muted border border-card items-center justify-center"><Icon name="image" size={16} color="#cbd5e1"/></View>
-                  <View className="w-1/2 h-1/2 bg-accent border border-card items-center justify-center"><Icon name="image" size={16} color="#cbd5e1"/></View>
-                  <View className="w-1/2 h-1/2 bg-accent border border-card items-center justify-center"><Icon name="image" size={16} color="#cbd5e1"/></View>
-                  <View className="w-1/2 h-1/2 bg-muted border border-card items-center justify-center"><Icon name="image" size={16} color="#cbd5e1"/></View>
+                  {[0, 1, 2, 3].map((idx) => (
+                    <View key={idx} className={`w-1/2 h-1/2 border border-card items-center justify-center ${idx === 0 || idx === 3 ? "bg-muted" : "bg-accent"}`}>
+                      {(cat as any).imageUrls?.[idx] ? (
+                        <Image source={{ uri: (cat as any).imageUrls[idx] }} style={{ width: '100%', height: '100%' }} contentFit="cover" />
+                      ) : (
+                        <Icon name="image" size={16} color="#cbd5e1" />
+                      )}
+                    </View>
+                  ))}
                 </View>
                 <View className="flex-row justify-between items-center">
                   <Text className="text-[12px] font-bold text-foreground w-2/3" numberOfLines={1}>{cat.name}</Text>
@@ -297,9 +302,13 @@ export default function HomeScreen() {
                 className="items-center active:opacity-70"
                 onPress={() => router.push(`/(customer)/product/${item.id}`)}
               >
-                <View className="w-[72px] h-[72px] rounded-full bg-muted mb-2 items-center justify-center border-2 border-card shadow-sm">
-                  <Icon name="image" size={24} color="#cbd5e1" />
-                </View>
+                  <View className="w-[72px] h-[72px] rounded-full bg-muted mb-2 items-center justify-center border-2 border-card shadow-sm overflow-hidden">
+                    {item.image ? (
+                      <Image source={{ uri: item.image }} style={{ width: '100%', height: '100%' }} contentFit="cover" />
+                    ) : (
+                      <Icon name="image" size={24} color="#cbd5e1" />
+                    )}
+                  </View>
                 <Text className="text-[10px] font-bold text-foreground" numberOfLines={1}>{item.name.substring(0, 10)}</Text>
               </Pressable>
             )}
@@ -335,8 +344,12 @@ export default function HomeScreen() {
                   className="w-[140px] active:opacity-70"
                   onPress={() => router.push(`/(customer)/product/${item.id}`)}
                 >
-                  <View className="w-full aspect-square rounded-[16px] bg-muted mb-2 items-center justify-center">
-                    <Icon name="image" size={32} color="#cbd5e1" />
+                  <View className="w-full aspect-square rounded-[16px] bg-muted mb-2 items-center justify-center overflow-hidden">
+                    {item.image ? (
+                      <Image source={{ uri: item.image }} style={{ width: '100%', height: '100%' }} contentFit="cover" />
+                    ) : (
+                      <Icon name="image" size={32} color="#cbd5e1" />
+                    )}
                   </View>
                   <Text className="text-[14px] font-bold text-foreground" numberOfLines={1}>{item.name}</Text>
                   <Text className="text-[11px] text-muted-foreground font-body mb-1" numberOfLines={1}>{item.subtitle || item.category}</Text>
@@ -369,10 +382,14 @@ export default function HomeScreen() {
                 return (
                   <Pressable 
                     key={item.id} 
-                    className="w-[31%] aspect-square rounded-[12px] bg-muted relative items-center justify-center active:opacity-70"
+                    className="w-[31%] aspect-square rounded-[12px] bg-muted relative items-center justify-center active:opacity-70 overflow-hidden"
                     onPress={() => router.push(`/(customer)/product/${item.id}`)}
                   >
-                    <Icon name="image" size={24} color="#cbd5e1" />
+                    {item.image ? (
+                      <Image source={{ uri: item.image }} style={{ width: '100%', height: '100%', position: 'absolute' }} contentFit="cover" />
+                    ) : (
+                      <Icon name="image" size={24} color="#cbd5e1" />
+                    )}
                     <View className="absolute top-1 right-1 bg-rose-500 px-1.5 py-0.5 rounded-sm">
                       <Text className="text-[9px] font-bold text-white">-{discount}%</Text>
                     </View>
@@ -405,8 +422,12 @@ export default function HomeScreen() {
                 className="w-[110px] active:opacity-70"
                 onPress={() => router.push(`/(customer)/product/${item.id}`)}
               >
-                <View className="w-full h-[150px] rounded-[16px] bg-muted mb-2 items-center justify-center">
-                  <Icon name="image" size={28} color="#cbd5e1" />
+                <View className="w-full h-[150px] rounded-[16px] bg-muted mb-2 items-center justify-center overflow-hidden">
+                  {item.image ? (
+                    <Image source={{ uri: item.image }} style={{ width: '100%', height: '100%' }} contentFit="cover" />
+                  ) : (
+                    <Icon name="image" size={28} color="#cbd5e1" />
+                  )}
                 </View>
                 <View className="flex-row justify-between items-center px-1">
                   <View className="flex-row items-center">
@@ -436,8 +457,12 @@ export default function HomeScreen() {
                 className="w-[48%] active:opacity-70"
                 onPress={() => router.push(`/(customer)/product/${item.id}`)}
               >
-                <View className="w-full aspect-[4/5] rounded-[16px] bg-muted mb-2 items-center justify-center relative">
-                  <Icon name="image" size={32} color="#cbd5e1" />
+                <View className="w-full aspect-[4/5] rounded-[16px] bg-muted mb-2 items-center justify-center relative overflow-hidden">
+                  {item.image ? (
+                    <Image source={{ uri: item.image }} style={{ width: '100%', height: '100%' }} contentFit="cover" />
+                  ) : (
+                    <Icon name="image" size={32} color="#cbd5e1" />
+                  )}
                   <Pressable style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]} className="absolute top-2 right-2 w-8 h-8 rounded-full bg-card/90 items-center justify-center shadow-sm" onPress={() => { toggleFavorite(item.id); }}>
                     <Icon name="heart" size={15} color={isFavorite(item.id) ? "#ef4444" : "#64748b"} />
                   </Pressable>
