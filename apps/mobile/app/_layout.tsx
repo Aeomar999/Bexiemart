@@ -78,6 +78,7 @@ export default function RootLayout() {
             <Stack.Screen name="(auth)" />
             <Stack.Screen name="(customer)" />
             <Stack.Screen name="(vendor)" />
+            <Stack.Screen name="(dispatcher)" />
           </Stack>
           <GlobalPopup />
         </PaystackProvider>

@@ -36,6 +36,7 @@ import { ChatModule } from "./modules/chat/chat.module";
 import { AdminModule } from "./modules/admin/admin.module";
 import { HealthModule } from "./modules/health/health.module";
 import { PrismaModule } from "./prisma/prisma.module";
+import { DispatcherModule } from "./modules/dispatcher/dispatcher.module";
 
 @Module({
   imports: [
@@ -74,6 +75,7 @@ import { PrismaModule } from "./prisma/prisma.module";
     ChatModule,
     AdminModule,
     HealthModule,
+    DispatcherModule,
   ],
   providers: [
     { provide: APP_GUARD, useClass: ThrottlerGuard },

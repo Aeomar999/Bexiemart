@@ -5,7 +5,7 @@ import { Icon } from "@/components/ui/Icon";
 import { Button } from "@/components/ui/Button";
 import { useState } from "react";
 import { usePopupStore } from "@/lib/stores/popup-store";
-import { useWithdrawEarnings } from "@/lib/hooks/use-vendor";
+import { useDispatcherEarnings, useWithdrawEarnings } from "@/lib/hooks/use-dispatcher";
 
 const WITHDRAWAL_METHODS = [
   { id: "momo", title: "Mobile Money", account: "024 **** 567", icon: "smartphone" },
@@ -17,11 +17,12 @@ export default function WithdrawFundsScreen() {
   const insets = useSafeAreaInsets();
   const showPopup = usePopupStore((s) => s.showPopup);
 
+  const { data: earnings } = useDispatcherEarnings();
+  const withdrawMutation = useWithdrawEarnings();
+
   const [amount, setAmount] = useState("");
   const [methods, setMethods] = useState(WITHDRAWAL_METHODS);
   const [selectedMethod, setSelectedMethod] = useState("momo");
-
-  const withdrawMutation = useWithdrawEarnings();
 
   // Modals state
   const [showAddMethod, setShowAddMethod] = useState(false);
@@ -31,7 +32,7 @@ export default function WithdrawFundsScreen() {
   const [showPinModal, setShowPinModal] = useState(false);
   const [pin, setPin] = useState("");
 
-  const availableBalance = 1250.00;
+  const availableBalance = earnings?.pendingClearance ?? 0;
   const numAmount = parseFloat(amount) || 0;
   const fee = numAmount > 0 ? 5.00 : 0; // Flat fee of 5 GHS
   const totalDeduction = numAmount + fee;
@@ -87,7 +88,7 @@ export default function WithdrawFundsScreen() {
           showPopup({
             type: "error",
             title: "Withdrawal Failed",
-            message: error?.message || "Something went wrong. Please try again."
+            message: error?.response?.data?.message || error?.message || "Something went wrong. Please try again."
           });
         },
       }

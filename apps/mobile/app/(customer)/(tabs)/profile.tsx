@@ -23,6 +23,7 @@ const PROFILE_SECTIONS = [
       { id: "favorites", icon: "heart", label: "My Collections", route: "/(customer)/favorites", color: "#ef4444" },
       { id: "address", icon: "map-pin", label: "Delivery Addresses", route: "/(customer)/addresses", color: "#059669" },
       { id: "payment", icon: "credit-card", label: "Payment Methods", route: "/(customer)/payment", color: "#7c3aed" },
+      { id: "drive", icon: "truck", label: "Drive for Bexiemart", route: "/(customer)/become-dispatcher", color: "#f97316" },
     ]
   },
   {
