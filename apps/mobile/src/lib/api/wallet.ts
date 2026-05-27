@@ -13,6 +13,7 @@ export const walletApi = {
   getPinStatus: () => apiClient.get("/wallet/pin/status"),
   getCards: () => apiClient.get("/wallet/cards"),
   addCard: (data: any) => apiClient.post("/wallet/cards", data),
+  verifyAndSaveCard: (data: any) => apiClient.post("/wallet/cards/verify-save", data),
   updateCard: (id: string, data: any) => apiClient.put(`/wallet/cards/${id}`, data),
   deleteCard: (id: string) => apiClient.delete(`/wallet/cards/${id}`),
   setDefaultCard: (id: string) => apiClient.post(`/wallet/cards/${id}/default`),

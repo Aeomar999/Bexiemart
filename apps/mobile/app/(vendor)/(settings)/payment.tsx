@@ -1,3 +1,4 @@
+import { BackButton } from "@/components/ui/BackButton";
 import { View, Text, ScrollView, Pressable, ActivityIndicator, Alert, Modal } from "react-native";
 import { useRouter } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -56,13 +57,7 @@ export default function PaymentMethodsScreen() {
         style={{ paddingTop: (insets.top || 12) + 12 }}
       >
         <View className="flex-row items-center">
-          <Pressable 
-            style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
-            className="w-10 h-10 rounded-full bg-background items-center justify-center mr-3"
-            onPress={() => router.back()}
-          >
-            <Icon name="arrow-left" size={20} color="#0f172a" />
-          </Pressable>
+          <BackButton className="mr-3" />
           <Text className="text-[20px] font-heading font-black text-foreground">
             Payout Methods
           </Text>

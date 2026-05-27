@@ -1,3 +1,4 @@
+import { BackButton } from "@/components/ui/BackButton";
 import { View, Text, ScrollView, TextInput, Pressable, Modal, TouchableOpacity, ActivityIndicator } from "react-native";
 import { useState } from "react";
 import * as Location from 'expo-location';
@@ -89,9 +90,7 @@ export default function BookRiderScreen() {
     <View className="flex-1 bg-background" style={{ paddingTop: insets.top }}>
       <View className="px-5 pt-4 pb-4 bg-card border-b border-border">
         <View className="flex-row items-center gap-3">
-          <Pressable onPress={() => router.back()} className="w-10 h-10 rounded-full border border-border bg-card items-center justify-center">
-            <Icon name="arrow-left" size={20} color="#0f172a" />
-          </Pressable>
+          <BackButton />
           <Text className="text-[20px] font-heading font-black text-foreground">Book a Rider</Text>
         </View>
       </View>

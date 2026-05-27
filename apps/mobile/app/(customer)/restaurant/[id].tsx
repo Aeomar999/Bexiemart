@@ -1,3 +1,4 @@
+import { BackButton } from "@/components/ui/BackButton";
 import { View, Text, ScrollView, Pressable, Dimensions, Image, ActivityIndicator } from "react-native";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -76,13 +77,7 @@ export default function RestaurantScreen() {
             </View>
           )}
           
-          <Pressable
-            className="absolute left-4 w-10 h-10 rounded-full bg-card border border-border items-center justify-center z-20"
-            style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }, { top: Math.max(insets.top, 20) }]}
-            onPress={() => router.back()}
-          >
-            <Icon name="arrow-left" size={20} color="#1e293b" />
-          </Pressable>
+          <BackButton className="absolute left-4 z-20" />
 
           <Pressable
             className="absolute right-4 w-10 h-10 rounded-full bg-card border border-border items-center justify-center z-20"

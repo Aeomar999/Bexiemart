@@ -29,4 +29,11 @@ export class PaymentsController {
   handleWebhook(@Body() body: any) {
     return this.paymentsService.handleWebhook(body);
   }
+
+  @ApiOperation({ summary: "Charge a saved card" })
+  @Post("charge-card")
+  @UseGuards(AuthGuard)
+  chargeCard(@Req() req: any, @Body() body: { orderId: string; cardId: string }) {
+    return this.paymentsService.chargeAuthorization(req.user.id, body.orderId, body.cardId);
+  }
 }

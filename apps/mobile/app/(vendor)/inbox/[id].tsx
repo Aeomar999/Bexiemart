@@ -1,3 +1,4 @@
+import { BackButton } from "@/components/ui/BackButton";
 import { View, Text, ScrollView, TextInput, Pressable, KeyboardAvoidingView, Platform, ActivityIndicator } from "react-native";
 import { useRouter, useLocalSearchParams } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -78,13 +79,7 @@ export default function VendorChatScreen() {
         className="px-5 pb-4 bg-card border-b border-border flex-row items-center"
         style={{ paddingTop: (insets.top || 12) + 12 }}
       >
-        <Pressable 
-          style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
-          className="w-10 h-10 rounded-full bg-background items-center justify-center mr-3"
-          onPress={() => router.back()}
-        >
-          <Icon name="arrow-left" size={20} color="#0f172a" />
-        </Pressable>
+        <BackButton className="mr-3" />
         <View className="flex-1">
           <Text className="text-[18px] font-heading font-black text-foreground">
             {otherParticipant?.user?.name || `Customer`}

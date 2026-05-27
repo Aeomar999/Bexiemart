@@ -1,3 +1,4 @@
+import { BackButton } from "@/components/ui/BackButton";
 import { View, Text, Pressable, ActivityIndicator, FlatList, Alert } from "react-native";
 import { useRouter } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -34,9 +35,7 @@ export default function CardsScreen() {
     <View className="flex-1 bg-[#F9FAFB]" style={{ paddingTop: insets.top }}>
       {/* Custom Header */}
       <View className="flex-row items-center justify-between px-5 py-4 bg-[#F9FAFB] border-b border-gray-100 z-10">
-        <Pressable onPress={() => router.back()} className="w-10 h-10 items-center justify-center -ml-2 rounded-full active:bg-gray-200">
-          <Icon name="arrow-left" size={24} color="#111827" />
-        </Pressable>
+        <BackButton className="-ml-2" />
         <Text className="text-lg font-bold text-gray-900">My Cards</Text>
         <View className="w-10 h-10" />
       </View>

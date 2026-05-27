@@ -1,3 +1,4 @@
+import { BackButton } from "@/components/ui/BackButton";
 import { View, Text, ScrollView, Share, Pressable, ActivityIndicator } from "react-native";
 import { useRouter } from "expo-router";
 import * as Clipboard from "expo-clipboard";
@@ -50,12 +51,7 @@ export default function ReferralsScreen() {
         style={{ paddingTop: (insets.top || 12) + 12 }}
       >
         <View className="flex-row items-center gap-3">
-          <Pressable style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
-            className="w-10 h-10 rounded-full bg-background items-center justify-center border border-border"
-            onPress={() => router.back()}
-          >
-            <Icon name="arrow-left" size={20} color="#0f172a" />
-          </Pressable>
+          <BackButton />
           <Text className="text-[20px] font-heading font-black text-foreground">
             Refer & Earn
           </Text>

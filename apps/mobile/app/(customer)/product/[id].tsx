@@ -1,3 +1,4 @@
+import { BackButton } from "@/components/ui/BackButton";
 import { View, Text, FlatList, ScrollView, Dimensions, useWindowDimensions, Pressable, Share, ActivityIndicator } from "react-native";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { useState, useCallback, useRef } from "react";
@@ -88,12 +89,7 @@ export default function ProductDetailsScreen() {
           />
 
           {/* Back Button */}
-          <Pressable style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
-            className="absolute top-12 left-4 w-10 h-10 rounded-full bg-card/90 items-center justify-center shadow-md"
-            onPress={() => router.back()}
-          >
-            <Icon name="arrow-left" size={18} color="#1e293b" />
-          </Pressable>
+          <BackButton className="absolute top-12 left-4 /90 shadow-md" />
 
           {/* Share & Favorite */}
           <View className="absolute top-12 right-4 flex-row gap-2">

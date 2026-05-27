@@ -15,11 +15,43 @@ export class ChatService {
               include: { user: { select: { id: true, name: true, email: true, image: true } } },
             },
             messages: { orderBy: { createdAt: "desc" }, take: 1 },
+            _count: {
+              select: {
+                messages: {
+                  where: {
+                    senderId: { not: userId },
+                    createdAt: {
+                      gt: undefined // We will handle this in code since we can't join `lastReadAt` cleanly inside nested count without tricky relations. Actually, let's just fetch all unread for each conv manually below or use a separate query.
+                    }
+                  }
+                }
+              }
+            }
           },
         },
       },
       orderBy: { conversation: { updatedAt: "desc" } },
     });
+
+    // To get accurate unread counts, we can query them separately for each participant, or just use a raw query. 
+    // Given the scale, querying messages per conversation might be okay for now.
+    const conversationIds = participants.map(p => p.conversationId);
+    
+    // Fetch unread counts
+    const unreadCounts = await Promise.all(
+      participants.map(async p => {
+        const count = await this.prisma.message.count({
+          where: {
+            conversationId: p.conversationId,
+            senderId: { not: userId },
+            createdAt: { gt: p.lastReadAt || new Date(0) }
+          }
+        });
+        return { conversationId: p.conversationId, count };
+      })
+    );
+
+    const unreadMap = new Map(unreadCounts.map(u => [u.conversationId, u.count]));
 
     return participants.map((p) => {
       const conv = p.conversation;
@@ -29,7 +61,7 @@ export class ChatService {
         orderId: conv.orderId,
         participants: otherParticipants.map((cp) => cp.user),
         lastMessage: conv.messages[0] || null,
-        unreadCount: 0,
+        unreadCount: unreadMap.get(conv.id) || 0,
         updatedAt: conv.updatedAt,
         createdAt: conv.createdAt,
       };
@@ -109,10 +141,10 @@ export class ChatService {
     return { success: true };
   }
 
-  async createMessage(conversationId: string, senderId: string, content: string) {
+  async createMessage(conversationId: string, senderId: string, content?: string, type: 'TEXT' | 'IMAGE' = 'TEXT', mediaUrl?: string) {
     const conv = await this.getConversation(conversationId, senderId);
     const message = await this.prisma.message.create({
-      data: { conversationId, senderId, content },
+      data: { conversationId, senderId, content, type, mediaUrl },
       include: { sender: { select: { id: true, name: true, email: true, image: true } } },
     });
     await this.prisma.conversation.update({

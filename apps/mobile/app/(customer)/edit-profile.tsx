@@ -1,3 +1,4 @@
+import { BackButton } from "@/components/ui/BackButton";
 import { View, Text, TextInput, ScrollView, Pressable, KeyboardAvoidingView, Platform, Alert } from "react-native";
 import { useState, useEffect } from "react";
 import Toast from "@/lib/toast-polyfill";
@@ -81,14 +82,7 @@ export default function EditProfileScreen() {
         className="px-5 pb-4 bg-card border-b border-border flex-row items-center gap-3"
         style={{ paddingTop: (insets.top || 12) + 12 }}
       >
-        <Pressable 
-          style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
-          className="w-10 h-10 rounded-full bg-background items-center justify-center"
-          onPress={() => router.back()}
-          disabled={isSaving}
-        >
-          <Icon name="arrow-left" size={20} color="#0f172a" />
-        </Pressable>
+        <BackButton />
         <Text className="text-[20px] font-heading font-black text-foreground">
           Edit Profile
         </Text>

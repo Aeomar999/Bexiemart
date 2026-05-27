@@ -1,3 +1,4 @@
+import { BackButton } from "@/components/ui/BackButton";
 import { View, Text, ScrollView, Pressable, Linking } from "react-native";
 import { useRouter } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -11,9 +12,7 @@ export default function ContactUsScreen() {
   return (
     <ScrollView className="flex-1 bg-background" style={{ paddingTop: insets.top }}>
       <View className="px-5 pt-4 pb-4 flex-row items-center gap-3">
-        <Pressable style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]} className="w-10 h-10 rounded-full bg-card border border-border items-center justify-center" onPress={() => router.back()}>
-          <Icon name="arrow-left" size={18} color="#475569" />
-        </Pressable>
+        <BackButton />
         <Text className="text-display-sm font-heading font-bold text-foreground">Contact Us</Text>
       </View>
       <View className="px-5 gap-4 mt-4 pb-12">

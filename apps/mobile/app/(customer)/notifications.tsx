@@ -1,3 +1,4 @@
+import { BackButton } from "@/components/ui/BackButton";
 import { View, Text, FlatList, Pressable, RefreshControl } from "react-native";
 import { useCallback } from "react";
 import { useRouter } from "expo-router";
@@ -40,12 +41,7 @@ export default function NotificationsScreen() {
         style={{ paddingTop: Math.max(insets.top, 20) + 12 }}
       >
         <View className="flex-row items-center gap-3">
-          <Pressable style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
-            className="w-10 h-10 rounded-full bg-card border border-border items-center justify-center"
-            onPress={() => router.back()}
-          >
-            <Icon name="arrow-left" size={18} color="#475569" />
-          </Pressable>
+          <BackButton />
           <View>
             <Text className="text-display-sm font-heading font-bold text-foreground">
               Notifications

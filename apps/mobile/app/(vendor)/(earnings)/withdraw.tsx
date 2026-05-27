@@ -1,3 +1,4 @@
+import { BackButton } from "@/components/ui/BackButton";
 import { View, Text, ScrollView, Alert, Pressable, Modal, TextInput, KeyboardAvoidingView, Platform } from "react-native";
 import { useRouter } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -126,13 +127,7 @@ export default function WithdrawFundsScreen() {
         className="px-5 pb-4 bg-white/80 backdrop-blur-xl border-b border-surface-100 flex-row justify-between items-center z-10 absolute top-0 left-0 right-0"
         style={{ paddingTop: (insets.top || 12) + 12 }}
       >
-        <Pressable 
-          style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
-          className="w-10 h-10 rounded-full bg-surface-100 items-center justify-center"
-          onPress={() => router.back()}
-        >
-          <Icon name="arrow-left" size={20} color="#0f172a" />
-        </Pressable>
+        <BackButton className="bg-surface-100" />
         <Text className="text-[18px] font-heading font-black text-surface-900 tracking-tight">
           Withdraw Funds
         </Text>

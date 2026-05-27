@@ -1,3 +1,4 @@
+import { BackButton } from "@/components/ui/BackButton";
 import { View, Text, FlatList, type ListRenderItemInfo, Pressable, RefreshControl, ActivityIndicator } from "react-native";
 import { useState } from "react";
 import { useRouter } from "expo-router";
@@ -68,12 +69,7 @@ export default function TransactionsScreen() {
       >
         <View className="flex-row items-center justify-between mb-4">
           <View className="flex-row items-center gap-3">
-            <Pressable style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
-              className="w-10 h-10 rounded-full bg-background items-center justify-center"
-              onPress={() => router.back()}
-            >
-              <Icon name="arrow-left" size={20} color="#0f172a" />
-            </Pressable>
+            <BackButton className="w-10 h-10 rounded-full bg-background items-center justify-center" color="#0f172a" />
             <Text className="text-[20px] font-heading font-black text-foreground">
               Transactions
             </Text>

@@ -1,3 +1,4 @@
+import { BackButton } from "@/components/ui/BackButton";
 import { View, Text, ScrollView, TextInput, KeyboardAvoidingView, Platform, Alert, Pressable } from "react-native";
 import { useState } from "react";
 import { useRouter } from "expo-router";
@@ -90,12 +91,7 @@ export default function TransferScreen() {
         style={{ paddingTop: (insets.top || 12) + 12 }}
       >
         <View className="flex-row items-center justify-between">
-          <Pressable style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
-            className="w-10 h-10 rounded-full bg-background items-center justify-center"
-            onPress={() => router.back()}
-          >
-            <Icon name="arrow-left" size={20} color="#0f172a" />
-          </Pressable>
+          <BackButton />
           <View className="bg-background px-3 py-1.5 rounded-full flex-row items-center">
             <Text className="text-[12px] font-bold text-muted-foreground mr-1">Balance:</Text>
             <Text className="text-[14px] font-bold text-brand-600">GHS {balance.toFixed(2)}</Text>

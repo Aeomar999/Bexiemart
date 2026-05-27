@@ -1,3 +1,4 @@
+import { BackButton } from "@/components/ui/BackButton";
 import { View, Text, ScrollView, TextInput, Keyboard, Pressable } from "react-native";
 import { useState } from "react";
 import { useRouter } from "expo-router";
@@ -100,19 +101,7 @@ export default function TopUpScreen() {
         }}
       >
         <View className="flex-row items-center gap-3">
-          <Pressable
-            onPress={() => router.back()}
-            style={{
-              width: 40,
-              height: 40,
-              borderRadius: 20,
-              backgroundColor: "#f8fafc",
-              alignItems: "center",
-              justifyContent: "center",
-            }}
-          >
-            <Icon name="arrow-left" size={20} color="#0f172a" />
-          </Pressable>
+          <BackButton />
           <Text className="text-[20px] font-heading font-black text-foreground">Top Up Wallet</Text>
         </View>
       </View>

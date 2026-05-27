@@ -1,3 +1,4 @@
+import { BackButton } from "@/components/ui/BackButton";
 import { View, Text, ScrollView, Alert, Pressable } from "react-native";
 import { useRouter } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -110,12 +111,7 @@ export default function CheckoutScreen() {
     <View className="flex-1 bg-background" style={{ paddingTop: insets.top }}>
       {/* Header */}
       <View className="px-5 pt-4 pb-2 flex-row items-center gap-3">
-        <Pressable style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
-          className="w-10 h-10 rounded-full bg-card border border-border items-center justify-center"
-          onPress={() => router.back()}
-        >
-          <Icon name="arrow-left" size={18} color="#475569" />
-        </Pressable>
+        <BackButton />
         <Text className="text-display-sm font-heading font-bold text-foreground">
           Checkout
         </Text>

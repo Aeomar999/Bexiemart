@@ -3,12 +3,28 @@ import { AuthGuard } from "../../guards/auth.guard";
 import { ChatService } from "./chat.service";
 import { CreateConversationDto } from "./dto/create-conversation.dto";
 import { ApiTags, ApiOperation, ApiBody } from "@nestjs/swagger";
+import { ChatGateway } from "./chat.gateway";
 
 @ApiTags("Chat")
 @Controller("chat")
 @UseGuards(AuthGuard)
 export class ChatController {
-  constructor(private readonly chatService: ChatService) {}
+  constructor(
+    private readonly chatService: ChatService,
+    private readonly chatGateway: ChatGateway
+  ) {}
+
+  @Get("presence")
+  @ApiOperation({ summary: "Get online status of users" })
+  getPresence(@Query("userIds") userIds: string) {
+    if (!userIds) return {};
+    const ids = userIds.split(",");
+    const presence: Record<string, boolean> = {};
+    ids.forEach((id) => {
+      presence[id] = this.chatGateway.isUserOnline(id);
+    });
+    return presence;
+  }
 
   @Get("conversations")
   @ApiOperation({ summary: "Get all conversations for the user" })

@@ -1,3 +1,4 @@
+import { BackButton } from "@/components/ui/BackButton";
 import { View, Text, ScrollView, Pressable, ActivityIndicator } from "react-native";
 import { useRouter } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -63,9 +64,7 @@ export default function FoodCartScreen() {
       <View className="flex-1 bg-background">
         <View className="px-5 pb-4 bg-card border-b border-border" style={{ paddingTop: (insets.top || 12) + 12 }}>
           <View className="flex-row items-center gap-3">
-            <Pressable style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]} className="w-10 h-10 rounded-full bg-background items-center justify-center" onPress={() => router.back()}>
-              <Icon name="arrow-left" size={20} color="#0f172a" />
-            </Pressable>
+            <BackButton />
             <Text className="text-[20px] font-heading font-black text-foreground">Food Cart</Text>
           </View>
         </View>
@@ -90,9 +89,7 @@ export default function FoodCartScreen() {
     <View className="flex-1 bg-background">
       <View className="px-5 pb-4 bg-card border-b border-border z-10" style={{ paddingTop: (insets.top || 12) + 12 }}>
         <View className="flex-row items-center gap-3">
-          <Pressable style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]} className="w-10 h-10 rounded-full bg-background items-center justify-center" onPress={() => router.back()}>
-            <Icon name="arrow-left" size={20} color="#0f172a" />
-          </Pressable>
+          <BackButton />
           <Text className="text-[20px] font-heading font-black text-foreground">Food Cart ({itemCount})</Text>
         </View>
       </View>

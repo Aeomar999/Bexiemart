@@ -1,3 +1,4 @@
+import { BackButton } from "@/components/ui/BackButton";
 import { View, Text, ScrollView, Pressable, Platform, Modal, KeyboardAvoidingView, Linking, TextInput, ActivityIndicator } from "react-native";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -83,12 +84,7 @@ export default function ProviderDetailsScreen() {
             className="px-5 flex-row items-center justify-between z-10 mb-6"
             style={{ paddingTop: Math.max(insets.top, 20) + 12 }}
           >
-            <Pressable style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
-              className="w-10 h-10 rounded-full bg-muted items-center justify-center"
-              onPress={() => router.back()}
-            >
-              <Icon name="arrow-left" size={20} color="#0f172a" />
-            </Pressable>
+            <BackButton className="bg-muted" />
             <Pressable style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
               className="w-10 h-10 rounded-full bg-muted items-center justify-center"
             >

@@ -1,3 +1,4 @@
+import { BackButton } from "@/components/ui/BackButton";
 import { View, Text, Pressable, ScrollView, Alert, ActivityIndicator } from "react-native";
 import { useRouter } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -42,9 +43,7 @@ export default function LinkAccountScreen() {
     <View className="flex-1 bg-gray-50" style={{ paddingTop: Math.max(insets.top, 16) }}>
       {/* Header */}
       <View className="flex-row items-center justify-between px-5 py-4">
-        <Pressable onPress={() => router.back()} className="w-10 h-10 items-center justify-center rounded-full active:bg-gray-200">
-          <Icon name="arrow-left" size={24} color="#111827" />
-        </Pressable>
+        <BackButton />
         <Text className="text-lg font-bold text-gray-900">Link Account</Text>
         <View className="w-10 h-10" />
       </View>

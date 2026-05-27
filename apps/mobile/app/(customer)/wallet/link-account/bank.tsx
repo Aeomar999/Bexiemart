@@ -1,3 +1,4 @@
+import { BackButton } from "@/components/ui/BackButton";
 import { View, Text, TextInput, Pressable, ActivityIndicator, Alert, ScrollView, KeyboardAvoidingView, Platform } from "react-native";
 import { useRouter } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -103,9 +104,7 @@ export default function AddBankAccountScreen() {
     >
       {/* Header */}
       <View className="flex-row items-center justify-between px-5 py-4 bg-gray-50 z-10">
-        <Pressable onPress={() => router.back()} className="w-10 h-10 items-center justify-center -ml-2 rounded-full active:bg-gray-200">
-          <Icon name="arrow-left" size={24} color="#111827" />
-        </Pressable>
+        <BackButton className="-ml-2" />
         <Text className="text-lg font-bold text-gray-900">Add Bank Account</Text>
         <View className="w-10 h-10" />
       </View>

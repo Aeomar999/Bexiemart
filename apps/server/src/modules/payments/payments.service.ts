@@ -128,15 +128,69 @@ export class PaymentsService {
 
   async handleWebhook(body: any) {
     const event = body.event;
+    
+    // Handle Transfer Events
+    if (event === "transfer.success" || event === "transfer.failed" || event === "transfer.reversed") {
+      const reference = body.data.reference;
+      const transaction = await this.prisma.transaction.findUnique({
+        where: { reference },
+      });
+
+      if (!transaction || transaction.type !== "WITHDRAWAL") {
+        return { received: true };
+      }
+
+      if (event === "transfer.success") {
+        await this.prisma.transaction.update({
+          where: { id: transaction.id },
+          data: { status: "COMPLETED" },
+        });
+      } else {
+        // Failed or reversed: Refund the amount + fee back to the wallet
+        await this.prisma.$transaction([
+          this.prisma.transaction.update({
+            where: { id: transaction.id },
+            data: { status: event === "transfer.failed" ? "FAILED" : "REVERSED" },
+          }),
+          this.prisma.wallet.update({
+            where: { id: transaction.walletId },
+            data: { balance: { increment: transaction.amount } }, // refund the total deducted
+          }),
+        ]);
+      }
+      return { received: true };
+    }
+
     if (event !== "charge.success") return { received: true };
 
     const reference = body.data.reference;
 
+    // Check if it's a top-up
+    if (reference.startsWith("tu_")) {
+      const transaction = await this.prisma.transaction.findUnique({
+        where: { reference },
+      });
+      if (transaction && transaction.status === "PENDING") {
+        await this.prisma.$transaction([
+          this.prisma.transaction.update({
+            where: { id: transaction.id },
+            data: { status: "COMPLETED" },
+          }),
+          this.prisma.wallet.update({
+            where: { id: transaction.walletId },
+            data: { balance: { increment: transaction.amount } },
+          }),
+        ]);
+      }
+      return { received: true };
+    }
+
+    // Otherwise, assume it's an order checkout
     const order = await this.prisma.order.findFirst({
       where: { paystackRef: reference },
     });
 
-    if (!order) throw new NotFoundException("Order not found");
+    if (!order) return { received: true }; // Don't throw NotFound here, just acknowledge
 
     await this.prisma.$transaction(async (tx) => {
       await tx.order.update({
@@ -168,8 +222,110 @@ export class PaymentsService {
           paidAt: body.data.paidAt ? new Date(body.data.paidAt) : null,
         },
       });
+
+      // Create Escrow since order is paid
+      const adminWallet = await tx.wallet.findFirst(); // In real app, identify the central admin or just buyer wallet
+      // But according to existing Escrow setup, it just needs buyerWalletId
+      const buyerWallet = await tx.wallet.findUnique({ where: { userId: order.userId } });
+      if (buyerWallet) {
+         await tx.escrow.create({
+           data: {
+             orderId: order.id,
+             buyerWalletId: buyerWallet.id,
+             amount: order.total,
+             netAmount: order.total, // Before commission is calculated
+             status: "HELD",
+           }
+         });
+      }
     });
 
     return { received: true };
+  }
+
+  async chargeAuthorization(userId: string, orderId: string, cardId: string) {
+    const order = await this.prisma.order.findFirst({
+      where: { id: orderId, userId },
+    });
+
+    if (!order) throw new NotFoundException("Order not found");
+    if (order.paymentStatus !== "pending") {
+      throw new BadRequestException("Payment already processed for this order");
+    }
+
+    const card = await this.prisma.card.findFirst({
+      where: { id: cardId, wallet: { userId } },
+      include: { wallet: { include: { user: true } } },
+    });
+
+    if (!card || !card.authorizationCode) {
+      throw new BadRequestException("Valid saved card not found");
+    }
+
+    const reference = `BEX-${order.id}-${Date.now()}`;
+
+    const response = await this.paystackPost("/transaction/charge_authorization", {
+      email: card.wallet.user.email,
+      amount: Math.round(Number(order.total) * 100),
+      authorization_code: card.authorizationCode,
+      reference,
+    });
+
+    if (!response.status) {
+      throw new BadRequestException(response.message || "Failed to charge card");
+    }
+
+    // It might be immediately successful
+    if (response.data?.status === "success") {
+      await this.prisma.$transaction(async (tx) => {
+        await tx.order.update({
+          where: { id: order.id },
+          data: {
+            paymentStatus: "success",
+            paymentMethod: response.data.channel || "card",
+            status: "confirmed",
+            paystackRef: reference,
+          },
+        });
+
+        await tx.payment.upsert({
+          where: { orderId: order.id },
+          update: {
+            status: "success",
+            paystackTxRef: response.data.reference,
+            channel: response.data.channel || "card",
+            paidAt: new Date(),
+          },
+          create: {
+            orderId: order.id,
+            userId,
+            amount: Number(order.total),
+            currency: "GHS",
+            status: "success",
+            paystackRef: reference,
+            paystackTxRef: response.data.reference,
+            channel: response.data.channel || "card",
+            paidAt: new Date(),
+          },
+        });
+
+        const buyerWallet = await tx.wallet.findUnique({ where: { userId } });
+        if (buyerWallet) {
+           await tx.escrow.create({
+             data: {
+               orderId: order.id,
+               buyerWalletId: buyerWallet.id,
+               amount: order.total,
+               netAmount: order.total,
+               status: "HELD",
+             }
+           });
+        }
+      });
+      
+      return { status: "success", reference, orderId: order.id };
+    }
+
+    return { status: response.data?.status || "pending", reference, orderId: order.id };
   }
 }

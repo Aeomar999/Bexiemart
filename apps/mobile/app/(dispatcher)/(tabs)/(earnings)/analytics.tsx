@@ -1,3 +1,4 @@
+import { BackButton } from "@/components/ui/BackButton";
 import { View, Text, ScrollView, Pressable, ActivityIndicator, Dimensions } from "react-native";
 import { useRouter } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -16,12 +17,7 @@ export default function AnalyticsScreen() {
       {/* Header */}
       <View className="px-5 py-4 bg-card border-b border-border flex-row items-center justify-between">
         <View className="flex-row items-center">
-          <Pressable 
-            onPress={() => router.back()}
-            className="w-10 h-10 -ml-2 items-center justify-center rounded-full active:bg-slate-100"
-          >
-            <Icon name="arrow-left" size={24} color="#0f172a" />
-          </Pressable>
+          <BackButton className="-ml-2 active:bg-slate-100" />
           <Text className="text-[20px] font-heading font-bold text-foreground ml-2">
             Analytics
           </Text>

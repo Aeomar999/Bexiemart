@@ -1,3 +1,4 @@
+import { BackButton } from "@/components/ui/BackButton";
 import { View, Text, ScrollView, FlatList, Dimensions, Pressable, Share, ActivityIndicator } from "react-native";
 import { useRouter } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -46,12 +47,7 @@ export default function FlashSalesScreen() {
         className="rounded-b-[32px] shadow-sm"
       >
         <View className="flex-row items-center justify-between mb-6">
-          <Pressable style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
-            className="w-10 h-10 rounded-full bg-black/20 items-center justify-center"
-            onPress={() => router.back()}
-          >
-            <Icon name="arrow-left" size={20} color="#fff" />
-          </Pressable>
+          <BackButton className="bg-black/20" />
           <Text className="text-[20px] font-heading font-black text-white">Flash Sales</Text>
           <Pressable style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]} 
             className="w-10 h-10 rounded-full bg-black/20 items-center justify-center" 

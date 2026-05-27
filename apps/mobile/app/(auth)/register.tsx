@@ -1,3 +1,4 @@
+import { BackButton } from "@/components/ui/BackButton";
 import { View, Text, ScrollView, TouchableOpacity } from "react-native";
 import { router } from "expo-router";
 import { Input } from "../../src/components/ui/Input";
@@ -68,12 +69,7 @@ export default function RegisterScreen() {
       keyboardShouldPersistTaps="handled"
     >
       <View className="mb-8 mt-4">
-        <TouchableOpacity
-          onPress={() => router.back()}
-          className="w-10 h-10 rounded-full bg-card border border-border items-center justify-center mb-6"
-        >
-          <FontAwesome5 name="arrow-left" size={16} color="#475569" />
-        </TouchableOpacity>
+        <BackButton className="mb-6" />
         <Text className="text-display-md font-heading font-bold text-foreground mb-1">
           Create account
         </Text>

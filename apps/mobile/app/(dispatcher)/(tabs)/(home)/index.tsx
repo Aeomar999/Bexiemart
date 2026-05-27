@@ -5,7 +5,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import * as Location from 'expo-location';
 import { Icon } from "@/components/ui/Icon";
 import { SwipeButton } from "@/components/ui/SwipeButton";
-import { darkMapStyle } from "../../../(customer)/track-order";
+import { darkMapStyle } from "@/lib/constants/map-style";
 import { Image } from "expo-image";
 import Toast from "@/lib/toast-polyfill";
 import { useAvailableTasks, useMyTasks, useAcceptTask, useUpdateTaskStatus } from "@/lib/hooks/use-dispatcher";

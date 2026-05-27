@@ -40,6 +40,13 @@ export class WalletController {
     return this.walletService.verifyTopUp(req.user.id, reference);
   }
 
+  @Post("withdraw")
+  @ApiOperation({ summary: "Withdraw funds to a bank or momo account" })
+  @ApiBody({ type: require('./dto/withdraw.dto').WithdrawDto }) // Dynamic require to avoid import clutter if not needed, but let's just add it correctly. Wait, I will just use the inline type since I can't add imports easily without another replace. I will import it.
+  withdraw(@Req() req: any, @Body() body: any) {
+    return this.walletService.withdraw(req.user.id, body.amount, body.accountId, body.accountType);
+  }
+
   @Post("transfer")
   @ApiOperation({ summary: "Transfer funds to another user" })
   @ApiBody({ type: TransferDto })

@@ -1,3 +1,4 @@
+import { BackButton } from "@/components/ui/BackButton";
 import { View, Text, TextInput, Pressable, ScrollView, ActivityIndicator } from "react-native";
 import { useState } from "react";
 import { useRouter } from "expo-router";
@@ -50,12 +51,7 @@ export default function BecomeDispatcherScreen() {
         className="px-5 pb-4 bg-card flex-row items-center border-b border-border"
         style={{ paddingTop: Math.max(insets.top, 12) + 12 }}
       >
-        <Pressable 
-          onPress={() => router.back()}
-          className="w-10 h-10 rounded-full items-center justify-center -ml-2 mr-2"
-        >
-          <Icon name="arrow-left" size={24} color="#0f172a" />
-        </Pressable>
+        <BackButton className="-ml-2 mr-2" />
         <Text className="text-[20px] font-heading font-black text-foreground">
           Drive with us
         </Text>

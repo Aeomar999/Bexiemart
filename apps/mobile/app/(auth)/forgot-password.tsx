@@ -1,3 +1,4 @@
+import { BackButton } from "@/components/ui/BackButton";
 import { View, Text, Alert, TouchableOpacity } from "react-native";
 import { router } from "expo-router";
 import { useState } from "react";
@@ -28,12 +29,7 @@ export default function ForgotPasswordScreen() {
   return (
     <View className="flex-1 bg-background px-6">
       <View className="mb-10 pt-16">
-        <TouchableOpacity 
-          onPress={() => router.back()}
-          className="w-10 h-10 rounded-full bg-card border border-border items-center justify-center mb-8"
-        >
-          <FontAwesome5 name="arrow-left" size={16} color="#475569" />
-        </TouchableOpacity>
+        <BackButton className="mb-8" />
       </View>
 
       {sent ? (

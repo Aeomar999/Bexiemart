@@ -1,3 +1,4 @@
+import { BackButton } from "@/components/ui/BackButton";
 import { View, Text, ScrollView, Pressable, TextInput, KeyboardAvoidingView, Platform, Image } from "react-native";
 import { useState } from "react";
 import Toast from "@/lib/toast-polyfill";
@@ -82,12 +83,7 @@ export default function PaymentMethodsScreen() {
         style={{ paddingTop: (insets.top || 12) + 12 }}
       >
         <View className="flex-row items-center gap-3">
-          <Pressable style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
-            className="w-10 h-10 rounded-full bg-background items-center justify-center"
-            onPress={() => router.back()}
-          >
-            <Icon name="arrow-left" size={20} color="#0f172a" />
-          </Pressable>
+          <BackButton />
           <Text className="text-[20px] font-heading font-black text-foreground">
             Payment Methods
           </Text>

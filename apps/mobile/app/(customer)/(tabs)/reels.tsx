@@ -1,3 +1,4 @@
+import { BackButton } from "@/components/ui/BackButton";
 import { View, Text, Pressable, Dimensions, FlatList, Image, Modal, TextInput, KeyboardAvoidingView, Platform, Share, ActivityIndicator } from "react-native";
 import { useRouter } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -177,12 +178,7 @@ export default function ReelsScreen() {
         style={{ paddingTop: Math.max(insets.top, 20) }}
         pointerEvents="box-none"
       >
-        <Pressable style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
-          className="w-10 h-10 rounded-full bg-black/40 items-center justify-center backdrop-blur-md"
-          onPress={() => router.back()}
-        >
-          <Icon name="arrow-left" size={20} color="#fff" />
-        </Pressable>
+        <BackButton className="w-10 h-10 rounded-full bg-black/40 items-center justify-center backdrop-blur-md" color="#fff" />
         <Text className="text-[18px] font-heading font-bold text-white shadow-sm">
           Discover
         </Text>

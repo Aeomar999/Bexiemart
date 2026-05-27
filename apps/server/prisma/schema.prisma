@@ -483,7 +483,9 @@ model Message {
   conversation   Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
   senderId       String
   sender         User         @relation(fields: [senderId], references: [id])
-  content        String
+  content        String?
+  type           String       @default("TEXT") // TEXT, IMAGE
+  mediaUrl       String?
   isRead         Boolean      @default(false)
   createdAt      DateTime     @default(now())
 
@@ -655,6 +657,7 @@ model MomoAccount {
   accountName String
   isDefault   Boolean      @default(false)
   isVerified  Boolean      @default(false)
+  paystackRecipientCode String?
   createdAt   DateTime     @default(now())
 
   @@unique([walletId, phoneNumber])

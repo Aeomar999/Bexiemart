@@ -8,7 +8,7 @@ import {
   MessageBody,
 } from "@nestjs/websockets";
 import { Server, Socket } from "socket.io";
-import { UnauthorizedException } from "@nestjs/common";
+import { UnauthorizedException, Logger } from "@nestjs/common";
 import { auth } from "../../auth/better-auth";
 import { ChatService } from "./chat.service";
 
@@ -20,6 +20,11 @@ interface AuthenticatedSocket extends Socket {
 export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
   @WebSocketServer()
   server: Server;
+  
+  private logger = new Logger("ChatGateway");
+  
+  // Track active socket IDs per user
+  private userSockets = new Map<string, Set<string>>();
 
   constructor(private readonly chatService: ChatService) {}
 
@@ -39,8 +44,23 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
         client.disconnect();
         return;
       }
-      client.userId = session.user.id;
-      client.join(`user:${session.user.id}`);
+      const userId = session.user.id;
+      client.userId = userId;
+      client.join(`user:${userId}`);
+
+      // Presence tracking
+      let sockets = this.userSockets.get(userId);
+      if (!sockets) {
+        sockets = new Set();
+        this.userSockets.set(userId, sockets);
+      }
+      sockets.add(client.id);
+
+      if (sockets.size === 1) {
+        // User just came online
+        this.server.to(`presence:${userId}`).emit("presence_update", { userId, isOnline: true });
+      }
+
     } catch {
       client.emit("error", "Authentication failed");
       client.disconnect();
@@ -48,6 +68,49 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
   }
 
   handleDisconnect(client: AuthenticatedSocket) {
+    if (client.userId) {
+      const sockets = this.userSockets.get(client.userId);
+      if (sockets) {
+        sockets.delete(client.id);
+        if (sockets.size === 0) {
+          this.userSockets.delete(client.userId);
+          // User went offline
+          this.server.to(`presence:${client.userId}`).emit("presence_update", { userId: client.userId, isOnline: false });
+        }
+      }
+    }
+  }
+
+  // Get current online status immediately (helpful for REST fallback too)
+  isUserOnline(userId: string): boolean {
+    const sockets = this.userSockets.get(userId);
+    return sockets ? sockets.size > 0 : false;
+  }
+
+  @SubscribeMessage("subscribe_presence")
+  async handleSubscribePresence(
+    @ConnectedSocket() client: AuthenticatedSocket,
+    @MessageBody() data: { userIds: string[] },
+  ) {
+    if (!client.userId || !data.userIds) return;
+    
+    // Join a presence room for each user
+    data.userIds.forEach(id => {
+      client.join(`presence:${id}`);
+      // Emit current status immediately to this client
+      client.emit("presence_update", { userId: id, isOnline: this.isUserOnline(id) });
+    });
+  }
+
+  @SubscribeMessage("unsubscribe_presence")
+  async handleUnsubscribePresence(
+    @ConnectedSocket() client: AuthenticatedSocket,
+    @MessageBody() data: { userIds: string[] },
+  ) {
+    if (!client.userId || !data.userIds) return;
+    data.userIds.forEach(id => {
+      client.leave(`presence:${id}`);
+    });
   }
 
   @SubscribeMessage("join_conversation")
@@ -71,16 +134,46 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
   @SubscribeMessage("send_message")
   async handleSendMessage(
     @ConnectedSocket() client: AuthenticatedSocket,
-    @MessageBody() data: { conversationId: string; content: string },
+    @MessageBody() data: { conversationId: string; content?: string; type?: 'TEXT' | 'IMAGE'; mediaUrl?: string },
   ) {
     if (!client.userId) return;
     const message = await this.chatService.createMessage(
       data.conversationId,
       client.userId,
       data.content,
+      data.type,
+      data.mediaUrl
     );
     this.server.to(`conversation:${data.conversationId}`).emit("new_message", message);
+    
+    // Also emit to the participants personal rooms in case they aren't actively in the conversation screen
+    // so their app can show a push notification or update the unread count
+    const conv = await this.chatService.getConversation(data.conversationId, client.userId);
+    conv.participants.forEach(p => {
+      if (p.userId !== client.userId) {
+        this.server.to(`user:${p.userId}`).emit("message_notification", {
+          conversationId: data.conversationId,
+          message
+        });
+      }
+    });
+
     return message;
+  }
+
+  @SubscribeMessage("message_read")
+  async handleMessageRead(
+    @ConnectedSocket() client: AuthenticatedSocket,
+    @MessageBody() data: { conversationId: string },
+  ) {
+    if (!client.userId) return;
+    await this.chatService.markAsRead(data.conversationId, client.userId);
+    // Broadcast that this user has read the conversation up to now
+    this.server.to(`conversation:${data.conversationId}`).emit("read_receipt", {
+      conversationId: data.conversationId,
+      userId: client.userId,
+      readAt: new Date(),
+    });
   }
 
   @SubscribeMessage("typing")
