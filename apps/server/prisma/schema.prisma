@@ -45,6 +45,9 @@ model User {
   foodCart          FoodCart?
   foodOrders        FoodOrder[]
   vendorFollows     VendorFollow[]
+
+  dispatcherProfile DispatcherProfile?
+  rideRequests      RideRequest[]      @relation("CustomerRides")
 }
 
 model Session {
@@ -300,6 +303,9 @@ model Order {
 
   createdAt       DateTime        @default(now())
   updatedAt       DateTime        @updatedAt
+
+  dispatcherId    String?
+  dispatcher      DispatcherProfile? @relation("OrderDispatcher", fields: [dispatcherId], references: [id])
 
   items           OrderItem[]
   payment         Payment?
@@ -797,6 +803,60 @@ model ServiceBooking {
 
   @@index([serviceId])
   @@index([userId])
+}
+
+// ─── Dispatcher Models ─────────────────────────────────────────────────────────────
+
+model DispatcherProfile {
+  id              String   @id @default(cuid())
+  userId          String   @unique
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  vehicleType     String   // "bike", "car", "van"
+  plateNumber     String
+  drivingLicense  String?
+  status          String   @default("OFFLINE") // OFFLINE, ONLINE, BUSY
+  
+  // Real-time tracking
+  lastLatitude    Float?
+  lastLongitude   Float?
+  lastLocationAt  DateTime?
+
+  totalEarnings   Decimal  @default(0)
+  pendingPayout   Decimal  @default(0)
+
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  rides           RideRequest[] @relation("DispatcherRides")
+  deliveries      Order[]       @relation("OrderDispatcher")
+
+  @@index([status])
+}
+
+model RideRequest {
+  id              String   @id @default(cuid())
+  customerId      String
+  customer        User     @relation("CustomerRides", fields: [customerId], references: [id])
+  dispatcherId    String?
+  dispatcher      DispatcherProfile? @relation("DispatcherRides", fields: [dispatcherId], references: [id])
+  
+  status          String   @default("PENDING") // PENDING, ACCEPTED, IN_TRANSIT, COMPLETED, CANCELLED
+  pickupAddress   String
+  dropoffAddress  String
+  pickupLat       Float
+  pickupLng       Float
+  dropoffLat      Float
+  dropoffLng      Float
+  
+  price           Decimal
+  
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@index([customerId])
+  @@index([dispatcherId])
+  @@index([status])
 }
 
 // ─── Flash Sale Models ─────────────────────────────────────────────────────────
