@@ -245,7 +245,7 @@ export default function HomeScreen() {
                 className="w-[30%] items-center active:opacity-70" 
                 onPress={() => item.route !== "#" && router.push(item.route as any)}
               >
-                <View className="w-full aspect-square rounded-[24px] items-center justify-center mb-2" style={{ backgroundColor: item.bgColor }}>
+                <View className="w-full rounded-[24px] items-center justify-center mb-2" style={{ backgroundColor: item.bgColor, aspectRatio: 1 }}>
                   <Icon name={item.icon} size={32} color={item.iconColor} />
                 </View>
                 <Text className="text-[13px] font-bold text-foreground font-heading">{item.name}</Text>
@@ -269,7 +269,7 @@ export default function HomeScreen() {
                 className="w-[48%] active:opacity-70"
                 onPress={() => goToShopWithCategory(cat.name)}
               >
-                <View className="w-full aspect-square rounded-[16px] bg-background mb-2 overflow-hidden flex-row flex-wrap">
+                <View className="w-full rounded-[16px] bg-background mb-2 overflow-hidden flex-row flex-wrap" style={{ aspectRatio: 1 }}>
                   {[0, 1, 2, 3].map((idx) => (
                     <View key={idx} className={`w-1/2 h-1/2 border border-card items-center justify-center ${idx === 0 || idx === 3 ? "bg-muted" : "bg-accent"}`}>
                       {(cat as any).imageUrls?.[idx] ? (
@@ -355,7 +355,7 @@ export default function HomeScreen() {
                   className="w-[140px] active:opacity-70"
                   onPress={() => router.push(`/(customer)/product/${item.id}`)}
                 >
-                  <View className="w-full aspect-square rounded-[16px] bg-muted mb-2 items-center justify-center overflow-hidden">
+                  <View className="w-full rounded-[16px] bg-muted mb-2 items-center justify-center overflow-hidden" style={{ aspectRatio: 1 }}>
                     {item.image ? (
                       <Image source={{ uri: item.image }} style={{ width: '100%', height: '100%' }} contentFit="cover" />
                     ) : (
@@ -393,7 +393,8 @@ export default function HomeScreen() {
                 return (
                   <Pressable 
                     key={item.id} 
-                    className="w-[31%] aspect-square rounded-[12px] bg-muted relative items-center justify-center active:opacity-70 overflow-hidden"
+                    className="w-[31%] rounded-[12px] bg-muted relative items-center justify-center active:opacity-70 overflow-hidden"
+                    style={{ aspectRatio: 1 }}
                     onPress={() => router.push(`/(customer)/product/${item.id}`)}
                   >
                     {item.image ? (
@@ -468,7 +469,7 @@ export default function HomeScreen() {
                 className="w-[48%] active:opacity-70"
                 onPress={() => router.push(`/(customer)/product/${item.id}`)}
               >
-                <View className="w-full aspect-[4/5] rounded-[16px] bg-muted mb-2 items-center justify-center relative overflow-hidden">
+                <View className="w-full rounded-[16px] bg-muted mb-2 items-center justify-center relative overflow-hidden" style={{ aspectRatio: 4/5 }}>
                   {item.image ? (
                     <Image source={{ uri: item.image }} style={{ width: '100%', height: '100%' }} contentFit="cover" />
                   ) : (

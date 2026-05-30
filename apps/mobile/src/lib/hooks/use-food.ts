@@ -4,7 +4,7 @@ import { foodApi } from "../api/food";
 export function useFoodRestaurants(params?: { category?: string }) {
   return useQuery({
     queryKey: ["food", "restaurants", params],
-    queryFn: () => foodApi.getRestaurants(params).then((r) => r.data),
+    queryFn: () => foodApi.getRestaurants(params).then((r) => r.data.data ?? r.data),
   });
 }
 
@@ -19,7 +19,7 @@ export function useFoodRestaurant(id: string) {
 export function useFoodItems(params?: { category?: string; search?: string }) {
   return useQuery({
     queryKey: ["food", "items", params],
-    queryFn: () => foodApi.getItems(params).then((r) => r.data),
+    queryFn: () => foodApi.getItems(params).then((r) => r.data.data ?? r.data),
   });
 }
 
@@ -78,7 +78,7 @@ export function useFoodCheckout() {
 export function useFoodOrders() {
   return useQuery({
     queryKey: ["food", "orders"],
-    queryFn: () => foodApi.getOrders().then((r) => r.data),
+    queryFn: () => foodApi.getOrders().then((r) => r.data.data ?? r.data),
   });
 }
 

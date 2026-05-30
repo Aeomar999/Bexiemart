@@ -34,7 +34,7 @@ export default function ForgotPasswordScreen() {
 
       {sent ? (
         <View className="flex-1 items-center justify-start">
-          <View className="w-24 h-24 rounded-full bg-success-light items-center justify-center mb-6 shadow-sm border border-success/10">
+          <View className="w-24 h-24 rounded-full bg-success-light items-center justify-center mb-6 border border-success/10">
             <FontAwesome5 name="check-circle" size={40} color="#00D084" solid />
           </View>
           <Text className="text-display-sm font-heading font-bold text-foreground text-center mb-3">
@@ -64,7 +64,7 @@ export default function ForgotPasswordScreen() {
             Enter your email and we'll send you a reset link
           </Text>
 
-          <View className="bg-card p-6 rounded-3xl shadow-sm border border-border gap-5">
+          <View className="bg-card p-6 rounded-3xl border border-border gap-5">
             <Input
               label="Email address"
               placeholder="you@school.edu.gh"

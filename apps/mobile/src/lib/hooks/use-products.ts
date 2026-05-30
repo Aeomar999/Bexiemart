@@ -18,7 +18,7 @@ export function useProducts(params?: {
 }) {
   return useQuery({
     queryKey: PRODUCT_KEYS.list(params),
-    queryFn: () => productsApi.getProducts(params).then((r) => r.data),
+    queryFn: () => productsApi.getProducts(params).then((r) => r.data.data ?? r.data),
     staleTime: 60_000,
   });
 }

@@ -17,7 +17,7 @@ export function CategoryCard({ id, name, count, imageUrls, onPress, width = "48%
       className="active:opacity-70 mb-4"
       onPress={onPress}
     >
-      <View className="w-full aspect-square rounded-[16px] bg-background mb-2 overflow-hidden flex-row flex-wrap">
+      <View className="w-full rounded-[16px] bg-background mb-2 overflow-hidden flex-row flex-wrap" style={{ aspectRatio: 1 }}>
         {[0, 1, 2, 3].map((idx) => (
           <View 
             key={idx} 

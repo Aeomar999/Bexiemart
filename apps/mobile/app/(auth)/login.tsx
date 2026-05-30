@@ -61,7 +61,7 @@ export default function LoginScreen() {
           </Text>
         </View>
 
-        <View className="bg-card p-6 rounded-3xl shadow-sm border border-border gap-5">
+        <View className="bg-card p-6 rounded-3xl border border-border gap-5">
           <Input
             label="Email address"
             placeholder="you@school.edu.gh"

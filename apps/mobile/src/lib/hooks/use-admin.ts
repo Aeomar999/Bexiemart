@@ -14,7 +14,7 @@ export const ADMIN_KEYS = {
 export function useAdminUsers(page = 1) {
   return useQuery({
     queryKey: ADMIN_KEYS.users(page),
-    queryFn: () => adminApi.getUsers(page).then((r) => r.data),
+    queryFn: () => adminApi.getUsers(page).then((r) => r.data.data ?? r.data),
   });
 }
 
@@ -77,7 +77,7 @@ export function useUpdateAdminConfig() {
 export function useAdminOrders(status?: string, page = 1) {
   return useQuery({
     queryKey: ADMIN_KEYS.orders(status, page),
-    queryFn: () => adminApi.getOrders(status, page).then((r) => r.data),
+    queryFn: () => adminApi.getOrders(status, page).then((r) => r.data.data ?? r.data),
   });
 }
 

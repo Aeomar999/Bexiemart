@@ -104,7 +104,7 @@ export default function FavoritesScreen() {
               
               onPress={() => router.push(`/(customer)/product/${item.id}`)}
             >
-              <View className="w-full aspect-[4/5] bg-muted items-center justify-center relative overflow-hidden">
+              <View className="w-full bg-muted items-center justify-center relative overflow-hidden" style={{ aspectRatio: 4/5 }}>
                 {item.image ? (
                   <Image source={{ uri: item.image }} style={{ width: '100%', height: '100%' }} contentFit="cover" />
                 ) : (

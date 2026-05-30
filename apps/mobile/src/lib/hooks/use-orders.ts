@@ -9,7 +9,7 @@ export const ORDER_KEYS = {
 export function useOrders() {
   return useQuery({
     queryKey: ORDER_KEYS.all,
-    queryFn: () => ordersApi.getAll().then((r) => r.data),
+    queryFn: () => ordersApi.getAll().then((r) => r.data.data ?? r.data),
   });
 }
 

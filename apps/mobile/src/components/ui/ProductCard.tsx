@@ -108,7 +108,7 @@ export function ProductCard({
       className="w-[140px] active:opacity-70"
       onPress={onPress}
     >
-      <View className="w-full aspect-square rounded-[16px] bg-muted mb-2 items-center justify-center relative overflow-hidden">
+      <View className="w-full rounded-[16px] bg-muted mb-2 items-center justify-center relative overflow-hidden" style={{ aspectRatio: 1 }}>
         {imageUrl ? (
           <Image source={{ uri: imageUrl }} style={{ width: '100%', height: '100%' }} contentFit="cover" />
         ) : (

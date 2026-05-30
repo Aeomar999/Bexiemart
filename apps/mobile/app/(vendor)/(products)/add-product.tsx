@@ -129,7 +129,7 @@ export default function AddProductScreen() {
       {localImages.length > 0 ? (
         <View className="mb-8 flex-row flex-wrap gap-3">
           {localImages.map((img, idx) => (
-            <View key={idx} className="w-[30%] aspect-square relative rounded-[16px] overflow-hidden border border-border">
+            <View key={idx} className="w-[30%] relative rounded-[16px] overflow-hidden border border-border" style={{ aspectRatio: 1 }}>
               <Image source={{ uri: img.uri }} style={{ width: '100%', height: '100%' }} contentFit="cover" />
               <Pressable 
                 onPress={() => removeImage(idx)}
@@ -142,7 +142,8 @@ export default function AddProductScreen() {
           {localImages.length < 5 && (
             <Pressable 
               onPress={pickImage}
-              className="w-[30%] aspect-square bg-muted rounded-[16px] items-center justify-center border-2 border-dashed border-border"
+              className="w-[30%] bg-muted rounded-[16px] items-center justify-center border-2 border-dashed border-border"
+              style={{ aspectRatio: 1 }}
             >
               <Icon name="plus" size={24} color="#64748b" />
             </Pressable>

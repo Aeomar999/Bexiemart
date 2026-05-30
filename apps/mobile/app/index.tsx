@@ -1,21 +1,8 @@
-import { Redirect } from "expo-router";
-import { useAuthStore } from "../src/lib/stores/auth-store";
+import { View } from "react-native";
 
 export default function Index() {
-  const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
-  const user = useAuthStore((s) => s.user);
-
-  if (!isAuthenticated) {
-    return <Redirect href="/(auth)/login" />;
-  }
-
-  if (user?.role === "vendor") {
-    return <Redirect href="/(vendor)/(dashboard)" />;
-  }
-
-  if (user?.role === "dispatcher") {
-    return <Redirect href="/(dispatcher)/(tabs)/(home)" />;
-  }
-
-  return <Redirect href="/(customer)/(home)" />;
+  // Routing logic is handled centrally by app/_layout.tsx, which checks auth state,
+  // onboarding state, and waits for the animated splash screen to finish.
+  // This component just serves as a mount point so expo-router has a valid index route.
+  return <View className="flex-1 bg-white" />;
 }

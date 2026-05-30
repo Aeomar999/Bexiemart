@@ -1,0 +1,28 @@
+appId: com.bexiemart.app
+---
+- launchApp:
+    clearState: true
+- tapOn: "Create one"
+- tapOn: "Kofi Mensah"
+- inputRandomPersonName
+- tapOn: "you@school.edu.gh"
+- inputRandomEmail
+- tapOn: "024 123 4567"
+- inputRandomNumber:
+    length: 10
+- tapOn: "Min 6 characters"
+- inputText: "password@123!"
+- tapOn: "Back"
+- tapOn: "Re-enter your password"
+- inputText: "password@123!"
+- tapOn: "Back"
+- tapOn: ", Shop"
+- tapOn:
+    text: "Create Account"
+    index: -1
+
+
+
+
+
+
