@@ -28,7 +28,7 @@ export function useConversation(id: string) {
 export function useMessages(conversationId: string, page = 1) {
   return useQuery({
     queryKey: CHAT_KEYS.messages(conversationId, page),
-    queryFn: () => chatApi.getMessages(conversationId, page).then((r) => r.data),
+    queryFn: () => chatApi.getMessages(conversationId, page).then((r) => r.data.data ?? r.data),
     enabled: !!conversationId,
   });
 }

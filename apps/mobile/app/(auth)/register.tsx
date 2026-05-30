@@ -78,7 +78,7 @@ export default function RegisterScreen() {
         </Text>
       </View>
 
-      <View className="bg-card p-6 rounded-3xl shadow-sm border border-border gap-5">
+      <View className="bg-card p-6 rounded-3xl border border-border gap-5">
         <Input
           label="Full name"
           placeholder="Kofi Mensah"
@@ -142,12 +142,10 @@ export default function RegisterScreen() {
                 backgroundColor: "#FFFFFF",
                 borderWidth: 1,
                 borderColor: "#E2E8F0",
-                shadowColor: "#000",
-                shadowOffset: { width: 0, height: 1 },
-                shadowOpacity: 0.05,
-                shadowRadius: 2,
               } : {
                 backgroundColor: "transparent",
+                borderWidth: 1,
+                borderColor: "transparent",
               }}
             >
               <FontAwesome5 name="shopping-bag" size={14} color={role === "customer" ? "#004CFF" : "#64748B"} />
@@ -166,12 +164,10 @@ export default function RegisterScreen() {
                 backgroundColor: "#FFFFFF",
                 borderWidth: 1,
                 borderColor: "#E2E8F0",
-                shadowColor: "#000",
-                shadowOffset: { width: 0, height: 1 },
-                shadowOpacity: 0.05,
-                shadowRadius: 2,
               } : {
                 backgroundColor: "transparent",
+                borderWidth: 1,
+                borderColor: "transparent",
               }}
             >
               <FontAwesome5 name="store" size={14} color={role === "vendor" ? "#004CFF" : "#64748B"} />

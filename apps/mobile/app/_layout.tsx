@@ -1,7 +1,7 @@
 import "../global.css";
 import { Stack, useRouter, useRootNavigationState, useSegments } from "expo-router";
 import { StatusBar } from "expo-status-bar";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { View } from "react-native";
 import { useFonts } from "expo-font";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
@@ -9,6 +9,7 @@ import { useAuthStore } from "../src/lib/stores/auth-store";
 import { LoadingSpinner } from "../src/components/ui/LoadingSpinner";
 import { GlobalPopup } from "../src/components/ui/GlobalPopup";
 import { ErrorBoundary } from "../src/components/ui/ErrorBoundary";
+import { AnimatedSplashScreen } from "../src/components/screens/AnimatedSplashScreen";
 import { PaystackProvider } from 'react-native-paystack-webview';
 import {
   Raleway_400Regular,
@@ -29,6 +30,8 @@ const queryClient = new QueryClient();
 export default function RootLayout() {
   const hydrate = useAuthStore((s) => s.hydrate);
   const isLoading = useAuthStore((s) => s.isLoading);
+  const hasSeenOnboarding = useAuthStore((s) => s.hasSeenOnboarding);
+  const [splashDone, setSplashDone] = useState(false);
 
   const [fontsLoaded] = useFonts({
     Raleway_400Regular,
@@ -50,23 +53,24 @@ export default function RootLayout() {
   }, []);
 
   useEffect(() => {
-    // Wait until the root layout has mounted completely
-    if (!rootNavigationState?.key || !fontsLoaded || isLoading) return;
+    // Wait until the root layout has mounted completely, fonts loaded, auth hydrated, and splash finished
+    if (!rootNavigationState?.key || !fontsLoaded || isLoading || !splashDone) return;
 
     const inAuthGroup = segments[0] === '(auth)';
+    const inOnboardingGroup = segments[0] === '(onboarding)';
 
     try {
-      if (!isAuthenticated && !inAuthGroup) {
-        // If the user isn't authenticated (e.g., token expired or manually logged out), kick them to auth
+      if (!hasSeenOnboarding && !inOnboardingGroup) {
+        router.replace("/(onboarding)/welcome");
+      } else if (hasSeenOnboarding && !isAuthenticated && !inAuthGroup) {
         router.replace("/(auth)/login");
-      } else if (isAuthenticated && inAuthGroup) {
-        // If the user is authenticated and is on the auth screen, redirect to home
+      } else if (isAuthenticated && (inAuthGroup || inOnboardingGroup)) {
         router.replace("/(customer)/(tabs)/(home)");
       }
     } catch (err) {
       console.warn("Navigation failed (likely due to ErrorBoundary removing Stack):", err);
     }
-  }, [isLoading, isAuthenticated, rootNavigationState?.key, segments, fontsLoaded]);
+  }, [isLoading, isAuthenticated, hasSeenOnboarding, splashDone, rootNavigationState?.key, segments, fontsLoaded]);
 
 
 
@@ -78,13 +82,16 @@ export default function RootLayout() {
           <ErrorBoundary>
             <Stack screenOptions={{ headerShown: false }}>
               <Stack.Screen name="(auth)" />
+              <Stack.Screen name="(onboarding)" />
               <Stack.Screen name="(customer)" />
               <Stack.Screen name="(vendor)" />
               <Stack.Screen name="(dispatcher)" />
             </Stack>
-            {(!fontsLoaded || isLoading) && (
-              <View style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: 'white', justifyContent: 'center', alignItems: 'center', zIndex: 9999 }}>
-                <LoadingSpinner fullScreen message="Loading BexieMart..." />
+            {(!fontsLoaded || isLoading || !splashDone) && (
+              <View style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: '#004CFF', zIndex: 9999 }}>
+                {(!fontsLoaded || isLoading) ? null : (
+                  <AnimatedSplashScreen onAnimationComplete={() => setSplashDone(true)} />
+                )}
               </View>
             )}
             <GlobalPopup />

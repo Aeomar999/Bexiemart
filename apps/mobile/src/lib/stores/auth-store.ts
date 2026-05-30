@@ -33,11 +33,13 @@ interface AuthState {
   token: string | null;
   isAuthenticated: boolean;
   isLoading: boolean;
+  hasSeenOnboarding: boolean;
 
   setAuth: (user: User, token: string) => Promise<void>;
   setUser: (user: User) => void;
   logout: () => Promise<void>;
   hydrate: () => Promise<void>;
+  completeOnboarding: () => Promise<void>;
 }
 
 export const useAuthStore = create<AuthState>((set) => ({
@@ -45,6 +47,7 @@ export const useAuthStore = create<AuthState>((set) => ({
   token: null,
   isAuthenticated: false,
   isLoading: true,
+  hasSeenOnboarding: false,
 
   setAuth: async (user, token) => {
     await storage.setItem("bexiemart_token", token);
@@ -60,13 +63,24 @@ export const useAuthStore = create<AuthState>((set) => ({
     set({ user: null, token: null, isAuthenticated: false, isLoading: false });
   },
 
+  completeOnboarding: async () => {
+    await storage.setItem("bexiemart_onboarding", "true");
+    set({ hasSeenOnboarding: true });
+  },
+
   hydrate: async () => {
     try {
-      const token = await storage.getItem("bexiemart_token");
+      const [token, onboardingStatus] = await Promise.all([
+        storage.getItem("bexiemart_token"),
+        storage.getItem("bexiemart_onboarding")
+      ]);
+      
+      const hasSeenOnboarding = onboardingStatus === "true";
+
       if (token) {
-        set({ token, isAuthenticated: true, isLoading: false });
+        set({ token, isAuthenticated: true, isLoading: false, hasSeenOnboarding });
       } else {
-        set({ isLoading: false });
+        set({ isLoading: false, hasSeenOnboarding });
       }
     } catch {
       set({ isLoading: false });
