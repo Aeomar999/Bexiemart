@@ -196,6 +196,7 @@ export class AdminService {
     const reference = `admin_${action.toLowerCase()}_${id}_${Date.now()}`;
 
     if (action === "RELEASE") {
+      if (!escrow.vendor) throw new NotFoundException("Escrow vendor not found");
       const vendorWallet = await this.prisma.wallet.findUnique({
         where: { userId: escrow.vendor.userId },
       });

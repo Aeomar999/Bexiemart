@@ -13,6 +13,7 @@ interface ButtonProps extends TouchableOpacityProps {
   size?: "sm" | "md" | "lg";
   loading?: boolean;
   leftIcon?: React.ReactNode;
+  textClassName?: string;
 }
 
 const variantStyles: Record<string, string> = {
@@ -53,6 +54,7 @@ export const Button = forwardRef<View, ButtonProps>(
       disabled,
       leftIcon,
       className = "",
+      textClassName = "",
       ...props
     },
     ref
@@ -90,6 +92,7 @@ export const Button = forwardRef<View, ButtonProps>(
                 font-heading font-semibold
                 ${textColors[variant]}
                 ${textSizes[size]}
+                ${textClassName}
               `}
             >
               {title}
