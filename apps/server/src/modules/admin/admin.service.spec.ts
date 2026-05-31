@@ -44,10 +44,10 @@ describe("AdminService", () => {
 
       const result = await service.listUsers(1, 10);
       expect(result.data).toEqual(users);
-      expect(result.total).toBe(2);
-      expect(result.page).toBe(1);
-      expect(result.limit).toBe(10);
-      expect(result.totalPages).toBe(1);
+      expect(result.meta.total).toBe(2);
+      expect(result.meta.page).toBe(1);
+      expect(result.meta.limit).toBe(10);
+      expect(result.meta.totalPages).toBe(1);
     });
   });
 
@@ -130,7 +130,7 @@ describe("AdminService", () => {
 
       const result = await service.listOrders(undefined, 1, 10);
       expect(result.data).toEqual(orders);
-      expect(result.total).toBe(2);
+      expect(result.meta.total).toBe(2);
     });
 
     it("optionally filters by status", async () => {

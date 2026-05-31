@@ -1,10 +1,11 @@
 import { Controller, Get, Post, Delete, Param, Body, Req, UseGuards } from "@nestjs/common";
-import { ApiTags, ApiOperation, ApiBody } from "@nestjs/swagger";
+import { ApiTags, ApiOperation, ApiBody, ApiBearerAuth } from "@nestjs/swagger";
 import { AuthGuard } from "../../guards/auth.guard";
 import { VendorDocumentsService } from "./vendor-documents.service";
 import { CreateDocumentDto } from "./dto/create-document.dto";
 
 @ApiTags("Vendor Documents")
+@ApiBearerAuth()
 @Controller("vendor/documents")
 @UseGuards(AuthGuard)
 export class VendorDocumentsController {

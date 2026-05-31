@@ -2,9 +2,10 @@ import { Controller, Get, Post, Delete, Param, Body, Query, Req, UseGuards } fro
 import { AuthGuard } from "../../guards/auth.guard";
 import { CustomerServicesService } from "./customer-services.service";
 import { BookServiceDto } from "./dto/book-service.dto";
-import { ApiTags, ApiOperation, ApiBody } from "@nestjs/swagger";
+import { ApiTags, ApiOperation, ApiBody, ApiBearerAuth } from "@nestjs/swagger";
 
 @ApiTags("Customer Services")
+@ApiBearerAuth()
 @Controller("services")
 @UseGuards(AuthGuard)
 export class CustomerServicesController {

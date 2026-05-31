@@ -318,6 +318,7 @@ model Order {
   @@index([userId])
   @@index([orderNumber])
   @@index([status])
+  @@index([userId, status])
 }
 
 model OrderItem {
@@ -453,6 +454,7 @@ model Review {
   @@unique([userId, productId])
   @@index([productId])
   @@index([userId])
+  @@index([productId, userId])
 }
 
 // ─── Chat Models ────────────────────────────────────────────────────────

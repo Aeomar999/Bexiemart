@@ -1,10 +1,11 @@
 import { Controller, Get, Post, Body, Param, UseGuards, Req, Put, Query } from "@nestjs/common";
-import { ApiTags, ApiOperation } from "@nestjs/swagger";
+import { ApiTags, ApiOperation, ApiBearerAuth } from "@nestjs/swagger";
 import { AuthGuard } from "../../guards/auth.guard";
 import { DispatcherService } from "./dispatcher.service";
 
 import { CreateDispatcherDto, ToggleStatusDto, UpdateLocationDto, AcceptTaskDto, UpdateTaskStatusDto, WithdrawEarningsDto } from "./dto/dispatcher.dto";
 
+@ApiBearerAuth()
 @Controller("dispatcher")
 @UseGuards(AuthGuard)
 @ApiTags("Dispatcher")

@@ -89,36 +89,38 @@ export class EscrowService {
 
     const reference = `esc_rel_${id}_${Date.now()}`;
 
-    const txn = await this.prisma.transaction.create({
-      data: {
-        walletId: vendorWallet.id,
-        type: "EARNINGS",
-        status: "COMPLETED",
-        amount: escrow.amount,
-        fee: Number(escrow.commission),
-        netAmount: Number(escrow.netAmount),
-        reference,
-        description: `Escrow release for order ${escrow.orderId}`,
-        counterpartyWalletId: escrow.buyerWalletId,
-      },
+    const updatedEscrow = await this.prisma.$transaction(async (tx) => {
+      const txn = await tx.transaction.create({
+        data: {
+          walletId: vendorWallet.id,
+          type: "EARNINGS",
+          status: "COMPLETED",
+          amount: escrow.amount,
+          fee: Number(escrow.commission),
+          netAmount: Number(escrow.netAmount),
+          reference,
+          description: `Escrow release for order ${escrow.orderId}`,
+          counterpartyWalletId: escrow.buyerWalletId,
+        },
+      });
+
+      await tx.wallet.update({
+        where: { id: vendorWallet.id },
+        data: { balance: { increment: Number(escrow.netAmount) } },
+      });
+
+      return tx.escrow.update({
+        where: { id },
+        data: {
+          status: "RELEASED",
+          releasedAt: new Date(),
+          releasedTxnId: txn.id,
+          vendorWalletId: vendorWallet.id,
+        },
+      });
     });
 
-    await this.prisma.wallet.update({
-      where: { id: vendorWallet.id },
-      data: { balance: { increment: Number(escrow.netAmount) } },
-    });
-
-    await this.prisma.escrow.update({
-      where: { id },
-      data: {
-        status: "RELEASED",
-        releasedAt: new Date(),
-        releasedTxnId: txn.id,
-        vendorWalletId: vendorWallet.id,
-      },
-    });
-
-    return this.prisma.escrow.findUnique({ where: { id } });
+    return updatedEscrow;
   }
 
   async refund(userId: string, id: string) {
@@ -139,35 +141,37 @@ export class EscrowService {
 
     const reference = `esc_ref_${id}_${Date.now()}`;
 
-    const txn = await this.prisma.transaction.create({
-      data: {
-        walletId: buyerWallet.id,
-        type: "REVERSAL",
-        status: "COMPLETED",
-        amount: escrow.amount,
-        fee: 0,
-        netAmount: Number(escrow.amount),
-        reference,
-        description: `Escrow refund for order ${escrow.orderId}`,
-        counterpartyWalletId: escrow.vendorWalletId,
-      },
+    const updatedEscrow = await this.prisma.$transaction(async (tx) => {
+      const txn = await tx.transaction.create({
+        data: {
+          walletId: buyerWallet.id,
+          type: "REVERSAL",
+          status: "COMPLETED",
+          amount: escrow.amount,
+          fee: 0,
+          netAmount: Number(escrow.amount),
+          reference,
+          description: `Escrow refund for order ${escrow.orderId}`,
+          counterpartyWalletId: escrow.vendorWalletId,
+        },
+      });
+
+      await tx.wallet.update({
+        where: { id: buyerWallet.id },
+        data: { balance: { increment: Number(escrow.amount) } },
+      });
+
+      return tx.escrow.update({
+        where: { id },
+        data: {
+          status: "REFUNDED",
+          refundedAt: new Date(),
+          refundedTxnId: txn.id,
+        },
+      });
     });
 
-    await this.prisma.wallet.update({
-      where: { id: buyerWallet.id },
-      data: { balance: { increment: Number(escrow.amount) } },
-    });
-
-    await this.prisma.escrow.update({
-      where: { id },
-      data: {
-        status: "REFUNDED",
-        refundedAt: new Date(),
-        refundedTxnId: txn.id,
-      },
-    });
-
-    return this.prisma.escrow.findUnique({ where: { id } });
+    return updatedEscrow;
   }
 
   private async assertOwner(userId: string, escrow: any) {

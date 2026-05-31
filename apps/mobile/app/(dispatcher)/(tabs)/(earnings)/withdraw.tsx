@@ -359,24 +359,24 @@ export default function WithdrawFundsScreen() {
               {[1, 2, 3, 4, 5, 6, 7, 8, 9].map((num) => (
                 <Pressable
                   key={num}
-                  className="w-[28%] items-center justify-center rounded-full bg-surface-50 border border-surface-100 shadow-sm shadow-surface-200/50"
-                  style={({ pressed }) => [{ transform: [{ scale: pressed ? 0.95 : 1 }], backgroundColor: pressed ? '#e2e8f0' : '#f8fafc', aspectRatio: 1 }]}
+                  className="w-[28%] aspect-square items-center justify-center rounded-full bg-surface-50 border border-surface-100 shadow-sm shadow-surface-200/50"
+                  style={({ pressed }) => [{ transform: [{ scale: pressed ? 0.95 : 1 }], backgroundColor: pressed ? '#e2e8f0' : '#f8fafc' }]}
                   onPress={() => handlePinEntry(num.toString())}
                 >
                   <Text className="text-[32px] font-heading font-black text-surface-900">{num}</Text>
                 </Pressable>
               ))}
-              <View className="w-[28%]" style={{ aspectRatio: 1 }} />
+              <View className="w-[28%] aspect-square" />
               <Pressable
-                className="w-[28%] items-center justify-center rounded-full bg-surface-50 border border-surface-100 shadow-sm shadow-surface-200/50"
-                style={({ pressed }) => [{ transform: [{ scale: pressed ? 0.95 : 1 }], backgroundColor: pressed ? '#e2e8f0' : '#f8fafc', aspectRatio: 1 }]}
+                className="w-[28%] aspect-square items-center justify-center rounded-full bg-surface-50 border border-surface-100 shadow-sm shadow-surface-200/50"
+                style={({ pressed }) => [{ transform: [{ scale: pressed ? 0.95 : 1 }], backgroundColor: pressed ? '#e2e8f0' : '#f8fafc' }]}
                 onPress={() => handlePinEntry("0")}
               >
                 <Text className="text-[32px] font-heading font-black text-surface-900">0</Text>
               </Pressable>
               <Pressable
-                className="w-[28%] items-center justify-center rounded-full"
-                style={({ pressed }) => [{ opacity: pressed ? 0.5 : 1, aspectRatio: 1 }]}
+                className="w-[28%] aspect-square items-center justify-center rounded-full"
+                style={({ pressed }) => [{ opacity: pressed ? 0.5 : 1 }]}
                 onPress={handlePinDelete}
               >
                 <Icon name="delete" size={32} color="#64748b" />

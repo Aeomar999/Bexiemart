@@ -1,8 +1,9 @@
-import { Controller, Get, Post, Param, UseGuards, Req } from "@nestjs/common";
-import { ApiTags, ApiOperation, ApiParam } from "@nestjs/swagger";
+import { Controller, Get, Post, Param, UseGuards, Req, Query } from "@nestjs/common";
+import { ApiTags, ApiOperation, ApiParam, ApiQuery, ApiBearerAuth } from "@nestjs/swagger";
 import { AuthGuard } from "../../guards/auth.guard";
 import { NotificationsService } from "./notifications.service";
 
+@ApiBearerAuth()
 @Controller("notifications")
 @UseGuards(AuthGuard)
 @ApiTags("Notifications")
@@ -11,8 +12,8 @@ export class NotificationsController {
 
   @ApiOperation({ summary: "Get all notifications" })
   @Get()
-  findAll(@Req() req: any) {
-    return this.notificationsService.findAll(req.user.id);
+  findAll(@Req() req: any, @Query("page") page?: string, @Query("limit") limit?: string) {
+    return this.notificationsService.findAll(req.user.id, Number(page) || 1, Number(limit) || 20);
   }
 
   @ApiOperation({ summary: "Get unread notification count" })

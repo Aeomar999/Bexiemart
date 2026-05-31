@@ -105,4 +105,10 @@ export class VendorController {
   updateShop(@Req() req: any, @Body() body: UpdateShopDto) {
     return this.vendorService.updateShop(req.user.id, body);
   }
+
+  @ApiOperation({ summary: "Get vendor disputes" })
+  @Get("disputes")
+  getDisputes(@Req() req: any, @Query("page") page?: string, @Query("limit") limit?: string) {
+    return this.vendorService.getDisputes(req.user.id, Number(page) || 1, Number(limit) || 20);
+  }
 }

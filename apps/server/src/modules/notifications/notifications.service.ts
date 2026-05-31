@@ -5,12 +5,18 @@ import { PrismaService } from "../../prisma/prisma.service";
 export class NotificationsService {
   constructor(private readonly prisma: PrismaService) {}
 
-  async findAll(userId: string) {
-    return this.prisma.notification.findMany({
-      where: { userId },
-      orderBy: { createdAt: "desc" },
-      take: 50,
-    });
+  async findAll(userId: string, page: number = 1, limit: number = 20) {
+    const skip = (page - 1) * limit;
+    const [data, total] = await Promise.all([
+      this.prisma.notification.findMany({
+        where: { userId },
+        skip,
+        take: limit,
+        orderBy: { createdAt: "desc" },
+      }),
+      this.prisma.notification.count({ where: { userId } }),
+    ]);
+    return { data, meta: { total, page, limit, totalPages: Math.ceil(total / limit)  } };
   }
 
   async getUnreadCount(userId: string) {

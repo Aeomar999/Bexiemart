@@ -1,7 +1,7 @@
 import { NestFactory } from "@nestjs/core";
 import { NestExpressApplication } from "@nestjs/platform-express";
 import { AppModule } from "./app.module";
-import { ValidationPipe } from "@nestjs/common";
+import { ValidationPipe, VersioningType } from "@nestjs/common";
 import { rawBodyParser } from "./middleware/raw-body.middleware";
 import { GlobalExceptionFilter } from "./filters/global-exception.filter";
 import { join } from "path";
@@ -36,6 +36,10 @@ async function bootstrap() {
   app.useGlobalFilters(new GlobalExceptionFilter());
 
   app.setGlobalPrefix("api");
+  app.enableVersioning({
+    type: VersioningType.URI,
+    defaultVersion: '1',
+  });
 
   const config = new DocumentBuilder()
     .setTitle("BexieMart API")

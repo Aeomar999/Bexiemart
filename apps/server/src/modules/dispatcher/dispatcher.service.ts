@@ -25,11 +25,14 @@ export class DispatcherService {
       throw new BadRequestException("Profile already exists");
     }
 
-    // Also update the user's role to dispatcher if it isn't already
-    await this.prisma.user.update({
-      where: { id: userId },
-      data: { role: "dispatcher" },
-    });
+    // Only update the user's role to dispatcher if they are currently a regular customer
+    const user = await this.prisma.user.findUnique({ where: { id: userId } });
+    if (user && user.role === "customer") {
+      await this.prisma.user.update({
+        where: { id: userId },
+        data: { role: "dispatcher" },
+      });
+    }
 
     return this.prisma.dispatcherProfile.create({
       data: {
@@ -79,13 +82,8 @@ export class DispatcherService {
       this.prisma.rideRequest.count({ where: { status: "PENDING" } })
     ]);
 
-    return {
-      data: { rides, deliveries: [] },
-      total,
-      page,
-      limit,
-      totalPages: Math.ceil(total / limit)
-    };
+    return { data: {  rides, deliveries: []  }, meta: { total, page, limit, totalPages: Math.ceil(total / limit)
+     } };
   }
 
   async acceptTask(userId: string, taskId: string, type: "ride" | "delivery") {
@@ -200,13 +198,8 @@ export class DispatcherService {
       })
     ]);
 
-    return {
-      data: { rides, deliveries: [] },
-      total,
-      page,
-      limit,
-      totalPages: Math.ceil(total / limit)
-    };
+    return { data: {  rides, deliveries: []  }, meta: { total, page, limit, totalPages: Math.ceil(total / limit)
+     } };
   }
 
   // --- Earnings & Wallet ---

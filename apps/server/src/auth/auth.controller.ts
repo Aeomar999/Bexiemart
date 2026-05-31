@@ -8,10 +8,12 @@ import {
   HttpStatus,
   UnauthorizedException,
   InternalServerErrorException,
+  UseGuards,
 } from "@nestjs/common";
 import { Request } from "express";
 import { Throttle } from "@nestjs/throttler";
-import { ApiTags, ApiOperation } from "@nestjs/swagger";
+import { ApiTags, ApiOperation, ApiBearerAuth } from "@nestjs/swagger";
+import { AuthGuard } from "../guards/auth.guard";
 import { auth } from "./better-auth";
 import { PrismaService } from "../prisma/prisma.service";
 import { RegisterDto } from "./dto/register.dto";
@@ -20,6 +22,7 @@ import { ForgotPasswordDto } from "./dto/forgot-password.dto";
 import { ResetPasswordDto } from "./dto/reset-password.dto";
 
 @ApiTags("Auth")
+@ApiBearerAuth()
 @Controller("auth")
 export class AuthController {
   constructor(private readonly prisma: PrismaService) {}
@@ -119,34 +122,18 @@ export class AuthController {
 
   @ApiOperation({ summary: "Get current user" })
   @Get("me")
-  async getCurrentUser(@Req() req: Request) {
-    const authHeader = req.headers.authorization as string;
-    if (!authHeader?.startsWith("Bearer ")) {
-      throw new UnauthorizedException("Missing or invalid token");
+  @UseGuards(AuthGuard)
+  async getCurrentUser(@Req() req: any) {
+    if (!req.user) {
+      throw new UnauthorizedException("User not found");
     }
 
-    const token = authHeader.split(" ")[1];
+    const fullUser = await this.prisma.user.findUnique({
+      where: { id: req.user.id },
+      include: { vendorProfile: true }
+    });
 
-    const headers = new Headers();
-    headers.set(
-      "cookie",
-      `better-auth.session_token=${token}`
-    );
-
-    try {
-      const session = await auth.api.getSession({ headers });
-      if (!session?.user) {
-        throw new UnauthorizedException("Invalid session");
-      }
-
-      const fullUser = await this.prisma.user.findUnique({
-        where: { id: session.user.id }
-      });
-
-      return { user: fullUser || session.user };
-    } catch {
-      throw new UnauthorizedException("Invalid session");
-    }
+    return { user: fullUser || req.user };
   }
 
   @Throttle({ default: { limit: 3, ttl: 60000 } })

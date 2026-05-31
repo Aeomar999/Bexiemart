@@ -48,7 +48,7 @@ export class FoodService {
       minPrice: v.foodItems[0] ? Number(v.foodItems[0].price) : null,
     }));
 
-    return { data, total, page, limit, totalPages: Math.ceil(total / limit) };
+    return { data, meta: { total, page, limit, totalPages: Math.ceil(total / limit)  } };
   }
 
   async getRestaurant(id: string) {
@@ -135,7 +135,7 @@ export class FoodService {
       vendor: item.vendor,
     }));
 
-    return { data, total, page, limit, totalPages: Math.ceil(total / limit) };
+    return { data, meta: { total, page, limit, totalPages: Math.ceil(total / limit)  } };
   }
 
   async addToCart(userId: string, foodItemId: string, quantity: number, specialInstructions?: string) {
@@ -342,7 +342,7 @@ export class FoodService {
       })),
     }));
 
-    return { data, total, page, limit, totalPages: Math.ceil(total / limit) };
+    return { data, meta: { total, page, limit, totalPages: Math.ceil(total / limit)  } };
   }
 
   async getOrder(userId: string, orderId: string) {

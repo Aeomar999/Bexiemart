@@ -7,38 +7,38 @@ import Animated, {
   useAnimatedStyle,
   interpolate,
   Extrapolation,
-  interpolateColor,
 } from "react-native-reanimated";
 import { Image } from "expo-image";
 import { useAuthStore } from "../../src/lib/stores/auth-store";
 import { Button } from "../../src/components/ui/Button";
+import { ArrowLeft } from "lucide-react-native";
 
 const { width, height } = Dimensions.get("window");
 
 const SLIDES = [
   {
     id: "1",
-    title: "Shop Campus",
-    subtitle: "Without The Hassle",
+    titleStart: "Shop",
+    titleBold: "Campus",
+    titleEnd: "Without The Hassle",
     description: "Discover the best products from vendors right inside your university campus.",
     image: require("../../assets/images/onboarding/shop.png"),
-    color: "#EBF0FF", // brand-50
   },
   {
     id: "2",
-    title: "Fast Delivery",
-    subtitle: "To Your Doorstep",
+    titleStart: "Fast",
+    titleBold: "Delivery",
+    titleEnd: "To Your Doorstep",
     description: "Get your orders delivered to your hostel or lecture hall in minutes.",
     image: require("../../assets/images/onboarding/delivery.png"),
-    color: "#E6F9F3", // success-light
   },
   {
     id: "3",
-    title: "Secure Payments",
-    subtitle: "With Zero Stress",
+    titleStart: "Secure",
+    titleBold: "Payments",
+    titleEnd: "With Zero Stress",
     description: "Pay securely via Mobile Money or your BexieMart wallet with ease.",
     image: require("../../assets/images/onboarding/payment.png"),
-    color: "#FFFBEB", // warning-light
   },
 ];
 
@@ -63,9 +63,15 @@ export default function OnboardingScreen() {
     }
   };
 
+  const handleBack = () => {
+    if (currentIndex > 0) {
+      scrollViewRef.current?.scrollTo({ x: (currentIndex - 1) * width, animated: true });
+    }
+  };
+
   const handleComplete = async () => {
     await completeOnboarding();
-    router.replace("/(auth)/login");
+    router.replace("/(auth)/register");
   };
 
   const onMomentumScrollEnd = (e: any) => {
@@ -75,128 +81,181 @@ export default function OnboardingScreen() {
 
   return (
     <View className="flex-1 bg-white">
-      {/* Top Header Actions */}
-      <View className="absolute top-14 left-0 right-0 flex-row justify-end items-center px-6 z-20">
-        <TouchableOpacity onPress={handleComplete} className="bg-white/50 px-4 py-2 rounded-full">
-          <Text className="text-body-sm font-bold text-surface-600 font-body">Skip</Text>
+      {/* Header */}
+      <View className="absolute top-14 left-0 right-0 flex-row justify-between items-center px-6 z-20">
+        {currentIndex > 0 ? (
+          <TouchableOpacity 
+            onPress={handleBack}
+            className="w-10 h-10 rounded-full bg-brand-50 items-center justify-center"
+          >
+            <ArrowLeft color="#004CFF" size={20} />
+          </TouchableOpacity>
+        ) : (
+          <View className="w-10 h-10" /> /* Spacer */
+        )}
+        
+        <TouchableOpacity onPress={handleComplete}>
+          <Text className="text-body-md font-bold text-brand-600 font-body">
+            Skip
+          </Text>
         </TouchableOpacity>
       </View>
 
-      {/* Top Section: Scrollable Images with Animated Background */}
-      <View style={{ height: height * 0.6 }}>
-        {/* Animated Background Color */}
-        <Animated.View 
-          className="absolute inset-0"
-          style={useAnimatedStyle(() => {
-            const backgroundColor = interpolateColor(
-              scrollX.value,
-              SLIDES.map((_, i) => i * width),
-              SLIDES.map(s => s.color)
-            );
-            return { backgroundColor };
-          })}
-        />
-        
-        <Animated.ScrollView
-          ref={scrollViewRef}
-          horizontal
-          pagingEnabled
-          showsHorizontalScrollIndicator={false}
-          onScroll={scrollHandler}
-          scrollEventThrottle={16}
-          onMomentumScrollEnd={onMomentumScrollEnd}
-          bounces={false}
-          className="flex-1"
-        >
-          {SLIDES.map((slide, index) => {
-            const imageStyle = useAnimatedStyle(() => {
-              const scale = interpolate(
-                scrollX.value,
-                [(index - 1) * width, index * width, (index + 1) * width],
-                [0.8, 1, 0.8],
-                Extrapolation.CLAMP
-              );
-              return { transform: [{ scale }] };
-            });
-
-            return (
-              <View key={slide.id} style={{ width, height: height * 0.6 }} className="items-center justify-center pt-10">
-                <Animated.View style={imageStyle} className="w-[85%] h-[85%]">
-                  <Image source={slide.image} style={{ width: '100%', height: '100%' }} contentFit="contain" />
-                </Animated.View>
-              </View>
-            );
-          })}
-        </Animated.ScrollView>
-      </View>
-
-      {/* Bottom Section: Content Sheet */}
-      <View 
-        className="bg-white rounded-t-[40px] px-8 pb-12 pt-8 shadow-up absolute bottom-0 left-0 right-0"
-        style={{ height: height * 0.45 }}
+      {/* Invisible ScrollView to capture gestures */}
+      <Animated.ScrollView
+        ref={scrollViewRef}
+        horizontal
+        pagingEnabled
+        showsHorizontalScrollIndicator={false}
+        onScroll={scrollHandler}
+        scrollEventThrottle={16}
+        onMomentumScrollEnd={onMomentumScrollEnd}
+        bounces={false}
+        className="absolute inset-0 z-30"
+        style={{ flex: 1 }}
       >
-        {/* Expanding Pill Pagination */}
-        <View className="flex-row justify-center items-center h-2 mb-2 gap-2">
-          {SLIDES.map((_, index) => {
-            const dotStyle = useAnimatedStyle(() => {
-              const dotWidth = interpolate(
-                scrollX.value,
-                [(index - 1) * width, index * width, (index + 1) * width],
-                [8, 24, 8],
-                Extrapolation.CLAMP
-              );
-              const opacity = interpolate(
-                scrollX.value,
-                [(index - 1) * width, index * width, (index + 1) * width],
-                [0.3, 1, 0.3],
-                Extrapolation.CLAMP
-              );
-              return { width: dotWidth, opacity };
+        {SLIDES.map((slide) => (
+          <View key={slide.id} style={{ width, height }} />
+        ))}
+      </Animated.ScrollView>
+
+      {/* Fixed UI Layer underneath the invisible ScrollView */}
+      <View className="flex-1 items-center pt-32 pb-[120px] px-6" pointerEvents="none">
+        
+        {/* Overlapping Cards Container */}
+        <View className="relative w-[280px] h-[340px] items-center justify-center mb-8">
+          {SLIDES.map((slide, index) => {
+            const getInterpolationArrays = (i: number) => {
+              if (i === 0) {
+                return {
+                  translateX: [0, -60, 60],
+                  rotate: [0, -12, 12],
+                  scale: [1, 0.9, 0.9],
+                  opacity: [1, 0.4, 0.4],
+                  zIndex: [3, 1, 2]
+                };
+              } else if (i === 1) {
+                return {
+                  translateX: [60, 0, -60],
+                  rotate: [12, 0, -12],
+                  scale: [0.9, 1, 0.9],
+                  opacity: [0.4, 1, 0.4],
+                  zIndex: [2, 3, 1]
+                };
+              } else {
+                return {
+                  translateX: [-60, 60, 0],
+                  rotate: [-12, 12, 0],
+                  scale: [0.9, 0.9, 1],
+                  opacity: [0.4, 0.4, 1],
+                  zIndex: [1, 2, 3]
+                };
+              }
+            };
+
+            const arrays = getInterpolationArrays(index);
+
+            const cardStyle = useAnimatedStyle(() => {
+              const tx = interpolate(scrollX.value, [0, width, width * 2], arrays.translateX, Extrapolation.CLAMP);
+              const rot = interpolate(scrollX.value, [0, width, width * 2], arrays.rotate, Extrapolation.CLAMP);
+              const sc = interpolate(scrollX.value, [0, width, width * 2], arrays.scale, Extrapolation.CLAMP);
+              const op = interpolate(scrollX.value, [0, width, width * 2], arrays.opacity, Extrapolation.CLAMP);
+              const zi = Math.round(interpolate(scrollX.value, [0, width, width * 2], arrays.zIndex, Extrapolation.CLAMP));
+
+              return {
+                transform: [
+                  { translateX: tx },
+                  { rotate: `${rot}deg` },
+                  { scale: sc }
+                ],
+                opacity: op,
+                zIndex: zi,
+              };
             });
 
             return (
-              <Animated.View
-                key={index}
-                className="h-2 rounded-full bg-brand-600"
-                style={dotStyle}
-              />
+              <Animated.View 
+                key={slide.id}
+                className="absolute w-[280px] h-[340px] rounded-[32px] overflow-hidden shadow-2xl shadow-brand-900/20 bg-brand-50"
+                style={cardStyle}
+              >
+                <Image source={slide.image} style={{ width: '100%', height: '100%' }} contentFit="cover" />
+              </Animated.View>
             );
           })}
         </View>
 
-        {/* Text Container: Vertically Centered */}
-        <View className="flex-1 justify-center items-center relative overflow-hidden">
+        {/* Reimagined Pagination: Liquid Worm */}
+        <View className="flex-row justify-center items-center mb-6 h-[24px]">
+          <View className="flex-row gap-2 relative">
+            {/* Background Dots */}
+            {SLIDES.map((_, i) => (
+              <View key={`dot-${i}`} className="w-2 h-2 rounded-full bg-brand-100" />
+            ))}
+            
+            {/* The Animated Worm */}
+            <Animated.View 
+              className="absolute left-0 top-0 h-2 bg-brand-600 rounded-full"
+              style={useAnimatedStyle(() => {
+                const tx = interpolate(
+                  scrollX.value,
+                  [0, width * 0.5, width, width * 1.5, width * 2],
+                  [0, 0, 16, 16, 32],
+                  Extrapolation.CLAMP
+                );
+                
+                const w = interpolate(
+                  scrollX.value,
+                  [0, width * 0.5, width, width * 1.5, width * 2],
+                  [8, 24, 8, 24, 8],
+                  Extrapolation.CLAMP
+                );
+
+                return {
+                  transform: [{ translateX: tx }],
+                  width: w,
+                };
+              })}
+            />
+          </View>
+        </View>
+
+        {/* Typography Container */}
+        <View className="flex-1 w-full items-center justify-center">
           {SLIDES.map((slide, index) => {
             const textStyle = useAnimatedStyle(() => {
               const opacity = interpolate(
                 scrollX.value,
-                [(index - 0.5) * width, index * width, (index + 0.5) * width],
+                [(index - 1) * width, index * width, (index + 1) * width],
                 [0, 1, 0],
                 Extrapolation.CLAMP
               );
+              
               const translateY = interpolate(
                 scrollX.value,
                 [(index - 1) * width, index * width, (index + 1) * width],
                 [20, 0, -20],
                 Extrapolation.CLAMP
               );
+
               return {
                 opacity,
                 transform: [{ translateY }],
                 position: 'absolute',
-                width: '100%',
+                left: 0,
+                right: 0,
+                alignItems: 'center'
               };
             });
 
             return (
-              <Animated.View key={`text-${index}`} style={textStyle} className="items-center">
-                <Text className="text-[28px] font-heading font-black text-foreground text-center mb-1">
-                  {slide.title}
+              <Animated.View key={`text-${slide.id}`} style={textStyle}>
+                <Text className="text-[38px] font-heading text-center leading-[46px] text-muted-foreground mb-4">
+                  {slide.titleStart} <Text className="font-bold text-foreground">{slide.titleBold}</Text>{"\n"}
+                  {slide.titleEnd}
                 </Text>
-                <Text className="text-[24px] font-heading font-bold text-brand-600 text-center mb-4">
-                  {slide.subtitle}
-                </Text>
-                <Text className="text-[16px] font-body text-surface-500 text-center leading-[24px]">
+                
+                <Text className="text-[18px] text-muted-foreground font-body text-center leading-[28px] px-4">
                   {slide.description}
                 </Text>
               </Animated.View>
@@ -204,16 +263,17 @@ export default function OnboardingScreen() {
           })}
         </View>
 
-        {/* Bottom Button */}
-        <View className="w-full mt-4">
-          <Button
-            title={currentIndex === SLIDES.length - 1 ? "Get Started" : "Continue"}
-            size="lg"
-            onPress={handleNext}
-            className="w-full rounded-full py-4 shadow-md bg-brand-600"
-            textClassName="text-[18px] font-bold text-white font-heading"
-          />
-        </View>
+      </View>
+
+      {/* Footer / Button (Needs z-40 so it's clickable above invisible ScrollView) */}
+      <View className="absolute bottom-12 left-0 right-0 px-6 z-40">
+        <Button
+          title={currentIndex === SLIDES.length - 1 ? "Get Started" : "Continue"}
+          size="lg"
+          onPress={handleNext}
+          className="rounded-full py-4 bg-brand-600"
+          textClassName="text-lg font-bold text-white"
+        />
       </View>
     </View>
   );

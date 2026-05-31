@@ -1,10 +1,11 @@
 import { Controller, Post, Body, UseGuards } from "@nestjs/common";
-import { ApiTags, ApiOperation, ApiBody } from "@nestjs/swagger";
+import { ApiTags, ApiOperation, ApiBody, ApiBearerAuth } from "@nestjs/swagger";
 import { CouponsService } from "./coupons.service";
 import { ValidateCouponDto } from "./dto/validate-coupon.dto";
 import { AuthGuard } from "../../guards/auth.guard";
 import { Throttle } from "@nestjs/throttler";
 
+@ApiBearerAuth()
 @Controller("coupons")
 @ApiTags("Coupons")
 @UseGuards(AuthGuard)

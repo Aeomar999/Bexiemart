@@ -1,9 +1,10 @@
 import { Controller, Get, Post, Delete, Body, Param, UseGuards, Req } from "@nestjs/common";
-import { ApiTags, ApiOperation, ApiBody } from "@nestjs/swagger";
+import { ApiTags, ApiOperation, ApiBody, ApiBearerAuth } from "@nestjs/swagger";
 import { AuthGuard } from "../../guards/auth.guard";
 import { ReviewsService } from "./reviews.service";
 import { CreateReviewDto } from "./dto/create-review.dto";
 
+@ApiBearerAuth()
 @Controller("reviews")
 @ApiTags("Reviews")
 export class ReviewsController {

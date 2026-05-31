@@ -37,10 +37,26 @@ import { AdminModule } from "./modules/admin/admin.module";
 import { HealthModule } from "./modules/health/health.module";
 import { PrismaModule } from "./prisma/prisma.module";
 import { DispatcherModule } from "./modules/dispatcher/dispatcher.module";
+import { StoryModule } from './modules/story/story.module';
+import { MetricsModule } from './modules/metrics/metrics.module';
+
+import { WinstonModule } from "nest-winston";
+import * as winston from "winston";
 
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
+    WinstonModule.forRoot({
+      transports: [
+        new winston.transports.Console({
+          format: winston.format.combine(
+            winston.format.timestamp(),
+            winston.format.ms(),
+            winston.format.json(),
+          ),
+        }),
+      ],
+    }),
     ThrottlerModule.forRoot([{ ttl: 60000, limit: 60 }]),
     PrismaModule,
     AuthModule,
@@ -76,6 +92,8 @@ import { DispatcherModule } from "./modules/dispatcher/dispatcher.module";
     AdminModule,
     HealthModule,
     DispatcherModule,
+    StoryModule,
+    MetricsModule,
   ],
   providers: [
     { provide: APP_GUARD, useClass: ThrottlerGuard },

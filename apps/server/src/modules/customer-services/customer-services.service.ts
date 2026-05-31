@@ -37,10 +37,7 @@ export class CustomerServicesService {
     return {
       data: services,
       categories: categories.map((c: any) => c.category),
-      total,
-      page,
-      limit,
-      totalPages: Math.ceil(total / limit)
+      meta: { total, page, limit, totalPages: Math.ceil(total / limit) }
     };
   }
 
@@ -96,7 +93,7 @@ export class CustomerServicesService {
       this.prisma.serviceBooking.count({ where: { userId } })
     ]);
 
-    return { data, total, page, limit, totalPages: Math.ceil(total / limit) };
+    return { data, meta: { total, page, limit, totalPages: Math.ceil(total / limit)  } };
   }
 
   async cancel(userId: string, bookingId: string) {

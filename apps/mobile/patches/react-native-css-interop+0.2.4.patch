@@ -759,6 +759,10 @@ index 0000000..b5fd69a
 +  margin-top: 2rem;
 +}
 +
++.aspect-square {
++  aspect-ratio: 1 / 1;
++}
++
 +.h-10 {
 +  height: 2.5rem;
 +}

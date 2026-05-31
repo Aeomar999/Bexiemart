@@ -1,10 +1,11 @@
 import { Controller, Get, Post, Put, Delete, Param, Body, Req, UseGuards } from "@nestjs/common";
-import { ApiTags, ApiOperation, ApiBody } from "@nestjs/swagger";
+import { ApiTags, ApiOperation, ApiBody, ApiBearerAuth } from "@nestjs/swagger";
 import { AuthGuard } from "../../guards/auth.guard";
 import { ReelsService } from "./reels.service";
 import { CreateReelDto, UpdateReelDto } from "./dto/create-reel.dto";
 
 @ApiTags("Vendor Reels")
+@ApiBearerAuth()
 @Controller("vendor/reels")
 @UseGuards(AuthGuard)
 export class ReelsController {

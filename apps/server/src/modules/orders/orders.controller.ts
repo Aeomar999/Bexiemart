@@ -1,9 +1,11 @@
 import { Controller, Get, Post, Body, Param, UseGuards, Req, Query } from "@nestjs/common";
-import { ApiTags, ApiOperation, ApiBody } from "@nestjs/swagger";
+import { Throttle } from "@nestjs/throttler";
+import { ApiTags, ApiOperation, ApiBody, ApiBearerAuth } from "@nestjs/swagger";
 import { AuthGuard } from "../../guards/auth.guard";
 import { OrdersService } from "./orders.service";
 import { CreateOrderDto } from "./dto/create-order.dto";
 
+@ApiBearerAuth()
 @Controller("orders")
 @UseGuards(AuthGuard)
 @ApiTags("Orders")
@@ -13,6 +15,7 @@ export class OrdersController {
   @ApiOperation({ summary: "Create a new order" })
   @ApiBody({ type: CreateOrderDto })
   @Post()
+  @Throttle({ default: { limit: 5, ttl: 60000 } })
   create(@Req() req: any, @Body() dto: CreateOrderDto) {
     return this.ordersService.create(req.user.id, dto);
   }
@@ -27,5 +30,20 @@ export class OrdersController {
   @Get(":id")
   findOne(@Req() req: any, @Param("id") id: string) {
     return this.ordersService.findOne(req.user.id, id);
+  }
+
+  @ApiOperation({ summary: "Cancel an order" })
+  @Post(":id/cancel")
+  @Throttle({ default: { limit: 5, ttl: 60000 } })
+  cancel(@Req() req: any, @Param("id") id: string) {
+    return this.ordersService.cancel(req.user.id, id);
+  }
+
+  @ApiOperation({ summary: "Request a refund for an order" })
+  @ApiBody({ schema: { type: "object", properties: { reason: { type: "string" } } } })
+  @Post(":id/request-refund")
+  @Throttle({ default: { limit: 5, ttl: 60000 } })
+  requestRefund(@Req() req: any, @Param("id") id: string, @Body("reason") reason: string) {
+    return this.ordersService.requestRefund(req.user.id, id, reason);
   }
 }
