@@ -1,5 +1,6 @@
 import React from "react";
-import { View, Text, Pressable, SafeAreaView, ScrollView } from "react-native";
+import { View, Text, Pressable, ScrollView } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { Icon } from "./Icon";
 
 interface ErrorBoundaryProps {
