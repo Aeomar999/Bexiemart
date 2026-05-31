@@ -1,0 +1,6 @@
+{
+  "files.exclude": {
+    "**/node_modules/.prisma": true,
+    "**/src/generated/prisma/schema.prisma": true
+  }
+}

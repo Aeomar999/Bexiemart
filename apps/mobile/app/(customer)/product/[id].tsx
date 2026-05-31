@@ -212,7 +212,7 @@ export default function ProductDetailsScreen() {
             <View className="flex-row gap-2">
               <Pressable style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]} 
                 className="w-10 h-10 rounded-full bg-background items-center justify-center border border-border"
-                onPress={() => router.push({ pathname: "/(customer)/chat", params: { contact: product.seller.name, role: "Seller" } })}
+                onPress={() => router.push({ pathname: "/(customer)/chats", params: { contact: product.seller.name, role: "Seller" } })}
               >
                 <Icon name="message-circle" size={18} color="#475569" />
               </Pressable>

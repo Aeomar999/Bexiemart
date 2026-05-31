@@ -11,6 +11,7 @@ import Animated, {
   Easing,
   interpolate,
   Extrapolation,
+  SharedValue,
 } from "react-native-reanimated";
 // @ts-expect-error
 import { FontAwesome5 } from "@expo/vector-icons";
@@ -106,7 +107,7 @@ export function AnimatedSplashScreen({ onAnimationComplete }: AnimatedSplashScre
     ],
   }));
 
-  const ringStyle = (scale: Animated.SharedValue<number>, opacity: Animated.SharedValue<number>, size: number) =>
+  const ringStyle = (scale: SharedValue<number>, opacity: SharedValue<number>, size: number) =>
     useAnimatedStyle(() => ({
       opacity: opacity.value,
       transform: [{ scale: scale.value }],

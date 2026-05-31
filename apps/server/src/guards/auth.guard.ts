@@ -20,7 +20,7 @@ export class AuthGuard implements CanActivate {
     const token = authHeader.split(" ")[1];
 
     const headers = new Headers();
-    headers.set("cookie", `better-auth.session_token=${token}`);
+    headers.set("authorization", authHeader);
 
     try {
       const session = await auth.api.getSession({ headers });

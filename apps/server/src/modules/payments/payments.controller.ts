@@ -1,4 +1,4 @@
-import { Controller, Post, Get, Param, Body, UseGuards, Req, Headers } from "@nestjs/common";
+import { Controller, Post, Get, Param, Body, UseGuards, Req, Headers, ForbiddenException } from "@nestjs/common";
 import { Throttle } from "@nestjs/throttler";
 import { ApiTags, ApiOperation, ApiBody, ApiBearerAuth } from "@nestjs/swagger";
 import { AuthGuard } from "../../guards/auth.guard";
@@ -37,7 +37,7 @@ export class PaymentsController {
     const hash = crypto.createHmac("sha512", secret).update(payload).digest("hex");
 
     if (hash !== signature) {
-      throw new Error("Invalid signature");
+      throw new ForbiddenException("Invalid signature");
     }
     return this.paymentsService.handleWebhook(body);
   }

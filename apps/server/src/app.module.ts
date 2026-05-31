@@ -3,6 +3,7 @@ import { ConfigModule } from "@nestjs/config";
 import { ThrottlerModule, ThrottlerGuard } from "@nestjs/throttler";
 import { APP_GUARD } from "@nestjs/core";
 import { CorrelationIdMiddleware } from "./middleware/correlation-id.middleware";
+import { AuditLoggerMiddleware } from "./middleware/audit-logger.middleware";
 import { AuthModule } from "./auth/auth.module";
 import { UsersModule } from "./modules/users/users.module";
 import { ProductsModule } from "./modules/products/products.module";
@@ -101,6 +102,6 @@ import * as winston from "winston";
 })
 export class AppModule {
   configure(consumer: MiddlewareConsumer) {
-    consumer.apply(CorrelationIdMiddleware).forRoutes("*");
+    consumer.apply(CorrelationIdMiddleware, AuditLoggerMiddleware).forRoutes("*");
   }
 }

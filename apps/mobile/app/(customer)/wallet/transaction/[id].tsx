@@ -100,7 +100,6 @@ export default function TransactionReceiptScreen() {
           title="Share Receipt"
           variant="outline"
           className="mt-6 border-border"
-          // @ts-expect-error
           textClassName="text-muted-foreground"
           leftIcon={<Icon name="share-2" size={18} color="#64748b" />}
           onPress={() => Alert.alert("Share", "Receipt sharing functionality mock")}

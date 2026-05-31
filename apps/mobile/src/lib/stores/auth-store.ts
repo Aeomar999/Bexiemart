@@ -4,17 +4,20 @@ import { Platform } from "react-native";
 
 const isWeb = Platform.OS === "web";
 
+// In-memory fallback for web to prevent XSS exfiltration from localStorage
+const webStorage = new Map<string, string>();
+
 const storage = {
   getItem: async (key: string) => {
-    if (isWeb) return localStorage.getItem(key);
+    if (isWeb) return webStorage.get(key) || null;
     return await SecureStore.getItemAsync(key);
   },
   setItem: async (key: string, value: string) => {
-    if (isWeb) localStorage.setItem(key, value);
+    if (isWeb) webStorage.set(key, value);
     else await SecureStore.setItemAsync(key, value);
   },
   removeItem: async (key: string) => {
-    if (isWeb) localStorage.removeItem(key);
+    if (isWeb) webStorage.delete(key);
     else await SecureStore.deleteItemAsync(key);
   }
 };

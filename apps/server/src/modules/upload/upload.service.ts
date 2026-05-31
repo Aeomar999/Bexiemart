@@ -14,7 +14,12 @@ export class UploadService {
 
   getSignature(folder?: string) {
     const timestamp = Math.round(new Date().getTime() / 1000);
-    const paramsToSign: Record<string, any> = { timestamp };
+    const paramsToSign: Record<string, any> = { 
+      timestamp,
+      // Add validation constraints natively into the Cloudinary signature
+      // so attackers cannot bypass constraints if uploading directly.
+      allowed_formats: "jpg,png,webp,jpeg"
+    };
     if (folder) {
       paramsToSign.folder = folder;
     }
@@ -29,7 +34,8 @@ export class UploadService {
       signature,
       api_key: this.configService.get<string>("CLOUDINARY_API_KEY"),
       cloud_name: this.configService.get<string>("CLOUDINARY_CLOUD_NAME"),
-      folder
+      folder,
+      allowed_formats: "jpg,png,webp,jpeg"
     };
   }
 

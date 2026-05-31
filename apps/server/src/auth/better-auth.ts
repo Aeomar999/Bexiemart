@@ -1,8 +1,12 @@
 import { betterAuth } from "better-auth";
 import { prismaAdapter } from "better-auth/adapters/prisma";
 import { PrismaClient } from "@prisma/client";
+import { Resend } from "resend";
 
 const prisma = new PrismaClient();
+
+// The user must replace `re_xxxxxxxxx` with their real API key via the .env file.
+const resend = new Resend(process.env.RESEND_API_KEY || 're_hZUiH98H_HtH4T2zdX2SBh6t3F4h4VBTC');
 
 export const auth = betterAuth({
   database: prismaAdapter(prisma, {
@@ -11,7 +15,18 @@ export const auth = betterAuth({
   emailAndPassword: {
     enabled: true,
     autoSignIn: true,
-    requireEmailVerification: false,
+    requireEmailVerification: true,
+  },
+  emailVerification: {
+    sendOnSignUp: true,
+    sendVerificationEmail: async ({ user, url, token }, request) => {
+      await resend.emails.send({
+        from: process.env.EMAIL_FROM || 'onboarding@resend.dev',
+        to: user.email,
+        subject: 'Verify your BexieMart Email',
+        html: `<p>Hi ${user.name},</p><p>Please verify your email address by clicking the link below:</p><br/><a href="${url}">Verify Email</a>`,
+      });
+    },
   },
   session: {
     cookieCache: {
