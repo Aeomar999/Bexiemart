@@ -1,5 +1,6 @@
 import { Injectable, NotFoundException, BadRequestException } from "@nestjs/common";
 import { PrismaService } from "../../prisma/prisma.service";
+import { UserRole } from "@prisma/client";
 
 @Injectable()
 export class DispatcherService {
@@ -27,10 +28,10 @@ export class DispatcherService {
 
     // Only update the user's role to dispatcher if they are currently a regular customer
     const user = await this.prisma.user.findUnique({ where: { id: userId } });
-    if (user && user.role === "customer") {
+    if (user && user.role === UserRole.CUSTOMER) {
       await this.prisma.user.update({
         where: { id: userId },
-        data: { role: "dispatcher" },
+        data: { role: UserRole.DISPATCHER },
       });
     }
 

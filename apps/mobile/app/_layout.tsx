@@ -30,6 +30,7 @@ const queryClient = new QueryClient();
 export default function RootLayout() {
   const hydrate = useAuthStore((s) => s.hydrate);
   const isLoading = useAuthStore((s) => s.isLoading);
+  const user = useAuthStore((s) => s.user);
   const hasSeenOnboarding = useAuthStore((s) => s.hasSeenOnboarding);
   const hasLaunchedBefore = useAuthStore((s) => s.hasLaunchedBefore);
   const [splashDone, setSplashDone] = useState(false);
@@ -61,8 +62,14 @@ export default function RootLayout() {
     const inOnboardingGroup = segments[0] === '(onboarding)';
 
     try {
-      if (isAuthenticated && (inAuthGroup || inOnboardingGroup)) {
-        router.replace("/(customer)/(tabs)/(home)");
+      if (isAuthenticated && (inAuthGroup || inOnboardingGroup || !segments[0])) {
+        if (user?.role === "VENDOR") {
+          router.replace("/(vendor)/(tabs)/(dashboard)");
+        } else if (user?.role === "DISPATCHER") {
+          router.replace("/(dispatcher)/(tabs)/(dashboard)");
+        } else {
+          router.replace("/(customer)/(tabs)/(home)");
+        }
       } else if (!isAuthenticated) {
         if (!hasLaunchedBefore && !inOnboardingGroup) {
           router.replace("/(onboarding)/welcome");
@@ -73,7 +80,7 @@ export default function RootLayout() {
     } catch (err) {
       console.warn("Navigation failed (likely due to ErrorBoundary removing Stack):", err);
     }
-  }, [isLoading, isAuthenticated, hasLaunchedBefore, hasSeenOnboarding, splashDone, rootNavigationState?.key, segments, fontsLoaded]);
+  }, [isLoading, isAuthenticated, user?.role, hasLaunchedBefore, hasSeenOnboarding, splashDone, rootNavigationState?.key, segments, fontsLoaded]);
 
 
 

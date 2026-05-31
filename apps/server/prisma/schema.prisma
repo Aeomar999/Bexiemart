@@ -15,7 +15,7 @@ model User {
   email               String   @unique
   emailVerified       Boolean  @default(false)
   image               String?
-  role                String   @default("customer")
+  role                UserRole @default(CUSTOMER)
   onboardingCompleted Boolean  @default(false)
   createdAt           DateTime @default(now())
   updatedAt           DateTime @updatedAt
@@ -530,6 +530,13 @@ model StoryView {
 }
 
 // ─── Enums ───────────────────────────────────────────────────────────────────────
+
+enum UserRole {
+  CUSTOMER
+  VENDOR
+  DISPATCHER
+  ADMIN
+}
 
 enum OrderStatus {
   pending

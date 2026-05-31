@@ -89,7 +89,27 @@ export const useAuthStore = create<AuthState>((set) => ({
       const hasLaunchedBefore = launchedStatus === "true";
 
       if (token) {
-        set({ token, isAuthenticated: true, isLoading: false, hasSeenOnboarding, hasLaunchedBefore });
+        try {
+          // Fetch user profile to get up-to-date role
+          const baseUrl = process.env.EXPO_PUBLIC_API_URL || "http://10.0.2.2:3000/api/v1";
+          const res = await fetch(`${baseUrl}/auth/me`, {
+            headers: {
+              "Authorization": `Bearer ${token}`
+            }
+          });
+          if (res.ok) {
+            const data = await res.json();
+            set({ token, user: data.user, isAuthenticated: true, isLoading: false, hasSeenOnboarding, hasLaunchedBefore });
+          } else {
+            // Token might be expired
+            await storage.removeItem("bexiemart_token");
+            set({ token: null, user: null, isAuthenticated: false, isLoading: false, hasSeenOnboarding, hasLaunchedBefore });
+          }
+        } catch (e) {
+          // Network error, keep token but we don't have user object yet.
+          // In a real app we might cache the user object in secure store too.
+          set({ token, isAuthenticated: true, isLoading: false, hasSeenOnboarding, hasLaunchedBefore });
+        }
       } else {
         set({ isLoading: false, hasSeenOnboarding, hasLaunchedBefore });
       }

@@ -16,6 +16,7 @@ import { ApiTags, ApiOperation, ApiBearerAuth } from "@nestjs/swagger";
 import { AuthGuard } from "../guards/auth.guard";
 import { auth } from "./better-auth";
 import { PrismaService } from "../prisma/prisma.service";
+import { UserRole } from "@prisma/client";
 import { RegisterDto } from "./dto/register.dto";
 import { LoginDto } from "./dto/login.dto";
 import { ForgotPasswordDto } from "./dto/forgot-password.dto";
@@ -57,7 +58,7 @@ export class AuthController {
       try {
         const updatedUser = await this.prisma.user.update({
           where: { id: user.id },
-          data: { role: "vendor" },
+          data: { role: UserRole.VENDOR },
         });
         
         user = updatedUser;
