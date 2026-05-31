@@ -9,8 +9,11 @@ import {
   UnauthorizedException,
   InternalServerErrorException,
   UseGuards,
+  All,
+  Res,
 } from "@nestjs/common";
-import { Request } from "express";
+import { Request, Response } from "express";
+import { toNodeHandler } from "better-auth/node";
 import { Throttle } from "@nestjs/throttler";
 import { ApiTags, ApiOperation, ApiBearerAuth } from "@nestjs/swagger";
 import { AuthGuard } from "../guards/auth.guard";
@@ -169,5 +172,11 @@ export class AuthController {
       body: { newPassword: body.newPassword },
     });
     return { message: "Password reset successfully." };
+  }
+
+  @All("/*")
+  async handleAuth(@Req() req: Request, @Res() res: Response) {
+    const handler = toNodeHandler(auth);
+    return handler(req, res);
   }
 }

@@ -15,24 +15,13 @@ interface RegisterParams {
 
 export const authApi = {
   login: async (data: LoginParams) => {
-    const res = await authClient.signIn.email({
-      email: data.email,
-      password: data.password,
-    });
-    if (res.error) throw res.error;
-    return { data: { user: res.data.user as any, token: (res.data as any).session?.token || (res.data as any).session?.id || (res.data as any).token || 'better-auth-token' } };
+    const res = await apiClient.post("/auth/login", data);
+    return res;
   },
 
   register: async (data: RegisterParams) => {
-    const res = await authClient.signUp.email({
-      email: data.email,
-      password: data.password,
-      name: data.name,
-      // @ts-ignore
-      role: data.role,
-    });
-    if (res.error) throw res.error;
-    return { data: { user: res.data.user as any, token: (res.data as any).session?.token || (res.data as any).session?.id || (res.data as any).token || 'better-auth-token' } };
+    const res = await apiClient.post("/auth/register", data);
+    return res;
   },
 
   getCurrentUser: async () => {

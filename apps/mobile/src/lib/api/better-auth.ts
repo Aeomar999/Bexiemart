@@ -21,7 +21,7 @@ const storage = {
 };
 
 export const authClient = createAuthClient({
-  baseURL: ENV.API_URL,
+  baseURL: `${ENV.API_URL}/auth`,
   plugins: [
     dashClient(),
     sentinelNativeClient({
