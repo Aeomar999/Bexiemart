@@ -3,9 +3,10 @@ import { AuthGuard } from "../../guards/auth.guard";
 import { ReferralsService } from "./referrals.service";
 import { GenerateReferralDto } from "./dto/generate-referral.dto";
 import { ApplyReferralDto } from "./dto/apply-referral.dto";
-import { ApiTags, ApiOperation, ApiBody } from "@nestjs/swagger";
+import { ApiTags, ApiOperation, ApiBody, ApiBearerAuth } from "@nestjs/swagger";
 
 @ApiTags("Referral")
+@ApiBearerAuth()
 @Controller("referrals")
 @UseGuards(AuthGuard)
 export class ReferralsController {

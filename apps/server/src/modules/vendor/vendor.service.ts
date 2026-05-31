@@ -81,7 +81,7 @@ export class VendorService {
       this.prisma.product.count({ where: { vendorId: profile.id, isDeleted: false } })
     ]);
 
-    return { data, total, page, limit, totalPages: Math.ceil(total / limit) };
+    return { data, meta: { total, page, limit, totalPages: Math.ceil(total / limit)  } };
   }
 
   async createProduct(userId: string, data: CreateProductDto) {
@@ -241,7 +241,7 @@ export class VendorService {
     // Since orderItems has an implicit sort, maintain order based on distinctOrderItems
     const sortedData = distinctOrderItems.map(doi => data.find(d => d.id === doi.orderId)).filter(Boolean);
 
-    return { data: sortedData, total, page, limit, totalPages: Math.ceil(total / limit) };
+    return { data: sortedData, meta: { total, page, limit, totalPages: Math.ceil(total / limit)  } };
   }
 
   async getOrder(userId: string, id: string) {
@@ -438,5 +438,26 @@ export class VendorService {
       where: { id: profile.id },
       data,
     });
+  }
+
+  async getDisputes(userId: string, page: number = 1, limit: number = 20) {
+    const profile = await this.getVendorProfile(userId);
+    const skip = (page - 1) * limit;
+
+    const [data, total] = await Promise.all([
+      this.prisma.escrow.findMany({
+        where: { vendorId: profile.id, status: "DISPUTED" },
+        skip,
+        take: limit,
+        orderBy: { updatedAt: "desc" },
+        include: {
+          order: { select: { orderNumber: true, status: true, total: true } },
+          buyerWallet: { include: { user: { select: { name: true, email: true } } } },
+        },
+      }),
+      this.prisma.escrow.count({ where: { vendorId: profile.id, status: "DISPUTED" } }),
+    ]);
+
+    return { data, meta: { total, page, limit, totalPages: Math.ceil(total / limit)  } };
   }
 }

@@ -109,8 +109,7 @@ export default function AddReelScreen() {
           <Pressable 
             style={({ pressed }) => [{ opacity: pressed ? 0.95 : 1, transform: [{ scale: pressed ? 0.98 : 1 }] }]}
             onPress={() => setUploadModalVisible(true)}
-            className="w-full bg-surface-900 rounded-[32px] overflow-hidden items-center justify-center relative shadow-lg shadow-black/10"
-            style={{ aspectRatio: 9/16 }}
+            className="w-full aspect-[9/16] bg-surface-900 rounded-[32px] overflow-hidden items-center justify-center relative shadow-lg shadow-black/10"
           >
             {videoUrl ? (
               <>

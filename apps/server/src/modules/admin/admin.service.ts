@@ -19,7 +19,7 @@ export class AdminService {
       }),
       this.prisma.user.count(),
     ]);
-    return { data, total, page, limit, totalPages: Math.ceil(total / limit) };
+    return { data, meta: { total, page, limit, totalPages: Math.ceil(total / limit)  } };
   }
 
   async getUser(id: string) {
@@ -90,7 +90,7 @@ export class AdminService {
       };
     });
 
-    return { data, total, page, limit, totalPages: Math.ceil(total / limit) };
+    return { data, meta: { total, page, limit, totalPages: Math.ceil(total / limit)  } };
   }
 
   async approveVendor(id: string) {
@@ -141,7 +141,7 @@ export class AdminService {
       }),
       this.prisma.order.count({ where }),
     ]);
-    return { data, total, page, limit, totalPages: Math.ceil(total / limit) };
+    return { data, meta: { total, page, limit, totalPages: Math.ceil(total / limit)  } };
   }
 
   async getOrder(id: string) {
@@ -162,5 +162,123 @@ export class AdminService {
     const order = await this.prisma.order.findUnique({ where: { id } });
     if (!order) throw new NotFoundException("Order not found");
     return this.prisma.order.update({ where: { id }, data: { status: status as any } });
+  }
+
+  // ─── Disputes ──────────────────────────────────────────────────────────────────
+
+  async listDisputes(page: number = 1, limit: number = 20) {
+    const skip = (page - 1) * limit;
+    const [data, total] = await Promise.all([
+      this.prisma.escrow.findMany({
+        where: { status: "DISPUTED" },
+        skip,
+        take: limit,
+        orderBy: { updatedAt: "desc" },
+        include: {
+          order: { select: { orderNumber: true, status: true, total: true } },
+          vendor: { select: { shopName: true } },
+        },
+      }),
+      this.prisma.escrow.count({ where: { status: "DISPUTED" } }),
+    ]);
+    return { data, meta: { total, page, limit, totalPages: Math.ceil(total / limit)  } };
+  }
+
+  async resolveDispute(id: string, action: "REFUND" | "RELEASE", reason: string) {
+    const escrow = await this.prisma.escrow.findUnique({ where: { id } });
+    if (!escrow) throw new NotFoundException("Escrow not found");
+    if (escrow.status !== "DISPUTED") throw new NotFoundException("Escrow is not in disputed state");
+
+    // In a real implementation we would also refund the buyer wallet or release to the vendor wallet
+    // For now we just update the status to match the action.
+    const newStatus = action === "REFUND" ? "REFUNDED" : "RELEASED";
+
+    return this.prisma.escrow.update({
+      where: { id },
+      data: {
+        status: newStatus,
+        reason: `Admin resolved dispute: ${action} - ${reason}`,
+      }
+    });
+  }
+
+  // ─── Dashboard ─────────────────────────────────────────────────────────────────
+
+  async getDashboardStats() {
+    const [totalUsers, totalVendors, totalOrders, pendingOrders, totalRevenueObj] = await Promise.all([
+      this.prisma.user.count(),
+      this.prisma.vendorProfile.count(),
+      this.prisma.order.count(),
+      this.prisma.order.count({ where: { status: "pending" } }),
+      this.prisma.escrow.aggregate({
+        _sum: { commission: true },
+        where: { status: "RELEASED" }
+      }),
+    ]);
+
+    return {
+      totalUsers,
+      totalVendors,
+      totalOrders,
+      pendingOrders,
+      totalRevenue: totalRevenueObj._sum.commission || 0,
+    };
+  }
+
+  // ─── Reports ───────────────────────────────────────────────────────────────────
+
+  async getRevenueReport(startDate?: string, endDate?: string) {
+    const where: any = { status: "RELEASED" };
+    if (startDate || endDate) {
+      where.createdAt = {};
+      if (startDate) where.createdAt.gte = new Date(startDate);
+      if (endDate) where.createdAt.lte = new Date(endDate);
+    }
+
+    const escrows = await this.prisma.escrow.findMany({
+      where,
+      select: { commission: true, amount: true, createdAt: true },
+      orderBy: { createdAt: "asc" },
+    });
+
+    const totalCommission = escrows.reduce((sum, e) => sum + Number(e.commission || 0), 0);
+    const totalSales = escrows.reduce((sum, e) => sum + Number(e.amount || 0), 0);
+
+    return {
+      totalCommission,
+      totalSales,
+      transactions: escrows.length,
+      data: escrows,
+    };
+  }
+
+  async getUsersReport(startDate?: string, endDate?: string) {
+    const where: any = {};
+    if (startDate || endDate) {
+      where.createdAt = {};
+      if (startDate) where.createdAt.gte = new Date(startDate);
+      if (endDate) where.createdAt.lte = new Date(endDate);
+    }
+
+    const [totalUsers, usersByRole, recentUsers] = await Promise.all([
+      this.prisma.user.count({ where }),
+      this.prisma.user.groupBy({
+        by: ['role'],
+        _count: true,
+        where,
+      }),
+      this.prisma.user.findMany({
+        where,
+        take: 50,
+        orderBy: { createdAt: "desc" },
+        select: { id: true, name: true, email: true, role: true, createdAt: true },
+      }),
+    ]);
+
+    return {
+      totalUsers,
+      usersByRole: usersByRole.map(r => ({ role: r.role, count: r._count })),
+      recentUsers,
+    };
   }
 }

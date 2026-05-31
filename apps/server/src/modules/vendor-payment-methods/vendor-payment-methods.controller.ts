@@ -1,11 +1,12 @@
 import { Controller, Get, Post, Delete, Patch, Param, Body, Req, UseGuards } from "@nestjs/common";
-import { ApiTags, ApiOperation, ApiBody } from "@nestjs/swagger";
+import { ApiTags, ApiOperation, ApiBody, ApiBearerAuth } from "@nestjs/swagger";
 import { AuthGuard } from "../../guards/auth.guard";
 import { VendorPaymentMethodsService } from "./vendor-payment-methods.service";
 import { AddBankAccountDto } from "./dto/add-bank-account.dto";
 import { AddMomoAccountDto } from "./dto/add-momo-account.dto";
 
 @ApiTags("Vendor Payment Methods")
+@ApiBearerAuth()
 @Controller("vendor/payment-methods")
 @UseGuards(AuthGuard)
 export class VendorPaymentMethodsController {

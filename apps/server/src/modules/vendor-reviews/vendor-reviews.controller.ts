@@ -1,10 +1,11 @@
 import { Controller, Get, Post, Param, Body, Req, UseGuards } from "@nestjs/common";
-import { ApiTags, ApiOperation, ApiBody } from "@nestjs/swagger";
+import { ApiTags, ApiOperation, ApiBody, ApiBearerAuth } from "@nestjs/swagger";
 import { AuthGuard } from "../../guards/auth.guard";
 import { VendorReviewsService } from "./vendor-reviews.service";
 import { ReplyReviewDto } from "./dto/reply-review.dto";
 
 @ApiTags("Vendor Reviews")
+@ApiBearerAuth()
 @Controller("vendor/reviews")
 @UseGuards(AuthGuard)
 export class VendorReviewsController {

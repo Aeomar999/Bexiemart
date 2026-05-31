@@ -1,10 +1,11 @@
 import { Controller, Get, Put, Body, Req, UseGuards } from "@nestjs/common";
-import { ApiTags, ApiOperation, ApiBody } from "@nestjs/swagger";
+import { ApiTags, ApiOperation, ApiBody, ApiBearerAuth } from "@nestjs/swagger";
 import { AuthGuard } from "../../guards/auth.guard";
 import { VendorHoursService } from "./vendor-hours.service";
 import { UpdateHoursDto } from "./dto/update-hours.dto";
 
 @ApiTags("Vendor Hours")
+@ApiBearerAuth()
 @Controller("vendor/hours")
 @UseGuards(AuthGuard)
 export class VendorHoursController {

@@ -114,7 +114,7 @@ export class OrdersService {
       this.prisma.order.count({ where: { userId } })
     ]);
 
-    return { data, total, page, limit, totalPages: Math.ceil(total / limit) };
+    return { data, meta: { total, page, limit, totalPages: Math.ceil(total / limit)  } };
   }
 
   async findOne(userId: string, id: string) {
@@ -129,5 +129,54 @@ export class OrdersService {
 
     if (!order) throw new NotFoundException("Order not found");
     return order;
+  }
+
+  async cancel(userId: string, id: string) {
+    const order = await this.prisma.order.findFirst({
+      where: { id, userId },
+      include: { items: true },
+    });
+
+    if (!order) throw new NotFoundException("Order not found");
+    
+    if (order.status !== "pending" && order.status !== "confirmed") {
+      throw new BadRequestException(`Cannot cancel order in ${order.status} status`);
+    }
+
+    return await this.prisma.$transaction(async (tx) => {
+      const updatedOrder = await tx.order.update({
+        where: { id },
+        data: { status: "cancelled" },
+      });
+
+      for (const item of order.items) {
+        await tx.product.update({
+          where: { id: item.productId },
+          data: { stock: { increment: item.quantity } },
+        });
+      }
+
+      return updatedOrder;
+    });
+  }
+
+  async requestRefund(userId: string, id: string, reason: string) {
+    const order = await this.prisma.order.findFirst({
+      where: { id, userId },
+      include: { items: true },
+    });
+
+    if (!order) throw new NotFoundException("Order not found");
+    
+    // An order can only be refunded if it has been paid, delivered, etc.
+    // Assuming 'delivered' or 'processing' are valid states for refund requests.
+    if (order.status === "cancelled" || order.status === "refunded") {
+      throw new BadRequestException(`Cannot request refund for order in ${order.status} status`);
+    }
+
+    return this.prisma.order.update({
+      where: { id },
+      data: { status: "refund_requested" as any },
+    });
   }
 }

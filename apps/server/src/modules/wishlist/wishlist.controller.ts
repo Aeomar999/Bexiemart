@@ -1,8 +1,9 @@
 import { Controller, Get, Post, Param, UseGuards, Req } from "@nestjs/common";
-import { ApiTags, ApiOperation } from "@nestjs/swagger";
+import { ApiTags, ApiOperation, ApiBearerAuth } from "@nestjs/swagger";
 import { WishlistService } from "./wishlist.service";
 import { AuthGuard } from "../../guards/auth.guard";
 
+@ApiBearerAuth()
 @Controller("wishlist")
 @UseGuards(AuthGuard)
 @ApiTags("Wishlist")

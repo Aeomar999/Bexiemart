@@ -33,12 +33,14 @@ interface AuthState {
   token: string | null;
   isAuthenticated: boolean;
   isLoading: boolean;
+  hasLaunchedBefore: boolean;
   hasSeenOnboarding: boolean;
 
   setAuth: (user: User, token: string) => Promise<void>;
   setUser: (user: User) => void;
   logout: () => Promise<void>;
   hydrate: () => Promise<void>;
+  completeLaunch: () => Promise<void>;
   completeOnboarding: () => Promise<void>;
 }
 
@@ -47,6 +49,7 @@ export const useAuthStore = create<AuthState>((set) => ({
   token: null,
   isAuthenticated: false,
   isLoading: true,
+  hasLaunchedBefore: false,
   hasSeenOnboarding: false,
 
   setAuth: async (user, token) => {
@@ -63,24 +66,32 @@ export const useAuthStore = create<AuthState>((set) => ({
     set({ user: null, token: null, isAuthenticated: false, isLoading: false });
   },
 
+  completeLaunch: async () => {
+    await storage.setItem("bexiemart_launched", "true");
+    set({ hasLaunchedBefore: true });
+  },
+
   completeOnboarding: async () => {
     await storage.setItem("bexiemart_onboarding", "true");
-    set({ hasSeenOnboarding: true });
+    await storage.setItem("bexiemart_launched", "true");
+    set({ hasSeenOnboarding: true, hasLaunchedBefore: true });
   },
 
   hydrate: async () => {
     try {
-      const [token, onboardingStatus] = await Promise.all([
+      const [token, onboardingStatus, launchedStatus] = await Promise.all([
         storage.getItem("bexiemart_token"),
-        storage.getItem("bexiemart_onboarding")
+        storage.getItem("bexiemart_onboarding"),
+        storage.getItem("bexiemart_launched"),
       ]);
       
       const hasSeenOnboarding = onboardingStatus === "true";
+      const hasLaunchedBefore = launchedStatus === "true";
 
       if (token) {
-        set({ token, isAuthenticated: true, isLoading: false, hasSeenOnboarding });
+        set({ token, isAuthenticated: true, isLoading: false, hasSeenOnboarding, hasLaunchedBefore });
       } else {
-        set({ isLoading: false, hasSeenOnboarding });
+        set({ isLoading: false, hasSeenOnboarding, hasLaunchedBefore });
       }
     } catch {
       set({ isLoading: false });

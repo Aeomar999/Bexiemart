@@ -183,7 +183,7 @@ export default function StoreProfileScreen() {
               className="flex-1 bg-card rounded-[24px] overflow-hidden border border-border pb-3 mb-4"
               onPress={() => router.push(`/(customer)/product/${item.id}`)}
             >
-              <View className="w-full bg-muted items-center justify-center relative overflow-hidden" style={{ aspectRatio: 4/5 }}>
+              <View className="w-full aspect-[4/5] bg-muted items-center justify-center relative overflow-hidden">
                 {item.image ? (
                   <Image source={{ uri: item.image }} style={{ width: '100%', height: '100%' }} contentFit="cover" />
                 ) : (

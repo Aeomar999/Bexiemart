@@ -3,9 +3,10 @@ import { AuthGuard } from "../../guards/auth.guard";
 import { FoodService } from "./food.service";
 import { AddFoodCartItemDto } from "./dto/add-food-cart-item.dto";
 import { UpdateFoodCartItemDto } from "./dto/update-food-cart-item.dto";
-import { ApiTags, ApiOperation, ApiBody } from "@nestjs/swagger";
+import { ApiTags, ApiOperation, ApiBody, ApiBearerAuth } from "@nestjs/swagger";
 
 @ApiTags("Food")
+@ApiBearerAuth()
 @Controller("food")
 @UseGuards(AuthGuard)
 export class FoodController {

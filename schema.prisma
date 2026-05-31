@@ -512,6 +512,7 @@ model Wallet {
   transactions  Transaction[]
   bankAccounts  BankAccount[]
   momoAccounts  MomoAccount[]
+  cards         Card[]
   escrowBuyer   Escrow[]      @relation("EscrowBuyer")
   escrowVendor  Escrow[]      @relation("EscrowVendor")
 }
@@ -567,6 +568,24 @@ model MomoAccount {
   createdAt   DateTime     @default(now())
 
   @@unique([walletId, phoneNumber])
+}
+
+model Card {
+  id                String   @id @default(uuid())
+  walletId          String
+  wallet            Wallet   @relation(fields: [walletId], references: [id])
+  cardholderName    String?
+  type              String
+  last4             String
+  expiryMonth       String
+  expiryYear        String
+  isDefault         Boolean  @default(false)
+  authorizationCode String?
+  bin               String?
+  bank              String?
+  createdAt         DateTime @default(now())
+
+  @@index([walletId])
 }
 
 // ─── Escrow Model ──────────────────────────────────────────────────────────────

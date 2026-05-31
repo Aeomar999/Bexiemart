@@ -2,10 +2,11 @@ import { Controller, Get, Post, Param, Body, Query, Req, UseGuards } from "@nest
 import { AuthGuard } from "../../guards/auth.guard";
 import { ChatService } from "./chat.service";
 import { CreateConversationDto } from "./dto/create-conversation.dto";
-import { ApiTags, ApiOperation, ApiBody } from "@nestjs/swagger";
+import { ApiTags, ApiOperation, ApiBody, ApiBearerAuth } from "@nestjs/swagger";
 import { ChatGateway } from "./chat.gateway";
 
 @ApiTags("Chat")
+@ApiBearerAuth()
 @Controller("chat")
 @UseGuards(AuthGuard)
 export class ChatController {

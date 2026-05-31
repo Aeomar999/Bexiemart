@@ -1,9 +1,10 @@
 import { Controller, Get, Param, Req, UseGuards } from "@nestjs/common";
-import { ApiTags, ApiOperation } from "@nestjs/swagger";
+import { ApiTags, ApiOperation, ApiBearerAuth } from "@nestjs/swagger";
 import { AuthGuard } from "../../guards/auth.guard";
 import { VendorCustomersService } from "./vendor-customers.service";
 
 @ApiTags("Vendor Customers")
+@ApiBearerAuth()
 @Controller("vendor/customers")
 @UseGuards(AuthGuard)
 export class VendorCustomersController {

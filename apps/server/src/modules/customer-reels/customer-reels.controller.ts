@@ -1,9 +1,10 @@
 import { Controller, Get, Post, Param, Req, UseGuards } from "@nestjs/common";
 import { AuthGuard } from "../../guards/auth.guard";
 import { CustomerReelsService } from "./customer-reels.service";
-import { ApiTags, ApiOperation } from "@nestjs/swagger";
+import { ApiTags, ApiOperation, ApiBearerAuth } from "@nestjs/swagger";
 
 @ApiTags("Customer Reels")
+@ApiBearerAuth()
 @Controller("reels")
 @UseGuards(AuthGuard)
 export class CustomerReelsController {

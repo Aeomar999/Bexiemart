@@ -31,6 +31,7 @@ export default function RootLayout() {
   const hydrate = useAuthStore((s) => s.hydrate);
   const isLoading = useAuthStore((s) => s.isLoading);
   const hasSeenOnboarding = useAuthStore((s) => s.hasSeenOnboarding);
+  const hasLaunchedBefore = useAuthStore((s) => s.hasLaunchedBefore);
   const [splashDone, setSplashDone] = useState(false);
 
   const [fontsLoaded] = useFonts({
@@ -60,17 +61,19 @@ export default function RootLayout() {
     const inOnboardingGroup = segments[0] === '(onboarding)';
 
     try {
-      if (!hasSeenOnboarding && !inOnboardingGroup) {
-        router.replace("/(onboarding)/welcome");
-      } else if (hasSeenOnboarding && !isAuthenticated && !inAuthGroup) {
-        router.replace("/(auth)/login");
-      } else if (isAuthenticated && (inAuthGroup || inOnboardingGroup)) {
+      if (isAuthenticated && (inAuthGroup || inOnboardingGroup)) {
         router.replace("/(customer)/(tabs)/(home)");
+      } else if (!isAuthenticated) {
+        if (!hasLaunchedBefore && !inOnboardingGroup) {
+          router.replace("/(onboarding)/welcome");
+        } else if (hasLaunchedBefore && !inAuthGroup && !inOnboardingGroup) {
+          router.replace("/(auth)/login");
+        }
       }
     } catch (err) {
       console.warn("Navigation failed (likely due to ErrorBoundary removing Stack):", err);
     }
-  }, [isLoading, isAuthenticated, hasSeenOnboarding, splashDone, rootNavigationState?.key, segments, fontsLoaded]);
+  }, [isLoading, isAuthenticated, hasLaunchedBefore, hasSeenOnboarding, splashDone, rootNavigationState?.key, segments, fontsLoaded]);
 
 
 
@@ -88,7 +91,7 @@ export default function RootLayout() {
               <Stack.Screen name="(dispatcher)" />
             </Stack>
             {(!fontsLoaded || isLoading || !splashDone) && (
-              <View style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: '#004CFF', zIndex: 9999 }}>
+              <View style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: 'white', justifyContent: 'center', alignItems: 'center', zIndex: 9999 }}>
                 {(!fontsLoaded || isLoading) ? null : (
                   <AnimatedSplashScreen onAnimationComplete={() => setSplashDone(true)} />
                 )}

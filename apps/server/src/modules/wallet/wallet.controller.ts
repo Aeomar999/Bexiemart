@@ -8,10 +8,11 @@ import { ChangePinDto } from "./dto/change-pin.dto";
 import { CreateCardDto, UpdateCardDto, VerifyCardDto } from "./dto/card.dto";
 import { LinkBankAccountDto, LinkMomoAccountDto } from "./dto/linked-accounts.dto";
 import { WithdrawDto } from "./dto/withdraw.dto";
-import { ApiTags, ApiOperation, ApiBody } from "@nestjs/swagger";
+import { ApiTags, ApiOperation, ApiBody, ApiBearerAuth } from "@nestjs/swagger";
 import { Throttle } from "@nestjs/throttler";
 
 @ApiTags("Wallet")
+@ApiBearerAuth()
 @Controller("wallet")
 @UseGuards(AuthGuard)
 export class WalletController {
@@ -171,7 +172,7 @@ export class WalletController {
     return this.walletService.deleteMomoAccount(req.user.id, id);
   }
 
-  @Post("cards/verify")
+  @Post("cards/verify-save")
   @ApiOperation({ summary: "Verify a Paystack transaction and save the card token" })
   @ApiBody({ type: VerifyCardDto })
   verifyAndSaveCard(@Req() req: any, @Body() body: VerifyCardDto) {

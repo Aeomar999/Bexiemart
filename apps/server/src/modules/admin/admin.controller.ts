@@ -1,5 +1,6 @@
-import { Controller, Get, Patch, Put, Param, Query, Body, UseGuards } from "@nestjs/common";
-import { ApiTags, ApiOperation, ApiBody } from "@nestjs/swagger";
+import { Controller, Get, Patch, Put, Param, Query, Body, UseGuards, Post } from "@nestjs/common";
+import { Throttle } from "@nestjs/throttler";
+import { ApiTags, ApiOperation, ApiBody, ApiBearerAuth } from "@nestjs/swagger";
 import { AuthGuard } from "../../guards/auth.guard";
 import { AdminGuard } from "../../guards/admin.guard";
 import { AdminService } from "./admin.service";
@@ -8,8 +9,10 @@ import { UpdateConfigDto } from "./dto/update-config.dto";
 import { UpdateOrderStatusDto } from "./dto/update-order-status.dto";
 
 @ApiTags("Admin")
+@ApiBearerAuth()
 @Controller("admin")
 @UseGuards(AuthGuard, AdminGuard)
+@Throttle({ default: { limit: 10, ttl: 60000 } })
 export class AdminController {
   constructor(private readonly adminService: AdminService) {}
 
@@ -92,5 +95,42 @@ export class AdminController {
   @Patch("orders/:id/status")
   updateOrderStatus(@Param("id") id: string, @Body() body: UpdateOrderStatusDto) {
     return this.adminService.updateOrderStatus(id, body.status);
+  }
+
+  // ─── Disputes ──────────────────────────────────────────────────────────────────
+
+  @ApiOperation({ summary: "List disputed escrows" })
+  @Get("disputes")
+  listDisputes(@Query("page") page?: string, @Query("limit") limit?: string) {
+    return this.adminService.listDisputes(Number(page) || 1, Number(limit) || 20);
+  }
+
+  @ApiOperation({ summary: "Resolve a dispute" })
+  @ApiBody({ schema: { type: 'object', properties: { action: { type: 'string', enum: ['REFUND', 'RELEASE'] }, reason: { type: 'string' } } } })
+  @Post("disputes/:id/resolve")
+  resolveDispute(@Param("id") id: string, @Body() body: { action: "REFUND" | "RELEASE", reason: string }) {
+    return this.adminService.resolveDispute(id, body.action, body.reason);
+  }
+
+  // ─── Dashboard ─────────────────────────────────────────────────────────────────
+
+  @ApiOperation({ summary: "Get dashboard stats" })
+  @Get("dashboard")
+  getDashboardStats() {
+    return this.adminService.getDashboardStats();
+  }
+
+  // ─── Reports ───────────────────────────────────────────────────────────────────
+
+  @ApiOperation({ summary: "Get revenue report" })
+  @Get("reports/revenue")
+  getRevenueReport(@Query("startDate") startDate?: string, @Query("endDate") endDate?: string) {
+    return this.adminService.getRevenueReport(startDate, endDate);
+  }
+
+  @ApiOperation({ summary: "Get users report" })
+  @Get("reports/users")
+  getUsersReport(@Query("startDate") startDate?: string, @Query("endDate") endDate?: string) {
+    return this.adminService.getUsersReport(startDate, endDate);
   }
 }

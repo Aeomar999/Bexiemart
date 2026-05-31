@@ -74,9 +74,12 @@ export class ProductsService {
         reviewCount: 0,
         createdAt: p.createdAt,
       })),
-      total,
-      page: dto.page ?? 1,
-      pages: Math.ceil(total / (dto.limit ?? 20)),
+      meta: {
+        total,
+        page: dto.page ?? 1,
+        limit: dto.limit ?? 20,
+        totalPages: Math.ceil(total / (dto.limit ?? 20)),
+      }
     };
   }
 
@@ -196,5 +199,56 @@ export class ProductsService {
       rating: 4.5,
       visits: (store as any).visits ? (store as any).visits + 1 : 1,
     };
+  }
+
+  async getFeatured() {
+    const products = await this.prisma.product.findMany({
+      where: { isActive: true, isDeleted: false, isFeatured: true },
+      take: 10,
+      include: {
+        images: { orderBy: { order: "asc" }, take: 1 },
+        category: true,
+        vendor: { select: { id: true, shopName: true } }
+      }
+    });
+
+    return products.map(p => ({
+      id: p.id,
+      name: p.name,
+      slug: p.slug,
+      price: Number(p.price),
+      category: p.category.name,
+      vendor: p.vendor?.shopName ?? null,
+      image: p.images[0]?.url ?? null,
+    }));
+  }
+
+  async searchProducts(query: string, limit: number = 20) {
+    const products = await this.prisma.product.findMany({
+      where: { 
+        isActive: true, 
+        isDeleted: false,
+        OR: [
+          { name: { contains: query, mode: "insensitive" } },
+          { description: { contains: query, mode: "insensitive" } },
+          { vendor: { shopName: { contains: query, mode: "insensitive" } } }
+        ]
+      },
+      take: limit,
+      include: {
+        images: { orderBy: { order: "asc" }, take: 1 },
+        category: true,
+        vendor: { select: { id: true, shopName: true } }
+      }
+    });
+    return products.map(p => ({
+      id: p.id,
+      name: p.name,
+      slug: p.slug,
+      price: Number(p.price),
+      category: p.category.name,
+      vendor: p.vendor?.shopName ?? null,
+      image: p.images[0]?.url ?? null,
+    }));
   }
 }

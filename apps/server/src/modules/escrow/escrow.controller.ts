@@ -1,9 +1,10 @@
 import { Controller, Get, Post, Param, Body, UseGuards, Req } from "@nestjs/common";
 import { AuthGuard } from "../../guards/auth.guard";
 import { EscrowService } from "./escrow.service";
-import { ApiTags, ApiOperation } from "@nestjs/swagger";
+import { ApiTags, ApiOperation, ApiBearerAuth } from "@nestjs/swagger";
 
 @ApiTags("Escrow")
+@ApiBearerAuth()
 @Controller("escrow")
 export class EscrowController {
   constructor(private readonly escrowService: EscrowService) {}

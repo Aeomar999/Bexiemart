@@ -1,9 +1,10 @@
 import { Controller, Get, Param, Query, UseGuards } from "@nestjs/common";
-import { ApiTags, ApiOperation } from "@nestjs/swagger";
+import { ApiTags, ApiOperation, ApiBearerAuth } from "@nestjs/swagger";
 import { AuthGuard } from "../../guards/auth.guard";
 import { ProductsService } from "./products.service";
 import { QueryProductsDto } from "./dto/query-products.dto";
 
+@ApiBearerAuth()
 @Controller("products")
 @UseGuards(AuthGuard)
 @ApiTags("Products")
@@ -20,6 +21,19 @@ export class ProductsController {
   @Get("categories")
   getCategories() {
     return this.productsService.getCategories();
+  }
+
+  @ApiOperation({ summary: "Get featured products" })
+  @Get("featured")
+  getFeatured() {
+    return this.productsService.getFeatured();
+  }
+
+  @ApiOperation({ summary: "Search products" })
+  @Get("search")
+  searchProducts(@Query("q") query: string, @Query("limit") limit?: string) {
+    if (!query) return [];
+    return this.productsService.searchProducts(query, Number(limit) || 20);
   }
 
   @ApiOperation({ summary: "Get a product by ID" })

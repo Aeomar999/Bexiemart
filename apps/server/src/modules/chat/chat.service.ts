@@ -103,7 +103,7 @@ export class ChatService {
       }),
       this.prisma.message.count({ where: { conversationId } }),
     ]);
-    return { data: messages.reverse(), total, page, pageSize, totalPages: Math.ceil(total / pageSize) };
+    return { data: messages.reverse(), meta: { total, page, limit: pageSize, totalPages: Math.ceil(total / pageSize) } };
   }
 
   async createConversation(userId: string, participantId: string, orderId?: string) {

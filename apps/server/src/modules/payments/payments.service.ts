@@ -1,7 +1,9 @@
-import { Injectable, NotFoundException, BadRequestException } from "@nestjs/common";
+import { Injectable, NotFoundException, BadRequestException, Inject } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { PrismaService } from "../../prisma/prisma.service";
 import { InitializePaymentDto } from "./dto/initialize-payment.dto";
+import { WINSTON_MODULE_PROVIDER } from "nest-winston";
+import { Logger } from "winston";
 
 @Injectable()
 export class PaymentsService {
@@ -11,6 +13,7 @@ export class PaymentsService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly config: ConfigService,
+    @Inject(WINSTON_MODULE_PROVIDER) private readonly logger: Logger,
   ) {
     this.paystackSecret = this.config.get<string>("PAYSTACK_SECRET_KEY") ?? "";
   }
@@ -56,6 +59,7 @@ export class PaymentsService {
     });
 
     if (!response.status) {
+      this.logger.error("Paystack initialization failed", { response });
       throw new BadRequestException(response.message ?? "Paystack initialization failed");
     }
 
@@ -74,6 +78,7 @@ export class PaymentsService {
     const response = await this.paystackGet(`/transaction/verify/${encodeURIComponent(reference)}`);
 
     if (!response.status) {
+      this.logger.error("Payment verification failed", { reference, response });
       throw new BadRequestException("Payment verification failed");
     }
 
@@ -128,6 +133,7 @@ export class PaymentsService {
 
   async handleWebhook(body: any) {
     const event = body.event;
+    this.logger.info("Received Paystack webhook", { event, reference: body.data?.reference });
     
     // Handle Transfer Events
     if (event === "transfer.success" || event === "transfer.failed" || event === "transfer.reversed") {
