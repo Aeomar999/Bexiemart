@@ -2,6 +2,7 @@ import { betterAuth } from "better-auth";
 import { prismaAdapter } from "better-auth/adapters/prisma";
 import { PrismaClient } from "@prisma/client";
 import { Resend } from "resend";
+import { dash, sentinel } from "@better-auth/infra";
 
 const prisma = new PrismaClient();
 
@@ -12,6 +13,24 @@ export const auth = betterAuth({
   database: prismaAdapter(prisma, {
     provider: "postgresql",
   }),
+  plugins: [
+    dash({
+      apiUrl: process.env.BETTER_AUTH_API_URL,
+      kvUrl: process.env.BETTER_AUTH_KV_URL,
+      apiKey: process.env.BETTER_AUTH_API_KEY,
+    }),
+    sentinel({
+      apiUrl: process.env.BETTER_AUTH_API_URL,
+      kvUrl: process.env.BETTER_AUTH_KV_URL,
+      apiKey: process.env.BETTER_AUTH_API_KEY,
+      security: {
+        credentialStuffing: {
+          enabled: true,
+          thresholds: { challenge: 3, block: 5 },
+        },
+      },
+    }),
+  ],
   emailAndPassword: {
     enabled: true,
     autoSignIn: true,

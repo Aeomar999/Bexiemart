@@ -65,6 +65,10 @@ export const useAuthStore = create<AuthState>((set) => ({
   },
 
   logout: async () => {
+    try {
+      const { authClient } = require('../api/better-auth');
+      await authClient.signOut();
+    } catch(e) {}
     await storage.removeItem("bexiemart_token");
     set({ user: null, token: null, isAuthenticated: false, isLoading: false });
   },
@@ -91,30 +95,24 @@ export const useAuthStore = create<AuthState>((set) => ({
       const hasSeenOnboarding = onboardingStatus === "true";
       const hasLaunchedBefore = launchedStatus === "true";
 
-      if (token) {
-        try {
-          // Fetch user profile to get up-to-date role
-          const baseUrl = process.env.EXPO_PUBLIC_API_URL || "http://10.0.2.2:3000/api/v1";
-          const res = await fetch(`${baseUrl}/auth/me`, {
-            headers: {
-              "Authorization": `Bearer ${token}`
-            }
-          });
-          if (res.ok) {
-            const data = await res.json();
-            set({ token, user: data.user, isAuthenticated: true, isLoading: false, hasSeenOnboarding, hasLaunchedBefore });
-          } else {
-            // Token might be expired
-            await storage.removeItem("bexiemart_token");
-            set({ token: null, user: null, isAuthenticated: false, isLoading: false, hasSeenOnboarding, hasLaunchedBefore });
-          }
-        } catch (e) {
-          // Network error, keep token but we don't have user object yet.
-          // In a real app we might cache the user object in secure store too.
-          set({ token, isAuthenticated: true, isLoading: false, hasSeenOnboarding, hasLaunchedBefore });
-        }
+      // Better Auth handles its own session state, but we still check it here
+      const { authClient } = require('../api/better-auth');
+      const { data, error } = await authClient.getSession();
+
+      if (data && data.user) {
+        // User is authenticated via better-auth
+        set({ 
+          token: data.session?.token || data.session?.id || token || 'better-auth-token', 
+          user: data.user as any, 
+          isAuthenticated: true, 
+          isLoading: false, 
+          hasSeenOnboarding, 
+          hasLaunchedBefore 
+        });
       } else {
-        set({ isLoading: false, hasSeenOnboarding, hasLaunchedBefore });
+        // Not authenticated
+        await storage.removeItem("bexiemart_token");
+        set({ token: null, user: null, isAuthenticated: false, isLoading: false, hasSeenOnboarding, hasLaunchedBefore });
       }
     } catch {
       set({ isLoading: false });

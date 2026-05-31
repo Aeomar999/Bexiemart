@@ -12,7 +12,7 @@ export function useLogin() {
   return useMutation({
     mutationFn: authApi.login,
     onSuccess: (response) => {
-      setAuth(response.data.user, response.data.token);
+      setAuth(response.data.user as any, response.data.token);
     },
   });
 }
@@ -32,8 +32,8 @@ export function useCurrentUser() {
     queryKey: AUTH_KEYS.currentUser,
     queryFn: async () => {
       const response = await authApi.getCurrentUser();
-      setUser(response.data.user);
-      return response.data.user;
+      setUser(response.data.user as any);
+      return response.data.user as any;
     },
     enabled: !!token,
     retry: false,

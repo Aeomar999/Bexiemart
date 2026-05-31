@@ -1,4 +1,5 @@
 import { apiClient } from "./client";
+import { authClient } from "./better-auth";
 
 interface LoginParams {
   email: string;
@@ -13,17 +14,42 @@ interface RegisterParams {
 }
 
 export const authApi = {
-  login: (data: LoginParams) =>
-    apiClient.post<{ user: any; token: string }>("/auth/login", data),
+  login: async (data: LoginParams) => {
+    const res = await authClient.signIn.email({
+      email: data.email,
+      password: data.password,
+    });
+    if (res.error) throw res.error;
+    return { data: { user: res.data.user as any, token: (res.data as any).session?.token || (res.data as any).session?.id || (res.data as any).token || 'better-auth-token' } };
+  },
 
-  register: (data: RegisterParams) =>
-    apiClient.post<{ user: any; token: string }>("/auth/register", data),
+  register: async (data: RegisterParams) => {
+    const res = await authClient.signUp.email({
+      email: data.email,
+      password: data.password,
+      name: data.name,
+      // @ts-ignore
+      role: data.role,
+    });
+    if (res.error) throw res.error;
+    return { data: { user: res.data.user as any, token: (res.data as any).session?.token || (res.data as any).session?.id || (res.data as any).token || 'better-auth-token' } };
+  },
 
-  getCurrentUser: () => apiClient.get<{ user: any }>("/auth/me"),
+  getCurrentUser: async () => {
+    const res = await authClient.getSession();
+    if (res.error) throw res.error;
+    return { data: { user: res.data?.user } };
+  },
 
-  forgotPassword: (email: string) =>
-    apiClient.post("/auth/forgot-password", { email }),
+  forgotPassword: async (email: string) => {
+    const res = await (authClient as any).forgetPassword({ email, redirectTo: 'bexiemart://reset-password' });
+    if (res.error) throw res.error;
+    return { data: res.data };
+  },
 
-  resetPassword: (token: string, newPassword: string) =>
-    apiClient.post("/auth/reset-password", { token, newPassword }),
+  resetPassword: async (token: string, newPassword: string) => {
+    const res = await authClient.resetPassword({ newPassword, token });
+    if (res.error) throw res.error;
+    return { data: res.data };
+  },
 };
