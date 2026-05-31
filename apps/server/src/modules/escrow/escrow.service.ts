@@ -118,7 +118,7 @@ export class EscrowService {
           vendorWalletId: vendorWallet.id,
         },
       });
-    });
+    }, { isolationLevel: 'Serializable' });
 
     return updatedEscrow;
   }
@@ -169,7 +169,7 @@ export class EscrowService {
           refundedTxnId: txn.id,
         },
       });
-    });
+    }, { isolationLevel: 'Serializable' });
 
     return updatedEscrow;
   }

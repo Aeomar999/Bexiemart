@@ -141,16 +141,16 @@ export class WalletService {
       throw new BadRequestException("Payment not successful yet");
     }
 
-    await this.prisma.$transaction([
-      this.prisma.transaction.update({
+    await this.prisma.$transaction(async (tx) => {
+      await tx.transaction.update({
         where: { id: transaction.id },
         data: { status: "COMPLETED" },
-      }),
-      this.prisma.wallet.update({
+      });
+      await tx.wallet.update({
         where: { id: wallet.id },
         data: { balance: { increment: transaction.amount } },
-      }),
-    ]);
+      });
+    }, { isolationLevel: 'Serializable' });
 
     const updatedWallet = await this.prisma.wallet.findUnique({ where: { id: wallet.id } });
     return { balance: updatedWallet?.balance };
@@ -173,12 +173,12 @@ export class WalletService {
     const recipientWallet = await this.getWallet(recipientUser.id);
     const reference = "tf_" + Date.now();
 
-    await this.prisma.$transaction([
-      this.prisma.wallet.update({
+    await this.prisma.$transaction(async (tx) => {
+      await tx.wallet.update({
         where: { id: senderWallet.id },
         data: { balance: { decrement: amount } },
-      }),
-      this.prisma.transaction.create({
+      });
+      await tx.transaction.create({
         data: {
           walletId: senderWallet.id,
           counterpartyWalletId: recipientWallet.id,
@@ -189,12 +189,12 @@ export class WalletService {
           reference: reference + "_out",
           description: `Transfer to ${recipientUser.name}`,
         },
-      }),
-      this.prisma.wallet.update({
+      });
+      await tx.wallet.update({
         where: { id: recipientWallet.id },
         data: { balance: { increment: amount } },
-      }),
-      this.prisma.transaction.create({
+      });
+      await tx.transaction.create({
         data: {
           walletId: recipientWallet.id,
           counterpartyWalletId: senderWallet.id,
@@ -205,8 +205,8 @@ export class WalletService {
           reference: reference + "_in",
           description: `Transfer from ${senderWallet.user?.name || "User"}`,
         },
-      }),
-    ]);
+      });
+    }, { isolationLevel: 'Serializable' });
 
     const updatedSenderWallet = await this.prisma.wallet.findUnique({ where: { id: senderWallet.id } });
     return { reference, newBalance: updatedSenderWallet?.balance };
@@ -584,12 +584,12 @@ export class WalletService {
       reference,
     });
 
-    await this.prisma.$transaction([
-      this.prisma.wallet.update({
+    await this.prisma.$transaction(async (tx) => {
+      await tx.wallet.update({
         where: { id: wallet.id },
         data: { balance: { decrement: totalDeduction } },
-      }),
-      this.prisma.transaction.create({
+      });
+      await tx.transaction.create({
         data: {
           walletId: wallet.id,
           type: "WITHDRAWAL",
@@ -601,8 +601,8 @@ export class WalletService {
           description: `Withdrawal to ${bankOrMomoName}`,
           providerRef: transferRes.transfer_code,
         },
-      }),
-    ]);
+      });
+    }, { isolationLevel: 'Serializable' });
 
     const updatedWallet = await this.prisma.wallet.findUnique({ where: { id: wallet.id } });
     return { success: true, reference, newBalance: updatedWallet?.balance };

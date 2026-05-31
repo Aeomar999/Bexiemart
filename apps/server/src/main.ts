@@ -4,6 +4,7 @@ import { AppModule } from "./app.module";
 import { ValidationPipe, VersioningType } from "@nestjs/common";
 import { rawBodyParser } from "./middleware/raw-body.middleware";
 import { GlobalExceptionFilter } from "./filters/global-exception.filter";
+import helmet from "helmet";
 import { join } from "path";
 import { existsSync, mkdirSync } from "fs";
 import { DocumentBuilder, SwaggerModule } from "@nestjs/swagger";
@@ -13,8 +14,11 @@ async function bootstrap() {
     logger: ["log", "error", "warn", "debug", "verbose"],
   });
 
+  app.set("trust proxy", 1);
+  app.use(helmet());
+
   app.enableCors({
-    origin: process.env.CORS_ORIGIN?.split(",") || false,
+    origin: process.env.CORS_ORIGIN ? process.env.CORS_ORIGIN.split(",") : ["bexiemart://", "exp://"],
     credentials: true,
   });
 

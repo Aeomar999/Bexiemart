@@ -76,7 +76,6 @@ export default function RewardsScreen() {
             <Button
               title={`Convert to GHS ${(bexieCoins * COIN_RATE).toFixed(2)}`}
               className="w-full bg-card rounded-full"
-              // @ts-expect-error
               textClassName="text-brand-600"
               onPress={handleConvert}
             />

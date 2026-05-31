@@ -43,15 +43,16 @@ export class AuthController {
       asResponse: true,
     });
 
+    const data = await res.json();
+
+    if (!res.ok) {
+      throw new UnauthorizedException(data.message || "Registration failed");
+    }
+
     const cookie = res.headers.get("set-cookie");
     const tokenMatch = cookie?.match(/better-auth\.session_token=([^;]+)/);
     const signedToken = tokenMatch ? tokenMatch[1] : null;
 
-    if (!signedToken) {
-      throw new UnauthorizedException("Registration failed");
-    }
-
-    const data = await res.json();
     let user = data.user;
 
     if (role === "vendor") {
@@ -80,7 +81,8 @@ export class AuthController {
 
     return {
       user: user,
-      token: signedToken,
+      token: signedToken || null,
+      message: signedToken ? "Registration successful" : "Please verify your email address before logging in."
     };
   }
 
@@ -99,16 +101,20 @@ export class AuthController {
       asResponse: true,
     });
 
+    const data = await res.json();
+
+    if (!res.ok) {
+      // If email isn't verified, better-auth might return a specific error
+      throw new UnauthorizedException(data.message || data.error?.message || "Invalid credentials");
+    }
+
     const cookie = res.headers.get("set-cookie");
     const tokenMatch = cookie?.match(/better-auth\.session_token=([^;]+)/);
     const signedToken = tokenMatch ? tokenMatch[1] : null;
 
     if (!signedToken) {
-      throw new UnauthorizedException("Invalid credentials");
+      throw new UnauthorizedException("Session creation failed");
     }
-
-    // Since we used asResponse, we need to parse the JSON body to get the user
-    const data = await res.json();
 
     // Fetch the full user from Prisma to ensure we get custom fields like 'role'
     const fullUser = await this.prisma.user.findUnique({

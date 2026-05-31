@@ -233,7 +233,7 @@ export default function TrackOrderScreen() {
                 </View>
               </View>
               <View className="flex-row gap-2">
-                <Pressable style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]} className="w-10 h-10 rounded-full bg-brand-50 items-center justify-center border border-brand-100" onPress={() => { router.push({ pathname: "/(customer)/chat", params: { contact: activeRide.driverName, role: "Rider" } }); }}>
+                <Pressable style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]} className="w-10 h-10 rounded-full bg-brand-50 items-center justify-center border border-brand-100" onPress={() => { router.push({ pathname: "/(customer)/chats", params: { contact: activeRide.driverName, role: "Rider" } }); }}>
                   <Icon name="message-circle" size={18} color="#004CFF" />
                 </Pressable>
                 <Pressable style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]} className="w-10 h-10 rounded-full bg-emerald-50 items-center justify-center border border-emerald-100" onPress={() => { Linking.openURL('tel:0541234567').catch(() => showPopup({ type: "error", title: "Call failed", message: "Phone app not available" })); }}>
