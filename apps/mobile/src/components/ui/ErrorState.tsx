@@ -9,36 +9,39 @@ interface ErrorStateProps {
   fullScreen?: boolean;
 }
 
-export function ErrorState({ 
-  title = "Something went wrong", 
-  message = "We couldn't load this data. Please try again.", 
+export function ErrorState({
+  title = "Something went wrong",
+  message = "We couldn't load this data. Please try again.",
   onRetry,
-  fullScreen = true 
+  fullScreen = true,
 }: ErrorStateProps) {
   return (
-    <View className={`items-center justify-center ${fullScreen ? "flex-1 bg-background" : "p-8"}`}>
-      <View className="h-24 w-24 rounded-full bg-destructive/10 items-center justify-center mb-6">
-        <Icon name="alert-triangle" size={40} color="#ef4444" />
+    <View
+      className={`items-center justify-center ${fullScreen ? "w-full bg-background" : "p-8 py-12"}`}
+      style={fullScreen ? { flex: 1, justifyContent: "center", alignItems: "center" } : undefined}
+    >
+      <View className="h-20 w-20 rounded-full bg-rose-50 items-center justify-center mb-6">
+        <Icon name="alert-triangle" size={32} color="#ef4444" />
       </View>
-      
-      <Text className="text-xl font-bold text-foreground mb-2 text-center">
+
+      <Text className="text-[24px] font-heading font-black text-foreground mb-3 text-center">
         {title}
       </Text>
-      
-      <Text className="text-muted-foreground text-center mb-8 max-w-[80%]">
+
+      <Text className="text-[16px] font-body text-muted-foreground text-center mb-8 max-w-[85%] leading-relaxed">
         {message}
       </Text>
 
       {onRetry && (
         <Pressable
           onPress={onRetry}
-          className="bg-primary px-8 py-3 rounded-full flex-row items-center active:opacity-80"
-          style={{ gap: 8 }}
+          style={({ pressed }) => [{ opacity: pressed ? 0.8 : 1 }]}
+          className="bg-rose-500 px-8 py-4 rounded-full flex-row items-center justify-center shadow-[0_4px_12px_rgba(239,68,68,0.15)]"
         >
-          <Icon name="refresh-cw" size={18} color="white" />
-          <Text className="text-primary-foreground font-semibold text-base">
-            Try Again
-          </Text>
+          <View className="mr-2">
+            <Icon name="refresh-cw" size={18} color="white" />
+          </View>
+          <Text className="text-white font-heading font-bold text-[16px]">Try Again</Text>
         </Pressable>
       )}
     </View>

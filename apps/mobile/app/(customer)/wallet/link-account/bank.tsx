@@ -1,5 +1,15 @@
 import { BackButton } from "@/components/ui/BackButton";
-import { View, Text, TextInput, Pressable, ActivityIndicator, Alert, ScrollView, KeyboardAvoidingView, Platform } from "react-native";
+import {
+  View,
+  Text,
+  TextInput,
+  Pressable,
+  ActivityIndicator,
+  Alert,
+  ScrollView,
+  KeyboardAvoidingView,
+  Platform,
+} from "react-native";
 import { useRouter } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Icon } from "@/components/ui/Icon";
@@ -54,7 +64,11 @@ export default function AddBankAccountScreen() {
       setResolvedName(response.data.accountName);
     } catch (error: any) {
       const serverMessage = error.response?.data?.message;
-      setResolveError(typeof serverMessage === "string" ? serverMessage : "Could not resolve account. Please check your details.");
+      setResolveError(
+        typeof serverMessage === "string"
+          ? serverMessage
+          : "Could not resolve account. Please check your details."
+      );
     } finally {
       setResolving(false);
     }
@@ -99,17 +113,25 @@ export default function AddBankAccountScreen() {
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === "ios" ? "padding" : "height"}
-      className="flex-1 bg-gray-50"
-      style={{ paddingTop: Math.max(insets.top, 16) }}
+      className="flex-1 bg-background"
     >
-      {/* Header */}
-      <View className="flex-row items-center justify-between px-5 py-4 bg-gray-50 z-10">
-        <BackButton className="-ml-2" />
-        <Text className="text-lg font-bold text-gray-900">Add Bank Account</Text>
-        <View className="w-10 h-10" />
+      <View
+        className="px-5 pt-4 pb-4 bg-card border-b border-border"
+        style={{ paddingTop: insets.top + 12 }}
+      >
+        <View className="flex-row items-center gap-3">
+          <BackButton />
+          <Text className="text-[20px] font-heading font-black text-foreground">
+            Add Bank Account
+          </Text>
+        </View>
       </View>
 
-      <ScrollView className="flex-1" showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 40 }}>
+      <ScrollView
+        className="flex-1"
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={{ paddingBottom: 40 }}
+      >
         {/* Info Banner */}
         <View className="mx-5 mb-6 bg-blue-50 rounded-2xl p-4 flex-row items-start">
           <View className="w-8 h-8 rounded-full bg-blue-100 items-center justify-center mr-3 mt-0.5">
@@ -127,18 +149,26 @@ export default function AddBankAccountScreen() {
           <View className="bg-white rounded-3xl p-5 border border-gray-100 shadow-sm">
             {/* Bank Selector */}
             <View className="mb-5">
-              <Text className="text-gray-500 text-xs font-bold uppercase tracking-wider mb-2 ml-1">Select Bank</Text>
+              <Text className="text-gray-500 text-xs font-bold uppercase tracking-wider mb-2 ml-1">
+                Select Bank
+              </Text>
               <Pressable
                 onPress={() => setShowBankPicker(!showBankPicker)}
                 className="bg-gray-50 flex-row items-center justify-between rounded-2xl px-4 py-4 border border-gray-200"
               >
                 <View className="flex-row items-center">
                   <Icon name="building" size={18} color="#9ca3af" />
-                  <Text className={`ml-3 font-medium ${selectedBank ? "text-gray-900" : "text-gray-400"}`}>
+                  <Text
+                    className={`ml-3 font-medium ${selectedBank ? "text-gray-900" : "text-gray-400"}`}
+                  >
                     {selectedBank ? selectedBank.name : "Choose your bank"}
                   </Text>
                 </View>
-                <Icon name={showBankPicker ? "chevron-up" : "chevron-down"} size={18} color="#9ca3af" />
+                <Icon
+                  name={showBankPicker ? "chevron-up" : "chevron-down"}
+                  size={18}
+                  color="#9ca3af"
+                />
               </Pressable>
 
               {/* Bank Dropdown */}
@@ -155,10 +185,18 @@ export default function AddBankAccountScreen() {
                         className={`px-4 py-3.5 border-b border-gray-50 ${selectedBank?.code === bank.code ? "bg-blue-50" : "active:bg-gray-50"}`}
                       >
                         <View className="flex-row items-center">
-                          <View className={`w-8 h-8 rounded-full items-center justify-center mr-3 ${selectedBank?.code === bank.code ? "bg-blue-100" : "bg-gray-100"}`}>
-                            <Icon name="building" size={14} color={selectedBank?.code === bank.code ? "#2563EB" : "#9ca3af"} />
+                          <View
+                            className={`w-8 h-8 rounded-full items-center justify-center mr-3 ${selectedBank?.code === bank.code ? "bg-blue-100" : "bg-gray-100"}`}
+                          >
+                            <Icon
+                              name="building"
+                              size={14}
+                              color={selectedBank?.code === bank.code ? "#2563EB" : "#9ca3af"}
+                            />
                           </View>
-                          <Text className={`font-medium text-[14px] ${selectedBank?.code === bank.code ? "text-blue-600" : "text-gray-700"}`}>
+                          <Text
+                            className={`font-medium text-[14px] ${selectedBank?.code === bank.code ? "text-blue-600" : "text-gray-700"}`}
+                          >
                             {bank.name}
                           </Text>
                         </View>
@@ -171,7 +209,9 @@ export default function AddBankAccountScreen() {
 
             {/* Account Number */}
             <View className="mb-5">
-              <Text className="text-gray-500 text-xs font-bold uppercase tracking-wider mb-2 ml-1">Account Number</Text>
+              <Text className="text-gray-500 text-xs font-bold uppercase tracking-wider mb-2 ml-1">
+                Account Number
+              </Text>
               <View className="bg-gray-50 flex-row items-center rounded-2xl px-4 border border-gray-200">
                 <Icon name="hash" size={18} color="#9ca3af" />
                 <TextInput
@@ -194,7 +234,9 @@ export default function AddBankAccountScreen() {
                   <Icon name="check-circle" size={20} color="#059669" />
                 </View>
                 <View className="flex-1">
-                  <Text className="text-green-800 text-xs font-bold uppercase tracking-wider mb-0.5">Account Verified</Text>
+                  <Text className="text-green-800 text-xs font-bold uppercase tracking-wider mb-0.5">
+                    Account Verified
+                  </Text>
                   <Text className="text-green-700 font-bold text-[15px]">{resolvedName}</Text>
                 </View>
               </View>
@@ -216,14 +258,26 @@ export default function AddBankAccountScreen() {
               className={`w-full rounded-2xl py-4 flex-row justify-center items-center ${
                 !resolvedName || linkBankAccount.isPending ? "bg-gray-300" : "bg-blue-600"
               }`}
-              style={resolvedName ? { shadowColor: "#2563EB", shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.3, shadowRadius: 8, elevation: 5 } : {}}
+              style={
+                resolvedName
+                  ? {
+                      shadowColor: "#2563EB",
+                      shadowOffset: { width: 0, height: 4 },
+                      shadowOpacity: 0.3,
+                      shadowRadius: 8,
+                      elevation: 5,
+                    }
+                  : {}
+              }
             >
               {linkBankAccount.isPending ? (
                 <ActivityIndicator color="#fff" />
               ) : (
                 <>
                   <Icon name="link" size={18} color="#fff" />
-                  <Text className="text-white font-bold text-base ml-2 tracking-wide">Link Bank Account</Text>
+                  <Text className="text-white font-bold text-base ml-2 tracking-wide">
+                    Link Bank Account
+                  </Text>
                 </>
               )}
             </Pressable>

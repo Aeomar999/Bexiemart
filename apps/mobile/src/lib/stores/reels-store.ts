@@ -1,5 +1,8 @@
 import { create } from "zustand";
+import { persist, createJSONStorage } from "zustand/middleware";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { reelsApi } from "../api/reels";
+import { logger } from "../logger";
 
 export interface Comment {
   id: string;
@@ -31,7 +34,7 @@ export interface Reel {
 interface ReelsState {
   reels: Reel[];
   isLoading: boolean;
-  
+
   fetchReels: () => Promise<void>;
   toggleLikeReel: (reelId: string) => Promise<void>;
   toggleFollowVendor: (vendorId: string) => void;
@@ -41,85 +44,97 @@ interface ReelsState {
   addReel: (reel: Reel) => void;
 }
 
-export const useReelsStore = create<ReelsState>((set, get) => ({
-  reels: [],
-  isLoading: false,
+export const useReelsStore = create<ReelsState>()(
+  persist(
+    (set, get) => ({
+      reels: [],
+      isLoading: false,
 
-  fetchReels: async () => {
-    try {
-      set({ isLoading: true });
-      const response = await reelsApi.getReels();
-      set({ reels: response.data, isLoading: false });
-    } catch (error) {
-      console.error("Failed to fetch reels:", error);
-      set({ isLoading: false });
-    }
-  },
-  toggleLikeReel: async (reelId) => {
-    // Optimistic update
-    set((state) => ({
-      reels: state.reels.map(reel => {
-        if (reel.id === reelId) {
-          const isLiked = !reel.isLiked;
-          return {
-            ...reel,
-            isLiked,
-            likes: isLiked ? reel.likes + 1 : reel.likes - 1
-          };
+      fetchReels: async () => {
+        try {
+          set({ isLoading: true });
+          const response = await reelsApi.getReels();
+          set({ reels: response.data, isLoading: false });
+        } catch (error) {
+          logger.error("Failed to fetch reels:", error);
+          set({ isLoading: false });
         }
-        return reel;
-      })
-    }));
+      },
+      toggleLikeReel: async (reelId) => {
+        // Optimistic update
+        set((state) => ({
+          reels: state.reels.map((reel) => {
+            if (reel.id === reelId) {
+              const isLiked = !reel.isLiked;
+              return {
+                ...reel,
+                isLiked,
+                likes: isLiked ? reel.likes + 1 : reel.likes - 1,
+              };
+            }
+            return reel;
+          }),
+        }));
 
-    try {
-      await reelsApi.toggleLike(reelId);
-    } catch (error) {
-      console.error("Failed to toggle like on reel:", error);
+        try {
+          await reelsApi.toggleLike(reelId);
+        } catch (error) {
+          logger.error("Failed to toggle like on reel:", error);
+        }
+      },
+
+      toggleFollowVendor: (vendorId) =>
+        set((state) => ({
+          reels: state.reels.map((reel) => {
+            if (reel.vendorId === vendorId) {
+              return { ...reel, isFollowing: !reel.isFollowing };
+            }
+            return reel;
+          }),
+        })),
+
+      addComment: (reelId, text) =>
+        set((state) => ({
+          reels: state.reels.map((reel) => {
+            if (reel.id === reelId) {
+              return {
+                ...reel,
+                comments: [
+                  ...reel.comments,
+                  { id: Math.random().toString(), username: "you", text, likes: 0 },
+                ],
+              };
+            }
+            return reel;
+          }),
+        })),
+
+      incrementShare: (reelId) =>
+        set((state) => ({
+          reels: state.reels.map((reel) => {
+            if (reel.id === reelId) {
+              return { ...reel, shares: reel.shares + 1 };
+            }
+            return reel;
+          }),
+        })),
+
+      incrementView: async (reelId) => {
+        try {
+          await reelsApi.incrementView(reelId);
+        } catch (error) {
+          logger.error("Failed to increment reel view:", error);
+        }
+      },
+
+      addReel: (reel) =>
+        set((state) => ({
+          reels: [reel, ...state.reels],
+        })),
+    }),
+    {
+      name: "reels-storage",
+      storage: createJSONStorage(() => AsyncStorage),
     }
-  },
-
-  toggleFollowVendor: (vendorId) => set((state) => ({
-    reels: state.reels.map(reel => {
-      if (reel.vendorId === vendorId) {
-        return { ...reel, isFollowing: !reel.isFollowing };
-      }
-      return reel;
-    })
-  })),
-
-  addComment: (reelId, text) => set((state) => ({
-    reels: state.reels.map(reel => {
-      if (reel.id === reelId) {
-        return {
-          ...reel,
-          comments: [
-            ...reel.comments, 
-            { id: Math.random().toString(), username: "you", text, likes: 0 }
-          ]
-        };
-      }
-      return reel;
-    })
-  })),
-
-  incrementShare: (reelId) => set((state) => ({
-    reels: state.reels.map(reel => {
-      if (reel.id === reelId) {
-        return { ...reel, shares: reel.shares + 1 };
-      }
-      return reel;
-    })
-  })),
-
-  incrementView: async (reelId) => {
-    try {
-      await reelsApi.incrementView(reelId);
-    } catch (error) {
-      console.error("Failed to increment reel view:", error);
-    }
-  },
-
-  addReel: (reel) => set((state) => ({
-    reels: [reel, ...state.reels]
-  }))
-}));
+  )
+);

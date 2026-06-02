@@ -38,6 +38,14 @@ import { useAuthStore } from "../stores/auth-store";
 apiClient.interceptors.response.use(
   (response) => response,
   async (error) => {
+    // Extract user-friendly error message from backend
+    if (error.response?.data?.message) {
+      const backendMessage = error.response.data.message;
+      error.message = Array.isArray(backendMessage) ? backendMessage[0] : backendMessage;
+    } else if (error.message === "Network Error") {
+      error.message = "Unable to connect to the server. Please check your internet connection.";
+    }
+
     if (error.response?.status === 401) {
       // Not just removing from storage, but updating app state to trigger redirect
       await useAuthStore.getState().logout();
@@ -47,4 +55,3 @@ apiClient.interceptors.response.use(
 );
 
 export { apiClient };
-

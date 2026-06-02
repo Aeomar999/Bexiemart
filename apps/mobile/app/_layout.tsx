@@ -1,5 +1,6 @@
 import "react-native-get-random-values";
 import "../global.css";
+import "../src/lib/sentry";
 import { Stack, useRouter, useRootNavigationState, useSegments } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { useEffect, useState } from "react";
@@ -11,7 +12,8 @@ import { LoadingSpinner } from "../src/components/ui/LoadingSpinner";
 import { GlobalPopup } from "../src/components/ui/GlobalPopup";
 import { ErrorBoundary } from "../src/components/ui/ErrorBoundary";
 import { AnimatedSplashScreen } from "../src/components/screens/AnimatedSplashScreen";
-import { PaystackProvider } from 'react-native-paystack-webview';
+import { PaystackProvider } from "react-native-paystack-webview";
+import { OfflineBanner } from "../src/components/ui/OfflineBanner";
 import {
   Raleway_400Regular,
   Raleway_600SemiBold,
@@ -26,7 +28,18 @@ import {
 
 import { SafeAreaProvider } from "react-native-safe-area-context";
 
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      retry: 2,
+      staleTime: 1000 * 60 * 5, // 5 minutes
+      gcTime: 1000 * 60 * 30, // 30 minutes
+    },
+    mutations: {
+      retry: 1,
+    },
+  },
+});
 
 export default function RootLayout() {
   const hydrate = useAuthStore((s) => s.hydrate);
@@ -59,8 +72,8 @@ export default function RootLayout() {
     // Wait until the root layout has mounted completely, fonts loaded, auth hydrated, and splash finished
     if (!rootNavigationState?.key || !fontsLoaded || isLoading || !splashDone) return;
 
-    const inAuthGroup = segments[0] === '(auth)';
-    const inOnboardingGroup = segments[0] === '(onboarding)';
+    const inAuthGroup = segments[0] === "(auth)";
+    const inOnboardingGroup = segments[0] === "(onboarding)";
 
     try {
       if (isAuthenticated && (inAuthGroup || inOnboardingGroup || !segments[0])) {
@@ -81,14 +94,25 @@ export default function RootLayout() {
     } catch (err) {
       console.warn("Navigation failed (likely due to ErrorBoundary removing Stack):", err);
     }
-  }, [isLoading, isAuthenticated, user?.role, hasLaunchedBefore, hasSeenOnboarding, splashDone, rootNavigationState?.key, segments, fontsLoaded]);
-
-
+  }, [
+    isLoading,
+    isAuthenticated,
+    user?.role,
+    hasLaunchedBefore,
+    hasSeenOnboarding,
+    splashDone,
+    rootNavigationState?.key,
+    segments,
+    fontsLoaded,
+  ]);
 
   return (
     <SafeAreaProvider>
+      <OfflineBanner />
       <QueryClientProvider client={queryClient}>
-        <PaystackProvider publicKey={process.env.EXPO_PUBLIC_PAYSTACK_PUBLIC_KEY || "pk_test_placeholder"}>
+        <PaystackProvider
+          publicKey={process.env.EXPO_PUBLIC_PAYSTACK_PUBLIC_KEY || "pk_test_placeholder"}
+        >
           <StatusBar style="dark" />
           <ErrorBoundary>
             <Stack screenOptions={{ headerShown: false }}>
@@ -99,8 +123,20 @@ export default function RootLayout() {
               <Stack.Screen name="(dispatcher)" />
             </Stack>
             {(!fontsLoaded || isLoading || !splashDone) && (
-              <View style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: 'white', justifyContent: 'center', alignItems: 'center', zIndex: 9999 }}>
-                {(!fontsLoaded || isLoading) ? null : (
+              <View
+                style={{
+                  position: "absolute",
+                  top: 0,
+                  left: 0,
+                  right: 0,
+                  bottom: 0,
+                  backgroundColor: "white",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  zIndex: 9999,
+                }}
+              >
+                {!fontsLoaded || isLoading ? null : (
                   <AnimatedSplashScreen onAnimationComplete={() => setSplashDone(true)} />
                 )}
               </View>

@@ -14,7 +14,7 @@ export default function ChatListScreen() {
   const insets = useSafeAreaInsets();
   const { user } = useAuthStore();
   const { data: conversations, isLoading, refetch } = useConversations();
-  const onlineUsers = useSocketStore(s => s.onlineUsers);
+  const onlineUsers = useSocketStore((s) => s.onlineUsers);
 
   if (isLoading) {
     return (
@@ -37,7 +37,11 @@ export default function ChatListScreen() {
       >
         <View className="relative">
           <Image
-            source={{ uri: otherParticipant.image || "https://ui-avatars.com/api/?name=" + encodeURIComponent(otherParticipant.name) }}
+            source={{
+              uri:
+                otherParticipant.image ||
+                "https://ui-avatars.com/api/?name=" + encodeURIComponent(otherParticipant.name),
+            }}
             style={{ width: 50, height: 50, borderRadius: 25 }}
             contentFit="cover"
           />
@@ -65,7 +69,9 @@ export default function ChatListScreen() {
               }`}
               numberOfLines={1}
             >
-              {item.lastMessage?.type === 'IMAGE' ? '📷 Image' : (item.lastMessage?.content || "No messages yet")}
+              {item.lastMessage?.type === "IMAGE"
+                ? "📷 Image"
+                : item.lastMessage?.content || "No messages yet"}
             </Text>
 
             {item.unreadCount > 0 && (
@@ -83,13 +89,14 @@ export default function ChatListScreen() {
 
   return (
     <View className="flex-1 bg-background">
-      <View 
-        className="px-5 bg-card pb-4 border-b border-border flex-row items-center justify-between shadow-sm z-10" 
-        style={{ paddingTop: (insets.top || 12) + 12 }}
+      <View
+        className="px-5 pt-4 pb-4 bg-card border-b border-border"
+        style={{ paddingTop: insets.top + 12 }}
       >
-        <BackButton className="w-10 h-10 items-start justify-center active:opacity-70" />
-        <Text className="text-[18px] font-heading font-bold text-foreground">Messages</Text>
-        <View className="w-10 h-10" />
+        <View className="flex-row items-center gap-3">
+          <BackButton />
+          <Text className="text-[20px] font-heading font-black text-foreground">Chats</Text>
+        </View>
       </View>
 
       <FlatList
@@ -103,7 +110,9 @@ export default function ChatListScreen() {
         ListEmptyComponent={
           <View className="flex-1 items-center justify-center py-20 px-5">
             <Icon name="message-square" size={64} color="#cbd5e1" />
-            <Text className="text-foreground font-heading font-bold text-[18px] mt-4 text-center">No messages yet</Text>
+            <Text className="text-foreground font-heading font-bold text-[18px] mt-4 text-center">
+              No messages yet
+            </Text>
             <Text className="text-muted-foreground font-body text-[14px] mt-2 text-center">
               Your conversations with vendors and riders will appear here.
             </Text>

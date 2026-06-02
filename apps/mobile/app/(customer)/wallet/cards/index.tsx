@@ -15,31 +15,28 @@ export default function CardsScreen() {
   const setDefault = useSetDefaultCard();
 
   const handleDelete = (id: string) => {
-    Alert.alert(
-      "Remove Card",
-      "Are you sure you want to remove this card?",
-      [
-        { text: "Cancel", style: "cancel" },
-        { 
-          text: "Remove", 
-          style: "destructive", 
-          onPress: () => deleteCard.mutate(id) 
-        }
-      ]
-    );
+    Alert.alert("Remove Card", "Are you sure you want to remove this card?", [
+      { text: "Cancel", style: "cancel" },
+      {
+        text: "Remove",
+        style: "destructive",
+        onPress: () => deleteCard.mutate(id),
+      },
+    ]);
   };
 
-
-
   return (
-    <View className="flex-1 bg-[#F9FAFB]" style={{ paddingTop: insets.top }}>
-      {/* Custom Header */}
-      <View className="flex-row items-center justify-between px-5 py-4 bg-[#F9FAFB] border-b border-gray-100 z-10">
-        <BackButton className="-ml-2" />
-        <Text className="text-lg font-bold text-gray-900">My Cards</Text>
-        <View className="w-10 h-10" />
+    <View className="flex-1 bg-background">
+      <View
+        className="px-5 pt-4 pb-4 bg-card border-b border-border"
+        style={{ paddingTop: insets.top + 12 }}
+      >
+        <View className="flex-row items-center gap-3">
+          <BackButton />
+          <Text className="text-[20px] font-heading font-black text-foreground">My Cards</Text>
+        </View>
       </View>
-      
+
       {isLoading ? (
         <View className="flex-1 items-center justify-center">
           <ActivityIndicator size="large" color="#2563EB" />
@@ -64,7 +61,7 @@ export default function CardsScreen() {
           renderItem={({ item }) => (
             <View className="mb-8">
               {/* Card Face */}
-              <View 
+              <View
                 className="rounded-3xl overflow-hidden shadow-lg border border-white/10"
                 style={{
                   shadowColor: getCardColors(item.type)[0],
@@ -78,7 +75,7 @@ export default function CardsScreen() {
                   colors={getCardColors(item.id, item.type) as any}
                   start={{ x: 0, y: 0 }}
                   end={{ x: 1, y: 1 }}
-                  style={{ height: 220, position: 'relative' }}
+                  style={{ height: 220, position: "relative" }}
                 >
                   {/* Decorative Elements */}
                   <View className="absolute -right-12 -top-12 w-48 h-48 rounded-full bg-white/5" />
@@ -96,7 +93,12 @@ export default function CardsScreen() {
                           <View className="h-full w-[1px] bg-yellow-600/30 absolute left-1/3" />
                           <View className="h-full w-[1px] bg-yellow-600/30 absolute right-1/3" />
                         </View>
-                        <Icon name="wifi" size={20} color="rgba(255,255,255,0.8)" style={{ transform: [{ rotate: '90deg' }] }} />
+                        <Icon
+                          name="wifi"
+                          size={20}
+                          color="rgba(255,255,255,0.8)"
+                          style={{ transform: [{ rotate: "90deg" }] }}
+                        />
                       </View>
                       <Text className="text-white font-extrabold text-2xl tracking-wider italic shadow-sm">
                         {item.type.toUpperCase()}
@@ -105,11 +107,19 @@ export default function CardsScreen() {
 
                     {/* Middle Row: Number */}
                     <View className="mt-4">
-                      <Text className="text-white/70 text-[10px] uppercase tracking-[2px] mb-1 font-medium">Card Number</Text>
+                      <Text className="text-white/70 text-[10px] uppercase tracking-[2px] mb-1 font-medium">
+                        Card Number
+                      </Text>
                       <View className="flex-row items-center mt-1">
-                        <Text className="text-white font-bold text-lg tracking-[4px] mr-2">••••</Text>
-                        <Text className="text-white font-bold text-lg tracking-[4px] mr-2">••••</Text>
-                        <Text className="text-white font-bold text-lg tracking-[4px] mr-2">••••</Text>
+                        <Text className="text-white font-bold text-lg tracking-[4px] mr-2">
+                          ••••
+                        </Text>
+                        <Text className="text-white font-bold text-lg tracking-[4px] mr-2">
+                          ••••
+                        </Text>
+                        <Text className="text-white font-bold text-lg tracking-[4px] mr-2">
+                          ••••
+                        </Text>
                         <Text className="text-white font-mono text-xl tracking-[2px] font-bold shadow-sm mt-0.5">
                           {item.last4}
                         </Text>
@@ -119,13 +129,20 @@ export default function CardsScreen() {
                     {/* Bottom Row: Name & Expiry */}
                     <View className="flex-row justify-between items-end mt-4">
                       <View className="flex-1 pr-4">
-                        <Text className="text-white/70 text-[10px] uppercase tracking-[2px] mb-1 font-medium">Cardholder Name</Text>
-                        <Text className="text-white font-bold text-[15px] tracking-widest uppercase shadow-sm" numberOfLines={1}>
+                        <Text className="text-white/70 text-[10px] uppercase tracking-[2px] mb-1 font-medium">
+                          Cardholder Name
+                        </Text>
+                        <Text
+                          className="text-white font-bold text-[15px] tracking-widest uppercase shadow-sm"
+                          numberOfLines={1}
+                        >
                           {item.cardholderName}
                         </Text>
                       </View>
                       <View className="items-end">
-                        <Text className="text-white/70 text-[10px] uppercase tracking-[2px] mb-1 font-medium">Valid Thru</Text>
+                        <Text className="text-white/70 text-[10px] uppercase tracking-[2px] mb-1 font-medium">
+                          Valid Thru
+                        </Text>
                         <Text className="text-white font-bold text-[15px] tracking-widest shadow-sm">
                           {item.expiryMonth}/{item.expiryYear}
                         </Text>
@@ -134,34 +151,38 @@ export default function CardsScreen() {
                   </View>
                 </LinearGradient>
               </View>
-              
+
               {/* Action Bar Below Card */}
               <View className="flex-row justify-between items-center mt-4 px-2">
                 <View className="flex-row items-center">
                   {item.isDefault ? (
                     <View className="bg-green-100/80 px-4 py-2 rounded-full flex-row items-center border border-green-200">
                       <Icon name="check-circle" size={14} color="#15803D" />
-                      <Text className="text-green-800 text-xs font-bold ml-1.5 tracking-wide">Primary Card</Text>
+                      <Text className="text-green-800 text-xs font-bold ml-1.5 tracking-wide">
+                        Primary Card
+                      </Text>
                     </View>
                   ) : (
-                    <Pressable 
+                    <Pressable
                       onPress={() => setDefault.mutate(item.id)}
                       className="bg-gray-100 px-4 py-2 rounded-full active:bg-gray-200 border border-gray-200"
                     >
-                      <Text className="text-gray-700 text-xs font-bold tracking-wide">Set as Primary</Text>
+                      <Text className="text-gray-700 text-xs font-bold tracking-wide">
+                        Set as Primary
+                      </Text>
                     </Pressable>
                   )}
                 </View>
-                
+
                 <View className="flex-row items-center gap-2">
-                  <Pressable 
+                  <Pressable
                     onPress={() => router.push(`/(customer)/wallet/cards/edit/${item.id}`)}
                     className="p-2.5 rounded-full bg-blue-50 active:bg-blue-100 border border-blue-100"
                   >
                     <Icon name="edit-2" size={18} color="#2563EB" />
                   </Pressable>
 
-                  <Pressable 
+                  <Pressable
                     onPress={() => handleDelete(item.id)}
                     className="p-2.5 rounded-full bg-red-50 active:bg-red-100 border border-red-100"
                   >
@@ -175,16 +196,14 @@ export default function CardsScreen() {
       )}
 
       {/* Floating Add Button */}
-      <LinearGradient 
+      <LinearGradient
         colors={["transparent", "rgba(249, 250, 251, 0.8)", "#F9FAFB"]}
         locations={[0, 0.4, 1]}
         style={{ position: "absolute", bottom: 0, left: 0, right: 0, padding: 20, paddingTop: 40 }}
       >
-        <Pressable 
+        <Pressable
           onPress={() => router.push("/(customer)/wallet/cards/add")}
-          style={({ pressed }) => [
-            { transform: [{ scale: pressed ? 0.98 : 1 }] },
-          ]}
+          style={({ pressed }) => [{ transform: [{ scale: pressed ? 0.98 : 1 }] }]}
           className="bg-[#2563EB] w-full rounded-2xl py-4 flex-row items-center justify-center shadow-lg shadow-blue-500/30"
         >
           <Icon name="plus" size={22} color="#fff" />

@@ -10,7 +10,8 @@
     "web": "expo start --web",
     "lint": "expo lint",
     "postinstall": "npx patch-package",
-    "test:e2e": ".\\run-e2e.bat"
+    "test:e2e": ".\\run-e2e.bat",
+    "prepare": "husky"
   },
   "dependencies": {
     "@better-auth/infra": "^0.2.11",
@@ -19,13 +20,16 @@
     "@expo-google-fonts/raleway": "^0.4.2",
     "@prisma/client": "^5.22.0",
     "@react-native-async-storage/async-storage": "^3.1.1",
+    "@react-native-community/netinfo": "11.4.1",
     "@react-navigation/bottom-tabs": "^7.0.0",
     "@react-navigation/native": "^7.0.0",
+    "@sentry/react-native": "^8.13.0",
     "@tanstack/react-query": "^5.60.0",
     "axios": "^1.7.0",
     "better-auth": "^1.6.13",
     "date-fns": "^4.3.0",
     "expo": "~54.0.35",
+    "expo-application": "~7.0.8",
     "expo-blur": "~15.0.8",
     "expo-build-properties": "~1.0.10",
     "expo-clipboard": "~8.0.8",
@@ -42,6 +46,7 @@
     "expo-splash-screen": "~31.0.13",
     "expo-status-bar": "~3.0.0",
     "expo-system-ui": "~6.0.9",
+    "expo-updates": "~29.0.18",
     "expo-web-browser": "~15.0.0",
     "lucide-react-native": "^1.16.0",
     "nativewind": "^4.1.23",
@@ -64,7 +69,7 @@
     "socket.io-client": "^4.8.3",
     "wonka": "^6.3.6",
     "zod": "^3.23.0",
-    "zustand": "^5.0.0"
+    "zustand": "^5.0.14"
   },
   "devDependencies": {
     "@babel/core": "^7.25.0",
@@ -73,6 +78,9 @@
     "babel-preset-expo": "~54.0.0",
     "eslint": "^9.0.0",
     "eslint-config-expo": "~10.0.0",
+    "husky": "^9.1.7",
+    "lint-staged": "^17.0.7",
+    "prettier": "^3.8.3",
     "react-refresh": "^0.18.0",
     "tailwindcss": "^3.4.17",
     "typescript": "~5.9.2"

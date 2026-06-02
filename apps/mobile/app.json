@@ -62,7 +62,8 @@
             "newArchEnabled": true
           }
         }
-      ]
+      ],
+      "@sentry/react-native/expo"
     ],
     "experiments": {
       "typedRoutes": true
@@ -72,6 +73,14 @@
       "eas": {
         "projectId": "a830e794-6932-47fd-9779-9b1317c59f3f"
       }
+    },
+    "updates": {
+      "enabled": true,
+      "fallbackToCacheTimeout": 10000,
+      "url": "https://u.expo.dev/a830e794-6932-47fd-9779-9b1317c59f3f"
+    },
+    "runtimeVersion": {
+      "policy": "appVersion"
     }
   }
 }

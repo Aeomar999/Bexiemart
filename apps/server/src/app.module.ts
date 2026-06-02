@@ -38,8 +38,9 @@ import { AdminModule } from "./modules/admin/admin.module";
 import { HealthModule } from "./modules/health/health.module";
 import { PrismaModule } from "./prisma/prisma.module";
 import { DispatcherModule } from "./modules/dispatcher/dispatcher.module";
-import { StoryModule } from './modules/story/story.module';
-import { MetricsModule } from './modules/metrics/metrics.module';
+import { StoryModule } from "./modules/story/story.module";
+import { MetricsModule } from "./modules/metrics/metrics.module";
+import { CollectionsModule } from "./modules/collections/collections.module";
 
 import { WinstonModule } from "nest-winston";
 import * as winston from "winston";
@@ -53,7 +54,7 @@ import * as winston from "winston";
           format: winston.format.combine(
             winston.format.timestamp(),
             winston.format.ms(),
-            winston.format.json(),
+            winston.format.json()
           ),
         }),
       ],
@@ -95,10 +96,9 @@ import * as winston from "winston";
     DispatcherModule,
     StoryModule,
     MetricsModule,
+    CollectionsModule,
   ],
-  providers: [
-    { provide: APP_GUARD, useClass: ThrottlerGuard },
-  ],
+  providers: [{ provide: APP_GUARD, useClass: ThrottlerGuard }],
 })
 export class AppModule {
   configure(consumer: MiddlewareConsumer) {

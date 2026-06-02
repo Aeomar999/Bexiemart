@@ -1,6 +1,8 @@
-import { create } from 'zustand';
-import { io, Socket } from 'socket.io-client';
-import { useAuthStore } from './auth-store';
+import { create } from "zustand";
+import { persist, createJSONStorage } from "zustand/middleware";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { io, Socket } from "socket.io-client";
+import { useAuthStore } from "./auth-store";
 
 import { ENV } from "../../config";
 
@@ -19,83 +21,89 @@ interface SocketState {
   flushOfflineMessages: () => void;
 }
 
-export const useSocketStore = create<SocketState>((set, get) => ({
-  socket: null,
-  isConnected: false,
-  onlineUsers: {},
-  offlineMessages: [],
-  
-  connect: () => {
-    const { token } = useAuthStore.getState();
-    if (!token) return;
-    
-    if (get().socket?.connected) return;
+export const useSocketStore = create<SocketState>()(
+  persist(
+    (set, get) => ({
+      socket: null,
+      isConnected: false,
+      onlineUsers: {},
+      offlineMessages: [],
 
-    const socket = io(SOCKET_URL, {
-      auth: { token },
-      transports: ['websocket'],
-    });
+      connect: () => {
+        const { token } = useAuthStore.getState();
+        if (!token) return;
 
-    socket.on('connect', () => {
-      set({ isConnected: true });
-      get().flushOfflineMessages();
-    });
+        if (get().socket?.connected) return;
 
-    socket.on('disconnect', () => {
-      set({ isConnected: false });
-    });
+        const socket = io(SOCKET_URL, {
+          auth: { token },
+          transports: ["websocket"],
+        });
 
-    socket.on('presence_update', (data: { userId: string; isOnline: boolean }) => {
-      set((state) => ({
-        onlineUsers: {
-          ...state.onlineUsers,
-          [data.userId]: data.isOnline,
-        },
-      }));
-    });
+        socket.on("connect", () => {
+          set({ isConnected: true });
+          get().flushOfflineMessages();
+        });
 
-    set({ socket });
-  },
+        socket.on("disconnect", () => {
+          set({ isConnected: false });
+        });
 
-  disconnect: () => {
-    const { socket } = get();
-    if (socket) {
-      socket.disconnect();
-      set({ socket: null, isConnected: false, onlineUsers: {} });
+        socket.on("presence_update", (data: { userId: string; isOnline: boolean }) => {
+          set((state) => ({
+            onlineUsers: {
+              ...state.onlineUsers,
+              [data.userId]: data.isOnline,
+            },
+          }));
+        });
+
+        set({ socket });
+      },
+
+      disconnect: () => {
+        const { socket } = get();
+        if (socket) {
+          socket.disconnect();
+          set({ socket: null, isConnected: false, onlineUsers: {} });
+        }
+      },
+
+      subscribePresence: (userIds: string[]) => {
+        const { socket } = get();
+        if (socket?.connected && userIds.length > 0) {
+          socket.emit("subscribe_presence", { userIds });
+        }
+      },
+
+      unsubscribePresence: (userIds: string[]) => {
+        const { socket } = get();
+        if (socket?.connected && userIds.length > 0) {
+          socket.emit("unsubscribe_presence", { userIds });
+        }
+      },
+
+      enqueueMessage: (message: any) => {
+        set((state) => ({ offlineMessages: [...state.offlineMessages, message] }));
+        const { isConnected } = get();
+        if (isConnected) {
+          get().flushOfflineMessages();
+        }
+      },
+
+      flushOfflineMessages: () => {
+        const { socket, offlineMessages } = get();
+        if (socket?.connected && offlineMessages.length > 0) {
+          offlineMessages.forEach((msg) => {
+            socket.emit("send_message", msg);
+          });
+          set({ offlineMessages: [] });
+        }
+      },
+    }),
+    {
+      name: "socket-storage",
+      storage: createJSONStorage(() => AsyncStorage),
     }
-  },
-
-  subscribePresence: (userIds: string[]) => {
-    const { socket } = get();
-    if (socket?.connected && userIds.length > 0) {
-      socket.emit('subscribe_presence', { userIds });
-    }
-  },
-
-  unsubscribePresence: (userIds: string[]) => {
-    const { socket } = get();
-    if (socket?.connected && userIds.length > 0) {
-      socket.emit('unsubscribe_presence', { userIds });
-    }
-  },
-
-  enqueueMessage: (message: any) => {
-    set((state) => ({ offlineMessages: [...state.offlineMessages, message] }));
-    const { isConnected } = get();
-    if (isConnected) {
-      get().flushOfflineMessages();
-    }
-  },
-
-  flushOfflineMessages: () => {
-    const { socket, offlineMessages } = get();
-    if (socket?.connected && offlineMessages.length > 0) {
-      offlineMessages.forEach((msg) => {
-        socket.emit('send_message', msg);
-      });
-      set({ offlineMessages: [] });
-    }
-  },
-
-
-}));
+  )
+);

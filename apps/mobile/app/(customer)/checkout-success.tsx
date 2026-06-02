@@ -2,6 +2,7 @@ import { View, Text, ActivityIndicator } from "react-native";
 import { useRouter, useLocalSearchParams } from "expo-router";
 import { useState } from "react";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { BackButton } from "@/components/ui/BackButton";
 import { Button } from "@/components/ui/Button";
 import { Icon } from "@/components/ui/Icon";
 import { useOrder } from "@/lib/hooks/use-orders";
@@ -9,7 +10,12 @@ import { useOrder } from "@/lib/hooks/use-orders";
 export default function CheckoutSuccessScreen() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
-  const { orderId, paymentMethod, deliveryMethod, useBexieCoins: useBexieCoinsParam } = useLocalSearchParams<{
+  const {
+    orderId,
+    paymentMethod,
+    deliveryMethod,
+    useBexieCoins: useBexieCoinsParam,
+  } = useLocalSearchParams<{
     orderId: string;
     paymentMethod: string;
     deliveryMethod: string;
@@ -24,7 +30,10 @@ export default function CheckoutSuccessScreen() {
 
   if (isLoading || stage === "processing") {
     return (
-      <View className="flex-1 bg-background items-center justify-center px-8" style={{ paddingTop: insets.top }}>
+      <View
+        className="flex-1 bg-background items-center justify-center px-8"
+        style={{ paddingTop: insets.top }}
+      >
         <View className="w-24 h-24 rounded-full bg-brand-50 items-center justify-center mb-8">
           <ActivityIndicator size="large" color="#004CFF" />
         </View>
@@ -47,7 +56,10 @@ export default function CheckoutSuccessScreen() {
 
   if (isError || stage === "failure") {
     return (
-      <View className="flex-1 bg-background items-center justify-center px-8" style={{ paddingTop: insets.top }}>
+      <View
+        className="flex-1 bg-background items-center justify-center px-8"
+        style={{ paddingTop: insets.top }}
+      >
         <View className="w-24 h-24 rounded-full bg-rose-50 items-center justify-center mb-8">
           <Icon name="alert-circle" size={48} color="#ef4444" />
         </View>
@@ -58,15 +70,35 @@ export default function CheckoutSuccessScreen() {
           Your payment could not be processed. Please try again or use a different payment method.
         </Text>
         <View className="gap-3 w-full px-8">
-          <Button title="Try Again" size="lg" onPress={() => { setStage("processing"); router.back(); }} className="w-full rounded-full" />
-          <Button title="Back to Cart" variant="outline" size="lg" onPress={() => router.replace("/(customer)/cart")} className="w-full rounded-full" />
+          <Button
+            title="Try Again"
+            size="lg"
+            onPress={() => {
+              setStage("processing");
+              router.back();
+            }}
+            className="w-full rounded-full"
+          />
+          <Button
+            title="Back to Cart"
+            variant="outline"
+            size="lg"
+            onPress={() => router.replace("/(customer)/cart")}
+            className="w-full rounded-full"
+          />
         </View>
       </View>
     );
   }
 
   return (
-    <View className="flex-1 bg-background items-center justify-center px-8" style={{ paddingTop: insets.top }}>
+    <View
+      className="flex-1 bg-background items-center justify-center px-8"
+      style={{ paddingTop: insets.top }}
+    >
+      <View className="absolute top-4 left-5 z-10" style={{ top: insets.top + 8 }}>
+        <BackButton onPress={() => router.replace("/(customer)/orders")} />
+      </View>
       <View className="w-24 h-24 rounded-full bg-emerald-50 items-center justify-center mb-8">
         <Icon name="check-circle" size={48} color="#10b981" />
       </View>
@@ -83,20 +115,37 @@ export default function CheckoutSuccessScreen() {
         </View>
         <View className="flex-row justify-between py-1.5 border-b border-border">
           <Text className="text-body-sm text-muted-foreground font-body">Total</Text>
-          <Text className="text-body-sm font-bold text-brand-600 font-heading">GHS {Number(parsedTotal).toFixed(2)}</Text>
+          <Text className="text-body-sm font-bold text-brand-600 font-heading">
+            GHS {Number(parsedTotal).toFixed(2)}
+          </Text>
         </View>
         <View className="flex-row justify-between py-1.5 border-b border-border">
           <Text className="text-body-sm text-muted-foreground font-body">Delivery</Text>
-          <Text className="text-body-sm font-semibold text-muted-foreground font-body">{deliveryMethod === "express" ? "Express" : "Standard"}</Text>
+          <Text className="text-body-sm font-semibold text-muted-foreground font-body">
+            {deliveryMethod === "express" ? "Express" : "Standard"}
+          </Text>
         </View>
         <View className="flex-row justify-between py-1.5">
           <Text className="text-body-sm text-muted-foreground font-body">Date</Text>
-          <Text className="text-body-sm font-semibold text-muted-foreground font-body">{new Date().toLocaleDateString()}</Text>
+          <Text className="text-body-sm font-semibold text-muted-foreground font-body">
+            {new Date().toLocaleDateString()}
+          </Text>
         </View>
       </View>
       <View className="gap-3 w-full">
-        <Button title="View Orders" size="lg" onPress={() => router.replace("/(customer)/orders")} className="w-full rounded-full" />
-        <Button title="Continue Shopping" variant="outline" size="lg" onPress={() => router.replace("/(customer)/(shop)")} className="w-full rounded-full" />
+        <Button
+          title="View Orders"
+          size="lg"
+          onPress={() => router.replace("/(customer)/orders")}
+          className="w-full rounded-full"
+        />
+        <Button
+          title="Continue Shopping"
+          variant="outline"
+          size="lg"
+          onPress={() => router.replace("/(customer)/(shop)")}
+          className="w-full rounded-full"
+        />
       </View>
     </View>
   );

@@ -1,5 +1,14 @@
 import { BackButton } from "@/components/ui/BackButton";
-import { View, Text, ScrollView, TextInput, KeyboardAvoidingView, Platform, Alert, Pressable } from "react-native";
+import {
+  View,
+  Text,
+  ScrollView,
+  TextInput,
+  KeyboardAvoidingView,
+  Platform,
+  Alert,
+  Pressable,
+} from "react-native";
 import { useState } from "react";
 import { useRouter } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -33,26 +42,17 @@ export default function RequestMoneyScreen() {
   const isValidAmount = numAmount > 0;
 
   return (
-    <KeyboardAvoidingView 
+    <KeyboardAvoidingView
       behavior={Platform.OS === "ios" ? "padding" : undefined}
-      className="flex-1 bg-card"
+      className="flex-1 bg-background"
     >
       <View
-        className="px-5 pb-4 bg-card"
-        style={{ paddingTop: (insets.top || 12) + 12 }}
+        className="px-5 pt-4 pb-4 bg-card border-b border-border"
+        style={{ paddingTop: insets.top + 12 }}
       >
-        <View className="flex-row items-center justify-between">
-          <View className="flex-row items-center gap-3">
-            <BackButton />
-            <Text className="text-[20px] font-heading font-black text-foreground">Request Money</Text>
-          </View>
-          <Pressable style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
-            className="bg-brand-50 px-3 py-1.5 rounded-full flex-row items-center gap-1.5"
-            onPress={() => Alert.alert("QR Code", "QR code sharing mockup")}
-          >
-            <Icon name="maximize" size={14} color="#004CFF" />
-            <Text className="text-[12px] font-bold text-brand-600">My QR</Text>
-          </Pressable>
+        <View className="flex-row items-center gap-3">
+          <BackButton />
+          <Text className="text-[20px] font-heading font-black text-foreground">Request Money</Text>
         </View>
       </View>
 
@@ -63,7 +63,9 @@ export default function RequestMoneyScreen() {
         keyboardShouldPersistTaps="always"
         keyboardDismissMode="on-drag"
       >
-        <Text className="text-[14px] font-bold text-muted-foreground font-heading mb-2 ml-1 mt-4">Request Amount</Text>
+        <Text className="text-[14px] font-bold text-muted-foreground font-heading mb-2 ml-1 mt-4">
+          Request Amount
+        </Text>
         <View className="bg-background p-4 rounded-[20px] mb-8 flex-row items-center">
           <Text className="text-[20px] font-bold text-foreground mr-2">GHS</Text>
           <TextInput
@@ -82,12 +84,15 @@ export default function RequestMoneyScreen() {
             <Icon name="arrow-down-left" size={20} color="#059669" />
           </View>
           <Text className="text-[14px] text-muted-foreground font-body leading-[22px]">
-            Ask friends, family, or customers for money. They will receive a notification and a secure link to pay.
+            Ask friends, family, or customers for money. They will receive a notification and a
+            secure link to pay.
           </Text>
         </View>
 
         <View className="mb-6">
-          <Text className="text-[14px] font-bold text-muted-foreground font-heading mb-2 ml-1">Request From</Text>
+          <Text className="text-[14px] font-bold text-muted-foreground font-heading mb-2 ml-1">
+            Request From
+          </Text>
           <Input
             placeholder="Phone Number or Username"
             value={contact}
@@ -98,7 +103,9 @@ export default function RequestMoneyScreen() {
         </View>
 
         <View className="mb-6">
-          <Text className="text-[14px] font-bold text-muted-foreground font-heading mb-2 ml-1">Note (Optional)</Text>
+          <Text className="text-[14px] font-bold text-muted-foreground font-heading mb-2 ml-1">
+            Note (Optional)
+          </Text>
           <Input
             placeholder="What's this for?"
             value={note}

@@ -35,7 +35,10 @@ export default function TopUpScreen() {
 
     setIsProcessing(true);
     try {
-      const result = await topUpMutation.mutateAsync({ amount: numAmount, channel: selectedMethod });
+      const result = await topUpMutation.mutateAsync({
+        amount: numAmount,
+        channel: selectedMethod,
+      });
       if (result?.authorizationUrl) {
         setPayUrl(result.authorizationUrl);
       }
@@ -59,7 +62,10 @@ export default function TopUpScreen() {
 
   if (isSuccess) {
     return (
-      <View className="flex-1 bg-brand-600 justify-center items-center px-5" style={{ paddingTop: insets.top }}>
+      <View
+        className="flex-1 bg-brand-600 justify-center items-center px-5"
+        style={{ paddingTop: insets.top }}
+      >
         <View className="w-20 h-20 bg-card rounded-full items-center justify-center mb-6">
           <Icon name="check" size={40} color="#10b981" />
         </View>
@@ -74,7 +80,9 @@ export default function TopUpScreen() {
             title="Complete Payment"
             variant="primary"
             className="w-full bg-card border-0 mb-3"
-            onPress={() => Toast.show({ type: "info", text1: "Pay", text2: "Opening payment page..." })}
+            onPress={() =>
+              Toast.show({ type: "info", text1: "Pay", text2: "Opening payment page..." })
+            }
           />
         ) : null}
         <Button
@@ -90,15 +98,10 @@ export default function TopUpScreen() {
   const isValidAmount = parseFloat(amount || "0") > 0;
 
   return (
-    <View style={{ flex: 1, backgroundColor: "#ffffff" }}>
+    <View className="flex-1 bg-background">
       <View
-        style={{
-          paddingTop: (insets.top || 12) + 12,
-          paddingBottom: 16,
-          paddingHorizontal: 20,
-          backgroundColor: "#ffffff",
-          zIndex: 10,
-        }}
+        className="px-5 pt-4 pb-4 bg-card border-b border-border"
+        style={{ paddingTop: insets.top + 12 }}
       >
         <View className="flex-row items-center gap-3">
           <BackButton />
@@ -113,7 +116,9 @@ export default function TopUpScreen() {
         keyboardShouldPersistTaps="always"
         keyboardDismissMode="on-drag"
       >
-        <Text className="text-[14px] font-bold text-muted-foreground font-heading mb-2 ml-1 mt-2">Amount to Add</Text>
+        <Text className="text-[14px] font-bold text-muted-foreground font-heading mb-2 ml-1 mt-2">
+          Amount to Add
+        </Text>
         <View className="bg-background p-4 rounded-[20px] mb-6 flex-row items-center">
           <Text className="text-[20px] font-bold text-foreground mr-2">GHS</Text>
           <TextInput
@@ -165,8 +170,17 @@ export default function TopUpScreen() {
           })}
         </View>
 
-        <Text className="text-[16px] font-bold text-foreground font-heading mb-4 px-1">Payment Method</Text>
-        <View style={{ backgroundColor: "#f8fafc", borderRadius: 20, overflow: "hidden", marginBottom: 32 }}>
+        <Text className="text-[16px] font-bold text-foreground font-heading mb-4 px-1">
+          Payment Method
+        </Text>
+        <View
+          style={{
+            backgroundColor: "#f8fafc",
+            borderRadius: 20,
+            overflow: "hidden",
+            marginBottom: 32,
+          }}
+        >
           {PAYMENT_METHODS.map((method, idx) => {
             const isSelected = selectedMethod === method.id;
             const isLast = idx === PAYMENT_METHODS.length - 1;

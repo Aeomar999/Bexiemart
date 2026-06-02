@@ -32,8 +32,11 @@ export function useCurrentUser() {
     queryKey: AUTH_KEYS.currentUser,
     queryFn: async () => {
       const response = await authApi.getCurrentUser();
-      setUser(response.data.user as any);
-      return response.data.user as any;
+      const user = response.data?.user || null;
+      if (user) {
+        setUser(user as any);
+      }
+      return user;
     },
     enabled: !!token,
     retry: false,

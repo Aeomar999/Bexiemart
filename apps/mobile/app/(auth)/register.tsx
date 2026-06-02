@@ -3,6 +3,7 @@ import { View, Text, ScrollView, TouchableOpacity } from "react-native";
 import { router } from "expo-router";
 import { Input } from "../../src/components/ui/Input";
 import { Button } from "../../src/components/ui/Button";
+import { Announcement } from "../../src/components/ui/Announcement";
 import { useRegister } from "../../src/lib/hooks/use-auth";
 import { useState } from "react";
 // @ts-expect-error
@@ -55,7 +56,7 @@ export default function RegisterScreen() {
     if (!validate()) return;
 
     registerMutation.mutate(
-      { name: name.trim(), email: email.trim(), password, role },
+      { name: name.trim(), email: email.trim(), password, role, phone: phone.trim() },
       {
         onSuccess: () => router.replace("/(auth)/login"),
       }
@@ -138,17 +139,25 @@ export default function RegisterScreen() {
             <TouchableOpacity
               onPress={() => setRole("customer")}
               className="flex-1 h-12 rounded-xl items-center justify-center flex-row gap-2"
-              style={role === "customer" ? {
-                backgroundColor: "#FFFFFF",
-                borderWidth: 1,
-                borderColor: "#E2E8F0",
-              } : {
-                backgroundColor: "transparent",
-                borderWidth: 1,
-                borderColor: "transparent",
-              }}
+              style={
+                role === "customer"
+                  ? {
+                      backgroundColor: "#FFFFFF",
+                      borderWidth: 1,
+                      borderColor: "#E2E8F0",
+                    }
+                  : {
+                      backgroundColor: "transparent",
+                      borderWidth: 1,
+                      borderColor: "transparent",
+                    }
+              }
             >
-              <FontAwesome5 name="shopping-bag" size={14} color={role === "customer" ? "#004CFF" : "#64748B"} />
+              <FontAwesome5
+                name="shopping-bag"
+                size={14}
+                color={role === "customer" ? "#004CFF" : "#64748B"}
+              />
               <Text
                 className="font-heading font-semibold"
                 style={{ color: role === "customer" ? "#004CFF" : "#64748B" }}
@@ -160,17 +169,25 @@ export default function RegisterScreen() {
             <TouchableOpacity
               onPress={() => setRole("vendor")}
               className="flex-1 h-12 rounded-xl items-center justify-center flex-row gap-2"
-              style={role === "vendor" ? {
-                backgroundColor: "#FFFFFF",
-                borderWidth: 1,
-                borderColor: "#E2E8F0",
-              } : {
-                backgroundColor: "transparent",
-                borderWidth: 1,
-                borderColor: "transparent",
-              }}
+              style={
+                role === "vendor"
+                  ? {
+                      backgroundColor: "#FFFFFF",
+                      borderWidth: 1,
+                      borderColor: "#E2E8F0",
+                    }
+                  : {
+                      backgroundColor: "transparent",
+                      borderWidth: 1,
+                      borderColor: "transparent",
+                    }
+              }
             >
-              <FontAwesome5 name="store" size={14} color={role === "vendor" ? "#004CFF" : "#64748B"} />
+              <FontAwesome5
+                name="store"
+                size={14}
+                color={role === "vendor" ? "#004CFF" : "#64748B"}
+              />
               <Text
                 className="font-heading font-semibold"
                 style={{ color: role === "vendor" ? "#004CFF" : "#64748B" }}
@@ -182,9 +199,10 @@ export default function RegisterScreen() {
         </View>
 
         {registerMutation.error && (
-          <Text className="text-body-sm text-error font-body text-center">
-            {registerMutation.error?.message ?? "Registration failed. Please try again."}
-          </Text>
+          <Announcement
+            type="error"
+            message={registerMutation.error?.message ?? "Registration failed. Please try again."}
+          />
         )}
 
         <View className="w-full mt-2">
@@ -204,9 +222,7 @@ export default function RegisterScreen() {
           Already have an account?
         </Text>
         <TouchableOpacity onPress={() => router.replace("/(auth)/login")}>
-          <Text className="text-body-md text-brand-600 font-bold font-body">
-            Sign in
-          </Text>
+          <Text className="text-body-md text-brand-600 font-bold font-body">Sign in</Text>
         </TouchableOpacity>
       </View>
     </ScrollView>

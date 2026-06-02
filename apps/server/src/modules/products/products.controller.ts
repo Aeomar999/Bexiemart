@@ -4,9 +4,7 @@ import { AuthGuard } from "../../guards/auth.guard";
 import { ProductsService } from "./products.service";
 import { QueryProductsDto } from "./dto/query-products.dto";
 
-@ApiBearerAuth()
 @Controller("products")
-@UseGuards(AuthGuard)
 @ApiTags("Products")
 export class ProductsController {
   constructor(private readonly productsService: ProductsService) {}

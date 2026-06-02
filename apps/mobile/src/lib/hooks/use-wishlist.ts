@@ -8,7 +8,7 @@ export const WISHLIST_KEYS = {
 export function useWishlist() {
   return useQuery({
     queryKey: WISHLIST_KEYS.all,
-    queryFn: () => wishlistApi.getWishlist().then((r) => r.data),
+    queryFn: () => wishlistApi.getWishlist().then((r) => r.data.data),
   });
 }
 

@@ -13,6 +13,10 @@ export class RegisterDto {
 
   @IsOptional()
   @IsString()
+  phone?: string;
+
+  @IsOptional()
+  @IsString()
   @IsIn(["customer", "vendor", "dispatcher"])
   role?: string;
 }

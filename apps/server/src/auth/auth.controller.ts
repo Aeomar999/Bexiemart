@@ -35,10 +35,8 @@ export class AuthController {
   @ApiOperation({ summary: "Register a new user" })
   @Post("register")
   @HttpCode(HttpStatus.CREATED)
-  async register(
-    @Body() body: RegisterDto
-  ) {
-    const { email, password, name, role } = body;
+  async register(@Body() body: RegisterDto) {
+    const { email, password, name, role, phone } = body;
 
     const res = await auth.api.signUpEmail({
       body: { email, password, name },
@@ -54,9 +52,16 @@ export class AuthController {
 
     const cookie = res.headers.get("set-cookie");
     const tokenMatch = cookie?.match(/better-auth\.session_token=([^;]+)/);
-    const signedToken = tokenMatch ? tokenMatch[1] : null;
+    const signedToken = (tokenMatch ? decodeURIComponent(tokenMatch[1]) : null) || data.token;
 
     let user = data.user;
+
+    if (phone) {
+      user = await this.prisma.user.update({
+        where: { id: user.id },
+        data: { phoneNumber: phone },
+      });
+    }
 
     if (role === "vendor") {
       try {
@@ -64,10 +69,16 @@ export class AuthController {
           where: { id: user.id },
           data: { role: UserRole.VENDOR },
         });
-        
+
         user = updatedUser;
 
-        const slug = name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "") + "-" + Date.now().toString(36);
+        const slug =
+          name
+            .toLowerCase()
+            .replace(/[^a-z0-9]+/g, "-")
+            .replace(/^-|-$/g, "") +
+          "-" +
+          Date.now().toString(36);
 
         await this.prisma.vendorProfile.create({
           data: {
@@ -85,7 +96,9 @@ export class AuthController {
     return {
       user: user,
       token: signedToken || null,
-      message: signedToken ? "Registration successful" : "Please verify your email address before logging in."
+      message: signedToken
+        ? "Registration successful"
+        : "Please verify your email address before logging in.",
     };
   }
 
@@ -93,9 +106,7 @@ export class AuthController {
   @ApiOperation({ summary: "Login with email and password" })
   @Post("login")
   @HttpCode(HttpStatus.OK)
-  async login(
-    @Body() body: LoginDto
-  ) {
+  async login(@Body() body: LoginDto) {
     const { email, password } = body;
 
     const res = await auth.api.signInEmail({
@@ -111,22 +122,20 @@ export class AuthController {
       throw new UnauthorizedException(data.message || data.error?.message || "Invalid credentials");
     }
 
-    const cookie = res.headers.get("set-cookie");
-    const tokenMatch = cookie?.match(/better-auth\.session_token=([^;]+)/);
-    const signedToken = tokenMatch ? tokenMatch[1] : null;
+    const rawToken = data.token;
 
-    if (!signedToken) {
+    if (!rawToken) {
       throw new UnauthorizedException("Session creation failed");
     }
 
     // Fetch the full user from Prisma to ensure we get custom fields like 'role'
     const fullUser = await this.prisma.user.findUnique({
-      where: { id: data.user.id }
+      where: { id: data.user.id },
     });
 
     return {
       user: fullUser || data.user,
-      token: signedToken,
+      token: rawToken,
     };
   }
 
@@ -140,7 +149,7 @@ export class AuthController {
 
     const fullUser = await this.prisma.user.findUnique({
       where: { id: req.user.id },
-      include: { vendorProfile: true }
+      include: { vendorProfile: true },
     });
 
     return { user: fullUser || req.user };
@@ -165,9 +174,7 @@ export class AuthController {
   @ApiOperation({ summary: "Reset password with token" })
   @Post("reset-password")
   @HttpCode(HttpStatus.OK)
-  async resetPassword(
-    @Body() body: ResetPasswordDto
-  ) {
+  async resetPassword(@Body() body: ResetPasswordDto) {
     await auth.api.resetPassword({
       body: { newPassword: body.newPassword },
     });

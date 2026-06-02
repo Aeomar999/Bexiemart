@@ -1,6 +1,17 @@
 import { BackButton } from "@/components/ui/BackButton";
-import { View, Text, FlatList, ScrollView, Dimensions, useWindowDimensions, Pressable, Share, ActivityIndicator } from "react-native";
+import {
+  View,
+  Text,
+  FlatList,
+  ScrollView,
+  Dimensions,
+  useWindowDimensions,
+  Pressable,
+  Share,
+  ActivityIndicator,
+} from "react-native";
 import { useLocalSearchParams, useRouter } from "expo-router";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useState, useCallback, useRef } from "react";
 import { Image } from "expo-image";
 import { Button } from "@/components/ui/Button";
@@ -18,6 +29,7 @@ const { width: SCREEN_WIDTH } = Dimensions.get("window");
 export default function ProductDetailsScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const router = useRouter();
+  const insets = useSafeAreaInsets();
   const { data: product, isPending, isError, refetch } = useProduct(id);
   const addToCartMutation = useAddToCart();
 
@@ -29,28 +41,31 @@ export default function ProductDetailsScreen() {
 
   const flatListRef = useRef<FlatList>(null);
 
-  const onImageScroll = useCallback(({ viewableItems }: { viewableItems: Array<{ index: number | null }> }) => {
-    if (viewableItems.length > 0) {
-      setActiveImageIndex(viewableItems[0].index ?? 0);
-    }
-  }, []);
+  const onImageScroll = useCallback(
+    ({ viewableItems }: { viewableItems: Array<{ index: number | null }> }) => {
+      if (viewableItems.length > 0) {
+        setActiveImageIndex(viewableItems[0].index ?? 0);
+      }
+    },
+    []
+  );
 
   if (isPending) {
     return <LoadingState message="Loading product details..." />;
   }
-  
+
   if (isError) {
     return <ErrorState message="Failed to load product details." onRetry={refetch} />;
   }
-  
+
   if (!product) {
     return (
       <View className="flex-1 bg-background pt-12">
         <View className="px-5 pb-4">
           <BackButton />
         </View>
-        <EmptyState 
-          title="Product Not Found" 
+        <EmptyState
+          title="Product Not Found"
           description="The product you are looking for does not exist or has been removed."
           iconName="package-x"
         />
@@ -72,6 +87,17 @@ export default function ProductDetailsScreen() {
 
   return (
     <View className="flex-1 bg-background">
+      <View
+        className="px-5 pt-4 pb-4 bg-card border-b border-border"
+        style={{ paddingTop: insets.top + 12 }}
+      >
+        <View className="flex-row items-center gap-3">
+          <BackButton />
+          <Text className="text-[20px] font-heading font-black text-foreground">
+            {product?.name || "Product"}
+          </Text>
+        </View>
+      </View>
       <ScrollView contentContainerClassName="pb-40" showsVerticalScrollIndicator={false}>
         {/* ===== IMAGE GALLERY ===== */}
         <View className="relative">
@@ -89,25 +115,31 @@ export default function ProductDetailsScreen() {
             keyExtractor={(_, index) => index.toString()}
             renderItem={({ item }) => (
               <View style={{ width: SCREEN_WIDTH }} className="h-[320px] bg-muted">
-                <Image 
-                  source={{ uri: item.url }} 
-                  style={{ width: '100%', height: '100%' }} 
-                  contentFit="cover" 
+                <Image
+                  source={{ uri: item.url }}
+                  style={{ width: "100%", height: "100%" }}
+                  contentFit="cover"
                   transition={200}
                 />
               </View>
             )}
           />
 
-          {/* Back Button */}
-          <BackButton className="absolute top-12 left-4 /90 shadow-md" />
-
           {/* Share & Favorite */}
           <View className="absolute top-12 right-4 flex-row gap-2">
-            <Pressable style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]} className="w-10 h-10 rounded-full bg-card/90 items-center justify-center shadow-md" onPress={() => Share.share({ message: `Check out ${product.name} on Bexiemart! Only GHS ${product.price.toFixed(2)}` })}>
+            <Pressable
+              style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
+              className="w-10 h-10 rounded-full bg-card/90 items-center justify-center shadow-md"
+              onPress={() =>
+                Share.share({
+                  message: `Check out ${product.name} on Bexiemart! Only GHS ${product.price.toFixed(2)}`,
+                })
+              }
+            >
               <Icon name="share-2" size={18} color="#1e293b" />
             </Pressable>
-            <Pressable style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
+            <Pressable
+              style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
               className="w-10 h-10 rounded-full bg-card/90 items-center justify-center shadow-md"
               onPress={() => setIsFavorited(!isFavorited)}
             >
@@ -118,7 +150,9 @@ export default function ProductDetailsScreen() {
           {/* Discount Badge */}
           {product.discount > 0 && (
             <View className="absolute top-44 left-4 bg-rose-500 px-3 py-1.5 rounded-full">
-              <Text className="text-body-sm font-bold text-white font-body">-{product.discount}% OFF</Text>
+              <Text className="text-body-sm font-bold text-white font-body">
+                -{product.discount}% OFF
+              </Text>
             </View>
           )}
 
@@ -126,7 +160,10 @@ export default function ProductDetailsScreen() {
           {product.images.length > 1 && (
             <View className="absolute bottom-4 w-full flex-row justify-center gap-1.5">
               {product.images.map((_: string, i: number) => (
-                <View key={i} className={`h-2 rounded-full ${i === activeImageIndex ? "w-6 bg-brand-600" : "w-2 bg-card/60"}`} />
+                <View
+                  key={i}
+                  className={`h-2 rounded-full ${i === activeImageIndex ? "w-6 bg-brand-600" : "w-2 bg-card/60"}`}
+                />
               ))}
             </View>
           )}
@@ -150,7 +187,9 @@ export default function ProductDetailsScreen() {
             )}
             {product.discount > 0 && (
               <View className="bg-rose-50 px-2 py-0.5 rounded-lg">
-                <Text className="text-caption font-bold text-rose-600 font-body">Save GHS {(product.oldPrice - product.price).toFixed(2)}</Text>
+                <Text className="text-caption font-bold text-rose-600 font-body">
+                  Save GHS {(product.oldPrice - product.price).toFixed(2)}
+                </Text>
               </View>
             )}
           </View>
@@ -160,15 +199,28 @@ export default function ProductDetailsScreen() {
             <View className="flex-row items-center gap-1.5">
               <View className="flex-row gap-0.5">
                 {[1, 2, 3, 4, 5].map((star) => (
-                  <Icon key={star} name="star" size={14} color={star <= Math.round(product.rating) ? "#f59e0b" : "#e2e8f0"} />
+                  <Icon
+                    key={star}
+                    name="star"
+                    size={14}
+                    color={star <= Math.round(product.rating) ? "#f59e0b" : "#e2e8f0"}
+                  />
                 ))}
               </View>
-              <Text className="text-body-sm font-bold text-muted-foreground font-body">{product.rating}</Text>
-              <Text className="text-body-sm text-muted-foreground font-body">({product.reviewCount} reviews)</Text>
+              <Text className="text-body-sm font-bold text-muted-foreground font-body">
+                {product.rating}
+              </Text>
+              <Text className="text-body-sm text-muted-foreground font-body">
+                ({product.reviewCount} reviews)
+              </Text>
             </View>
             <View className="flex-row items-center gap-1.5">
-              <View className={`w-2 h-2 rounded-full ${product.stock > 0 ? "bg-emerald-500" : "bg-rose-500"}`} />
-              <Text className={`text-body-sm font-semibold font-body ${product.stock > 0 ? "text-emerald-600" : "text-rose-600"}`}>
+              <View
+                className={`w-2 h-2 rounded-full ${product.stock > 0 ? "bg-emerald-500" : "bg-rose-500"}`}
+              />
+              <Text
+                className={`text-body-sm font-semibold font-body ${product.stock > 0 ? "text-emerald-600" : "text-rose-600"}`}
+              >
                 {product.stock > 0 ? `In Stock (${product.stock} left)` : "Out of Stock"}
               </Text>
             </View>
@@ -180,39 +232,66 @@ export default function ProductDetailsScreen() {
           <Text className="text-heading-sm font-heading font-bold text-foreground mb-3">
             Description
           </Text>
-          <Text className="text-body-md text-muted-foreground font-body leading-relaxed" numberOfLines={showFullDesc ? undefined : 4}>
+          <Text
+            className="text-body-md text-muted-foreground font-body leading-relaxed"
+            numberOfLines={showFullDesc ? undefined : 4}
+          >
             {product.description}
           </Text>
           {product.description.length > 200 && (
-            <Pressable style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]} className="mt-2" onPress={() => setShowFullDesc(!showFullDesc)}>
+            <Pressable
+              style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
+              className="mt-2"
+              onPress={() => setShowFullDesc(!showFullDesc)}
+            >
               <View className="flex-row items-center gap-1">
                 <Text className="text-body-sm font-bold text-brand-600 font-body">
                   {showFullDesc ? "Show less" : "Read more"}
                 </Text>
-                <Icon name={showFullDesc ? "chevron-up" : "chevron-down"} size={14} color="#004CFF" />
+                <Icon
+                  name={showFullDesc ? "chevron-up" : "chevron-down"}
+                  size={14}
+                  color="#004CFF"
+                />
               </View>
             </Pressable>
           )}
         </View>
 
         {/* ===== SELLER INFO ===== */}
-        <Pressable style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]} className="mx-5 mt-6 bg-card rounded-[24px] p-5 border border-border" onPress={() => router.push(`/(customer)/store/${product.seller.id}`)}>
-          <Text className="text-caption text-muted-foreground font-body uppercase tracking-wider mb-3 font-bold">Sold by</Text>
+        <Pressable
+          style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
+          className="mx-5 mt-6 bg-card rounded-[24px] p-5 border border-border"
+          onPress={() => router.push(`/(customer)/store/${product.seller.id}`)}
+        >
+          <Text className="text-caption text-muted-foreground font-body uppercase tracking-wider mb-3 font-bold">
+            Sold by
+          </Text>
           <View className="flex-row items-center gap-3">
             <View className="w-12 h-12 rounded-full bg-muted items-center justify-center">
               <Icon name="store" size={22} color="#004CFF" />
             </View>
             <View className="flex-1">
-              <Text className="text-body-md font-bold text-foreground font-body">{product.seller.name}</Text>
+              <Text className="text-body-md font-bold text-foreground font-body">
+                {product.seller.name}
+              </Text>
               <View className="flex-row items-center gap-2 mt-0.5">
                 <Icon name="star" size={11} color="#f59e0b" />
-                <Text className="text-caption text-muted-foreground font-body">{product.seller.rating}  {product.seller.products} products</Text>
+                <Text className="text-caption text-muted-foreground font-body">
+                  {product.seller.rating} {product.seller.products} products
+                </Text>
               </View>
             </View>
             <View className="flex-row gap-2">
-              <Pressable style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]} 
+              <Pressable
+                style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
                 className="w-10 h-10 rounded-full bg-background items-center justify-center border border-border"
-                onPress={() => router.push({ pathname: "/(customer)/chats", params: { contact: product.seller.name, role: "Seller" } })}
+                onPress={() =>
+                  router.push({
+                    pathname: "/(customer)/chats",
+                    params: { contact: product.seller.name, role: "Seller" },
+                  })
+                }
               >
                 <Icon name="message-circle" size={18} color="#475569" />
               </Pressable>
@@ -227,13 +306,20 @@ export default function ProductDetailsScreen() {
           </Text>
           <View className="gap-0">
             {product.deliveryOptions.map((option: any, index: number) => (
-              <View key={index} className="flex-row items-center gap-4 bg-card rounded-[24px] p-5 border border-border mb-3">
+              <View
+                key={index}
+                className="flex-row items-center gap-4 bg-card rounded-[24px] p-5 border border-border mb-3"
+              >
                 <View className="w-10 h-10 rounded-full bg-background items-center justify-center">
                   <Icon name={option.icon} size={18} color="#475569" />
                 </View>
                 <View className="flex-1">
-                  <Text className="text-body-md font-bold text-foreground font-body">{option.type}</Text>
-                  <Text className="text-body-sm text-muted-foreground font-body">{option.duration}</Text>
+                  <Text className="text-body-md font-bold text-foreground font-body">
+                    {option.type}
+                  </Text>
+                  <Text className="text-body-sm text-muted-foreground font-body">
+                    {option.duration}
+                  </Text>
                 </View>
                 <Text className="text-body-md font-bold text-brand-600 font-heading">
                   {option.fee === 0 ? "FREE" : `GHS ${option.fee.toFixed(2)}`}
@@ -249,38 +335,64 @@ export default function ProductDetailsScreen() {
             <Text className="text-heading-sm font-heading font-bold text-foreground">
               Reviews ({product.reviewCount})
             </Text>
-            <Pressable style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]} onPress={() => Toast.show({ type: "info", text1: "All Reviews", text2: "Full reviews page coming soon." })}>
+            <Pressable
+              style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
+              onPress={() =>
+                Toast.show({
+                  type: "info",
+                  text1: "All Reviews",
+                  text2: "Full reviews page coming soon.",
+                })
+              }
+            >
               <Text className="text-body-sm font-bold text-brand-600 font-body">See All</Text>
             </Pressable>
           </View>
 
           <View className="gap-0">
             {product.reviews.slice(0, 3).map((review: any) => (
-              <View key={review.id} className="bg-card rounded-[24px] p-5 border border-border mb-3">
+              <View
+                key={review.id}
+                className="bg-card rounded-[24px] p-5 border border-border mb-3"
+              >
                 <View className="flex-row justify-between items-start mb-2">
                   <View className="flex-row items-center gap-3">
                     <View className="w-10 h-10 rounded-full bg-brand-100 items-center justify-center">
                       <Text className="text-body-sm font-bold text-brand-600 font-heading">
-                        {typeof review.user === 'string' ? review.user.charAt(0) : review.user.name?.charAt(0) || 'U'}
+                        {typeof review.user === "string"
+                          ? review.user.charAt(0)
+                          : review.user.name?.charAt(0) || "U"}
                       </Text>
                     </View>
                     <View>
-                      <Text className="text-body-sm font-bold text-foreground font-body">{typeof review.user === 'string' ? review.user : review.user.name}</Text>
+                      <Text className="text-body-sm font-bold text-foreground font-body">
+                        {typeof review.user === "string" ? review.user : review.user.name}
+                      </Text>
                       <View className="flex-row gap-0.5 mt-0.5">
                         {[1, 2, 3, 4, 5].map((star) => (
-                          <Icon key={star} name="star" size={10} color={star <= review.rating ? "#f59e0b" : "#e2e8f0"} />
+                          <Icon
+                            key={star}
+                            name="star"
+                            size={10}
+                            color={star <= review.rating ? "#f59e0b" : "#e2e8f0"}
+                          />
                         ))}
                       </View>
                     </View>
                   </View>
-                  <Text className="text-caption text-muted-foreground font-body">{review.date}</Text>
+                  <Text className="text-caption text-muted-foreground font-body">
+                    {review.date}
+                  </Text>
                 </View>
-                <Text className="text-body-sm text-muted-foreground font-body leading-relaxed">{review.comment}</Text>
+                <Text className="text-body-sm text-muted-foreground font-body leading-relaxed">
+                  {review.comment}
+                </Text>
               </View>
             ))}
           </View>
-          
-          <Pressable style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]} 
+
+          <Pressable
+            style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
             className="w-full bg-brand-50 py-4 rounded-full items-center justify-center mt-2 border border-brand-100 flex-row gap-2"
             onPress={() => router.push("/(customer)/review-modal")}
           >
@@ -295,23 +407,32 @@ export default function ProductDetailsScreen() {
         <View className="flex-row items-center gap-3">
           {/* Quantity Selector */}
           <View className="flex-row items-center bg-background rounded-full border border-border">
-            <Pressable style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
+            <Pressable
+              style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
               className="w-11 h-11 items-center justify-center"
               onPress={() => setQuantity(Math.max(1, quantity - 1))}
             >
               <Icon name="minus" size={18} color={quantity <= 1 ? "#cbd5e1" : "#475569"} />
             </Pressable>
-            <Text className="text-body-md font-bold text-foreground font-body w-8 text-center">{quantity}</Text>
-            <Pressable style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
+            <Text className="text-body-md font-bold text-foreground font-body w-8 text-center">
+              {quantity}
+            </Text>
+            <Pressable
+              style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
               className="w-11 h-11 items-center justify-center"
               onPress={() => setQuantity(Math.min(product.stock, quantity + 1))}
             >
-              <Icon name="plus" size={18} color={quantity >= product.stock ? "#cbd5e1" : "#475569"} />
+              <Icon
+                name="plus"
+                size={18}
+                color={quantity >= product.stock ? "#cbd5e1" : "#475569"}
+              />
             </Pressable>
           </View>
 
           {/* Add to Cart */}
-          <Pressable style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
+          <Pressable
+            style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
             className={`flex-1 h-[52px] rounded-full items-center justify-center active:scale-[0.98] ${
               addedToCart ? "bg-emerald-500" : "bg-brand-600"
             }`}
@@ -328,13 +449,16 @@ export default function ProductDetailsScreen() {
         </View>
 
         {/* Buy Now */}
-        <Pressable style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
+        <Pressable
+          style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
           className="mt-2 h-[46px] rounded-full items-center justify-center bg-accent-600 active:scale-[0.98]"
           onPress={handleBuyNow}
         >
           <View className="flex-row items-center gap-2">
             <Icon name="zap" size={16} color="#fff" />
-            <Text className="text-body-md font-bold text-white font-body">Buy Now  GHS {(product.price * quantity).toFixed(2)}</Text>
+            <Text className="text-body-md font-bold text-white font-body">
+              Buy Now GHS {(product.price * quantity).toFixed(2)}
+            </Text>
           </View>
         </Pressable>
       </View>

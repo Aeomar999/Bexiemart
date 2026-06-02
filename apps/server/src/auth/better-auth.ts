@@ -4,6 +4,7 @@ dotenv.config({ path: path.resolve(__dirname, "../../.env") });
 console.log("BETTER_AUTH_URL:", process.env.BETTER_AUTH_URL);
 import { betterAuth } from "better-auth";
 import { prismaAdapter } from "better-auth/adapters/prisma";
+import { phoneNumber } from "better-auth/plugins";
 import { PrismaClient } from "@prisma/client";
 import { Resend } from "resend";
 import { dash, sentinel } from "@better-auth/infra";
@@ -11,7 +12,7 @@ import { dash, sentinel } from "@better-auth/infra";
 const prisma = new PrismaClient();
 
 // The user must replace `re_xxxxxxxxx` with their real API key via the .env file.
-const resend = new Resend(process.env.RESEND_API_KEY || 're_hZUiH98H_HtH4T2zdX2SBh6t3F4h4VBTC');
+const resend = new Resend(process.env.RESEND_API_KEY || "re_hZUiH98H_HtH4T2zdX2SBh6t3F4h4VBTC");
 
 export const auth = betterAuth({
   database: prismaAdapter(prisma, {
@@ -35,6 +36,14 @@ export const auth = betterAuth({
         },
       },
     }),
+    phoneNumber({
+      sendOTP: async ({ phoneNumber, code }) => {
+        // Mocked SMS delivery
+        console.log(
+          `\n\n=== SMS GATEWAY MOCK ===\nTo: ${phoneNumber}\nMessage: Your BexieMart verification code is: ${code}\n========================\n\n`
+        );
+      },
+    }),
   ],
   emailAndPassword: {
     enabled: true,
@@ -45,19 +54,15 @@ export const auth = betterAuth({
     sendOnSignUp: true,
     sendVerificationEmail: async ({ user, url, token }, request) => {
       await resend.emails.send({
-        from: process.env.EMAIL_FROM || 'onboarding@resend.dev',
+        from: process.env.EMAIL_FROM || "onboarding@resend.dev",
         to: user.email,
-        subject: 'Verify your BexieMart Email',
+        subject: "Verify your BexieMart Email",
         html: `<p>Hi ${user.name},</p><p>Please verify your email address by clicking the link below:</p><br/><a href="${url}">Verify Email</a>`,
       });
     },
   },
   session: {
-    cookieCache: {
-      enabled: true,
-      maxAge: 7 * 24 * 60 * 60,
-      strategy: "jwt",
-    },
+    expiresIn: 7 * 24 * 60 * 60,
   },
   trustedOrigins: ["bexiemart://", "com.bexiemart.app://"],
 });

@@ -1,5 +1,15 @@
 import { BackButton } from "@/components/ui/BackButton";
-import { View, Text, TextInput, Pressable, ActivityIndicator, Alert, ScrollView, KeyboardAvoidingView, Platform } from "react-native";
+import {
+  View,
+  Text,
+  TextInput,
+  Pressable,
+  ActivityIndicator,
+  Alert,
+  ScrollView,
+  KeyboardAvoidingView,
+  Platform,
+} from "react-native";
 import { useRouter } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Icon } from "@/components/ui/Icon";
@@ -39,7 +49,7 @@ export default function AddMomoAccountScreen() {
   const insets = useSafeAreaInsets();
   const linkMomoAccount = useLinkMomoAccount();
 
-  const [selectedProvider, setSelectedProvider] = useState<typeof PROVIDERS[number] | null>(null);
+  const [selectedProvider, setSelectedProvider] = useState<(typeof PROVIDERS)[number] | null>(null);
   const [phoneNumber, setPhoneNumber] = useState("");
   const [accountName, setAccountName] = useState("");
 
@@ -81,20 +91,30 @@ export default function AddMomoAccountScreen() {
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === "ios" ? "padding" : "height"}
-      className="flex-1 bg-gray-50"
-      style={{ paddingTop: Math.max(insets.top, 16) }}
+      className="flex-1 bg-background"
     >
-      {/* Header */}
-      <View className="flex-row items-center justify-between px-5 py-4 bg-gray-50 z-10">
-        <BackButton className="-ml-2" />
-        <Text className="text-lg font-bold text-gray-900">Add Mobile Money</Text>
-        <View className="w-10 h-10" />
+      <View
+        className="px-5 pt-4 pb-4 bg-card border-b border-border"
+        style={{ paddingTop: insets.top + 12 }}
+      >
+        <View className="flex-row items-center gap-3">
+          <BackButton />
+          <Text className="text-[20px] font-heading font-black text-foreground">
+            Add Mobile Money
+          </Text>
+        </View>
       </View>
 
-      <ScrollView className="flex-1" showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 40 }}>
+      <ScrollView
+        className="flex-1"
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={{ paddingBottom: 40 }}
+      >
         {/* Provider Selector */}
         <View className="px-5 mb-6">
-          <Text className="text-gray-500 text-xs font-bold uppercase tracking-wider mb-3 ml-1">Select Provider</Text>
+          <Text className="text-gray-500 text-xs font-bold uppercase tracking-wider mb-3 ml-1">
+            Select Provider
+          </Text>
           {PROVIDERS.map((provider) => {
             const isSelected = selectedProvider?.id === provider.id;
             return (
@@ -105,23 +125,36 @@ export default function AddMomoAccountScreen() {
               >
                 <View
                   className="rounded-2xl overflow-hidden"
-                  style={isSelected ? { borderWidth: 3, borderColor: provider.gradient[0] } : { borderWidth: 1, borderColor: "#e5e7eb" }}
+                  style={
+                    isSelected
+                      ? { borderWidth: 3, borderColor: provider.gradient[0] }
+                      : { borderWidth: 1, borderColor: "#e5e7eb" }
+                  }
                 >
                   <LinearGradient
-                    colors={isSelected ? provider.gradient as any : ["#fff", "#fafafa"]}
-                    start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }}
+                    colors={isSelected ? (provider.gradient as any) : ["#fff", "#fafafa"]}
+                    start={{ x: 0, y: 0 }}
+                    end={{ x: 1, y: 1 }}
                     style={{ padding: 16, flexDirection: "row", alignItems: "center" }}
                   >
-                    <View className={`w-14 h-14 rounded-2xl items-center justify-center mr-4 ${isSelected ? "bg-white/25" : "bg-gray-100"}`}>
-                      <Icon name="smartphone" size={24} color={isSelected ? provider.textColor : "#6b7280"} />
+                    <View
+                      className={`w-14 h-14 rounded-2xl items-center justify-center mr-4 ${isSelected ? "bg-white/25" : "bg-gray-100"}`}
+                    >
+                      <Icon
+                        name="smartphone"
+                        size={24}
+                        color={isSelected ? provider.textColor : "#6b7280"}
+                      />
                     </View>
                     <View className="flex-1">
-                      <Text className={`font-bold text-[16px] ${isSelected ? `text-[${provider.textColor}]` : "text-gray-900"}`}
+                      <Text
+                        className={`font-bold text-[16px] ${isSelected ? `text-[${provider.textColor}]` : "text-gray-900"}`}
                         style={isSelected ? { color: provider.textColor } : {}}
                       >
                         {provider.name}
                       </Text>
-                      <Text className={`text-sm mt-0.5 ${isSelected ? "opacity-70" : "text-gray-500"}`}
+                      <Text
+                        className={`text-sm mt-0.5 ${isSelected ? "opacity-70" : "text-gray-500"}`}
                         style={isSelected ? { color: provider.textColor } : {}}
                       >
                         {provider.description}
@@ -144,7 +177,9 @@ export default function AddMomoAccountScreen() {
           <View className="bg-white rounded-3xl p-5 border border-gray-100 shadow-sm">
             {/* Phone Number */}
             <View className="mb-5">
-              <Text className="text-gray-500 text-xs font-bold uppercase tracking-wider mb-2 ml-1">Phone Number</Text>
+              <Text className="text-gray-500 text-xs font-bold uppercase tracking-wider mb-2 ml-1">
+                Phone Number
+              </Text>
               <View className="bg-gray-50 flex-row items-center rounded-2xl px-4 border border-gray-200">
                 <Icon name="phone" size={18} color="#9ca3af" />
                 <TextInput
@@ -161,7 +196,9 @@ export default function AddMomoAccountScreen() {
 
             {/* Account Name */}
             <View className="mb-6">
-              <Text className="text-gray-500 text-xs font-bold uppercase tracking-wider mb-2 ml-1">Account Name</Text>
+              <Text className="text-gray-500 text-xs font-bold uppercase tracking-wider mb-2 ml-1">
+                Account Name
+              </Text>
               <View className="bg-gray-50 flex-row items-center rounded-2xl px-4 border border-gray-200">
                 <Icon name="user" size={18} color="#9ca3af" />
                 <TextInput
@@ -182,23 +219,31 @@ export default function AddMomoAccountScreen() {
               className={`w-full rounded-2xl py-4 flex-row justify-center items-center ${
                 !isValid || linkMomoAccount.isPending ? "bg-gray-300" : ""
               }`}
-              style={isValid && !linkMomoAccount.isPending ? {
-                backgroundColor: selectedProvider?.gradient[0] || "#2563EB",
-                shadowColor: selectedProvider?.gradient[0] || "#2563EB",
-                shadowOffset: { width: 0, height: 4 },
-                shadowOpacity: 0.3,
-                shadowRadius: 8,
-                elevation: 5,
-              } : {}}
+              style={
+                isValid && !linkMomoAccount.isPending
+                  ? {
+                      backgroundColor: selectedProvider?.gradient[0] || "#2563EB",
+                      shadowColor: selectedProvider?.gradient[0] || "#2563EB",
+                      shadowOffset: { width: 0, height: 4 },
+                      shadowOpacity: 0.3,
+                      shadowRadius: 8,
+                      elevation: 5,
+                    }
+                  : {}
+              }
             >
               {linkMomoAccount.isPending ? (
                 <ActivityIndicator color="#fff" />
               ) : (
                 <>
-                  <Icon name="link" size={18} color={isValid ? (selectedProvider?.textColor || "#fff") : "#fff"} />
+                  <Icon
+                    name="link"
+                    size={18}
+                    color={isValid ? selectedProvider?.textColor || "#fff" : "#fff"}
+                  />
                   <Text
                     className="font-bold text-base ml-2 tracking-wide"
-                    style={{ color: isValid ? (selectedProvider?.textColor || "#fff") : "#fff" }}
+                    style={{ color: isValid ? selectedProvider?.textColor || "#fff" : "#fff" }}
                   >
                     Link {selectedProvider?.shortName || "Mobile Money"}
                   </Text>

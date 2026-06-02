@@ -11,6 +11,7 @@ interface RegisterParams {
   password: string;
   name: string;
   role: string;
+  phone?: string;
 }
 
 export const authApi = {
@@ -25,13 +26,15 @@ export const authApi = {
   },
 
   getCurrentUser: async () => {
-    const res = await authClient.getSession();
-    if (res.error) throw res.error;
-    return { data: { user: res.data?.user } };
+    const res = await apiClient.get("/auth/me");
+    return res;
   },
 
   forgotPassword: async (email: string) => {
-    const res = await (authClient as any).forgetPassword({ email, redirectTo: 'bexiemart://reset-password' });
+    const res = await (authClient as any).forgetPassword({
+      email,
+      redirectTo: "bexiemart://reset-password",
+    });
     if (res.error) throw res.error;
     return { data: res.data };
   },

@@ -1,5 +1,14 @@
 import { BackButton } from "@/components/ui/BackButton";
-import { View, Text, ScrollView, TextInput, KeyboardAvoidingView, Platform, Alert, Pressable } from "react-native";
+import {
+  View,
+  Text,
+  ScrollView,
+  TextInput,
+  KeyboardAvoidingView,
+  Platform,
+  Alert,
+  Pressable,
+} from "react-native";
 import { useState } from "react";
 import { useRouter } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -48,7 +57,10 @@ export default function TransferScreen() {
       await transferMutation.mutateAsync({ email: recipient, amount: parseFloat(amount), pin });
       setIsSuccess(true);
     } catch (error: any) {
-      Alert.alert("Transfer Failed", error?.response?.data?.message || error?.message || "Something went wrong");
+      Alert.alert(
+        "Transfer Failed",
+        error?.response?.data?.message || error?.message || "Something went wrong"
+      );
     } finally {
       setIsProcessing(false);
       setPin("");
@@ -57,7 +69,10 @@ export default function TransferScreen() {
 
   if (isSuccess) {
     return (
-      <View className="flex-1 bg-brand-600 justify-center items-center px-5" style={{ paddingTop: insets.top }}>
+      <View
+        className="flex-1 bg-brand-600 justify-center items-center px-5"
+        style={{ paddingTop: insets.top }}
+      >
         <View className="w-20 h-20 bg-card rounded-full items-center justify-center mb-6">
           <Icon name="check" size={40} color="#10b981" />
         </View>
@@ -84,18 +99,15 @@ export default function TransferScreen() {
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === "ios" ? "padding" : undefined}
-      className="flex-1 bg-card"
+      className="flex-1 bg-background"
     >
       <View
-        className="px-5 pb-4 bg-card"
-        style={{ paddingTop: (insets.top || 12) + 12 }}
+        className="px-5 pt-4 pb-4 bg-card border-b border-border"
+        style={{ paddingTop: insets.top + 12 }}
       >
-        <View className="flex-row items-center justify-between">
+        <View className="flex-row items-center gap-3">
           <BackButton />
-          <View className="bg-background px-3 py-1.5 rounded-full flex-row items-center">
-            <Text className="text-[12px] font-bold text-muted-foreground mr-1">Balance:</Text>
-            <Text className="text-[14px] font-bold text-brand-600">GHS {balance.toFixed(2)}</Text>
-          </View>
+          <Text className="text-[20px] font-heading font-black text-foreground">Send Money</Text>
         </View>
       </View>
 
@@ -106,8 +118,12 @@ export default function TransferScreen() {
         keyboardShouldPersistTaps="always"
         keyboardDismissMode="on-drag"
       >
-        <Text className="text-[14px] font-bold text-muted-foreground font-heading mb-2 ml-1 mt-4">Send Amount</Text>
-        <View className={`bg-background p-4 rounded-[20px] mb-2 flex-row items-center border ${isInsufficient ? "border-red-500" : "border-border"}`}>
+        <Text className="text-[14px] font-bold text-muted-foreground font-heading mb-2 ml-1 mt-4">
+          Send Amount
+        </Text>
+        <View
+          className={`bg-background p-4 rounded-[20px] mb-2 flex-row items-center border ${isInsufficient ? "border-red-500" : "border-border"}`}
+        >
           <Text className="text-[20px] font-bold text-foreground mr-2">GHS</Text>
           <TextInput
             value={amount}
@@ -125,7 +141,9 @@ export default function TransferScreen() {
           <View className="mb-6" />
         )}
 
-        <Text className="text-[14px] font-bold text-muted-foreground font-heading mb-2 ml-1">Send To</Text>
+        <Text className="text-[14px] font-bold text-muted-foreground font-heading mb-2 ml-1">
+          Send To
+        </Text>
         <View className="mb-8">
           <Input
             placeholder="Phone number, username, or email"
@@ -136,25 +154,36 @@ export default function TransferScreen() {
           />
         </View>
 
-        <Text className="text-[16px] font-bold text-foreground font-heading mb-4 px-1">Recent Contacts</Text>
+        <Text className="text-[16px] font-bold text-foreground font-heading mb-4 px-1">
+          Recent Contacts
+        </Text>
         <View className="bg-background rounded-[20px] overflow-hidden mb-8">
           {RECENT_CONTACTS.map((contact, idx) => {
             const isSelected = recipient === contact.phone;
             const isLast = idx === RECENT_CONTACTS.length - 1;
             return (
-              <Pressable style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
+              <Pressable
+                style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
                 key={contact.id}
                 onPress={() => setRecipient(contact.phone)}
                 className={`flex-row items-center p-4 ${!isLast ? "border-b border-border" : ""}`}
               >
                 <View className="w-10 h-10 rounded-full bg-brand-100 items-center justify-center mr-4">
-                  <Text className="font-bold text-[16px] text-brand-600 font-heading">{contact.initial}</Text>
+                  <Text className="font-bold text-[16px] text-brand-600 font-heading">
+                    {contact.initial}
+                  </Text>
                 </View>
                 <View className="flex-1">
-                  <Text className={`text-[15px] font-bold ${isSelected ? "text-brand-700" : "text-foreground"}`}>{contact.name}</Text>
+                  <Text
+                    className={`text-[15px] font-bold ${isSelected ? "text-brand-700" : "text-foreground"}`}
+                  >
+                    {contact.name}
+                  </Text>
                   <Text className="text-[13px] text-muted-foreground mt-0.5">{contact.phone}</Text>
                 </View>
-                <View className={`w-5 h-5 rounded-full border-2 items-center justify-center ${isSelected ? "border-brand-500 bg-brand-500" : "border-surface-300 bg-transparent"}`}>
+                <View
+                  className={`w-5 h-5 rounded-full border-2 items-center justify-center ${isSelected ? "border-brand-500 bg-brand-500" : "border-surface-300 bg-transparent"}`}
+                >
                   {isSelected && <Icon name="check" size={10} color="#fff" />}
                 </View>
               </Pressable>
@@ -174,9 +203,14 @@ export default function TransferScreen() {
       </View>
 
       {showPinModal && (
-        <View className="absolute inset-0 bg-black/50 justify-center items-center z-50" style={{ paddingTop: insets.top }}>
+        <View
+          className="absolute inset-0 bg-black/50 justify-center items-center z-50"
+          style={{ paddingTop: insets.top }}
+        >
           <View className="bg-card mx-5 p-6 rounded-[24px] w-[90%] max-w-[340px]">
-            <Text className="text-[18px] font-heading font-black text-foreground text-center mb-2">Enter PIN</Text>
+            <Text className="text-[18px] font-heading font-black text-foreground text-center mb-2">
+              Enter PIN
+            </Text>
             <Text className="text-[13px] text-muted-foreground font-body text-center mb-6">
               Enter your wallet PIN to confirm this transfer
             </Text>
@@ -195,8 +229,13 @@ export default function TransferScreen() {
                 <Pressable
                   key={i}
                   onPress={() => {
-                    if (key === "del") { setPin((p) => p.slice(0, -1)); return; }
-                    if (typeof key === "number") { setPin((p) => p.length < 4 ? p + key : p); }
+                    if (key === "del") {
+                      setPin((p) => p.slice(0, -1));
+                      return;
+                    }
+                    if (typeof key === "number") {
+                      setPin((p) => (p.length < 4 ? p + key : p));
+                    }
                   }}
                   className={`w-16 h-16 rounded-full items-center justify-center ${typeof key === "number" ? "bg-background" : "bg-transparent"}`}
                 >
@@ -214,7 +253,10 @@ export default function TransferScreen() {
                 title="Cancel"
                 variant="outline"
                 className="flex-1"
-                onPress={() => { setShowPinModal(false); setPin(""); }}
+                onPress={() => {
+                  setShowPinModal(false);
+                  setPin("");
+                }}
               />
               <Button
                 title="Confirm"

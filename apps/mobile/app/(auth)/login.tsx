@@ -1,9 +1,12 @@
 import { View, Text, TouchableOpacity } from "react-native";
 import { router } from "expo-router";
 import { useEffect, useState } from "react";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { BackButton } from "../../src/components/ui/BackButton";
 import { useAuthStore } from "../../src/lib/stores/auth-store";
 import { Input } from "../../src/components/ui/Input";
 import { Button } from "../../src/components/ui/Button";
+import { Announcement } from "../../src/components/ui/Announcement";
 import { useLogin } from "../../src/lib/hooks/use-auth";
 // @ts-expect-error
 import { FontAwesome5 } from "@expo/vector-icons";
@@ -45,9 +48,13 @@ export default function LoginScreen() {
     login.mutate({ email: email.trim(), password });
   };
 
+  const insets = useSafeAreaInsets();
 
   return (
-    <View className="flex-1 bg-background px-6">
+    <View className="flex-1 bg-background px-6" style={{ paddingTop: insets.top }}>
+      <View className="absolute top-4 left-2 z-10" style={{ top: insets.top + 8 }}>
+        <BackButton />
+      </View>
       <View className="flex-1 justify-center py-12">
         <View className="mb-10 items-center">
           <View className="w-16 h-16 rounded-2xl bg-brand-100 items-center justify-center mb-6">
@@ -92,18 +99,14 @@ export default function LoginScreen() {
           </View>
 
           {login.error && (
-            <Text className="text-body-sm text-error font-body text-center">
-              {login.error?.message ?? "Login failed. Please try again."}
-            </Text>
+            <Announcement
+              type="error"
+              message={login.error?.message ?? "Login failed. Please try again."}
+            />
           )}
 
           <View className="w-full mt-2">
-            <Button
-              title="Sign In"
-              size="lg"
-              loading={login.isPending}
-              onPress={handleSubmit}
-            />
+            <Button title="Sign In" size="lg" loading={login.isPending} onPress={handleSubmit} />
           </View>
         </View>
 
@@ -114,13 +117,9 @@ export default function LoginScreen() {
             Don't have an account?
           </Text>
           <TouchableOpacity onPress={() => router.push("/(auth)/register")}>
-            <Text className="text-body-md text-brand-600 font-bold font-body">
-              Create one
-            </Text>
+            <Text className="text-body-md text-brand-600 font-bold font-body">Create one</Text>
           </TouchableOpacity>
         </View>
-
-
       </View>
     </View>
   );

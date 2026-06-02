@@ -17,6 +17,8 @@ model User {
   image               String?
   role                UserRole @default(CUSTOMER)
   onboardingCompleted Boolean  @default(false)
+  phoneNumber         String?  @unique
+  phoneNumberVerified Boolean  @default(false)
   createdAt           DateTime @default(now())
   updatedAt           DateTime @updatedAt
 
@@ -48,6 +50,7 @@ model User {
 
   dispatcherProfile DispatcherProfile?
   rideRequests      RideRequest[]      @relation("CustomerRides")
+  Collection        Collection[]
 }
 
 model Session {
@@ -222,9 +225,10 @@ model Product {
   orderItems      OrderItem[]
   cartItems       CartItem[]
   reviews         Review[]
-  deliveryOptions Json            @default("[]")
+  deliveryOptions Json             @default("[]")
   reels           Reel[]
   flashSaleItems  FlashSaleItem[]
+  CollectionItem  CollectionItem[]
 
   @@index([categoryId])
   @@index([vendorId])
@@ -1040,4 +1044,32 @@ model VendorFollow {
   @@unique([userId, vendorId])
   @@index([userId])
   @@index([vendorId])
+}
+
+// ─── Collections Model ─────────────────────────────────────────────────────────
+
+model Collection {
+  id          String   @id @default(cuid())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  name        String
+  description String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  items CollectionItem[]
+
+  @@unique([userId, name])
+  @@index([userId])
+}
+
+model CollectionItem {
+  id           String     @id @default(cuid())
+  collectionId String
+  collection   Collection @relation(fields: [collectionId], references: [id], onDelete: Cascade)
+  productId    String
+  product      Product    @relation(fields: [productId], references: [id], onDelete: Cascade)
+  createdAt    DateTime   @default(now())
+
+  @@unique([collectionId, productId])
 }
