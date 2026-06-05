@@ -1,7 +1,9 @@
 import "react-native-get-random-values";
 import "../global.css";
 import "../src/lib/sentry";
-import { Stack, useRouter, useRootNavigationState, useSegments } from "expo-router";
+import { posthog } from "../src/lib/posthog";
+import { PostHogProvider } from "posthog-react-native";
+import { Stack, useRouter, useRootNavigationState, useSegments, usePathname } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { useEffect, useState } from "react";
 import { View } from "react-native";
@@ -63,6 +65,14 @@ export default function RootLayout() {
   const router = useRouter();
   const rootNavigationState = useRootNavigationState();
   const segments = useSegments();
+  const pathname = usePathname();
+
+  // Screen tracking
+  useEffect(() => {
+    if (posthog && pathname) {
+      posthog.screen(pathname);
+    }
+  }, [pathname]);
 
   useEffect(() => {
     hydrate();
@@ -108,43 +118,45 @@ export default function RootLayout() {
 
   return (
     <SafeAreaProvider>
-      <OfflineBanner />
-      <QueryClientProvider client={queryClient}>
-        <PaystackProvider
-          publicKey={process.env.EXPO_PUBLIC_PAYSTACK_PUBLIC_KEY || "pk_test_placeholder"}
-        >
-          <StatusBar style="dark" />
-          <ErrorBoundary>
-            <Stack screenOptions={{ headerShown: false }}>
-              <Stack.Screen name="(auth)" />
-              <Stack.Screen name="(onboarding)" />
-              <Stack.Screen name="(customer)" />
-              <Stack.Screen name="(vendor)" />
-              <Stack.Screen name="(dispatcher)" />
-            </Stack>
-            {(!fontsLoaded || isLoading || !splashDone) && (
-              <View
-                style={{
-                  position: "absolute",
-                  top: 0,
-                  left: 0,
-                  right: 0,
-                  bottom: 0,
-                  backgroundColor: "white",
-                  justifyContent: "center",
-                  alignItems: "center",
-                  zIndex: 9999,
-                }}
-              >
-                {!fontsLoaded || isLoading ? null : (
-                  <AnimatedSplashScreen onAnimationComplete={() => setSplashDone(true)} />
-                )}
-              </View>
-            )}
-            <GlobalPopup />
-          </ErrorBoundary>
-        </PaystackProvider>
-      </QueryClientProvider>
+      <PostHogProvider client={posthog} autocapture>
+        <OfflineBanner />
+        <QueryClientProvider client={queryClient}>
+          <PaystackProvider
+            publicKey={process.env.EXPO_PUBLIC_PAYSTACK_PUBLIC_KEY || "pk_test_placeholder"}
+          >
+            <StatusBar style="dark" />
+            <ErrorBoundary>
+              <Stack screenOptions={{ headerShown: false }}>
+                <Stack.Screen name="(auth)" />
+                <Stack.Screen name="(onboarding)" />
+                <Stack.Screen name="(customer)" />
+                <Stack.Screen name="(vendor)" />
+                <Stack.Screen name="(dispatcher)" />
+              </Stack>
+              {(!fontsLoaded || isLoading || !splashDone) && (
+                <View
+                  style={{
+                    position: "absolute",
+                    top: 0,
+                    left: 0,
+                    right: 0,
+                    bottom: 0,
+                    backgroundColor: "white",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    zIndex: 9999,
+                  }}
+                >
+                  {!fontsLoaded || isLoading ? null : (
+                    <AnimatedSplashScreen onAnimationComplete={() => setSplashDone(true)} />
+                  )}
+                </View>
+              )}
+              <GlobalPopup />
+            </ErrorBoundary>
+          </PaystackProvider>
+        </QueryClientProvider>
+      </PostHogProvider>
     </SafeAreaProvider>
   );
 }

@@ -13,28 +13,44 @@ export class PaymentsService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly config: ConfigService,
-    @Inject(WINSTON_MODULE_PROVIDER) private readonly logger: Logger,
+    @Inject(WINSTON_MODULE_PROVIDER) private readonly logger: Logger
   ) {
     this.paystackSecret = this.config.get<string>("PAYSTACK_SECRET_KEY") ?? "";
   }
 
-  private async paystackPost(path: string, data: any) {
-    const res = await fetch(`${this.paystackApi}${path}`, {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${this.paystackSecret}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(data),
-    });
-    return res.json();
+  private async paystackPost(path: string, data: any, retries = 2) {
+    for (let i = 0; i <= retries; i++) {
+      try {
+        const res = await fetch(`${this.paystackApi}${path}`, {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${this.paystackSecret}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(data),
+        });
+        if (!res.ok && i < retries) throw new Error("Paystack request failed");
+        return res.json();
+      } catch (err) {
+        if (i === retries) throw err;
+        await new Promise((resolve) => setTimeout(resolve, 1000 * Math.pow(2, i))); // exponential backoff
+      }
+    }
   }
 
-  private async paystackGet(path: string) {
-    const res = await fetch(`${this.paystackApi}${path}`, {
-      headers: { Authorization: `Bearer ${this.paystackSecret}` },
-    });
-    return res.json();
+  private async paystackGet(path: string, retries = 2) {
+    for (let i = 0; i <= retries; i++) {
+      try {
+        const res = await fetch(`${this.paystackApi}${path}`, {
+          headers: { Authorization: `Bearer ${this.paystackSecret}` },
+        });
+        if (!res.ok && i < retries) throw new Error("Paystack request failed");
+        return res.json();
+      } catch (err) {
+        if (i === retries) throw err;
+        await new Promise((resolve) => setTimeout(resolve, 1000 * Math.pow(2, i)));
+      }
+    }
   }
 
   async initialize(userId: string, dto: InitializePaymentDto) {
@@ -134,15 +150,24 @@ export class PaymentsService {
   async handleWebhook(body: any) {
     const event = body.event;
     this.logger.info("Received Paystack webhook", { event, reference: body.data?.reference });
-    
+
     // Handle Transfer Events
-    if (event === "transfer.success" || event === "transfer.failed" || event === "transfer.reversed") {
+    if (
+      event === "transfer.success" ||
+      event === "transfer.failed" ||
+      event === "transfer.reversed"
+    ) {
       const reference = body.data.reference;
       const transaction = await this.prisma.transaction.findUnique({
         where: { reference },
       });
 
       if (!transaction || transaction.type !== "WITHDRAWAL") {
+        return { received: true };
+      }
+
+      // Idempotency check
+      if (transaction.status !== "PENDING") {
         return { received: true };
       }
 
@@ -177,16 +202,18 @@ export class PaymentsService {
         where: { reference },
       });
       if (transaction && transaction.status === "PENDING") {
-        await this.prisma.$transaction([
-          this.prisma.transaction.update({
-            where: { id: transaction.id },
-            data: { status: "COMPLETED" },
-          }),
-          this.prisma.wallet.update({
+        // Simple lock mechanism could be added here, using prisma updateMany for atomic check
+        const updated = await this.prisma.transaction.updateMany({
+          where: { id: transaction.id, status: "PENDING" },
+          data: { status: "COMPLETED" },
+        });
+
+        if (updated.count > 0) {
+          await this.prisma.wallet.update({
             where: { id: transaction.walletId },
             data: { balance: { increment: transaction.amount } },
-          }),
-        ]);
+          });
+        }
       }
       return { received: true };
     }
@@ -194,9 +221,15 @@ export class PaymentsService {
     // Otherwise, assume it's an order checkout
     const order = await this.prisma.order.findFirst({
       where: { paystackRef: reference },
+      include: { payment: true },
     });
 
     if (!order) return { received: true }; // Don't throw NotFound here, just acknowledge
+
+    // Idempotency check
+    if (order.paymentStatus === "success" || order.payment?.status === "success") {
+      return { received: true };
+    }
 
     await this.prisma.$transaction(async (tx) => {
       await tx.order.update({
@@ -234,15 +267,15 @@ export class PaymentsService {
       // But according to existing Escrow setup, it just needs buyerWalletId
       const buyerWallet = await tx.wallet.findUnique({ where: { userId: order.userId } });
       if (buyerWallet) {
-         await tx.escrow.create({
-           data: {
-             orderId: order.id,
-             buyerWalletId: buyerWallet.id,
-             amount: order.total,
-             netAmount: order.total, // Before commission is calculated
-             status: "HELD",
-           }
-         });
+        await tx.escrow.create({
+          data: {
+            orderId: order.id,
+            buyerWalletId: buyerWallet.id,
+            amount: order.total,
+            netAmount: order.total, // Before commission is calculated
+            status: "HELD",
+          },
+        });
       }
     });
 
@@ -317,18 +350,18 @@ export class PaymentsService {
 
         const buyerWallet = await tx.wallet.findUnique({ where: { userId } });
         if (buyerWallet) {
-           await tx.escrow.create({
-             data: {
-               orderId: order.id,
-               buyerWalletId: buyerWallet.id,
-               amount: order.total,
-               netAmount: order.total,
-               status: "HELD",
-             }
-           });
+          await tx.escrow.create({
+            data: {
+              orderId: order.id,
+              buyerWalletId: buyerWallet.id,
+              amount: order.total,
+              netAmount: order.total,
+              status: "HELD",
+            },
+          });
         }
       });
-      
+
       return { status: "success", reference, orderId: order.id };
     }
 

@@ -28,6 +28,10 @@ async function bootstrap() {
   if (!existsSync(uploadDir)) mkdirSync(uploadDir, { recursive: true });
   app.useStaticAssets(uploadDir, { prefix: "/uploads/" });
 
+  const publicDir = join(process.cwd(), "public");
+  if (!existsSync(publicDir)) mkdirSync(publicDir, { recursive: true });
+  app.useStaticAssets(publicDir, { prefix: "/" });
+
   app.use(rawBodyParser("/webhooks/paystack"));
 
   app.useGlobalPipes(

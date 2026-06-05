@@ -11,13 +11,15 @@ import {
   UseGuards,
   All,
   Res,
+  Inject,
+  Logger,
 } from "@nestjs/common";
 import { Request, Response } from "express";
 import { toNodeHandler } from "better-auth/node";
 import { Throttle } from "@nestjs/throttler";
 import { ApiTags, ApiOperation, ApiBearerAuth } from "@nestjs/swagger";
 import { AuthGuard } from "../guards/auth.guard";
-import { auth } from "./better-auth";
+import { AUTH } from "./auth.constants";
 import { PrismaService } from "../prisma/prisma.service";
 import { UserRole } from "@prisma/client";
 import { RegisterDto } from "./dto/register.dto";
@@ -29,7 +31,12 @@ import { ResetPasswordDto } from "./dto/reset-password.dto";
 @ApiBearerAuth()
 @Controller("auth")
 export class AuthController {
-  constructor(private readonly prisma: PrismaService) {}
+  private readonly logger = new Logger(AuthController.name);
+
+  constructor(
+    private readonly prisma: PrismaService,
+    @Inject(AUTH) private readonly auth: any
+  ) {}
 
   @Throttle({ default: { limit: 5, ttl: 60000 } })
   @ApiOperation({ summary: "Register a new user" })
@@ -38,16 +45,29 @@ export class AuthController {
   async register(@Body() body: RegisterDto) {
     const { email, password, name, role, phone } = body;
 
-    const res = await auth.api.signUpEmail({
+    this.logger.log(
+      `Registering user: ${email}, role: ${role || "customer"}, phone: ${phone || "none"}`
+    );
+
+    const res = await this.auth.api.signUpEmail({
       body: { email, password, name },
       headers: {} as Headers,
       asResponse: true,
     });
 
     const data = await res.json();
+    this.logger.debug(
+      `Better-auth signUpEmail response status: ${res.status}, data keys: ${Object.keys(data).join(", ")}`
+    );
 
     if (!res.ok) {
+      this.logger.error(`Registration failed for ${email}: ${data.message || "Unknown error"}`);
       throw new UnauthorizedException(data.message || "Registration failed");
+    }
+
+    if (!data.user || !data.user.id) {
+      this.logger.error(`Better-auth returned no user for ${email}: ${JSON.stringify(data)}`);
+      throw new InternalServerErrorException("User creation failed");
     }
 
     const cookie = res.headers.get("set-cookie");
@@ -55,15 +75,26 @@ export class AuthController {
     const signedToken = (tokenMatch ? decodeURIComponent(tokenMatch[1]) : null) || data.token;
 
     let user = data.user;
+    this.logger.log(`User created by better-auth: id=${user.id}, email=${user.email}`);
 
     if (phone) {
-      user = await this.prisma.user.update({
-        where: { id: user.id },
-        data: { phoneNumber: phone },
-      });
+      this.logger.log(`Updating phone number for user ${user.id}`);
+      try {
+        user = await this.prisma.user.update({
+          where: { id: user.id },
+          data: { phoneNumber: phone },
+        });
+        this.logger.log(`Phone number updated for user ${user.id}`);
+      } catch (e) {
+        this.logger.error(
+          `Failed to update phone for user ${user.id}: ${e instanceof Error ? e.message : e}`
+        );
+        throw e;
+      }
     }
 
     if (role === "vendor") {
+      this.logger.log(`Setting up vendor profile for user ${user.id}`);
       try {
         const updatedUser = await this.prisma.user.update({
           where: { id: user.id },
@@ -71,6 +102,7 @@ export class AuthController {
         });
 
         user = updatedUser;
+        this.logger.log(`User ${user.id} role updated to VENDOR`);
 
         const slug =
           name
@@ -87,8 +119,11 @@ export class AuthController {
             slug,
           },
         });
+        this.logger.log(`Vendor profile created for user ${user.id} with slug: ${slug}`);
       } catch (e) {
-        console.error("Failed to create vendor profile:", e);
+        this.logger.error(
+          `Failed to create vendor profile for user ${user.id}: ${e instanceof Error ? e.message : e}`
+        );
         throw new InternalServerErrorException("Failed to complete vendor setup");
       }
     }
@@ -108,8 +143,9 @@ export class AuthController {
   @HttpCode(HttpStatus.OK)
   async login(@Body() body: LoginDto) {
     const { email, password } = body;
+    this.logger.log(`Login attempt: ${email}`);
 
-    const res = await auth.api.signInEmail({
+    const res = await this.auth.api.signInEmail({
       body: { email, password },
       headers: {} as Headers,
       asResponse: true,
@@ -118,20 +154,27 @@ export class AuthController {
     const data = await res.json();
 
     if (!res.ok) {
-      // If email isn't verified, better-auth might return a specific error
+      this.logger.warn(`Login failed for ${email}: ${data.message || data.error?.message}`);
       throw new UnauthorizedException(data.message || data.error?.message || "Invalid credentials");
     }
 
     const rawToken = data.token;
 
     if (!rawToken) {
+      this.logger.error(`Session creation failed for ${email} - no token returned`);
       throw new UnauthorizedException("Session creation failed");
     }
 
-    // Fetch the full user from Prisma to ensure we get custom fields like 'role'
+    this.logger.log(`Login successful for ${email}, user id: ${data.user?.id}`);
+
     const fullUser = await this.prisma.user.findUnique({
       where: { id: data.user.id },
     });
+    if (!fullUser) {
+      this.logger.warn(
+        `User ${data.user.id} from better-auth not found in Prisma (dual client issue)`
+      );
+    }
 
     return {
       user: fullUser || data.user,
@@ -161,7 +204,7 @@ export class AuthController {
   @HttpCode(HttpStatus.OK)
   async forgotPassword(@Body() body: ForgotPasswordDto) {
     try {
-      await (auth.api as any).forgetPassword({
+      await (this.auth.api as any).forgetPassword({
         body: { email: body.email, redirectTo: "/reset-password" },
       });
     } catch (e) {
@@ -175,7 +218,7 @@ export class AuthController {
   @Post("reset-password")
   @HttpCode(HttpStatus.OK)
   async resetPassword(@Body() body: ResetPasswordDto) {
-    await auth.api.resetPassword({
+    await this.auth.api.resetPassword({
       body: { newPassword: body.newPassword },
     });
     return { message: "Password reset successfully." };
@@ -183,7 +226,7 @@ export class AuthController {
 
   @All("/*")
   async handleAuth(@Req() req: Request, @Res() res: Response) {
-    const handler = toNodeHandler(auth);
+    const handler = toNodeHandler(this.auth);
     return handler(req, res);
   }
 }

@@ -9,9 +9,10 @@ import { useCart } from "@/lib/hooks/use-cart";
 import { useCreateOrder } from "@/lib/hooks/use-orders";
 import { useAddresses } from "@/lib/hooks/use-addresses";
 import { Icon } from "@/components/ui/Icon";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Toast from "@/lib/toast-polyfill";
 import type { Href } from "expo-router";
+import { posthog } from "@/lib/posthog";
 
 type DeliveryMethod = "standard" | "express";
 type PaymentMethod = "card" | "momo" | "wallet";
@@ -47,6 +48,15 @@ export default function CheckoutScreen() {
   const deliveryFee = deliveryMethod === "express" ? 12.0 : 5.0;
   const discount = useBexieCoins ? 10.0 : 0;
   const total = Math.max(0, subtotal + deliveryFee - discount);
+
+  useEffect(() => {
+    if (posthog && !cartLoading && items.length > 0) {
+      posthog.capture("begin_checkout", {
+        item_count: items.length,
+        value: total,
+      });
+    }
+  }, [cartLoading, items.length]);
 
   if (cartLoading) {
     return (
@@ -116,6 +126,14 @@ export default function CheckoutScreen() {
       },
       {
         onSuccess: (order) => {
+          if (posthog) {
+            posthog.capture("order_placed", {
+              order_id: order?.id ?? order?._id,
+              value: total,
+              payment_method: paymentMethod,
+              delivery_method: deliveryMethod,
+            });
+          }
           router.push({
             pathname: "/(customer)/checkout-success",
             params: {

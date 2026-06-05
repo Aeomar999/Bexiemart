@@ -48,6 +48,17 @@
     }
   },
   "submit": {
-    "production": {}
+    "production": {
+      "ios": {
+        "appleId": "developer@bexiemart.com",
+        "ascAppId": "1234567890",
+        "appleTeamId": "TEAMID1234"
+      },
+      "android": {
+        "serviceAccountKeyPath": "./google-api-key.json",
+        "track": "production",
+        "releaseStatus": "draft"
+      }
+    }
   }
 }

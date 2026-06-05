@@ -10,6 +10,7 @@
     "ios": {
       "supportsTablet": false,
       "bundleIdentifier": "com.bexiemart.app",
+      "associatedDomains": ["applinks:bexiemart.com"],
       "infoPlist": {
         "NSCameraUsageDescription": "Take photos of products to sell on BexieMart.",
         "NSPhotoLibraryUsageDescription": "Select product images from your photo library.",
@@ -18,11 +19,22 @@
     },
     "android": {
       "adaptiveIcon": {
-        "backgroundColor": "#004CFF"
+        "foregroundImage": "./assets/images/icon-adaptive-foreground.png",
+        "backgroundColor": "#FFFFFF"
       },
       "package": "com.bexiemart.app",
       "permissions": [
         "android.permission.RECORD_AUDIO"
+      ],
+      "intentFilters": [
+        {
+          "action": "VIEW",
+          "autoVerify": true,
+          "data": [
+            { "scheme": "https", "host": "bexiemart.com", "pathPrefix": "/" }
+          ],
+          "category": ["BROWSABLE", "DEFAULT"]
+        }
       ]
     },
     "web": {

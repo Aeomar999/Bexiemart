@@ -23,6 +23,7 @@ import { ErrorState } from "@/components/ui/ErrorState";
 import { EmptyState } from "@/components/ui/EmptyState";
 import Toast from "@/lib/toast-polyfill";
 import { LinearGradient } from "expo-linear-gradient";
+import { posthog } from "@/lib/posthog";
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
 
@@ -76,6 +77,16 @@ export default function ProductDetailsScreen() {
   const handleAddToCart = () => {
     if (!product) return;
     addToCartMutation.mutate({ productId: product.id, quantity });
+
+    if (posthog) {
+      posthog.capture("add_to_cart", {
+        product_id: product.id,
+        name: product.name,
+        price: product.price,
+        quantity: quantity,
+      });
+    }
+
     setAddedToCart(true);
     setTimeout(() => setAddedToCart(false), 2000);
   };
