@@ -18,7 +18,9 @@ async function bootstrap() {
   app.use(helmet());
 
   app.enableCors({
-    origin: process.env.CORS_ORIGIN ? process.env.CORS_ORIGIN.split(",") : ["bexiemart://", "exp://"],
+    origin: process.env.CORS_ORIGIN
+      ? process.env.CORS_ORIGIN.split(",")
+      : ["bexiemart://", "exp://"],
     credentials: true,
   });
 
@@ -42,7 +44,7 @@ async function bootstrap() {
   app.setGlobalPrefix("api");
   app.enableVersioning({
     type: VersioningType.URI,
-    defaultVersion: '1',
+    defaultVersion: "1",
   });
 
   const config = new DocumentBuilder()
@@ -56,7 +58,7 @@ async function bootstrap() {
   SwaggerModule.setup("api/docs", app, document);
 
   const port = process.env.PORT ?? 3000;
-  await app.listen(port);
+  await app.listen(port, "0.0.0.0");
   console.log(`BexieMart API running on port ${port}`);
 }
 bootstrap();

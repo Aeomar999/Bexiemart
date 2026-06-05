@@ -11,6 +11,7 @@ import { useProducts, useCategories } from "@/lib/hooks/use-products";
 import { useAddToCart } from "@/lib/hooks/use-cart";
 import { useFavoritesStore } from "@/lib/stores/favorites-store";
 import Toast from "@/lib/toast-polyfill";
+import { ProductCardSkeleton } from "@/components/ui/Skeleton";
 
 type SortOption = "popular" | "newest" | "price-low" | "price-high";
 
@@ -94,7 +95,29 @@ export default function ShopScreen() {
   };
 
   if (isProductsLoading || isCategoriesLoading) {
-    return <LoadingState message="Loading shop..." />;
+    return (
+      <View className="flex-1 bg-background">
+        <View
+          className="px-5 pt-4 pb-4 bg-card border-b border-border"
+          style={{ paddingTop: insets.top + 12 }}
+        >
+          <View className="flex-row items-center gap-3">
+            <View className="flex-1 h-11 bg-muted rounded-full border border-border" />
+            <View className="w-11 h-11 rounded-full bg-card border border-border" />
+          </View>
+          <View className="flex-row gap-2 mt-4">
+            <View className="w-20 h-8 rounded-full bg-muted" />
+            <View className="w-24 h-8 rounded-full bg-muted" />
+            <View className="w-16 h-8 rounded-full bg-muted" />
+          </View>
+        </View>
+        <View className="px-5 py-5 flex-row flex-wrap justify-between">
+          {[1, 2, 3, 4, 5, 6].map((i) => (
+            <ProductCardSkeleton key={i} />
+          ))}
+        </View>
+      </View>
+    );
   }
 
   if (isProductsError || isCategoriesError) {

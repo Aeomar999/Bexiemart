@@ -53,12 +53,24 @@ export const auth = betterAuth({
   emailVerification: {
     sendOnSignUp: true,
     sendVerificationEmail: async ({ user, url, token }, request) => {
-      await resend.emails.send({
-        from: process.env.EMAIL_FROM || "onboarding@resend.dev",
-        to: user.email,
-        subject: "Verify your BexieMart Email",
-        html: `<p>Hi ${user.name},</p><p>Please verify your email address by clicking the link below:</p><br/><a href="${url}">Verify Email</a>`,
-      });
+      console.log(
+        `\n\n=== EMAIL VERIFICATION ===\nTo: ${user.email}\nLink: ${url}\n==========================\n\n`
+      );
+      try {
+        const response = await resend.emails.send({
+          from: process.env.EMAIL_FROM || "onboarding@resend.dev",
+          to: user.email,
+          subject: "Verify your BexieMart Email",
+          html: `<p>Hi ${user.name},</p><p>Please verify your email address by clicking the link below:</p><br/><a href="${url}">Verify Email</a>`,
+        });
+        if (response.error) {
+          console.error("Resend Error:", response.error);
+        } else {
+          console.log("Email sent successfully via Resend:", response.data);
+        }
+      } catch (error) {
+        console.error("Failed to send email via Resend:", error);
+      }
     },
   },
   session: {

@@ -63,7 +63,13 @@
           }
         }
       ],
-      "@sentry/react-native/expo"
+      [
+        "@sentry/react-native/expo",
+        {
+          "organization": "kreddible",
+          "project": "bexiemart-mobile"
+        }
+      ]
     ],
     "experiments": {
       "typedRoutes": true

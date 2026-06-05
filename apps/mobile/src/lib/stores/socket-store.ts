@@ -1,15 +1,10 @@
 import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { io, Socket } from "socket.io-client";
+import { socketService } from "../socket";
 import { useAuthStore } from "./auth-store";
 
-import { ENV } from "../../config";
-
-const SOCKET_URL = ENV.SOCKET_URL;
-
 interface SocketState {
-  socket: Socket | null;
   isConnected: boolean;
   onlineUsers: Record<string, boolean>;
   offlineMessages: any[];
@@ -24,21 +19,14 @@ interface SocketState {
 export const useSocketStore = create<SocketState>()(
   persist(
     (set, get) => ({
-      socket: null,
       isConnected: false,
       onlineUsers: {},
       offlineMessages: [],
 
       connect: () => {
-        const { token } = useAuthStore.getState();
-        if (!token) return;
-
-        if (get().socket?.connected) return;
-
-        const socket = io(SOCKET_URL, {
-          auth: { token },
-          transports: ["websocket"],
-        });
+        socketService.connect();
+        const socket = socketService.get();
+        if (!socket) return;
 
         socket.on("connect", () => {
           set({ isConnected: true });
@@ -57,27 +45,22 @@ export const useSocketStore = create<SocketState>()(
             },
           }));
         });
-
-        set({ socket });
       },
 
       disconnect: () => {
-        const { socket } = get();
-        if (socket) {
-          socket.disconnect();
-          set({ socket: null, isConnected: false, onlineUsers: {} });
-        }
+        socketService.disconnect();
+        set({ isConnected: false, onlineUsers: {} });
       },
 
       subscribePresence: (userIds: string[]) => {
-        const { socket } = get();
+        const socket = socketService.get();
         if (socket?.connected && userIds.length > 0) {
           socket.emit("subscribe_presence", { userIds });
         }
       },
 
       unsubscribePresence: (userIds: string[]) => {
-        const { socket } = get();
+        const socket = socketService.get();
         if (socket?.connected && userIds.length > 0) {
           socket.emit("unsubscribe_presence", { userIds });
         }
@@ -92,7 +75,8 @@ export const useSocketStore = create<SocketState>()(
       },
 
       flushOfflineMessages: () => {
-        const { socket, offlineMessages } = get();
+        const socket = socketService.get();
+        const { offlineMessages } = get();
         if (socket?.connected && offlineMessages.length > 0) {
           offlineMessages.forEach((msg) => {
             socket.emit("send_message", msg);
@@ -104,6 +88,7 @@ export const useSocketStore = create<SocketState>()(
     {
       name: "socket-storage",
       storage: createJSONStorage(() => AsyncStorage),
+      partialize: (state) => ({ offlineMessages: state.offlineMessages }),
     }
   )
 );

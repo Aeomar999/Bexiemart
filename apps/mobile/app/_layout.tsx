@@ -78,7 +78,7 @@ export default function RootLayout() {
     try {
       if (isAuthenticated && (inAuthGroup || inOnboardingGroup || !segments[0])) {
         if (user?.role === "VENDOR") {
-          router.replace("/(vendor)/(tabs)/(dashboard)");
+          router.replace("/(vendor)/(dashboard)");
         } else if (user?.role === "DISPATCHER") {
           router.replace("/(dispatcher)/(tabs)/(dashboard)");
         } else {

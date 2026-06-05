@@ -11,6 +11,7 @@ import { Image } from "expo-image";
 import { Icon } from "@/components/ui/Icon";
 import { useState } from "react";
 import Toast from "@/lib/toast-polyfill";
+import { CartItemSkeleton, Skeleton } from "@/components/ui/Skeleton";
 
 interface CartItemData {
   id: string;
@@ -87,7 +88,31 @@ export default function CartScreen() {
   };
 
   if (isPending) {
-    return <LoadingState message="Loading cart..." />;
+    return (
+      <View className="flex-1 bg-background">
+        <View
+          className="px-5 pt-4 pb-4 bg-card border-b border-border"
+          style={{ paddingTop: insets.top + 12 }}
+        >
+          <Skeleton width={120} height={24} borderRadius={4} />
+        </View>
+        <ScrollView
+          contentContainerClassName="px-5 pt-4 pb-72"
+          showsVerticalScrollIndicator={false}
+        >
+          {[1, 2].map((group) => (
+            <View key={group} className="mb-6">
+              <View className="flex-row items-center justify-between mb-3 px-1">
+                <Skeleton width={140} height={20} borderRadius={4} />
+              </View>
+              {[1, 2].map((item) => (
+                <CartItemSkeleton key={item} />
+              ))}
+            </View>
+          ))}
+        </ScrollView>
+      </View>
+    );
   }
 
   if (isError) {

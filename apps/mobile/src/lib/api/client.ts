@@ -35,8 +35,33 @@ apiClient.interceptors.request.use(async (config) => {
 
 import { useAuthStore } from "../stores/auth-store";
 
+import { z } from "zod";
+import * as Sentry from "@sentry/react-native";
+
+declare module "axios" {
+  export interface AxiosRequestConfig {
+    zodSchema?: z.ZodType<any>;
+  }
+}
+
 apiClient.interceptors.response.use(
-  (response) => response,
+  (response) => {
+    const schema = (response.config as any).zodSchema;
+    if (schema) {
+      const parsed = schema.safeParse(response.data);
+      if (!parsed.success) {
+        console.error("API Contract Violation:", parsed.error);
+        Sentry.captureException(new Error("API Contract Violation"), {
+          extra: { issues: parsed.error.issues, url: response.config.url },
+        });
+        // You could optionally throw here to fail hard, but returning data
+        // might allow the app to partially work if the schema mismatch is minor.
+      } else {
+        response.data = parsed.data;
+      }
+    }
+    return response;
+  },
   async (error) => {
     // Extract user-friendly error message from backend
     if (error.response?.data?.message) {
