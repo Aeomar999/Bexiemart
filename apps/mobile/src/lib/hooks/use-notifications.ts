@@ -8,7 +8,7 @@ export const NOTIFICATION_KEYS = {
 export function useNotifications() {
   return useQuery({
     queryKey: NOTIFICATION_KEYS.all,
-    queryFn: () => notificationsApi.getAll().then((r) => r.data),
+    queryFn: () => notificationsApi.getAll().then((r) => r.data.data),
   });
 }
 

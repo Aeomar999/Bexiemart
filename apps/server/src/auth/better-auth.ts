@@ -6,11 +6,18 @@ import { betterAuth } from "better-auth";
 import { prismaAdapter } from "better-auth/adapters/prisma";
 import { phoneNumber } from "better-auth/plugins";
 import type { PrismaClient } from "@prisma/client";
-import { Resend } from "resend";
+import * as nodemailer from "nodemailer";
 import { dash, sentinel } from "@better-auth/infra";
 
-// The user must replace `re_xxxxxxxxx` with their real API key via the .env file.
-const resend = new Resend(process.env.RESEND_API_KEY || "re_hZUiH98H_HtH4T2zdX2SBh6t3F4h4VBTC");
+const transporter = nodemailer.createTransport({
+  host: process.env.SMTP_HOST || "smtp.gmail.com",
+  port: parseInt(process.env.SMTP_PORT || "465", 10),
+  secure: true, // true for 465, false for other ports
+  auth: {
+    user: process.env.SMTP_USER,
+    pass: process.env.SMTP_PASS,
+  },
+});
 
 export function createAuth(prisma: PrismaClient) {
   return betterAuth({
@@ -51,29 +58,44 @@ export function createAuth(prisma: PrismaClient) {
     emailVerification: {
       sendOnSignUp: true,
       sendVerificationEmail: async ({ user, url, token }, request) => {
+        const webUrl = url.replace("localhost", "172.20.10.2");
+        const appUrl = `bexiemart://verify-email?token=${token}`;
         console.log(
-          `\n\n=== EMAIL VERIFICATION ===\nTo: ${user.email}\nLink: ${url}\n==========================\n\n`
+          `\n\n=== EMAIL VERIFICATION ===\nTo: ${user.email}\nWeb: ${webUrl}\nApp: ${appUrl}\n==========================\n\n`
         );
         try {
-          const response = await resend.emails.send({
-            from: process.env.EMAIL_FROM || "onboarding@resend.dev",
+          const info = await transporter.sendMail({
+            from: process.env.EMAIL_FROM || "BexieMart <onboarding@bexiemart.com>",
             to: user.email,
             subject: "Verify your BexieMart Email",
-            html: `<p>Hi ${user.name},</p><p>Please verify your email address by clicking the link below:</p><br/><a href="${url}">Verify Email</a>`,
+            html: `
+              <p>Hi ${user.name},</p>
+              <p>Click the button below to verify your email:</p>
+              <br/>
+              <a href="${webUrl}" style="display:inline-block;padding:14px 32px;background-color:#004CFF;color:#ffffff;text-decoration:none;border-radius:8px;font-weight:bold;font-size:16px;">
+                Verify Email
+              </a>
+              <br/><br/>
+              <p style="color:#64748B;font-size:14px;">
+                If the button above doesn't work, copy this link into your browser:<br/>
+                <a href="${webUrl}" style="color:#004CFF;">${webUrl}</a>
+              </p>
+              <br/>
+              <p style="color:#64748B;font-size:13px;">
+                <strong>Already have the app installed?</strong><br/>
+                <a href="${appUrl}" style="color:#64748B;">bexiemart://verify-email?token=${token}</a>
+              </p>
+            `,
           });
-          if (response.error) {
-            console.error("Resend Error:", response.error);
-          } else {
-            console.log("Email sent successfully via Resend:", response.data);
-          }
+          console.log("Email sent successfully via Nodemailer:", info.messageId);
         } catch (error) {
-          console.error("Failed to send email via Resend:", error);
+          console.error("Failed to send email via Nodemailer:", error);
         }
       },
     },
     session: {
       expiresIn: 7 * 24 * 60 * 60,
     },
-    trustedOrigins: ["bexiemart://", "com.bexiemart.app://"],
+    trustedOrigins: ["bexiemart://", "com.bexiemart.app://", "exp://"],
   });
 }

@@ -34,6 +34,14 @@
             { "scheme": "https", "host": "bexiemart.com", "pathPrefix": "/" }
           ],
           "category": ["BROWSABLE", "DEFAULT"]
+        },
+        {
+          "action": "VIEW",
+          "data": [
+            { "scheme": "bexiemart", "host": "verify-email" },
+            { "scheme": "bexiemart", "host": "reset-password" }
+          ],
+          "category": ["BROWSABLE", "DEFAULT"]
         }
       ]
     },

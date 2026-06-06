@@ -44,4 +44,15 @@ export const authApi = {
     if (res.error) throw res.error;
     return { data: res.data };
   },
+
+  verifyEmail: async (token: string) => {
+    const res = await authClient.verifyEmail({ query: { token } });
+    if (res.error) throw res.error;
+    return res;
+  },
+
+  resendVerificationEmail: async (email: string) => {
+    const res = await apiClient.post("/auth/resend-verification", { email });
+    return res;
+  },
 };

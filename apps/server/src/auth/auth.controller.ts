@@ -74,8 +74,15 @@ export class AuthController {
     const tokenMatch = cookie?.match(/better-auth\.session_token=([^;]+)/);
     const signedToken = (tokenMatch ? decodeURIComponent(tokenMatch[1]) : null) || data.token;
 
-    let user = data.user;
-    this.logger.log(`User created by better-auth: id=${user.id}, email=${user.email}`);
+    this.logger.log(`Better-auth user response: id=${data.user.id}, email=${data.user.email}`);
+
+    const dbUser = await this.prisma.user.findUnique({ where: { email } });
+    let user = dbUser ?? (data.user as { id: string; email: string });
+    if (dbUser) {
+      this.logger.log(`Fetched real DB user: id=${user.id}, email=${user.email}`);
+    } else {
+      this.logger.warn(`User created by better-auth not found by email, using response data.id`);
+    }
 
     if (phone) {
       this.logger.log(`Updating phone number for user ${user.id}`);
@@ -196,6 +203,27 @@ export class AuthController {
     });
 
     return { user: fullUser || req.user };
+  }
+
+  @Throttle({ default: { limit: 3, ttl: 60000 } })
+  @ApiOperation({ summary: "Resend verification email" })
+  @Post("resend-verification")
+  @HttpCode(HttpStatus.OK)
+  async resendVerification(@Body() body: { email: string }) {
+    const { email } = body;
+    const user = await this.prisma.user.findUnique({ where: { email } });
+    if (!user) {
+      throw new UnauthorizedException("No account found with this email.");
+    }
+    this.logger.log(`Resending verification email to: ${email}`);
+    try {
+      await (this.auth.api as any).sendVerificationEmail({
+        body: { email, callbackURL: "bexiemart://verify-email" },
+      });
+    } catch (e) {
+      this.logger.error(`Resend verification error for ${email}: ${e}`);
+    }
+    return { message: "Verification email sent." };
   }
 
   @Throttle({ default: { limit: 3, ttl: 60000 } })

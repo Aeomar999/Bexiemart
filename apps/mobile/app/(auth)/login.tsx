@@ -7,7 +7,7 @@ import { useAuthStore } from "../../src/lib/stores/auth-store";
 import { Input } from "../../src/components/ui/Input";
 import { Button } from "../../src/components/ui/Button";
 import { Announcement } from "../../src/components/ui/Announcement";
-import { useLogin } from "../../src/lib/hooks/use-auth";
+import { useLogin, useResendVerification } from "../../src/lib/hooks/use-auth";
 // @ts-expect-error
 import { FontAwesome5 } from "@expo/vector-icons";
 import { SocialLogins } from "../../src/components/auth/SocialLogins";
@@ -20,10 +20,24 @@ interface FormErrors {
 export default function LoginScreen() {
   const { isAuthenticated, setAuth } = useAuthStore();
   const login = useLogin();
+  const resendVerification = useResendVerification();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [errors, setErrors] = useState<FormErrors>({});
+  const [isEmailNotVerified, setIsEmailNotVerified] = useState(false);
+  const [resendError, setResendError] = useState("");
+  const [countdown, setCountdown] = useState(0);
+
+  useEffect(() => {
+    let interval: NodeJS.Timeout;
+    if (countdown > 0) {
+      interval = setInterval(() => {
+        setCountdown((c) => c - 1);
+      }, 1000);
+    }
+    return () => clearInterval(interval);
+  }, [countdown]);
 
   useEffect(() => {
     if (isAuthenticated) router.replace("/");
@@ -45,7 +59,18 @@ export default function LoginScreen() {
 
   const handleSubmit = () => {
     if (!validate()) return;
-    login.mutate({ email: email.trim(), password });
+    setIsEmailNotVerified(false);
+    login.mutate(
+      { email: email.trim(), password },
+      {
+        onError: (err: any) => {
+          const msg = err?.message?.toLowerCase() || "";
+          if (msg.includes("email not verified") || msg.includes("verify your email")) {
+            setIsEmailNotVerified(true);
+          }
+        },
+      }
+    );
   };
 
   const insets = useSafeAreaInsets();
@@ -98,11 +123,66 @@ export default function LoginScreen() {
             </TouchableOpacity>
           </View>
 
-          {login.error && (
+          {login.error && !isEmailNotVerified && (
             <Announcement
               type="error"
               message={login.error?.message ?? "Login failed. Please try again."}
             />
+          )}
+
+          {isEmailNotVerified && (
+            <View className="bg-brand-50 p-5 rounded-3xl border border-brand-100 overflow-hidden relative">
+              <View className="flex-row items-start gap-4 mb-4">
+                <View className="w-12 h-12 bg-white rounded-2xl items-center justify-center shadow-sm">
+                  <FontAwesome5 name="envelope-open-text" size={20} color="#004CFF" />
+                </View>
+                <View className="flex-1 pt-1">
+                  <Text className="text-[16px] font-heading font-black text-brand-900 mb-1">
+                    Check your inbox
+                  </Text>
+                  <Text className="text-[13px] text-brand-700 font-body leading-relaxed">
+                    We've sent a verification link to{" "}
+                    <Text className="font-bold text-brand-900">{email}</Text>. Please verify your
+                    email before signing in.
+                  </Text>
+                </View>
+              </View>
+
+              {resendError ? (
+                <Text className="text-[13px] text-red-600 font-body mb-3 px-1">{resendError}</Text>
+              ) : resendVerification.isSuccess && countdown > 0 ? (
+                <View className="flex-row items-center gap-2 mb-4 bg-green-100 p-3 rounded-2xl border border-green-200">
+                  <FontAwesome5 name="check-circle" size={14} color="#16A34A" />
+                  <Text className="text-[13px] font-bold text-green-800">
+                    Verification email sent!
+                  </Text>
+                </View>
+              ) : null}
+
+              <Button
+                title={
+                  countdown > 0
+                    ? `Resend email in ${Math.floor(countdown / 60)}:${(countdown % 60).toString().padStart(2, "0")}`
+                    : "Resend verification email"
+                }
+                size="md"
+                variant={countdown > 0 ? "outline" : "primary"}
+                className={countdown > 0 ? "bg-white border-brand-200" : ""}
+                loading={resendVerification.isPending}
+                disabled={countdown > 0}
+                onPress={() => {
+                  setResendError("");
+                  resendVerification.mutate(email, {
+                    onSuccess: () => {
+                      setCountdown(180);
+                    },
+                    onError: (err: any) => {
+                      setResendError(err?.message || "Failed to resend.");
+                    },
+                  });
+                }}
+              />
+            </View>
           )}
 
           <View className="w-full mt-2">

@@ -6,6 +6,7 @@ import { Button } from "../../src/components/ui/Button";
 import { Announcement } from "../../src/components/ui/Announcement";
 import { useRegister } from "../../src/lib/hooks/use-auth";
 import { useState } from "react";
+import { useAuthStore } from "../../src/lib/stores/auth-store";
 // @ts-expect-error
 import { FontAwesome5 } from "@expo/vector-icons";
 import { SocialLogins } from "../../src/components/auth/SocialLogins";
@@ -20,6 +21,7 @@ interface FormErrors {
 
 export default function RegisterScreen() {
   const registerMutation = useRegister();
+  const setAuth = useAuthStore((s) => s.setAuth);
 
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -58,7 +60,14 @@ export default function RegisterScreen() {
     registerMutation.mutate(
       { name: name.trim(), email: email.trim(), password, role, phone: phone.trim() },
       {
-        onSuccess: () => router.replace("/(auth)/login"),
+        onSuccess: (response) => {
+          if (response?.data?.token) {
+            setAuth(response.data.user, response.data.token);
+            router.replace("/");
+          } else {
+            router.replace(`/(auth)/verify-email?email=${encodeURIComponent(email.trim())}`);
+          }
+        },
       }
     );
   };

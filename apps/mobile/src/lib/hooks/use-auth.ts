@@ -44,6 +44,24 @@ export function useCurrentUser() {
   });
 }
 
+export function useVerifyEmail() {
+  return useMutation({
+    mutationFn: async (token: string) => {
+      const result = await authApi.verifyEmail(token);
+      return result;
+    },
+  });
+}
+
+export function useResendVerification() {
+  return useMutation({
+    mutationFn: async (email: string) => {
+      const result = await authApi.resendVerificationEmail(email);
+      return result;
+    },
+  });
+}
+
 export function useLogout() {
   const logout = useAuthStore((s) => s.logout);
   const clearCart = () => {};
