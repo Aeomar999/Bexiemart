@@ -3,7 +3,7 @@ export { Input } from "./Input";
 export { Card } from "./Card";
 export { Badge } from "./Badge";
 export { EmptyState } from "./EmptyState";
-export { LoadingSpinner } from "./LoadingSpinner";
+export { LoadingState } from "./LoadingState";
 export { Carousel } from "./Carousel";
 export { SearchBar } from "./SearchBar";
 export { Icon } from "./Icon";

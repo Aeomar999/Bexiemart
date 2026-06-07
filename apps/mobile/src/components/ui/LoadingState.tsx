@@ -1,27 +1,35 @@
 import React from "react";
 import { View, Text, ActivityIndicator } from "react-native";
-import { Icon } from "@/components/ui/Icon";
+import { ListSkeleton, DetailSkeleton, ProfileSkeleton } from "./Skeleton";
 
 interface LoadingStateProps {
   message?: string;
-  fullScreen?: boolean;
+  type?: "spinner" | "list" | "detail" | "profile";
 }
 
-export function LoadingState({ message = "Loading...", fullScreen = true }: LoadingStateProps) {
-  return (
-    <View
-      className={`items-center justify-center ${fullScreen ? "w-full bg-background" : "p-8 py-12"}`}
-      style={fullScreen ? { flex: 1, justifyContent: "center", alignItems: "center" } : undefined}
-    >
-      <View className="h-20 w-20 rounded-full bg-brand-50 items-center justify-center mb-6">
-        <ActivityIndicator size="large" color="#004CFF" />
-      </View>
+export function LoadingState({ message = "Loading...", type = "spinner" }: LoadingStateProps) {
+  if (type === "list") {
+    return <ListSkeleton />;
+  }
 
+  if (type === "detail") {
+    return <DetailSkeleton />;
+  }
+
+  if (type === "profile") {
+    return <ProfileSkeleton />;
+  }
+
+  return (
+    <View className="flex-1 bg-background items-center justify-center p-6">
+      <ActivityIndicator size="large" color="#004CFF" />
       {message && (
-        <Text className="text-[16px] font-heading font-bold text-foreground mt-2 text-center">
+        <Text className="mt-4 text-[15px] font-bold text-muted-foreground text-center">
           {message}
         </Text>
       )}
     </View>
   );
 }
+
+export * from "./Skeleton";

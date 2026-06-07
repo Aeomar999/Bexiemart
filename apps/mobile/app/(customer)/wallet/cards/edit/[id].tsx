@@ -18,6 +18,7 @@ import { useUpdateCard, useCards, WALLET_KEYS } from "@/lib/hooks/use-wallet";
 import { getCardColors } from "@/lib/utils/wallet";
 import { useQueryClient } from "@tanstack/react-query";
 import { LinearGradient } from "expo-linear-gradient";
+import { DetailSkeleton } from "@/components/ui/Skeleton";
 
 export default function EditCardScreen() {
   const router = useRouter();
@@ -86,7 +87,7 @@ export default function EditCardScreen() {
   if (cardsLoading) {
     return (
       <View className="flex-1 items-center justify-center bg-gray-50">
-        <ActivityIndicator size="large" color="#2563EB" />
+        <DetailSkeleton />
       </View>
     );
   }

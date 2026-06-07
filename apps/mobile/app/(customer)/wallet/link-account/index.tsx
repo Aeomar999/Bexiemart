@@ -1,8 +1,9 @@
 import { BackButton } from "@/components/ui/BackButton";
-import { View, Text, Pressable, ScrollView, Alert, ActivityIndicator } from "react-native";
+import { View, Text, Pressable, ScrollView, Alert } from "react-native";
 import { useRouter } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Icon } from "@/components/ui/Icon";
+import { ListSkeleton } from "@/components/ui/Skeleton";
 import {
   useBankAccounts,
   useMomoAccounts,
@@ -122,7 +123,7 @@ export default function LinkAccountScreen() {
           <View style={{ paddingHorizontal: 20 }}>
             {bankLoading ? (
               <View style={{ paddingVertical: 60, alignItems: "center" }}>
-                <ActivityIndicator size="large" color="#2563EB" />
+                <ListSkeleton />
               </View>
             ) : bankList.length > 0 ? (
               <View style={{ marginBottom: 24 }}>
@@ -293,7 +294,7 @@ export default function LinkAccountScreen() {
           <View style={{ paddingHorizontal: 20 }}>
             {momoLoading ? (
               <View style={{ paddingVertical: 60, alignItems: "center" }}>
-                <ActivityIndicator size="large" color="#F59E0B" />
+                <ListSkeleton />
               </View>
             ) : momoList.length > 0 ? (
               <View style={{ marginBottom: 24 }}>

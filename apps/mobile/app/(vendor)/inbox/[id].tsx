@@ -1,10 +1,19 @@
 import { BackButton } from "@/components/ui/BackButton";
-import { View, Text, ScrollView, TextInput, Pressable, KeyboardAvoidingView, Platform, ActivityIndicator } from "react-native";
+import {
+  View,
+  Text,
+  ScrollView,
+  TextInput,
+  Pressable,
+  KeyboardAvoidingView,
+  Platform,
+} from "react-native";
 import { useRouter, useLocalSearchParams } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Icon } from "@/components/ui/Icon";
 import { useState, useEffect, useRef } from "react";
 import { useMessages, useConversation, useMarkAsRead } from "@/lib/hooks/use-chat";
+import { DetailSkeleton } from "@/components/ui/Skeleton";
 
 const SOCKET_URL = process.env.EXPO_PUBLIC_SOCKET_URL ?? "http://localhost:3000";
 
@@ -55,27 +64,38 @@ export default function VendorChatScreen() {
   const sendMessage = () => {
     if (!message.trim() || !wsRef.current || !connected) {
       if (!connected) {
-        setMessages((prev) => [...prev, { id: Date.now().toString(), content: message, senderId: "vendor", createdAt: new Date().toISOString(), isRead: false }]);
+        setMessages((prev) => [
+          ...prev,
+          {
+            id: Date.now().toString(),
+            content: message,
+            senderId: "vendor",
+            createdAt: new Date().toISOString(),
+            isRead: false,
+          },
+        ]);
         setMessage("");
       }
       return;
     }
-    wsRef.current.send(JSON.stringify({
-      event: "send_message",
-      data: { conversationId: id, content: message },
-    }));
+    wsRef.current.send(
+      JSON.stringify({
+        event: "send_message",
+        data: { conversationId: id, content: message },
+      })
+    );
     setMessage("");
   };
 
   const otherParticipant = conversationData?.participants?.find((p: any) => p.user?.name);
 
   return (
-    <KeyboardAvoidingView 
+    <KeyboardAvoidingView
       className="flex-1 bg-background"
-      behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+      behavior={Platform.OS === "ios" ? "padding" : undefined}
     >
       {/* Header */}
-      <View 
+      <View
         className="px-5 pb-4 bg-card border-b border-border flex-row items-center"
         style={{ paddingTop: (insets.top || 12) + 12 }}
       >
@@ -85,7 +105,9 @@ export default function VendorChatScreen() {
             {otherParticipant?.user?.name || `Customer`}
           </Text>
           <View className="flex-row items-center gap-1.5 mt-0.5">
-            <View className={`w-2 h-2 rounded-full ${connected ? "bg-emerald-500" : "bg-gray-400"}`} />
+            <View
+              className={`w-2 h-2 rounded-full ${connected ? "bg-emerald-500" : "bg-gray-400"}`}
+            />
             <Text className="text-[12px] font-body text-muted-foreground">
               {connected ? "Online" : "Offline"}
             </Text>
@@ -95,7 +117,7 @@ export default function VendorChatScreen() {
 
       {isLoading ? (
         <View className="flex-1 items-center justify-center">
-          <ActivityIndicator size="large" color="#004CFF" />
+          <DetailSkeleton />
         </View>
       ) : (
         <ScrollView
@@ -112,13 +134,25 @@ export default function VendorChatScreen() {
           {messages.map((msg: any) => {
             const isVendor = msg.senderId === "vendor" || msg.sender === "vendor";
             return (
-              <View key={msg.id} className={`max-w-[80%] mb-4 ${isVendor ? "self-end" : "self-start"}`}>
-                <View className={`p-3 rounded-[16px] ${isVendor ? "bg-brand-600 rounded-br-none" : "bg-card border border-border rounded-bl-none"}`}>
+              <View
+                key={msg.id}
+                className={`max-w-[80%] mb-4 ${isVendor ? "self-end" : "self-start"}`}
+              >
+                <View
+                  className={`p-3 rounded-[16px] ${isVendor ? "bg-brand-600 rounded-br-none" : "bg-card border border-border rounded-bl-none"}`}
+                >
                   <Text className={`text-[14px] ${isVendor ? "text-white" : "text-foreground"}`}>
                     {msg.content || msg.text}
                   </Text>
-                  <Text className={`text-[10px] ${isVendor ? "text-white/70 text-right" : "text-muted-foreground"} mt-1`}>
-                    {msg.createdAt ? new Date(msg.createdAt).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }) : msg.time}
+                  <Text
+                    className={`text-[10px] ${isVendor ? "text-white/70 text-right" : "text-muted-foreground"} mt-1`}
+                  >
+                    {msg.createdAt
+                      ? new Date(msg.createdAt).toLocaleTimeString([], {
+                          hour: "2-digit",
+                          minute: "2-digit",
+                        })
+                      : msg.time}
                   </Text>
                 </View>
               </View>
@@ -142,11 +176,16 @@ export default function VendorChatScreen() {
             maxLength={500}
           />
         </View>
-        <Pressable 
+        <Pressable
           onPress={sendMessage}
-          className={`w-12 h-12 rounded-full items-center justify-center ${message.trim() ? 'bg-brand-600' : 'bg-accent'}`}
+          className={`w-12 h-12 rounded-full items-center justify-center ${message.trim() ? "bg-brand-600" : "bg-accent"}`}
         >
-          <Icon name="send" size={20} color={message.trim() ? "#ffffff" : "#94a3b8"} style={{ marginLeft: 4 }} />
+          <Icon
+            name="send"
+            size={20}
+            color={message.trim() ? "#ffffff" : "#94a3b8"}
+            style={{ marginLeft: 4 }}
+          />
         </Pressable>
       </View>
     </KeyboardAvoidingView>

@@ -1,10 +1,11 @@
 import { BackButton } from "@/components/ui/BackButton";
-import { View, Text, ScrollView, Alert, Pressable, ActivityIndicator } from "react-native";
+import { View, Text, ScrollView, Alert, Pressable } from "react-native";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Icon } from "@/components/ui/Icon";
 import { Button } from "@/components/ui/Button";
 import { useTransactions } from "@/lib/hooks/use-wallet";
+import { DetailSkeleton } from "@/components/ui/Skeleton";
 import {
   getTransactionIcon,
   getTransactionColors,
@@ -24,7 +25,7 @@ export default function TransactionReceiptScreen() {
   if (isLoading && !tx) {
     return (
       <View className="flex-1 bg-background justify-center items-center">
-        <ActivityIndicator size="large" color="#004CFF" />
+        <DetailSkeleton />
       </View>
     );
   }
@@ -57,16 +58,25 @@ export default function TransactionReceiptScreen() {
 
       <ScrollView className="flex-1 px-5 pt-6 pb-20">
         <View className="bg-card rounded-[24px] p-6 items-center shadow-[0_10px_20px_rgba(0,0,0,0.03)] border border-border mb-6">
-          <View className="w-16 h-16 rounded-full items-center justify-center mb-4" style={{ backgroundColor: colors.bg }}>
+          <View
+            className="w-16 h-16 rounded-full items-center justify-center mb-4"
+            style={{ backgroundColor: colors.bg }}
+          >
             <Icon name={getTransactionIcon(tx.type)} size={30} color={colors.icon} />
           </View>
 
           <Text className="text-[16px] text-muted-foreground font-body mb-2">{tx.description}</Text>
-          <Text className={`text-[40px] font-black font-heading mb-2 ${isPositive ? 'text-emerald-600' : 'text-foreground'}`}>
-            {isPositive ? '+' : '-'}GHS {tx.amount.toFixed(2)}
+          <Text
+            className={`text-[40px] font-black font-heading mb-2 ${isPositive ? "text-emerald-600" : "text-foreground"}`}
+          >
+            {isPositive ? "+" : "-"}GHS {tx.amount.toFixed(2)}
           </Text>
-          <View className={`px-4 py-1.5 rounded-full ${tx.status === 'COMPLETED' ? 'bg-emerald-50' : 'bg-amber-50'}`}>
-            <Text className={`text-[13px] font-bold ${tx.status === 'COMPLETED' ? 'text-emerald-600' : 'text-amber-600'}`}>
+          <View
+            className={`px-4 py-1.5 rounded-full ${tx.status === "COMPLETED" ? "bg-emerald-50" : "bg-amber-50"}`}
+          >
+            <Text
+              className={`text-[13px] font-bold ${tx.status === "COMPLETED" ? "text-emerald-600" : "text-amber-600"}`}
+            >
               {tx.status}
             </Text>
           </View>

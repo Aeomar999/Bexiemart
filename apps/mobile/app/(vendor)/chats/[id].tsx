@@ -1,7 +1,17 @@
-import { View, Text, FlatList, TextInput, Pressable, KeyboardAvoidingView, Platform, ActivityIndicator } from "react-native";
+import {
+  View,
+  Text,
+  FlatList,
+  TextInput,
+  Pressable,
+  KeyboardAvoidingView,
+  Platform,
+  ActivityIndicator,
+} from "react-native";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Icon } from "@/components/ui";
+import { Avatar } from "@/components/ui/Avatar";
 import { Image } from "expo-image";
 import { useChatMessages, useConversations } from "@/lib/hooks/use-chat";
 import { useAuthStore } from "@/lib/stores/auth-store";
@@ -11,6 +21,7 @@ import * as ImagePicker from "expo-image-picker";
 import { uploadApi } from "@/lib/api/upload";
 import { format } from "date-fns";
 import { BackButton } from "@/components/ui/BackButton";
+import { DetailSkeleton } from "@/components/ui/Skeleton";
 
 export default function ChatDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
@@ -19,10 +30,16 @@ export default function ChatDetailScreen() {
   const { user } = useAuthStore();
   const [content, setContent] = useState("");
   const [isUploading, setIsUploading] = useState(false);
-  
-  const { data: messagesData, isLoading, sendMessage, sendTypingEvent, typingUsers } = useChatMessages(id as string);
+
+  const {
+    data: messagesData,
+    isLoading,
+    sendMessage,
+    sendTypingEvent,
+    typingUsers,
+  } = useChatMessages(id as string);
   const { data: conversations } = useConversations();
-  const onlineUsers = useSocketStore(s => s.onlineUsers);
+  const onlineUsers = useSocketStore((s) => s.onlineUsers);
 
   const conversation = conversations?.find((c: any) => c.id === id);
   const otherParticipant = conversation?.participants.find((p: any) => p.id !== user?.id);
@@ -31,7 +48,7 @@ export default function ChatDetailScreen() {
 
   const handleSendText = () => {
     if (!content.trim()) return;
-    sendMessage.mutate({ content: content.trim(), type: 'TEXT' });
+    sendMessage.mutate({ content: content.trim(), type: "TEXT" });
     setContent("");
     sendTypingEvent(false);
   };
@@ -47,16 +64,16 @@ export default function ChatDetailScreen() {
       try {
         setIsUploading(true);
         const asset = result.assets[0];
-        const filename = asset.fileName || asset.uri.split('/').pop() || 'image.jpg';
+        const filename = asset.fileName || asset.uri.split("/").pop() || "image.jpg";
         // upload to cloudinary
         const { url } = await uploadApi.uploadFile({
           uri: asset.uri,
           name: filename,
-          type: "image/jpeg"
+          type: "image/jpeg",
         });
-        
+
         // send message
-        sendMessage.mutate({ type: 'IMAGE', mediaUrl: url });
+        sendMessage.mutate({ type: "IMAGE", mediaUrl: url });
       } catch (e) {
         console.error("Upload failed", e);
         alert("Failed to upload image.");
@@ -72,15 +89,20 @@ export default function ChatDetailScreen() {
     return (
       <View className={`w-full flex-row mb-4 px-5 ${isMine ? "justify-end" : "justify-start"}`}>
         {!isMine && (
-          <Image
-            source={{ uri: otherParticipant?.image || "https://ui-avatars.com/api/?name=" + encodeURIComponent(otherParticipant?.name || "") }}
-            style={{ width: 28, height: 28, borderRadius: 14, marginRight: 8, marginTop: 4 }}
-            contentFit="cover"
-          />
+          <View style={{ marginRight: 8, marginTop: 4 }}>
+            <Avatar
+              uri={otherParticipant?.image}
+              name={otherParticipant?.name || "?"}
+              size={28}
+              fallback="initials"
+            />
+          </View>
         )}
-        <View className={`max-w-[75%] rounded-[16px] px-4 py-2.5 ${isMine ? "bg-brand-600 rounded-tr-sm" : "bg-accent rounded-tl-sm"}`}>
-          {item.type === 'IMAGE' && item.mediaUrl ? (
-            <Image 
+        <View
+          className={`max-w-[75%] rounded-[16px] px-4 py-2.5 ${isMine ? "bg-brand-600 rounded-tr-sm" : "bg-accent rounded-tl-sm"}`}
+        >
+          {item.type === "IMAGE" && item.mediaUrl ? (
+            <Image
               source={{ uri: item.mediaUrl }}
               style={{ width: 200, height: 200, borderRadius: 8, marginBottom: 4 }}
               contentFit="cover"
@@ -90,7 +112,9 @@ export default function ChatDetailScreen() {
               {item.content}
             </Text>
           )}
-          <Text className={`text-[10px] mt-1 ${isMine ? "text-white/70 text-right" : "text-muted-foreground text-left"}`}>
+          <Text
+            className={`text-[10px] mt-1 ${isMine ? "text-white/70 text-right" : "text-muted-foreground text-left"}`}
+          >
             {format(new Date(item.createdAt), "h:mm a")}
           </Text>
         </View>
@@ -99,24 +123,25 @@ export default function ChatDetailScreen() {
   };
 
   return (
-    <KeyboardAvoidingView 
-      className="flex-1 bg-background" 
+    <KeyboardAvoidingView
+      className="flex-1 bg-background"
       behavior={Platform.OS === "ios" ? "padding" : undefined}
     >
       {/* Header */}
-      <View 
-        className="px-5 bg-card pb-3 border-b border-border flex-row items-center shadow-sm z-10" 
+      <View
+        className="px-5 bg-card pb-3 border-b border-border flex-row items-center shadow-sm z-10"
         style={{ paddingTop: (insets.top || 12) + 12 }}
       >
         <BackButton className="w-10 h-10 items-start justify-center active:opacity-70" />
-        
+
         {otherParticipant && (
           <View className="flex-1 flex-row items-center ml-2">
             <View className="relative">
-              <Image
-                source={{ uri: otherParticipant.image || "https://ui-avatars.com/api/?name=" + encodeURIComponent(otherParticipant.name) }}
-                style={{ width: 36, height: 36, borderRadius: 18 }}
-                contentFit="cover"
+              <Avatar
+                uri={otherParticipant.image}
+                name={otherParticipant.name}
+                size={36}
+                fallback="initials"
               />
               {isOnline && (
                 <View className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 border-2 border-card rounded-full" />
@@ -127,7 +152,7 @@ export default function ChatDetailScreen() {
                 {otherParticipant.name}
               </Text>
               <Text className="text-[12px] font-body text-muted-foreground leading-tight">
-                {isTyping ? "Typing..." : (isOnline ? "Online" : "Offline")}
+                {isTyping ? "Typing..." : isOnline ? "Online" : "Offline"}
               </Text>
             </View>
           </View>
@@ -136,7 +161,7 @@ export default function ChatDetailScreen() {
 
       {isLoading ? (
         <View className="flex-1 justify-center items-center">
-          <ActivityIndicator size="large" color="#004CFF" />
+          <DetailSkeleton />
         </View>
       ) : (
         <FlatList
@@ -150,15 +175,22 @@ export default function ChatDetailScreen() {
       )}
 
       {/* Input Area */}
-      <View className="px-5 py-3 border-t border-border bg-card flex-row items-end" style={{ paddingBottom: Math.max(insets.bottom, 12) }}>
-        <Pressable 
+      <View
+        className="px-5 py-3 border-t border-border bg-card flex-row items-end"
+        style={{ paddingBottom: Math.max(insets.bottom, 12) }}
+      >
+        <Pressable
           className="w-10 h-10 items-center justify-center bg-accent rounded-full mb-1 active:opacity-70"
           onPress={handlePickImage}
           disabled={isUploading}
         >
-          {isUploading ? <ActivityIndicator size="small" color="#004CFF" /> : <Icon name="image" size={20} color="#64748b" />}
+          {isUploading ? (
+            <ActivityIndicator size="small" color="#004CFF" />
+          ) : (
+            <Icon name="image" size={20} color="#64748b" />
+          )}
         </Pressable>
-        
+
         <View className="flex-1 bg-accent rounded-[20px] px-4 pt-3 pb-3 ml-2 mr-2 max-h-[100px] min-h-[44px]">
           <TextInput
             className="flex-1 text-[15px] font-body text-foreground p-0 m-0 leading-tight"
@@ -173,8 +205,8 @@ export default function ChatDetailScreen() {
           />
         </View>
 
-        <Pressable 
-          className={`w-10 h-10 items-center justify-center rounded-full mb-1 ${content.trim() ? 'bg-brand-600' : 'bg-muted'}`}
+        <Pressable
+          className={`w-10 h-10 items-center justify-center rounded-full mb-1 ${content.trim() ? "bg-brand-600" : "bg-muted"}`}
           onPress={handleSendText}
           disabled={!content.trim()}
         >

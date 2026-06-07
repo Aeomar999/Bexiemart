@@ -1,19 +1,12 @@
 import { BackButton } from "@/components/ui/BackButton";
-import {
-  View,
-  Text,
-  ScrollView,
-  Pressable,
-  Dimensions,
-  Image,
-  ActivityIndicator,
-} from "react-native";
+import { View, Text, ScrollView, Pressable, Dimensions, Image } from "react-native";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useState } from "react";
 import { Icon } from "@/components/ui/Icon";
 import { useFoodRestaurant, useAddToFoodCart, useFoodCart } from "@/lib/hooks/use-food";
 import { usePopupStore } from "@/lib/stores/popup-store";
+import { DetailSkeleton } from "@/components/ui/Skeleton";
 
 const { width } = Dimensions.get("window");
 
@@ -67,7 +60,7 @@ export default function RestaurantScreen() {
   if (isLoading) {
     return (
       <View className="flex-1 bg-background items-center justify-center">
-        <ActivityIndicator size="large" color="#ea580c" />
+        <DetailSkeleton />
       </View>
     );
   }

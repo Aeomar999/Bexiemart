@@ -3,11 +3,21 @@ import { View, Text, ScrollView, Pressable, TextInput } from "react-native";
 import { useRouter } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Icon } from "@/components/ui/Icon";
+import { Input } from "@/components/ui/Input";
 
 const FAQS = [
-  { q: "How and when do I get paid?", a: "You can request a withdrawal to your Mobile Money or Bank Account at any time from the Earnings tab. Transfers typically take 1-2 hours to process." },
-  { q: "How do I manage my delivery options?", a: "When an order is ready, you can choose to request a BexieMart rider or handle the delivery yourself. Set your default preference in Settings." },
-  { q: "What is the platform fee?", a: "BexieMart charges a flat 5% commission on successful sales, plus a GHS 5.00 flat fee for withdrawals." },
+  {
+    q: "How and when do I get paid?",
+    a: "You can request a withdrawal to your Mobile Money or Bank Account at any time from the Earnings tab. Transfers typically take 1-2 hours to process.",
+  },
+  {
+    q: "How do I manage my delivery options?",
+    a: "When an order is ready, you can choose to request a BexieMart rider or handle the delivery yourself. Set your default preference in Settings.",
+  },
+  {
+    q: "What is the platform fee?",
+    a: "BexieMart charges a flat 5% commission on successful sales, plus a GHS 5.00 flat fee for withdrawals.",
+  },
 ];
 
 export default function VendorHelpScreen() {
@@ -16,7 +26,7 @@ export default function VendorHelpScreen() {
 
   return (
     <View className="flex-1 bg-background">
-      <View 
+      <View
         className="px-5 pb-4 bg-card border-b border-border flex-row items-center"
         style={{ paddingTop: (insets.top || 12) + 12 }}
       >
@@ -27,15 +37,16 @@ export default function VendorHelpScreen() {
       </View>
 
       <ScrollView className="flex-1 px-5 pt-6 pb-12" showsVerticalScrollIndicator={false}>
-        <View className="bg-card rounded-[20px] border border-border p-2 flex-row items-center mb-6">
-          <Icon name="search" size={20} color="#94a3b8" style={{ marginLeft: 12, marginRight: 8 }} />
-          <TextInput 
+        <View className="mb-6">
+          <Input
             placeholder="Search articles..."
-            className="flex-1 h-10 text-[15px]"
+            leftIcon={<Icon name="search" size={20} color="#94a3b8" />}
           />
         </View>
 
-        <Text className="text-[18px] font-bold text-foreground mb-4">Frequently Asked Questions</Text>
+        <Text className="text-[18px] font-bold text-foreground mb-4">
+          Frequently Asked Questions
+        </Text>
         <View className="gap-3 mb-8">
           {FAQS.map((faq, idx) => (
             <View key={idx} className="bg-card rounded-[16px] border border-border p-4">
@@ -53,7 +64,7 @@ export default function VendorHelpScreen() {
           <Text className="text-[14px] text-muted-foreground text-center mb-6">
             Our dedicated seller support team is here to assist you 24/7.
           </Text>
-          <Pressable 
+          <Pressable
             className="bg-brand-600 w-full py-4 rounded-full items-center"
             onPress={() => router.push("/(vendor)/(settings)/contact")}
           >

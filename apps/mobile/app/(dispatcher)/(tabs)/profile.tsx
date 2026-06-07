@@ -4,13 +4,13 @@ import { useRouter } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Icon } from "@/components/ui/Icon";
 import { useAuthStore } from "@/lib/stores/auth-store";
-import { Image } from "expo-image";
+import { Avatar } from "@/components/ui/Avatar";
 
 export default function DispatcherProfile() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
-  const user = useAuthStore(s => s.user);
-  const logout = useAuthStore(s => s.logout);
+  const user = useAuthStore((s) => s.user);
+  const logout = useAuthStore((s) => s.logout);
   const [autoAccept, setAutoAccept] = useState(false);
 
   const handleLogout = async () => {
@@ -21,32 +21,29 @@ export default function DispatcherProfile() {
   return (
     <View className="flex-1 bg-background">
       {/* Header */}
-      <View 
+      <View
         className="px-5 pb-4 bg-card border-b border-border"
         style={{ paddingTop: Math.max(insets.top, 12) + 12 }}
       >
-        <Text className="text-[20px] font-heading font-black text-foreground">
-          My Profile
-        </Text>
+        <Text className="text-[20px] font-heading font-black text-foreground">My Profile</Text>
       </View>
 
       <ScrollView className="flex-1 px-5 pt-6 pb-10" showsVerticalScrollIndicator={false}>
         {/* User Card */}
         <View className="bg-card rounded-[24px] p-5 flex-row items-center shadow-[0_10px_20px_rgba(0,0,0,0.03)] border border-border mb-6">
-          <View className="w-[64px] h-[64px] rounded-full bg-brand-100 items-center justify-center border-4 border-card shadow-sm mr-4 overflow-hidden">
-            {user?.image ? (
-              <Image source={{ uri: user.image }} style={{ width: '100%', height: '100%' }} contentFit="cover" />
-            ) : (
-              <Text className="text-[24px] font-heading font-black text-brand-600">
-                {user?.name ? user.name.charAt(0).toUpperCase() : 'D'}
-              </Text>
-            )}
+          <View className="mr-4">
+            <Avatar uri={user?.image} name={user?.name || "D"} size={64} fallback="initials" />
           </View>
           <View className="flex-1">
-            <Text className="text-[20px] font-heading font-bold text-foreground">{user?.name || "Dispatcher"}</Text>
+            <Text className="text-[20px] font-heading font-bold text-foreground">
+              {user?.name || "Dispatcher"}
+            </Text>
             <Text className="text-body-sm font-body text-muted-foreground">{user?.email}</Text>
           </View>
-          <Pressable className="w-10 h-10 rounded-full bg-background items-center justify-center">
+          <Pressable
+            className="w-10 h-10 rounded-full bg-background items-center justify-center"
+            onPress={() => router.push("/(dispatcher)/edit-profile")}
+          >
             <Icon name="edit-2" size={16} color="#64748b" />
           </Pressable>
         </View>
@@ -65,14 +62,18 @@ export default function DispatcherProfile() {
               <Icon name="check-circle" size={14} color="#10b981" />
               <Text className="font-bold text-foreground font-heading">98%</Text>
             </View>
-            <Text className="text-[12px] text-muted-foreground font-body text-center">Acceptance</Text>
+            <Text className="text-[12px] text-muted-foreground font-body text-center">
+              Acceptance
+            </Text>
           </View>
           <View className="flex-1 bg-card border border-border p-3 rounded-2xl items-center">
             <View className="flex-row items-center gap-1 mb-1">
               <Icon name="truck" size={14} color="#004CFF" />
               <Text className="font-bold text-foreground font-heading">142</Text>
             </View>
-            <Text className="text-[12px] text-muted-foreground font-body text-center">Total Trips</Text>
+            <Text className="text-[12px] text-muted-foreground font-body text-center">
+              Total Trips
+            </Text>
           </View>
         </View>
 
@@ -95,7 +96,9 @@ export default function DispatcherProfile() {
               <Icon name="credit-card" size={18} color="#64748b" />
             </View>
             <View className="flex-1">
-              <Text className="text-[15px] font-body font-semibold text-foreground">License Plate</Text>
+              <Text className="text-[15px] font-body font-semibold text-foreground">
+                License Plate
+              </Text>
               <Text className="text-body-sm font-body text-muted-foreground">AS-1234-21</Text>
             </View>
           </View>
@@ -112,15 +115,19 @@ export default function DispatcherProfile() {
                 <Icon name="zap" size={18} color="#004CFF" />
               </View>
               <View>
-                <Text className="text-[15px] font-body font-semibold text-foreground">Auto-Accept Trips</Text>
-                <Text className="text-[12px] font-body text-muted-foreground mt-0.5">Automatically accept nearby requests</Text>
+                <Text className="text-[15px] font-body font-semibold text-foreground">
+                  Auto-Accept Trips
+                </Text>
+                <Text className="text-[12px] font-body text-muted-foreground mt-0.5">
+                  Automatically accept nearby requests
+                </Text>
               </View>
             </View>
             <Switch
               value={autoAccept}
               onValueChange={setAutoAccept}
-              trackColor={{ false: '#e2e8f0', true: '#004CFF' }}
-              thumbColor={'#ffffff'}
+              trackColor={{ false: "#e2e8f0", true: "#004CFF" }}
+              thumbColor={"#ffffff"}
             />
           </View>
           <Pressable className="flex-row items-center justify-between p-4 border-b border-border">
@@ -128,7 +135,9 @@ export default function DispatcherProfile() {
               <View className="w-10 h-10 rounded-full bg-emerald-50 items-center justify-center">
                 <Icon name="navigation" size={18} color="#10b981" />
               </View>
-              <Text className="text-[15px] font-body font-semibold text-foreground">Navigation App</Text>
+              <Text className="text-[15px] font-body font-semibold text-foreground">
+                Navigation App
+              </Text>
             </View>
             <View className="flex-row items-center gap-2">
               <Text className="text-body-sm font-body text-muted-foreground">Google Maps</Text>
@@ -140,21 +149,22 @@ export default function DispatcherProfile() {
               <View className="w-10 h-10 rounded-full bg-rose-50 items-center justify-center">
                 <Icon name="help-circle" size={18} color="#e11d48" />
               </View>
-              <Text className="text-[15px] font-body font-semibold text-foreground">Driver Support</Text>
+              <Text className="text-[15px] font-body font-semibold text-foreground">
+                Driver Support
+              </Text>
             </View>
             <Icon name="chevron-right" size={18} color="#cbd5e1" />
           </Pressable>
         </View>
 
         {/* Logout Button */}
-        <Pressable style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]} 
+        <Pressable
+          style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
           className="flex-row items-center justify-center gap-2 p-4 bg-rose-50 rounded-[16px] mb-8 border border-rose-100"
           onPress={handleLogout}
         >
           <Icon name="log-out" size={18} color="#ef4444" />
-          <Text className="text-[15px] font-body font-bold text-rose-500">
-            Log Out
-          </Text>
+          <Text className="text-[15px] font-body font-bold text-rose-500">Log Out</Text>
         </Pressable>
       </ScrollView>
     </View>

@@ -1,9 +1,9 @@
 import React, { useEffect, useRef } from "react";
-import { Animated, ViewStyle } from "react-native";
+import { Animated, ViewStyle, DimensionValue } from "react-native";
 
 interface SkeletonProps {
-  width?: number | string;
-  height?: number | string;
+  width?: DimensionValue;
+  height?: DimensionValue;
   borderRadius?: number;
   style?: ViewStyle;
 }
@@ -32,8 +32,8 @@ export function Skeleton({ width = "100%", height = 20, borderRadius = 4, style 
     <Animated.View
       style={[
         {
-          width,
-          height,
+          width: width as any,
+          height: height as any,
           borderRadius,
           backgroundColor: "#E2E8F0", // Slate 200
           opacity,
@@ -72,6 +72,58 @@ export function CartItemSkeleton() {
           <Skeleton width={60} height={18} borderRadius={4} />
           <Skeleton width={80} height={32} borderRadius={16} />
         </Animated.View>
+      </Animated.View>
+    </Animated.View>
+  );
+}
+
+export function ListSkeleton() {
+  return (
+    <Animated.View className="w-full flex-1 p-4 bg-background">
+      {[1, 2, 3, 4, 5].map((key) => (
+        <Animated.View
+          key={key}
+          className="flex-row items-center p-4 mb-4 bg-card rounded-[24px] border border-border"
+        >
+          <Skeleton width={50} height={50} borderRadius={25} style={{ marginRight: 16 }} />
+          <Animated.View className="flex-1">
+            <Skeleton width="80%" height={16} style={{ marginBottom: 8 }} />
+            <Skeleton width="40%" height={14} />
+          </Animated.View>
+        </Animated.View>
+      ))}
+    </Animated.View>
+  );
+}
+
+export function DetailSkeleton() {
+  return (
+    <Animated.View className="w-full flex-1 bg-background">
+      <Skeleton width="100%" height={250} borderRadius={0} style={{ marginBottom: 20 }} />
+      <Animated.View className="px-4">
+        <Skeleton width="70%" height={24} style={{ marginBottom: 12 }} />
+        <Skeleton width="40%" height={16} style={{ marginBottom: 24 }} />
+
+        <Skeleton width="100%" height={14} style={{ marginBottom: 8 }} />
+        <Skeleton width="100%" height={14} style={{ marginBottom: 8 }} />
+        <Skeleton width="90%" height={14} style={{ marginBottom: 24 }} />
+
+        <Skeleton width="100%" height={50} borderRadius={16} />
+      </Animated.View>
+    </Animated.View>
+  );
+}
+
+export function ProfileSkeleton() {
+  return (
+    <Animated.View className="w-full flex-1 p-4 bg-background items-center pt-8">
+      <Skeleton width={100} height={100} borderRadius={50} style={{ marginBottom: 24 }} />
+      <Skeleton width="50%" height={20} style={{ marginBottom: 32 }} />
+
+      <Animated.View className="w-full">
+        <Skeleton width="100%" height={60} borderRadius={16} style={{ marginBottom: 16 }} />
+        <Skeleton width="100%" height={60} borderRadius={16} style={{ marginBottom: 16 }} />
+        <Skeleton width="100%" height={60} borderRadius={16} style={{ marginBottom: 16 }} />
       </Animated.View>
     </Animated.View>
   );

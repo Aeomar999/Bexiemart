@@ -6,7 +6,7 @@ import { useState } from "react";
 import { useCurrentUser } from "@/lib/hooks/use-auth";
 import { useAuthStore } from "@/lib/stores/auth-store";
 import Toast from "@/lib/toast-polyfill";
-import { Image } from "expo-image";
+import { Avatar } from "@/components/ui/Avatar";
 
 const PROFILE_SECTIONS = [
   {
@@ -139,15 +139,12 @@ export default function ProfileScreen() {
       >
         {/* User Card */}
         <View className="bg-card rounded-[24px] p-5 flex-row items-center shadow-[0_10px_20px_rgba(0,0,0,0.03)] border border-border mb-8">
-          <View className="w-[64px] h-[64px] rounded-full bg-brand-100 items-center justify-center border-4 border-card shadow-sm mr-4 overflow-hidden">
-            <Image
-              source={{
-                uri:
-                  user?.image ||
-                  `https://api.dicebear.com/9.x/micah/png?seed=${encodeURIComponent(user?.name || "Bexiemart")}&backgroundColor=b6e3f4,c0aede,d1d4f9`,
-              }}
-              style={{ width: "100%", height: "100%" }}
-              contentFit="cover"
+          <View className="mr-4">
+            <Avatar
+              uri={user?.image}
+              name={user?.name || "Bexiemart"}
+              size={64}
+              fallback="dicebear"
             />
           </View>
           <View className="flex-1">

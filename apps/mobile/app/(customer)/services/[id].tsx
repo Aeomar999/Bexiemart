@@ -9,7 +9,6 @@ import {
   KeyboardAvoidingView,
   Linking,
   TextInput,
-  ActivityIndicator,
 } from "react-native";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -18,6 +17,7 @@ import { useState } from "react";
 import { useService, useBookService } from "@/lib/hooks/use-services";
 import { useAddressStore, Address } from "@/lib/stores/address-store";
 import { usePopupStore } from "@/lib/stores/popup-store";
+import { DetailSkeleton } from "@/components/ui/Skeleton";
 
 const DATES = ["Today", "Tomorrow", "Wednesday", "Thursday", "Custom"];
 
@@ -41,7 +41,7 @@ export default function ProviderDetailsScreen() {
   if (isLoading) {
     return (
       <View className="flex-1 bg-background items-center justify-center">
-        <ActivityIndicator size="large" color="#004CFF" />
+        <DetailSkeleton />
       </View>
     );
   }

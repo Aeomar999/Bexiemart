@@ -1,9 +1,10 @@
-import { View, Text, ScrollView, Pressable, RefreshControl, ActivityIndicator } from "react-native";
+import { View, Text, ScrollView, Pressable, RefreshControl } from "react-native";
 import { useRouter } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useState } from "react";
 import { useVendorOrders } from "@/lib/hooks/use-vendor";
 import { EmptyState } from "@/components/ui/EmptyState";
+import { ListSkeleton } from "@/components/ui/Skeleton";
 
 const FILTERS = ["New", "Processing", "Ready", "Completed", "Cancelled"];
 
@@ -15,16 +16,24 @@ export default function OrdersManagerScreen() {
   const { data: orders = [], isLoading, refetch } = useVendorOrders();
   const filteredOrders = orders.filter((o: any) => o.status === activeFilter);
   const counts: Record<string, number> = {};
-  orders.forEach((o: any) => { counts[o.status] = (counts[o.status] || 0) + 1; });
+  orders.forEach((o: any) => {
+    counts[o.status] = (counts[o.status] || 0) + 1;
+  });
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case "New": return "bg-blue-100 text-blue-700";
-      case "Processing": return "bg-amber-100 text-amber-700";
-      case "Ready": return "bg-indigo-100 text-indigo-700";
-      case "Completed": return "bg-green-100 text-green-700";
-      case "Cancelled": return "bg-rose-100 text-rose-700";
-      default: return "bg-accent text-muted-foreground";
+      case "New":
+        return "bg-blue-100 text-blue-700";
+      case "Processing":
+        return "bg-amber-100 text-amber-700";
+      case "Ready":
+        return "bg-indigo-100 text-indigo-700";
+      case "Completed":
+        return "bg-green-100 text-green-700";
+      case "Cancelled":
+        return "bg-rose-100 text-rose-700";
+      default:
+        return "bg-accent text-muted-foreground";
     }
   };
 
@@ -32,35 +41,39 @@ export default function OrdersManagerScreen() {
     <View className="flex-1 bg-background" style={{ paddingTop: insets.top }}>
       {/* Header */}
       <View className="px-5 py-4 bg-card border-b border-border">
-        <Text className="text-[28px] font-heading font-black text-foreground">
-          Orders
-        </Text>
+        <Text className="text-[28px] font-heading font-black text-foreground">Orders</Text>
       </View>
 
       {/* Filters */}
       <View className="bg-card border-b border-border">
-        <ScrollView 
-          horizontal 
+        <ScrollView
+          horizontal
           showsHorizontalScrollIndicator={false}
           className="px-5 py-3"
           contentContainerClassName="gap-2 pr-10"
         >
-          {FILTERS.map(filter => {
+          {FILTERS.map((filter) => {
             const isActive = activeFilter === filter;
             const count = counts[filter] || 0;
-            
+
             return (
               <Pressable
                 key={filter}
                 onPress={() => setActiveFilter(filter)}
-                className={`flex-row items-center px-4 py-2 rounded-full border ${isActive ? 'bg-foreground border-surface-900' : 'bg-card border-border'}`}
+                className={`flex-row items-center px-4 py-2 rounded-full border ${isActive ? "bg-foreground border-surface-900" : "bg-card border-border"}`}
               >
-                <Text className={`text-[13px] font-bold ${isActive ? 'text-white' : 'text-muted-foreground'}`}>
+                <Text
+                  className={`text-[13px] font-bold ${isActive ? "text-white" : "text-muted-foreground"}`}
+                >
                   {filter}
                 </Text>
                 {count > 0 && (
-                  <View className={`ml-2 px-1.5 py-0.5 rounded-full ${isActive ? 'bg-card/20' : 'bg-muted'}`}>
-                    <Text className={`text-[10px] font-bold ${isActive ? 'text-white' : 'text-muted-foreground'}`}>
+                  <View
+                    className={`ml-2 px-1.5 py-0.5 rounded-full ${isActive ? "bg-card/20" : "bg-muted"}`}
+                  >
+                    <Text
+                      className={`text-[10px] font-bold ${isActive ? "text-white" : "text-muted-foreground"}`}
+                    >
                       {count}
                     </Text>
                   </View>
@@ -80,7 +93,7 @@ export default function OrdersManagerScreen() {
       >
         {isLoading ? (
           <View className="items-center justify-center py-20">
-            <ActivityIndicator size="large" color="#004CFF" />
+            <ListSkeleton />
           </View>
         ) : filteredOrders.length === 0 ? (
           <EmptyState
@@ -90,7 +103,7 @@ export default function OrdersManagerScreen() {
           />
         ) : (
           filteredOrders.map((order: any) => {
-            const statusClasses = getStatusColor(order.status).split(' ');
+            const statusClasses = getStatusColor(order.status).split(" ");
             const bgClass = statusClasses[0];
             const textClass = statusClasses[1];
 
@@ -114,9 +127,13 @@ export default function OrdersManagerScreen() {
                 <View className="px-5 py-4 flex-row justify-between items-center bg-background/50">
                   <View>
                     <Text className="text-[14px] font-bold text-foreground">{order.customer}</Text>
-                    <Text className="text-[13px] text-muted-foreground">{order.items} {order.items === 1 ? 'item' : 'items'}</Text>
+                    <Text className="text-[13px] text-muted-foreground">
+                      {order.items} {order.items === 1 ? "item" : "items"}
+                    </Text>
                   </View>
-                  <Text className="text-[16px] font-black text-brand-600">GHS {order.total.toFixed(2)}</Text>
+                  <Text className="text-[16px] font-black text-brand-600">
+                    GHS {order.total.toFixed(2)}
+                  </Text>
                 </View>
               </Pressable>
             );

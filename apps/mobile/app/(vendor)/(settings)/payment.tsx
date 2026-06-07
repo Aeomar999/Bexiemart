@@ -1,17 +1,24 @@
 import { BackButton } from "@/components/ui/BackButton";
-import { View, Text, ScrollView, Pressable, ActivityIndicator, Alert, Modal } from "react-native";
+import { View, Text, ScrollView, Pressable, Alert, Modal } from "react-native";
 import { useRouter } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Icon } from "@/components/ui/Icon";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import { useState } from "react";
-import { useVendorPaymentMethods, useAddBankAccount, useAddMomoAccount, useRemovePaymentMethod, useSetDefaultPaymentMethod } from "@/lib/hooks/use-vendor-payment-methods";
+import {
+  useVendorPaymentMethods,
+  useAddBankAccount,
+  useAddMomoAccount,
+  useRemovePaymentMethod,
+  useSetDefaultPaymentMethod,
+} from "@/lib/hooks/use-vendor-payment-methods";
+import { DetailSkeleton } from "@/components/ui/Skeleton";
 
 export default function PaymentMethodsScreen() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
-  
+
   const { data: paymentMethods, isLoading } = useVendorPaymentMethods();
   const addBank = useAddBankAccount();
   const addMomo = useAddMomoAccount();
@@ -52,7 +59,7 @@ export default function PaymentMethodsScreen() {
   return (
     <View className="flex-1 bg-background">
       {/* Header */}
-      <View 
+      <View
         className="px-5 pb-4 bg-card border-b border-border flex-row items-center justify-between"
         style={{ paddingTop: (insets.top || 12) + 12 }}
       >
@@ -66,12 +73,13 @@ export default function PaymentMethodsScreen() {
 
       {isLoading ? (
         <View className="flex-1 items-center justify-center">
-          <ActivityIndicator size="large" color="#004CFF" />
+          <DetailSkeleton />
         </View>
       ) : (
         <ScrollView className="flex-1 px-5 pt-6 pb-12">
           <Text className="text-[14px] text-muted-foreground mb-6 leading-relaxed">
-            Manage where your earnings are sent when you request a withdrawal. You can add up to 3 payout methods.
+            Manage where your earnings are sent when you request a withdrawal. You can add up to 3
+            payout methods.
           </Text>
 
           <View className="gap-4 mb-6">
@@ -79,14 +87,16 @@ export default function PaymentMethodsScreen() {
               <View key={method.id} className="bg-card rounded-[20px] border border-border p-5">
                 <View className="flex-row justify-between items-start mb-4">
                   <View className="flex-row items-center">
-                    <View 
+                    <View
                       className="w-12 h-12 rounded-full items-center justify-center mr-4"
                       style={{ backgroundColor: method.bg }}
                     >
                       <Icon name={method.icon} size={20} color={method.color} />
                     </View>
                     <View>
-                      <Text className="text-[16px] font-bold text-foreground mb-0.5">{method.title}</Text>
+                      <Text className="text-[16px] font-bold text-foreground mb-0.5">
+                        {method.title}
+                      </Text>
                       <Text className="text-[14px] text-muted-foreground">{method.account}</Text>
                     </View>
                   </View>
@@ -96,14 +106,16 @@ export default function PaymentMethodsScreen() {
                     </View>
                   )}
                 </View>
-                
+
                 <View className="flex-row border-t border-border pt-3">
                   {!method.isDefault && (
                     <Pressable
                       className="flex-1 items-center border-r border-border py-1"
                       onPress={() => setDefaultMethod.mutate({ type: method.type, id: method.id })}
                     >
-                      <Text className="text-[14px] font-bold text-muted-foreground">Set as Default</Text>
+                      <Text className="text-[14px] font-bold text-muted-foreground">
+                        Set as Default
+                      </Text>
                     </Pressable>
                   )}
                   <Pressable
@@ -111,7 +123,11 @@ export default function PaymentMethodsScreen() {
                     onPress={() => {
                       Alert.alert("Remove", "Are you sure?", [
                         { text: "Cancel", style: "cancel" },
-                        { text: "Remove", style: "destructive", onPress: () => removeMethod.mutate({ type: method.type, id: method.id }) },
+                        {
+                          text: "Remove",
+                          style: "destructive",
+                          onPress: () => removeMethod.mutate({ type: method.type, id: method.id }),
+                        },
                       ]);
                     }}
                   >
@@ -155,12 +171,28 @@ export default function PaymentMethodsScreen() {
             <Text className="text-[20px] font-heading font-bold text-foreground mb-6">
               Add {addType === "bank" ? "Bank Account" : "Mobile Money"}
             </Text>
-            
+
             <View className="gap-4">
-              <Input label="Account Name" placeholder="e.g. John Doe" value={accountName} onChangeText={setAccountName} />
-              <Input label="Account Number" placeholder="e.g. 024XXXXXXX" value={accountNumber} onChangeText={setAccountNumber} keyboardType="phone-pad" />
+              <Input
+                label="Account Name"
+                placeholder="e.g. John Doe"
+                value={accountName}
+                onChangeText={setAccountName}
+              />
+              <Input
+                label="Account Number"
+                placeholder="e.g. 024XXXXXXX"
+                value={accountNumber}
+                onChangeText={setAccountNumber}
+                keyboardType="phone-pad"
+              />
               {addType === "bank" && (
-                <Input label="Bank Name" placeholder="e.g. Ecobank" value={bankName} onChangeText={setBankName} />
+                <Input
+                  label="Bank Name"
+                  placeholder="e.g. Ecobank"
+                  value={bankName}
+                  onChangeText={setBankName}
+                />
               )}
               <Button
                 title="Add Method"

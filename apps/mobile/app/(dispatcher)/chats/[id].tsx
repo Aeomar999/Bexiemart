@@ -11,6 +11,7 @@ import {
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Icon } from "@/components/ui";
+import { Avatar } from "@/components/ui/Avatar";
 import { Image } from "expo-image";
 import { useChatMessages, useConversations } from "@/lib/hooks/use-chat";
 import { useAuthStore } from "@/lib/stores/auth-store";
@@ -20,6 +21,7 @@ import * as ImagePicker from "expo-image-picker";
 import { uploadApi } from "@/lib/api/upload";
 import { format } from "date-fns";
 import { BackButton } from "@/components/ui/BackButton";
+import { DetailSkeleton } from "@/components/ui/Skeleton";
 
 export default function ChatDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
@@ -87,16 +89,14 @@ export default function ChatDetailScreen() {
     return (
       <View className={`w-full flex-row mb-4 px-5 ${isMine ? "justify-end" : "justify-start"}`}>
         {!isMine && (
-          <Image
-            source={{
-              uri:
-                otherParticipant?.image ||
-                "https://ui-avatars.com/api/?name=" +
-                  encodeURIComponent(otherParticipant?.name || ""),
-            }}
-            style={{ width: 28, height: 28, borderRadius: 14, marginRight: 8, marginTop: 4 }}
-            contentFit="cover"
-          />
+          <View style={{ marginRight: 8, marginTop: 4 }}>
+            <Avatar
+              uri={otherParticipant?.image}
+              name={otherParticipant?.name || "?"}
+              size={28}
+              fallback="initials"
+            />
+          </View>
         )}
         <View
           className={`max-w-[75%] rounded-[16px] px-4 py-2.5 ${isMine ? "bg-brand-600 rounded-tr-sm" : "bg-accent rounded-tl-sm"}`}
@@ -142,7 +142,7 @@ export default function ChatDetailScreen() {
 
       {isLoading ? (
         <View className="flex-1 justify-center items-center">
-          <ActivityIndicator size="large" color="#004CFF" />
+          <DetailSkeleton />
         </View>
       ) : (
         <FlatList

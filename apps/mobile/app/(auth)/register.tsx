@@ -11,13 +11,8 @@ import { useAuthStore } from "../../src/lib/stores/auth-store";
 import { FontAwesome5 } from "@expo/vector-icons";
 import { SocialLogins } from "../../src/components/auth/SocialLogins";
 
-interface FormErrors {
-  name?: string;
-  email?: string;
-  phone?: string;
-  password?: string;
-  confirmPassword?: string;
-}
+import { useFormValidation } from "../../src/lib/hooks/use-form-validation";
+import { registerSchema } from "../../src/lib/validation/schemas";
 
 export default function RegisterScreen() {
   const registerMutation = useRegister();
@@ -29,33 +24,10 @@ export default function RegisterScreen() {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [role, setRole] = useState<"customer" | "vendor">("customer");
-  const [errors, setErrors] = useState<FormErrors>({});
-
-  const validate = (): boolean => {
-    const newErrors: FormErrors = {};
-
-    if (name.trim().length < 2) {
-      newErrors.name = "Name must be at least 2 characters";
-    }
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-      newErrors.email = "Enter a valid email address";
-    }
-    if (phone.trim().length < 10) {
-      newErrors.phone = "Enter a valid phone number";
-    }
-    if (password.length < 6) {
-      newErrors.password = "Password must be at least 6 characters";
-    }
-    if (password !== confirmPassword) {
-      newErrors.confirmPassword = "Passwords don't match";
-    }
-
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  };
+  const { errors, validate } = useFormValidation(registerSchema);
 
   const handleSubmit = () => {
-    if (!validate()) return;
+    if (!validate({ name, email, phone, password, confirmPassword })) return;
 
     registerMutation.mutate(
       { name: name.trim(), email: email.trim(), password, role, phone: phone.trim() },

@@ -4,7 +4,7 @@ export interface User {
   email: string;
   emailVerified: boolean;
   image?: string | null;
-  role: "customer" | "vendor";
+  role: "CUSTOMER" | "VENDOR" | "DISPATCHER" | "ADMIN";
   onboardingCompleted: boolean;
   createdAt: string;
   updatedAt: string;

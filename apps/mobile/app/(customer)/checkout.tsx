@@ -13,6 +13,8 @@ import { useState, useEffect } from "react";
 import Toast from "@/lib/toast-polyfill";
 import type { Href } from "expo-router";
 import { posthog } from "@/lib/posthog";
+import { useFormValidation } from "@/lib/hooks/use-form-validation";
+import { checkoutSchema } from "@/lib/validation/schemas";
 
 type DeliveryMethod = "standard" | "express";
 type PaymentMethod = "card" | "momo" | "wallet";
@@ -40,6 +42,7 @@ export default function CheckoutScreen() {
   const [deliveryMethod, setDeliveryMethod] = useState<DeliveryMethod>("standard");
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>("card");
   const [useBexieCoins, setUseBexieCoins] = useState(false);
+  const { errors, validate } = useFormValidation(checkoutSchema);
 
   const { balance, bexieCoins } = useWalletStore();
 
@@ -87,18 +90,15 @@ export default function CheckoutScreen() {
   }
 
   const handlePlaceOrder = () => {
-    if (!name.trim() || !phone.trim() || !address.trim() || !city.trim()) {
+    if (!validate({ name, phone, address, city, deliveryMethod, paymentMethod })) {
       Toast.show({
         type: "error",
         text1: "Missing Info",
-        text2: "Please fill in all delivery details.",
+        text2: "Please fill in all valid delivery details.",
       });
       return;
     }
-    if (phone.trim().length < 10) {
-      Toast.show({ type: "error", text1: "Invalid Phone", text2: "Enter a valid phone number." });
-      return;
-    }
+
     if (paymentMethod === "wallet" && balance < total) {
       Toast.show({
         type: "error",
@@ -191,6 +191,7 @@ export default function CheckoutScreen() {
               value={name}
               onChangeText={setName}
               autoCapitalize="words"
+              error={errors.name}
             />
             <Input
               label="Phone number"
@@ -198,6 +199,7 @@ export default function CheckoutScreen() {
               value={phone}
               onChangeText={setPhone}
               keyboardType="phone-pad"
+              error={errors.phone}
               leftIcon={<Icon name="phone" size={16} color="#94A3B8" />}
             />
             <Input
@@ -205,11 +207,18 @@ export default function CheckoutScreen() {
               placeholder="Legon Hall, Room 12"
               value={address}
               onChangeText={setAddress}
+              error={errors.address}
               leftIcon={<Icon name="map-pin" size={16} color="#94A3B8" />}
             />
             <View className="flex-row gap-3">
               <View className="flex-1">
-                <Input label="City" placeholder="Accra" value={city} onChangeText={setCity} />
+                <Input
+                  label="City"
+                  placeholder="Accra"
+                  value={city}
+                  onChangeText={setCity}
+                  error={errors.city}
+                />
               </View>
             </View>
             <Input

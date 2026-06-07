@@ -1,13 +1,14 @@
-import { View, Text, FlatList, Pressable, ActivityIndicator } from "react-native";
+import { View, Text, FlatList, Pressable } from "react-native";
 import { useRouter } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Icon } from "@/components/ui";
-import { Image } from "expo-image";
+import { Avatar } from "@/components/ui/Avatar";
 import { useConversations } from "@/lib/hooks/use-chat";
 import { useAuthStore } from "@/lib/stores/auth-store";
 import { useSocketStore } from "@/lib/stores/socket-store";
 import { formatDistanceToNow } from "date-fns";
 import { BackButton } from "@/components/ui/BackButton";
+import { ListSkeleton } from "@/components/ui/Skeleton";
 
 export default function ChatListScreen() {
   const router = useRouter();
@@ -19,7 +20,7 @@ export default function ChatListScreen() {
   if (isLoading) {
     return (
       <View className="flex-1 bg-background justify-center items-center">
-        <ActivityIndicator size="large" color="#004CFF" />
+        <ListSkeleton />
       </View>
     );
   }
@@ -36,14 +37,11 @@ export default function ChatListScreen() {
         onPress={() => router.push(`/(dispatcher)/chats/${item.id}`)}
       >
         <View className="relative">
-          <Image
-            source={{
-              uri:
-                otherParticipant.image ||
-                "https://ui-avatars.com/api/?name=" + encodeURIComponent(otherParticipant.name),
-            }}
-            style={{ width: 50, height: 50, borderRadius: 25 }}
-            contentFit="cover"
+          <Avatar
+            uri={otherParticipant.image}
+            name={otherParticipant.name}
+            size={50}
+            fallback="initials"
           />
           {isOnline && (
             <View className="absolute bottom-0 right-0 w-3.5 h-3.5 bg-green-500 border-2 border-background rounded-full" />

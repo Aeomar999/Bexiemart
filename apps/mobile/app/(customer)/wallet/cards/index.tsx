@@ -1,11 +1,12 @@
 import { BackButton } from "@/components/ui/BackButton";
-import { View, Text, Pressable, ActivityIndicator, FlatList, Alert } from "react-native";
+import { View, Text, Pressable, FlatList, Alert } from "react-native";
 import { useRouter } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Icon } from "@/components/ui/Icon";
 import { useCards, useDeleteCard, useSetDefaultCard } from "@/lib/hooks/use-wallet";
 import { getCardColors } from "@/lib/utils/wallet";
 import { LinearGradient } from "expo-linear-gradient";
+import { ListSkeleton } from "@/components/ui/Skeleton";
 
 export default function CardsScreen() {
   const router = useRouter();
@@ -39,7 +40,7 @@ export default function CardsScreen() {
 
       {isLoading ? (
         <View className="flex-1 items-center justify-center">
-          <ActivityIndicator size="large" color="#2563EB" />
+          <ListSkeleton />
         </View>
       ) : (
         <FlatList

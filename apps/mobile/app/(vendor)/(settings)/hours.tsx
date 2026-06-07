@@ -1,11 +1,12 @@
 import { BackButton } from "@/components/ui/BackButton";
-import { View, Text, ScrollView, Pressable, Switch, Alert, Modal, FlatList, ActivityIndicator } from "react-native";
+import { View, Text, ScrollView, Pressable, Switch, Alert, Modal, FlatList } from "react-native";
 import { useRouter } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Icon } from "@/components/ui/Icon";
 import { Button } from "@/components/ui/Button";
 import { useState, useEffect } from "react";
 import { useVendorHours, useUpdateVendorHours } from "@/lib/hooks/use-vendor-hours";
+import { DetailSkeleton } from "@/components/ui/Skeleton";
 
 const DAYS_OF_WEEK = [
   { id: "mon", label: "Monday" },
@@ -19,7 +20,7 @@ const DAYS_OF_WEEK = [
 
 const generateTimes = () => {
   const times = [];
-  const periods = ['AM', 'PM'];
+  const periods = ["AM", "PM"];
   for (let p = 0; p < 2; p++) {
     for (let h = 0; h < 12; h++) {
       let hour = h === 0 ? 12 : h;
@@ -35,7 +36,7 @@ const TIME_OPTIONS = generateTimes();
 export default function OperatingHoursScreen() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
-  
+
   const { data: apiHours, isLoading } = useVendorHours();
   const updateHours = useUpdateVendorHours();
 
@@ -55,14 +56,14 @@ export default function OperatingHoursScreen() {
   const [pickerConfig, setPickerConfig] = useState<{
     visible: boolean;
     dayId: string;
-    type: 'open' | 'close';
+    type: "open" | "close";
     currentValue: string;
   } | null>(null);
 
   const toggleDay = (id: string) => {
     setHours((prev: any) => ({
       ...prev,
-      [id]: { ...prev[id], isOpen: !prev[id].isOpen }
+      [id]: { ...prev[id], isOpen: !prev[id].isOpen },
     }));
   };
 
@@ -72,8 +73,8 @@ export default function OperatingHoursScreen() {
         ...prev,
         [pickerConfig.dayId]: {
           ...prev[pickerConfig.dayId],
-          [pickerConfig.type]: time
-        }
+          [pickerConfig.type]: time,
+        },
       }));
       setPickerConfig(null);
     }
@@ -89,7 +90,7 @@ export default function OperatingHoursScreen() {
     updateHours.mutate(payload, {
       onSuccess: () => {
         Alert.alert("Success", "Operating hours updated successfully!", [
-          { text: "OK", onPress: () => router.back() }
+          { text: "OK", onPress: () => router.back() },
         ]);
       },
     });
@@ -98,19 +99,17 @@ export default function OperatingHoursScreen() {
   return (
     <View className="flex-1 bg-background">
       {/* Header */}
-      <View 
+      <View
         className="px-5 pb-4 bg-card border-b border-border flex-row items-center"
         style={{ paddingTop: (insets.top || 12) + 12 }}
       >
         <BackButton className="mr-3" />
-        <Text className="text-[20px] font-heading font-black text-foreground">
-          Operating Hours
-        </Text>
+        <Text className="text-[20px] font-heading font-black text-foreground">Operating Hours</Text>
       </View>
 
       {isLoading ? (
         <View className="flex-1 items-center justify-center">
-          <ActivityIndicator size="large" color="#004CFF" />
+          <DetailSkeleton />
         </View>
       ) : (
         <ScrollView
@@ -124,30 +123,38 @@ export default function OperatingHoursScreen() {
               const data = hours[day.id] || { isOpen: false, open: "08:00 AM", close: "06:00 PM" };
 
               return (
-                <View 
-                  key={day.id}
-                  className={`p-5 ${!isLast ? 'border-b border-border' : ''}`}
-                >
+                <View key={day.id} className={`p-5 ${!isLast ? "border-b border-border" : ""}`}>
                   <View className="flex-row items-center justify-between mb-2">
-                    <Text className={`text-[16px] font-bold ${data.isOpen ? 'text-foreground' : 'text-muted-foreground'}`}>
+                    <Text
+                      className={`text-[16px] font-bold ${data.isOpen ? "text-foreground" : "text-muted-foreground"}`}
+                    >
                       {day.label}
                     </Text>
                     <Switch
                       value={data.isOpen}
                       onValueChange={() => toggleDay(day.id)}
-                      trackColor={{ false: '#e2e8f0', true: '#004CFF' }}
-                      thumbColor={'#ffffff'}
+                      trackColor={{ false: "#e2e8f0", true: "#004CFF" }}
+                      thumbColor={"#ffffff"}
                     />
                   </View>
 
                   {data.isOpen ? (
                     <View className="flex-row items-center justify-between mt-2">
-                      <Pressable 
+                      <Pressable
                         style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
-                        onPress={() => setPickerConfig({ visible: true, dayId: day.id, type: 'open', currentValue: data.open })}
+                        onPress={() =>
+                          setPickerConfig({
+                            visible: true,
+                            dayId: day.id,
+                            type: "open",
+                            currentValue: data.open,
+                          })
+                        }
                         className="flex-1 bg-background rounded-[12px] px-4 py-3 border border-border"
                       >
-                        <Text className="text-[12px] text-muted-foreground mb-0.5">Opening Time</Text>
+                        <Text className="text-[12px] text-muted-foreground mb-0.5">
+                          Opening Time
+                        </Text>
                         <View className="flex-row items-center justify-between">
                           <Text className="text-[15px] font-bold text-foreground">{data.open}</Text>
                           <Icon name="chevron-down" size={16} color="#64748b" />
@@ -156,14 +163,25 @@ export default function OperatingHoursScreen() {
                       <View className="px-3">
                         <Text className="text-muted-foreground font-bold">-</Text>
                       </View>
-                      <Pressable 
+                      <Pressable
                         style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
-                        onPress={() => setPickerConfig({ visible: true, dayId: day.id, type: 'close', currentValue: data.close })}
+                        onPress={() =>
+                          setPickerConfig({
+                            visible: true,
+                            dayId: day.id,
+                            type: "close",
+                            currentValue: data.close,
+                          })
+                        }
                         className="flex-1 bg-background rounded-[12px] px-4 py-3 border border-border"
                       >
-                        <Text className="text-[12px] text-muted-foreground mb-0.5">Closing Time</Text>
+                        <Text className="text-[12px] text-muted-foreground mb-0.5">
+                          Closing Time
+                        </Text>
                         <View className="flex-row items-center justify-between">
-                          <Text className="text-[15px] font-bold text-foreground">{data.close}</Text>
+                          <Text className="text-[15px] font-bold text-foreground">
+                            {data.close}
+                          </Text>
                           <Icon name="chevron-down" size={16} color="#64748b" />
                         </View>
                       </Pressable>
@@ -194,19 +212,16 @@ export default function OperatingHoursScreen() {
         onRequestClose={() => setPickerConfig(null)}
       >
         <View className="flex-1 justify-end bg-black/40">
-          <Pressable 
-            className="absolute inset-0" 
-            onPress={() => setPickerConfig(null)} 
-          />
+          <Pressable className="absolute inset-0" onPress={() => setPickerConfig(null)} />
           <View className="bg-card rounded-t-[32px] p-6 pb-12 h-[60%]">
             <View className="w-12 h-1.5 bg-accent rounded-full self-center mb-6" />
             <Text className="text-[20px] font-heading font-bold text-foreground mb-6">
-              Select {pickerConfig?.type === 'open' ? 'Opening' : 'Closing'} Time
+              Select {pickerConfig?.type === "open" ? "Opening" : "Closing"} Time
             </Text>
-            
+
             <FlatList
               data={TIME_OPTIONS}
-              keyExtractor={item => item}
+              keyExtractor={(item) => item}
               showsVerticalScrollIndicator={false}
               renderItem={({ item }) => {
                 const isSelected = item === pickerConfig?.currentValue;
@@ -215,19 +230,17 @@ export default function OperatingHoursScreen() {
                     style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
                     onPress={() => handleTimeSelect(item)}
                     className={`flex-row items-center justify-between p-4 rounded-[16px] mb-2 border ${
-                      isSelected 
-                        ? 'bg-brand-50 border-brand-200' 
-                        : 'bg-card border-border'
+                      isSelected ? "bg-brand-50 border-brand-200" : "bg-card border-border"
                     }`}
                   >
-                    <Text className={`text-[16px] font-bold ${
-                      isSelected ? 'text-brand-700' : 'text-foreground'
-                    }`}>
+                    <Text
+                      className={`text-[16px] font-bold ${
+                        isSelected ? "text-brand-700" : "text-foreground"
+                      }`}
+                    >
                       {item}
                     </Text>
-                    {isSelected && (
-                      <Icon name="check-circle" size={20} color="#004CFF" />
-                    )}
+                    {isSelected && <Icon name="check-circle" size={20} color="#004CFF" />}
                   </Pressable>
                 );
               }}
@@ -235,7 +248,6 @@ export default function OperatingHoursScreen() {
           </View>
         </View>
       </Modal>
-
     </View>
   );
 }

@@ -1,5 +1,5 @@
 import { BackButton } from "@/components/ui/BackButton";
-import { View, Text, ScrollView, Alert, Pressable, ActivityIndicator } from "react-native";
+import { View, Text, ScrollView, Alert, Pressable } from "react-native";
 import { Image } from "expo-image";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -8,6 +8,7 @@ import { useFoodItems } from "@/lib/hooks/use-food";
 import { useVendorServices } from "@/lib/hooks/use-vendor-services";
 import { Icon } from "@/components/ui/Icon";
 import { Button } from "@/components/ui/Button";
+import { DetailSkeleton } from "@/components/ui/Skeleton";
 
 export default function ListingDetailsScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
@@ -24,48 +25,64 @@ export default function ListingDetailsScreen() {
       const p = products.find((x: any) => x.id === id);
       if (!p) return null;
       return {
-        type: "Product", name: p.name, price: p.price, status: p.status, category: p.category,
+        type: "Product",
+        name: p.name,
+        price: p.price,
+        status: p.status,
+        category: p.category,
         details: [
           { label: "Stock", value: String(p.stock ?? "-") },
           { label: "SKU", value: p.sku ?? "-" },
-          { label: "Shipping", value: p.shippingRequired ? "Required" : "Not Required" }
+          { label: "Shipping", value: p.shippingRequired ? "Required" : "Not Required" },
         ],
         description: p.description ?? "",
-        images: p.images ?? []
+        images: p.images ?? [],
       };
     }
     if (id?.startsWith?.("FOOD")) {
       const f = foodItems.find((x: any) => x.id === id);
       if (!f) return null;
       return {
-        type: "Food", name: f.name, price: f.price, status: f.status, category: f.category,
+        type: "Food",
+        name: f.name,
+        price: f.price,
+        status: f.status,
+        category: f.category,
         details: [
           { label: "Prep Time", value: f.prepTime ?? "-" },
-          { label: "Dietary", value: f.dietaryTags?.join?.(", ") ?? "-" }
+          { label: "Dietary", value: f.dietaryTags?.join?.(", ") ?? "-" },
         ],
         description: f.description ?? "",
-        images: f.imageUrl ? [{ url: f.imageUrl }] : []
+        images: f.imageUrl ? [{ url: f.imageUrl }] : [],
       };
     }
     if (id?.startsWith?.("SERV")) {
       const s = services.find((x: any) => x.id === id);
       if (!s) return null;
       return {
-        type: "Service", name: s.name, price: s.price, status: s.status, category: s.category,
+        type: "Service",
+        name: s.name,
+        price: s.price,
+        status: s.status,
+        category: s.category,
         details: [
           { label: "Duration", value: s.duration ?? "-" },
           { label: "Pricing Model", value: s.pricingModel ?? "Fixed" },
-          { label: "Location", value: s.locationType === "remote" ? "Remote" : "In-Person" }
+          { label: "Location", value: s.locationType === "remote" ? "Remote" : "In-Person" },
         ],
         description: s.description ?? "",
-        images: s.imageUrl ? [{ url: s.imageUrl }] : []
+        images: s.imageUrl ? [{ url: s.imageUrl }] : [],
       };
     }
     return null;
   };
 
   const item = getItemData();
-  const isLoading = id?.startsWith?.("PROD") ? productsLoading : id?.startsWith?.("FOOD") ? foodLoading : servicesLoading;
+  const isLoading = id?.startsWith?.("PROD")
+    ? productsLoading
+    : id?.startsWith?.("FOOD")
+      ? foodLoading
+      : servicesLoading;
 
   const handleDelete = () => {
     Alert.alert(
@@ -73,21 +90,24 @@ export default function ListingDetailsScreen() {
       `Are you sure you want to delete "${item?.name}"? This action cannot be undone.`,
       [
         { text: "Cancel", style: "cancel" },
-        { 
-          text: "Delete", 
+        {
+          text: "Delete",
           style: "destructive",
           onPress: () => {
             if (id?.startsWith?.("PROD") && deleteMutation) {
               deleteMutation.mutate(id, {
-                onSuccess: () => { Alert.alert("Deleted", "Product has been removed."); router.back(); },
+                onSuccess: () => {
+                  Alert.alert("Deleted", "Product has been removed.");
+                  router.back();
+                },
                 onError: () => Alert.alert("Error", "Failed to delete product."),
               });
             } else {
               Alert.alert("Deleted", "Listing has been removed.");
               router.back();
             }
-          }
-        }
+          },
+        },
       ]
     );
   };
@@ -97,7 +117,7 @@ export default function ListingDetailsScreen() {
     if (item?.type === "Product") route = "/(vendor)/(products)/add-product";
     if (item?.type === "Food") route = "/(vendor)/(products)/add-food";
     if (item?.type === "Service") route = "/(vendor)/(products)/add-service";
-    
+
     if (route) {
       router.push({ pathname: route as any, params: { mode: "edit", id } });
     }
@@ -106,7 +126,7 @@ export default function ListingDetailsScreen() {
   if (isLoading) {
     return (
       <View className="flex-1 bg-background items-center justify-center">
-        <ActivityIndicator size="large" color="#004CFF" />
+        <DetailSkeleton />
       </View>
     );
   }
@@ -122,7 +142,7 @@ export default function ListingDetailsScreen() {
   return (
     <View className="flex-1 bg-background">
       {/* Custom Header */}
-      <View 
+      <View
         className="px-5 pb-4 bg-card border-b border-border flex-row items-center justify-between"
         style={{ paddingTop: (insets.top || 12) + 12 }}
       >
@@ -132,8 +152,12 @@ export default function ListingDetailsScreen() {
             {item.type} Details
           </Text>
         </View>
-        <View className={`px-3 py-1 rounded-full ${item.status === 'active' || item.status === 'available' ? 'bg-green-100' : 'bg-accent'}`}>
-          <Text className={`text-[12px] font-bold ${item.status === 'active' || item.status === 'available' ? 'text-green-700' : 'text-muted-foreground'}`}>
+        <View
+          className={`px-3 py-1 rounded-full ${item.status === "active" || item.status === "available" ? "bg-green-100" : "bg-accent"}`}
+        >
+          <Text
+            className={`text-[12px] font-bold ${item.status === "active" || item.status === "available" ? "text-green-700" : "text-muted-foreground"}`}
+          >
             {item.status.toUpperCase().replace("_", " ")}
           </Text>
         </View>
@@ -146,15 +170,22 @@ export default function ListingDetailsScreen() {
       >
         {/* Product Images */}
         {item.images && item.images.length > 0 ? (
-          <ScrollView 
-            horizontal 
+          <ScrollView
+            horizontal
             showsHorizontalScrollIndicator={false}
             className="mb-6"
             contentContainerStyle={{ gap: 12 }}
           >
             {item.images.map((img: any, idx: number) => (
-              <View key={idx} className="w-64 h-64 bg-accent rounded-[24px] overflow-hidden border border-border">
-                <Image source={{ uri: img.url }} style={{ width: '100%', height: '100%' }} contentFit="cover" />
+              <View
+                key={idx}
+                className="w-64 h-64 bg-accent rounded-[24px] overflow-hidden border border-border"
+              >
+                <Image
+                  source={{ uri: img.url }}
+                  style={{ width: "100%", height: "100%" }}
+                  contentFit="cover"
+                />
               </View>
             ))}
           </ScrollView>
@@ -191,9 +222,9 @@ export default function ListingDetailsScreen() {
               <Text className="text-[14px] font-bold text-foreground">{item.category}</Text>
             </View>
             {item.details.map((detail: any, index: number) => (
-              <View 
-                key={detail.label} 
-                className={`flex-row items-center justify-between p-4 ${index < item.details.length - 1 ? 'border-b border-border' : ''}`}
+              <View
+                key={detail.label}
+                className={`flex-row items-center justify-between p-4 ${index < item.details.length - 1 ? "border-b border-border" : ""}`}
               >
                 <Text className="text-[14px] text-muted-foreground font-body">{detail.label}</Text>
                 <Text className="text-[14px] font-bold text-foreground">{detail.value}</Text>
@@ -204,13 +235,8 @@ export default function ListingDetailsScreen() {
 
         {/* Actions */}
         <View className="gap-3 mt-4">
-          <Button
-            title="Edit Listing"
-            size="lg"
-            onPress={handleEdit}
-            className="w-full"
-          />
-          <Pressable 
+          <Button title="Edit Listing" size="lg" onPress={handleEdit} className="w-full" />
+          <Pressable
             style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
             onPress={handleDelete}
             className="w-full py-4 items-center rounded-full bg-rose-50 border border-rose-100"
@@ -218,7 +244,6 @@ export default function ListingDetailsScreen() {
             <Text className="text-[15px] font-bold text-rose-600">Delete Listing</Text>
           </Pressable>
         </View>
-
       </ScrollView>
     </View>
   );

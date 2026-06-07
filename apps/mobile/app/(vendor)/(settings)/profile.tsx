@@ -1,5 +1,5 @@
 import { BackButton } from "@/components/ui/BackButton";
-import { View, Text, ScrollView, Pressable, Alert, Modal, ActivityIndicator } from "react-native";
+import { View, Text, ScrollView, Pressable, Alert, Modal } from "react-native";
 import { useRouter } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Icon } from "@/components/ui/Icon";
@@ -11,6 +11,9 @@ import { useAuthStore } from "@/lib/stores/auth-store";
 import { useVendorProfile, useUpdateShop } from "@/lib/hooks/use-vendor";
 import { useUpload } from "@/lib/hooks/use-upload";
 import { useImagePicker } from "@/lib/hooks/use-image-picker";
+import { useFormValidation } from "@/lib/hooks/use-form-validation";
+import { shopSchema } from "@/lib/validation/schemas";
+import { ProfileSkeleton } from "@/components/ui/LoadingState";
 
 export default function VendorProfileScreen() {
   const router = useRouter();
@@ -24,6 +27,7 @@ export default function VendorProfileScreen() {
   const [address, setAddress] = useState("");
 
   const { data: profile } = useVendorProfile();
+  const { validate, errors } = useFormValidation(shopSchema);
 
   // Photo Upload State
   const [isPhotoModalVisible, setPhotoModalVisible] = useState(false);
@@ -63,7 +67,10 @@ export default function VendorProfileScreen() {
       if (photoTarget === "banner") setBannerUrl(res.url);
       else setLogoUrl(res.url);
       setPhotoModalVisible(false);
-      Alert.alert("Success", `${photoTarget === 'banner' ? 'Cover photo' : 'Logo'} updated successfully!`);
+      Alert.alert(
+        "Success",
+        `${photoTarget === "banner" ? "Cover photo" : "Logo"} updated successfully!`
+      );
     } catch {
       Alert.alert("Upload Failed", "Could not upload image.");
     } finally {
@@ -73,22 +80,32 @@ export default function VendorProfileScreen() {
   };
 
   const handleSave = () => {
-    if (!storeName.trim() || !phone.trim() || !address.trim()) {
-      Alert.alert("Required", "Store Name, Phone, and Address are required.");
+    if (
+      !validate({
+        shopName: storeName,
+        description,
+        phone,
+        address,
+        logo: logoUrl,
+        banner: bannerUrl,
+      })
+    ) {
+      Alert.alert("Validation Error", "Please correct the errors before saving.");
       return;
     }
     setLoading(true);
-    updateShop.mutateAsync({
-      shopName: storeName,
-      description,
-      phone,
-      address,
-      logo: logoUrl || undefined,
-      banner: bannerUrl || undefined,
-    })
+    updateShop
+      .mutateAsync({
+        shopName: storeName,
+        description,
+        phone,
+        address,
+        logo: logoUrl || undefined,
+        banner: bannerUrl || undefined,
+      })
       .then(() => {
         Alert.alert("Success", "Store profile updated successfully!", [
-          { text: "OK", onPress: () => router.back() }
+          { text: "OK", onPress: () => router.back() },
         ]);
       })
       .catch(() => {
@@ -100,14 +117,12 @@ export default function VendorProfileScreen() {
   return (
     <View className="flex-1 bg-background">
       {/* Header */}
-      <View 
+      <View
         className="px-5 pb-4 bg-card border-b border-border flex-row items-center"
         style={{ paddingTop: (insets.top || 12) + 12 }}
       >
         <BackButton className="mr-3" />
-        <Text className="text-[20px] font-heading font-black text-foreground">
-          Store Profile
-        </Text>
+        <Text className="text-[20px] font-heading font-black text-foreground">Store Profile</Text>
       </View>
 
       <ScrollView
@@ -118,29 +133,43 @@ export default function VendorProfileScreen() {
       >
         {/* Banner & Logo */}
         <View className="items-center mb-4">
-          <Pressable 
+          <Pressable
             style={({ pressed }) => [{ opacity: pressed ? 0.9 : 1 }]}
-            onPress={() => { setPhotoTarget("banner"); setPhotoModalVisible(true); }}
+            onPress={() => {
+              setPhotoTarget("banner");
+              setPhotoModalVisible(true);
+            }}
             className="w-full h-32 bg-accent rounded-[20px] items-center justify-center overflow-hidden mb-[-40px]"
           >
             {bannerUrl ? (
-              <Image source={{ uri: bannerUrl }} style={{ width: '100%', height: '100%' }} contentFit="cover" />
+              <Image
+                source={{ uri: bannerUrl }}
+                style={{ width: "100%", height: "100%" }}
+                contentFit="cover"
+              />
             ) : (
               <Icon name="camera" size={24} color="#64748b" />
             )}
           </Pressable>
-          
-          <Pressable 
+
+          <Pressable
             style={({ pressed }) => [{ opacity: pressed ? 0.9 : 1 }]}
-            onPress={() => { setPhotoTarget("logo"); setPhotoModalVisible(true); }}
+            onPress={() => {
+              setPhotoTarget("logo");
+              setPhotoModalVisible(true);
+            }}
             className="w-[100px] h-[100px] rounded-full bg-card items-center justify-center border-4 border-card shadow-sm overflow-hidden z-10 relative"
           >
             {logoUrl ? (
-              <Image source={{ uri: logoUrl }} style={{ width: '100%', height: '100%' }} contentFit="cover" />
+              <Image
+                source={{ uri: logoUrl }}
+                style={{ width: "100%", height: "100%" }}
+                contentFit="cover"
+              />
             ) : (
               <View className="w-full h-full bg-brand-100 items-center justify-center">
                 <Text className="text-[32px] font-heading font-black text-brand-600">
-                  {storeName ? storeName.charAt(0).toUpperCase() : 'S'}
+                  {storeName ? storeName.charAt(0).toUpperCase() : "S"}
                 </Text>
               </View>
             )}
@@ -157,6 +186,7 @@ export default function VendorProfileScreen() {
             placeholder="Enter store name"
             value={storeName}
             onChangeText={setStoreName}
+            error={errors.shopName}
           />
           <Input
             label="Store Description"
@@ -165,6 +195,7 @@ export default function VendorProfileScreen() {
             onChangeText={setDescription}
             multiline
             numberOfLines={4}
+            error={errors.description}
           />
         </View>
 
@@ -176,6 +207,7 @@ export default function VendorProfileScreen() {
             value={phone}
             onChangeText={setPhone}
             keyboardType="phone-pad"
+            error={errors.phone}
           />
           <Input
             label="Physical Address"
@@ -184,6 +216,7 @@ export default function VendorProfileScreen() {
             onChangeText={setAddress}
             multiline
             numberOfLines={2}
+            error={errors.address}
           />
         </View>
 
@@ -204,24 +237,26 @@ export default function VendorProfileScreen() {
         onRequestClose={() => !isUploading && setPhotoModalVisible(false)}
       >
         <View className="flex-1 justify-end bg-black/40">
-          <Pressable 
-            className="absolute inset-0" 
-            onPress={() => !isUploading && setPhotoModalVisible(false)} 
+          <Pressable
+            className="absolute inset-0"
+            onPress={() => !isUploading && setPhotoModalVisible(false)}
           />
           <View className="bg-card rounded-t-[32px] p-6 pb-12">
             <View className="w-12 h-1.5 bg-accent rounded-full self-center mb-6" />
             <Text className="text-[20px] font-heading font-bold text-foreground mb-6">
-              Update {photoTarget === 'banner' ? 'Cover Photo' : 'Store Logo'}
+              Update {photoTarget === "banner" ? "Cover Photo" : "Store Logo"}
             </Text>
-            
+
             {isUploading ? (
               <View className="py-8 items-center justify-center">
-                <ActivityIndicator size="large" color="#004CFF" />
-                <Text className="mt-4 text-[15px] font-bold text-muted-foreground">Uploading photo...</Text>
+                <ProfileSkeleton />
+                <Text className="mt-4 text-[15px] font-bold text-muted-foreground">
+                  Uploading photo...
+                </Text>
               </View>
             ) : (
               <View className="gap-3">
-                <Pressable 
+                <Pressable
                   style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
                   className="flex-row items-center p-4 bg-background border border-border rounded-[20px]"
                   onPress={() => handlePhotoOption("camera")}
@@ -231,11 +266,13 @@ export default function VendorProfileScreen() {
                   </View>
                   <View className="ml-4 flex-1">
                     <Text className="text-[16px] font-bold text-foreground mb-0.5">Take Photo</Text>
-                    <Text className="text-[13px] font-body text-muted-foreground">Use your camera</Text>
+                    <Text className="text-[13px] font-body text-muted-foreground">
+                      Use your camera
+                    </Text>
                   </View>
                 </Pressable>
 
-                <Pressable 
+                <Pressable
                   style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
                   className="flex-row items-center p-4 bg-background border border-border rounded-[20px]"
                   onPress={() => handlePhotoOption("library")}
@@ -244,13 +281,17 @@ export default function VendorProfileScreen() {
                     <Icon name="image" size={20} color="#0f172a" />
                   </View>
                   <View className="ml-4 flex-1">
-                    <Text className="text-[16px] font-bold text-foreground mb-0.5">Choose from Library</Text>
-                    <Text className="text-[13px] font-body text-muted-foreground">Select from camera roll</Text>
+                    <Text className="text-[16px] font-bold text-foreground mb-0.5">
+                      Choose from Library
+                    </Text>
+                    <Text className="text-[13px] font-body text-muted-foreground">
+                      Select from camera roll
+                    </Text>
                   </View>
                 </Pressable>
-                
-                {photoTarget === 'logo' && (
-                  <Pressable 
+
+                {photoTarget === "logo" && (
+                  <Pressable
                     style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
                     className="flex-row items-center p-4 bg-rose-50 border border-rose-100 rounded-[20px] mt-2"
                     onPress={() => {
@@ -262,8 +303,12 @@ export default function VendorProfileScreen() {
                       <Icon name="trash-2" size={20} color="#ef4444" />
                     </View>
                     <View className="ml-4 flex-1">
-                      <Text className="text-[16px] font-bold text-rose-600 mb-0.5">Remove Logo</Text>
-                      <Text className="text-[13px] font-body text-rose-500">Revert to default initial</Text>
+                      <Text className="text-[16px] font-bold text-rose-600 mb-0.5">
+                        Remove Logo
+                      </Text>
+                      <Text className="text-[13px] font-body text-rose-500">
+                        Revert to default initial
+                      </Text>
                     </View>
                   </Pressable>
                 )}

@@ -1,17 +1,9 @@
 import { BackButton } from "@/components/ui/BackButton";
-import {
-  View,
-  Text,
-  ScrollView,
-  FlatList,
-  Dimensions,
-  Pressable,
-  Share,
-  ActivityIndicator,
-} from "react-native";
+import { View, Text, ScrollView, FlatList, Dimensions, Pressable, Share } from "react-native";
 import { useRouter } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Icon } from "@/components/ui/Icon";
+import { ListSkeleton } from "@/components/ui/Skeleton";
 import { LinearGradient } from "expo-linear-gradient";
 import { useState, useEffect } from "react";
 import { Image } from "expo-image";
@@ -81,7 +73,7 @@ export default function FlashSalesScreen() {
       {/* Product List */}
       {isLoading ? (
         <View className="flex-1 items-center justify-center p-10">
-          <ActivityIndicator size="large" color="#004CFF" />
+          <ListSkeleton />
         </View>
       ) : !sale ? (
         <View className="flex-1 items-center justify-center p-10">

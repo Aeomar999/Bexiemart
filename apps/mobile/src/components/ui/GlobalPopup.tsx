@@ -1,25 +1,27 @@
-import React, { useEffect, useRef, useState } from 'react';
-import { View, Text, Pressable, Animated } from 'react-native';
-import { usePopupStore } from '@/lib/stores/popup-store';
-import { Icon } from './Icon';
+import React, { useEffect, useRef, useState } from "react";
+import { View, Text, Pressable, Animated, Platform } from "react-native";
+import { usePopupStore } from "@/lib/stores/popup-store";
+import { Icon } from "./Icon";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 export function GlobalPopup() {
   const { isVisible, type, title, message, hidePopup } = usePopupStore();
-  const fadeAnim = useRef(new Animated.Value(0)).current;
-  const scaleAnim = useRef(new Animated.Value(0.9)).current;
+  const translateY = useRef(new Animated.Value(100)).current;
+  const opacity = useRef(new Animated.Value(0)).current;
   const [renderComponent, setRenderComponent] = useState(isVisible);
+  const insets = useSafeAreaInsets();
 
   useEffect(() => {
     if (isVisible) {
       setRenderComponent(true);
       Animated.parallel([
-        Animated.timing(fadeAnim, {
+        Animated.timing(opacity, {
           toValue: 1,
           duration: 200,
           useNativeDriver: true,
         }),
-        Animated.spring(scaleAnim, {
-          toValue: 1,
+        Animated.spring(translateY, {
+          toValue: 0,
           friction: 8,
           tension: 65,
           useNativeDriver: true,
@@ -31,21 +33,34 @@ export function GlobalPopup() {
       }, 4000);
       return () => clearTimeout(timer);
     } else {
-      Animated.timing(fadeAnim, {
-        toValue: 0,
-        duration: 150,
-        useNativeDriver: true,
-      }).start(() => setRenderComponent(false));
-      scaleAnim.setValue(0.9);
+      Animated.parallel([
+        Animated.timing(opacity, {
+          toValue: 0,
+          duration: 150,
+          useNativeDriver: true,
+        }),
+        Animated.timing(translateY, {
+          toValue: 100,
+          duration: 150,
+          useNativeDriver: true,
+        }),
+      ]).start(() => setRenderComponent(false));
     }
   }, [isVisible]);
 
   const closeModal = () => {
-    Animated.timing(fadeAnim, {
-      toValue: 0,
-      duration: 150,
-      useNativeDriver: true,
-    }).start(() => {
+    Animated.parallel([
+      Animated.timing(opacity, {
+        toValue: 0,
+        duration: 150,
+        useNativeDriver: true,
+      }),
+      Animated.timing(translateY, {
+        toValue: 100,
+        duration: 150,
+        useNativeDriver: true,
+      }),
+    ]).start(() => {
       hidePopup();
       setRenderComponent(false);
     });
@@ -55,115 +70,121 @@ export function GlobalPopup() {
 
   const getIconProps = () => {
     switch (type) {
-      case 'success': return { name: 'check', bgColor: '#0369a1' }; // Match the deep blue from design
-      case 'error': return { name: 'x', bgColor: '#ef4444' };
-      case 'info': return { name: 'info', bgColor: '#3b82f6' };
-      default: return { name: 'check', bgColor: '#0369a1' };
+      case "success":
+        return {
+          name: "check-circle",
+          color: "#10B981",
+          bgColor: "#ECFDF5",
+          borderColor: "#A7F3D0",
+        };
+      case "error":
+        return {
+          name: "alert-circle",
+          color: "#EF4444",
+          bgColor: "#FEF2F2",
+          borderColor: "#FECACA",
+        };
+      case "info":
+        return { name: "info", color: "#3B82F6", bgColor: "#EFF6FF", borderColor: "#BFDBFE" };
+      default:
+        return {
+          name: "check-circle",
+          color: "#10B981",
+          bgColor: "#ECFDF5",
+          borderColor: "#A7F3D0",
+        };
     }
   };
 
-  const iconProps = getIconProps();
+  const styleProps = getIconProps();
 
   return (
-    <Animated.View 
+    <View
       style={{
-        position: 'absolute',
-        top: 0,
-        left: 0,
-        right: 0,
-        bottom: 0,
+        position: "absolute",
+        bottom: insets.bottom + (Platform.OS === "ios" ? 20 : 30),
+        left: 20,
+        right: 20,
         zIndex: 9999,
         elevation: 9999,
-        backgroundColor: 'rgba(23, 23, 23, 0.8)', // Dark overlay
-        justifyContent: 'center',
-        alignItems: 'center',
-        paddingHorizontal: 24,
-        opacity: fadeAnim,
+        alignItems: "center",
       }}
-      pointerEvents={isVisible ? 'auto' : 'none'}
+      pointerEvents="box-none"
     >
-      <Animated.View 
+      <Animated.View
         style={{
-          width: '100%',
-          backgroundColor: '#ffffff',
-          borderRadius: 24,
-          paddingTop: 56, // Space for the overlapping circle
-          paddingBottom: 32,
-          paddingHorizontal: 24,
-          alignItems: 'center',
-          transform: [{ scale: scaleAnim }],
+          width: "100%",
+          backgroundColor: "#ffffff",
+          borderRadius: 16,
+          padding: 16,
+          flexDirection: "row",
+          alignItems: "center",
+          opacity: opacity,
+          transform: [{ translateY }],
+          shadowColor: "#000",
+          shadowOffset: { width: 0, height: 8 },
+          shadowOpacity: 0.1,
+          shadowRadius: 16,
+          elevation: 5,
+          borderLeftWidth: 4,
+          borderLeftColor: styleProps.color,
+          borderWidth: 1,
+          borderColor: "#E2E8F0",
         }}
       >
-        {/* Overlapping White Circle Background */}
-        <View 
+        {/* Icon */}
+        <View
           style={{
-            position: 'absolute',
-            top: -44,
-            width: 88,
-            height: 88,
-            borderRadius: 44,
-            backgroundColor: 'white',
-            justifyContent: 'center',
-            alignItems: 'center',
-            shadowColor: '#000',
-            shadowOffset: { width: 0, height: 4 },
-            shadowOpacity: 0.05,
-            shadowRadius: 10,
-            elevation: 3,
+            width: 40,
+            height: 40,
+            borderRadius: 20,
+            backgroundColor: styleProps.bgColor,
+            justifyContent: "center",
+            alignItems: "center",
+            marginRight: 12,
+            borderWidth: 1,
+            borderColor: styleProps.borderColor,
           }}
         >
-          {/* Inner Colored Circle */}
-          <View 
-            style={{
-              width: 56,
-              height: 56,
-              borderRadius: 28,
-              backgroundColor: iconProps.bgColor,
-              justifyContent: 'center',
-              alignItems: 'center',
-            }}
-          >
-            <Icon name={iconProps.name as any} size={24} color="#ffffff" />
-          </View>
+          <Icon name={styleProps.name as any} size={20} color={styleProps.color} />
         </View>
 
-        {/* Close (X) Button */}
-        <Pressable 
+        {/* Text Content */}
+        <View style={{ flex: 1 }}>
+          <Text
+            style={{
+              fontSize: 15,
+              color: "#0F172A",
+              fontFamily: "Nunito_700Bold",
+              marginBottom: message ? 2 : 0,
+            }}
+            numberOfLines={1}
+          >
+            {title}
+          </Text>
+          {message ? (
+            <Text
+              style={{
+                fontSize: 13,
+                color: "#64748B",
+                fontFamily: "Nunito_500Medium",
+              }}
+              numberOfLines={2}
+            >
+              {message}
+            </Text>
+          ) : null}
+        </View>
+
+        {/* Close Button */}
+        <Pressable
           onPress={closeModal}
-          style={{
-            position: 'absolute',
-            top: 16,
-            right: 16,
-            width: 32,
-            height: 32,
-            justifyContent: 'center',
-            alignItems: 'center',
-          }}
+          style={{ padding: 8, marginLeft: 4 }}
           hitSlop={{ top: 10, right: 10, bottom: 10, left: 10 }}
         >
-          <Icon name="x" size={24} color="#0f172a" />
+          <Icon name="x" size={18} color="#94A3B8" />
         </Pressable>
-
-        {/* Title & Message */}
-        <Text style={{ 
-          fontSize: 24, 
-          color: '#1e293b',
-          textAlign: 'center',
-          marginBottom: 16,
-          fontFamily: 'Raleway_700Bold' 
-        }}>
-          {title}
-        </Text>
-        <Text style={{
-          fontSize: 16,
-          color: '#0f172a',
-          textAlign: 'center',
-          lineHeight: 24,
-          fontFamily: 'Nunito_500Medium'
-        }}>
-          {message}
-        </Text>
       </Animated.View>
-    </Animated.View>
+    </View>
   );
 }

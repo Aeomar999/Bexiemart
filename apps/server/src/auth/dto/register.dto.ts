@@ -17,6 +17,6 @@ export class RegisterDto {
 
   @IsOptional()
   @IsString()
-  @IsIn(["customer", "vendor", "dispatcher"])
+  @IsIn(["customer", "vendor"])
   role?: string;
 }

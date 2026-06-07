@@ -16,6 +16,8 @@ import { Icon } from "@/components/ui/Icon";
 import { Input } from "@/components/ui/Input";
 import { Button } from "@/components/ui/Button";
 import { useWallet, useTransfer } from "@/lib/hooks/use-wallet";
+import { useFormValidation } from "@/lib/hooks/use-form-validation";
+import { transferSchema } from "@/lib/validation/schemas";
 
 const RECENT_CONTACTS = [
   { id: "1", name: "Abena O.", phone: "024 123 4567", initial: "A" },
@@ -32,6 +34,7 @@ export default function TransferScreen() {
   const [showPinModal, setShowPinModal] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
+  const { validate, errors, clearErrors } = useFormValidation(transferSchema);
 
   const { data: walletData } = useWallet();
   const transferMutation = useTransfer();
@@ -50,7 +53,10 @@ export default function TransferScreen() {
   };
 
   const confirmTransfer = async () => {
-    if (!pin) return;
+    if (!validate({ recipient, amount: parseFloat(amount), pin })) {
+      Alert.alert("Validation Error", "Please check your inputs.");
+      return;
+    }
     setIsProcessing(true);
     setShowPinModal(false);
     try {
@@ -151,6 +157,7 @@ export default function TransferScreen() {
             onChangeText={setRecipient}
             leftIcon={<Icon name="user" size={18} color="#64748b" />}
             className="bg-background border-0"
+            error={errors.recipient}
           />
         </View>
 

@@ -5,7 +5,6 @@ import {
   ScrollView,
   Pressable,
   Modal,
-  ActivityIndicator,
   KeyboardAvoidingView,
   Platform,
   TextInput,
@@ -14,6 +13,7 @@ import { Image } from "expo-image";
 import { useRouter } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Icon } from "@/components/ui/Icon";
+import { ListSkeleton } from "@/components/ui/Skeleton";
 import { Button } from "@/components/ui/Button";
 import { useState } from "react";
 import { useAuthStore } from "@/lib/stores/auth-store";
@@ -259,7 +259,7 @@ export default function AddReelScreen() {
 
             {isUploading ? (
               <View className="py-10 items-center justify-center">
-                <ActivityIndicator size="large" color="#004CFF" />
+                <ListSkeleton />
                 <Text className="mt-6 text-[18px] font-heading font-bold text-surface-900 tracking-tight">
                   Processing video...
                 </Text>

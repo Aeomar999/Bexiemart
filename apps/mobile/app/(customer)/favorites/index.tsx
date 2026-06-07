@@ -1,12 +1,4 @@
-import {
-  View,
-  Text,
-  FlatList,
-  ActivityIndicator,
-  Pressable,
-  RefreshControl,
-  ScrollView,
-} from "react-native";
+import { View, Text, FlatList, Pressable, RefreshControl, ScrollView } from "react-native";
 import { useState } from "react";
 import { useRouter } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -14,6 +6,7 @@ import { BackButton } from "@/components/ui/BackButton";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { Image } from "expo-image";
 import { Icon } from "@/components/ui/Icon";
+import { ListSkeleton } from "@/components/ui/Skeleton";
 import { useCartStore } from "@/lib/stores/cart-store";
 import { useWishlist, useToggleWishlist } from "@/lib/hooks/use-wishlist";
 import {
@@ -108,7 +101,7 @@ export default function FavoritesScreen() {
         className="flex-1 bg-background items-center justify-center"
         style={{ paddingTop: insets.top }}
       >
-        <ActivityIndicator size="large" color="#004CFF" />
+        <ListSkeleton />
       </View>
     );
   }

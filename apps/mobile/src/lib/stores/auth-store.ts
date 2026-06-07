@@ -19,7 +19,7 @@ const storage = {
   removeItem: async (key: string) => {
     if (isWeb) webStorage.delete(key);
     else await SecureStore.deleteItemAsync(key);
-  }
+  },
 };
 
 interface User {
@@ -57,7 +57,8 @@ export const useAuthStore = create<AuthState>((set) => ({
 
   setAuth: async (user, token) => {
     await storage.setItem("bexiemart_token", token);
-    set({ user, token, isAuthenticated: true, isLoading: false });
+    const normalizedUser = { ...user, role: user.role?.toUpperCase() };
+    set({ user: normalizedUser, token, isAuthenticated: true, isLoading: false });
   },
 
   setUser: (user) => {
@@ -66,9 +67,9 @@ export const useAuthStore = create<AuthState>((set) => ({
 
   logout: async () => {
     try {
-      const { authClient } = require('../api/better-auth');
+      const { authClient } = require("../api/better-auth");
       await authClient.signOut();
-    } catch(e) {}
+    } catch (e) {}
     await storage.removeItem("bexiemart_token");
     set({ user: null, token: null, isAuthenticated: false, isLoading: false });
   },
@@ -91,28 +92,35 @@ export const useAuthStore = create<AuthState>((set) => ({
         storage.getItem("bexiemart_onboarding"),
         storage.getItem("bexiemart_launched"),
       ]);
-      
+
       const hasSeenOnboarding = onboardingStatus === "true";
       const hasLaunchedBefore = launchedStatus === "true";
 
       // Better Auth handles its own session state, but we still check it here
-      const { authClient } = require('../api/better-auth');
+      const { authClient } = require("../api/better-auth");
       const { data, error } = await authClient.getSession();
 
       if (data && data.user) {
         // User is authenticated via better-auth
-        set({ 
-          token: data.session?.token || data.session?.id || token || 'better-auth-token', 
-          user: data.user as any, 
-          isAuthenticated: true, 
-          isLoading: false, 
-          hasSeenOnboarding, 
-          hasLaunchedBefore 
+        set({
+          token: data.session?.token || data.session?.id || token || "better-auth-token",
+          user: data.user as any,
+          isAuthenticated: true,
+          isLoading: false,
+          hasSeenOnboarding,
+          hasLaunchedBefore,
         });
       } else {
         // Not authenticated
         await storage.removeItem("bexiemart_token");
-        set({ token: null, user: null, isAuthenticated: false, isLoading: false, hasSeenOnboarding, hasLaunchedBefore });
+        set({
+          token: null,
+          user: null,
+          isAuthenticated: false,
+          isLoading: false,
+          hasSeenOnboarding,
+          hasLaunchedBefore,
+        });
       }
     } catch {
       set({ isLoading: false });

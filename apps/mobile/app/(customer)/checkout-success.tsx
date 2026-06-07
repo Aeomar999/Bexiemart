@@ -1,10 +1,11 @@
-import { View, Text, ActivityIndicator } from "react-native";
+import { View, Text } from "react-native";
 import { useRouter, useLocalSearchParams } from "expo-router";
 import { useState } from "react";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { BackButton } from "@/components/ui/BackButton";
 import { Button } from "@/components/ui/Button";
 import { Icon } from "@/components/ui/Icon";
+import { ListSkeleton } from "@/components/ui/Skeleton";
 import { useOrder } from "@/lib/hooks/use-orders";
 
 export default function CheckoutSuccessScreen() {
@@ -35,7 +36,7 @@ export default function CheckoutSuccessScreen() {
         style={{ paddingTop: insets.top }}
       >
         <View className="w-24 h-24 rounded-full bg-brand-50 items-center justify-center mb-8">
-          <ActivityIndicator size="large" color="#004CFF" />
+          <ListSkeleton />
         </View>
         <Text className="text-display-sm font-heading font-bold text-foreground text-center mb-3">
           {stage === "processing" ? "Processing Payment" : "Loading Order"}

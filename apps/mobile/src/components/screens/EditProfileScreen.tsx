@@ -15,7 +15,8 @@ import { useRouter } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Icon } from "@/components/ui/Icon";
 import { Button } from "@/components/ui/Button";
-import { Image } from "expo-image";
+import { Input } from "@/components/ui/Input";
+import { Avatar } from "@/components/ui/Avatar";
 import { useAuthStore } from "@/lib/stores/auth-store";
 import { useUpdateProfile } from "@/lib/hooks/use-users";
 import { useUpload } from "@/lib/hooks/use-upload";
@@ -118,96 +119,59 @@ export function EditProfileScreen() {
         >
           {/* Avatar Section */}
           <View className="items-center mb-8">
-            <View className="relative">
-              <View className="w-24 h-24 rounded-full overflow-hidden border-4 border-card shadow-sm bg-accent">
-                <Image
-                  source={{
-                    uri:
-                      avatarUrl ||
-                      `https://api.dicebear.com/9.x/micah/png?seed=${encodeURIComponent(name || "Bexiemart")}&backgroundColor=b6e3f4,c0aede,d1d4f9`,
-                  }}
-                  style={{ width: "100%", height: "100%" }}
-                  contentFit="cover"
-                />
-              </View>
-              <Pressable
-                style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
-                className="absolute bottom-0 right-0 w-8 h-8 bg-brand-600 rounded-full items-center justify-center border-2 border-card"
-                onPress={handleChangePhoto}
-                disabled={isSaving}
-              >
-                <Icon name="camera" size={14} color="#ffffff" />
-              </Pressable>
-            </View>
+            <Avatar
+              uri={avatarUrl}
+              name={name || user?.name || "Bexiemart"}
+              size={96}
+              fallback="dicebear"
+              editable={!isSaving}
+              onPress={handleChangePhoto}
+            />
           </View>
 
           {/* Form Fields */}
           <View className="bg-card rounded-[24px] p-5 border border-border mb-6">
             <View className="mb-4">
-              <Text className="text-[14px] font-bold text-foreground font-heading mb-2 ml-1">
-                Full Name
-              </Text>
-              <View className="h-12 bg-background rounded-[16px] px-4 justify-center border border-border">
-                <TextInput
-                  className="text-[15px] font-body text-foreground flex-1"
-                  placeholder="Enter your full name"
-                  placeholderTextColor="#94a3b8"
-                  value={name}
-                  onChangeText={setName}
-                  editable={!isSaving}
-                />
-              </View>
+              <Input
+                label="Full Name"
+                placeholder="Enter your full name"
+                value={name}
+                onChangeText={setName}
+                editable={!isSaving}
+              />
             </View>
 
             <View className="mb-4">
-              <Text className="text-[14px] font-bold text-foreground font-heading mb-2 ml-1">
-                Email Address
-              </Text>
-              <View className="h-12 bg-background rounded-[16px] px-4 justify-center border border-border">
-                <TextInput
-                  className="text-[15px] font-body text-foreground flex-1"
-                  placeholder="Enter your email"
-                  placeholderTextColor="#94a3b8"
-                  keyboardType="email-address"
-                  autoCapitalize="none"
-                  value={email}
-                  onChangeText={setEmail}
-                  editable={!isSaving}
-                />
-              </View>
+              <Input
+                label="Email Address"
+                placeholder="Enter your email"
+                keyboardType="email-address"
+                autoCapitalize="none"
+                value={email}
+                onChangeText={setEmail}
+                editable={!isSaving}
+              />
             </View>
 
             <View className="mb-4">
-              <Text className="text-[14px] font-bold text-foreground font-heading mb-2 ml-1">
-                Phone Number (Optional)
-              </Text>
-              <View className="h-12 bg-background rounded-[16px] px-4 justify-center border border-border">
-                <TextInput
-                  className="text-[15px] font-body text-foreground flex-1"
-                  placeholder="e.g. +233 50 123 4567"
-                  placeholderTextColor="#94a3b8"
-                  keyboardType="phone-pad"
-                  value={phone}
-                  onChangeText={setPhone}
-                  editable={!isSaving}
-                />
-              </View>
+              <Input
+                label="Phone Number (Optional)"
+                placeholder="e.g. +233 50 123 4567"
+                keyboardType="phone-pad"
+                value={phone}
+                onChangeText={setPhone}
+                editable={!isSaving}
+              />
             </View>
 
             <View className="mb-4">
-              <Text className="text-[14px] font-bold text-foreground font-heading mb-2 ml-1">
-                Location
-              </Text>
-              <View className="h-12 bg-background rounded-[16px] px-4 justify-center border border-border">
-                <TextInput
-                  className="text-[15px] font-body text-foreground flex-1"
-                  placeholder="e.g. Accra, Ghana"
-                  placeholderTextColor="#94a3b8"
-                  value={location}
-                  onChangeText={setLocation}
-                  editable={!isSaving}
-                />
-              </View>
+              <Input
+                label="Location"
+                placeholder="e.g. Accra, Ghana"
+                value={location}
+                onChangeText={setLocation}
+                editable={!isSaving}
+              />
             </View>
 
             <View className="mb-2">

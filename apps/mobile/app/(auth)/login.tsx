@@ -11,11 +11,10 @@ import { useLogin, useResendVerification } from "../../src/lib/hooks/use-auth";
 // @ts-expect-error
 import { FontAwesome5 } from "@expo/vector-icons";
 import { SocialLogins } from "../../src/components/auth/SocialLogins";
+import { LinearGradient } from "expo-linear-gradient";
 
-interface FormErrors {
-  email?: string;
-  password?: string;
-}
+import { useFormValidation } from "../../src/lib/hooks/use-form-validation";
+import { loginSchema } from "../../src/lib/validation/schemas";
 
 export default function LoginScreen() {
   const { isAuthenticated, setAuth } = useAuthStore();
@@ -24,7 +23,7 @@ export default function LoginScreen() {
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [errors, setErrors] = useState<FormErrors>({});
+  const { errors, validate } = useFormValidation(loginSchema);
   const [isEmailNotVerified, setIsEmailNotVerified] = useState(false);
   const [resendError, setResendError] = useState("");
   const [countdown, setCountdown] = useState(0);
@@ -43,22 +42,8 @@ export default function LoginScreen() {
     if (isAuthenticated) router.replace("/");
   }, [isAuthenticated]);
 
-  const validate = (): boolean => {
-    const newErrors: FormErrors = {};
-
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-      newErrors.email = "Enter a valid email address";
-    }
-    if (password.length < 6) {
-      newErrors.password = "Password must be at least 6 characters";
-    }
-
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  };
-
   const handleSubmit = () => {
-    if (!validate()) return;
+    if (!validate({ email, password })) return;
     setIsEmailNotVerified(false);
     login.mutate(
       { email: email.trim(), password },
@@ -131,57 +116,87 @@ export default function LoginScreen() {
           )}
 
           {isEmailNotVerified && (
-            <View className="bg-brand-50 p-5 rounded-3xl border border-brand-100 overflow-hidden relative">
-              <View className="flex-row items-start gap-4 mb-4">
-                <View className="w-12 h-12 bg-white rounded-2xl items-center justify-center shadow-sm">
-                  <FontAwesome5 name="envelope-open-text" size={20} color="#004CFF" />
+            <View className="mt-2 overflow-hidden rounded-3xl border border-brand-200">
+              <LinearGradient
+                colors={["#F0F4FF", "#FAFCFF"]}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 1, y: 1 }}
+                className="p-5"
+              >
+                <View className="flex-row items-center gap-4 mb-5">
+                  <View className="w-14 h-14 bg-white rounded-full shadow-sm items-center justify-center border border-brand-100">
+                    <FontAwesome5 name="envelope-open-text" size={22} color="#004CFF" />
+                  </View>
+                  <View className="flex-1">
+                    <Text className="text-[18px] font-heading font-black text-brand-900 mb-1">
+                      Check your inbox
+                    </Text>
+                    <Text className="text-[13px] text-brand-700 font-body leading-relaxed">
+                      We sent a link to <Text className="font-bold text-brand-900">{email}</Text>
+                    </Text>
+                  </View>
                 </View>
-                <View className="flex-1 pt-1">
-                  <Text className="text-[16px] font-heading font-black text-brand-900 mb-1">
-                    Check your inbox
-                  </Text>
-                  <Text className="text-[13px] text-brand-700 font-body leading-relaxed">
-                    We've sent a verification link to{" "}
-                    <Text className="font-bold text-brand-900">{email}</Text>. Please verify your
-                    email before signing in.
-                  </Text>
-                </View>
-              </View>
 
-              {resendError ? (
-                <Text className="text-[13px] text-red-600 font-body mb-3 px-1">{resendError}</Text>
-              ) : resendVerification.isSuccess && countdown > 0 ? (
-                <View className="flex-row items-center gap-2 mb-4 bg-green-100 p-3 rounded-2xl border border-green-200">
-                  <FontAwesome5 name="check-circle" size={14} color="#16A34A" />
-                  <Text className="text-[13px] font-bold text-green-800">
-                    Verification email sent!
+                <View className="bg-white/60 p-4 rounded-2xl mb-5 border border-white">
+                  <Text className="text-[13px] text-brand-800 font-body leading-relaxed">
+                    Tap the verification link in your email before signing in.
                   </Text>
+                  <View className="mt-2 flex-row items-start gap-2 bg-brand-50 p-3 rounded-xl border border-brand-100">
+                    <FontAwesome5
+                      name="info-circle"
+                      size={14}
+                      color="#004CFF"
+                      style={{ marginTop: 2 }}
+                    />
+                    <Text className="flex-1 text-[12px] text-brand-700 leading-tight">
+                      <Text className="font-bold">Testing locally?</Text> Phone browsers can't open
+                      "localhost" links. Copy the link to your PC browser, or update your .env to
+                      use your local IP address (e.g., 192.168.x.x) instead of localhost.
+                    </Text>
+                  </View>
                 </View>
-              ) : null}
 
-              <Button
-                title={
-                  countdown > 0
-                    ? `Resend email in ${Math.floor(countdown / 60)}:${(countdown % 60).toString().padStart(2, "0")}`
-                    : "Resend verification email"
-                }
-                size="md"
-                variant={countdown > 0 ? "outline" : "primary"}
-                className={countdown > 0 ? "bg-white border-brand-200" : ""}
-                loading={resendVerification.isPending}
-                disabled={countdown > 0}
-                onPress={() => {
-                  setResendError("");
-                  resendVerification.mutate(email, {
-                    onSuccess: () => {
-                      setCountdown(180);
-                    },
-                    onError: (err: any) => {
-                      setResendError(err?.message || "Failed to resend.");
-                    },
-                  });
-                }}
-              />
+                {resendError ? (
+                  <Text className="text-[13px] text-red-600 font-body mb-3 px-1 text-center">
+                    {resendError}
+                  </Text>
+                ) : resendVerification.isSuccess && countdown > 0 ? (
+                  <View className="flex-row items-center justify-center gap-2 mb-4">
+                    <FontAwesome5 name="check-circle" size={14} color="#16A34A" />
+                    <Text className="text-[13px] font-bold text-green-700">
+                      Link sent! Check your email.
+                    </Text>
+                  </View>
+                ) : null}
+
+                {countdown > 0 ? (
+                  <View className="bg-white/80 border border-brand-100 py-3.5 px-4 rounded-full flex-row items-center justify-center gap-2">
+                    <FontAwesome5 name="clock" size={14} color="#004CFF" />
+                    <Text className="text-[14px] font-bold text-brand-900">
+                      Resend available in {Math.floor(countdown / 60)}:
+                      {(countdown % 60).toString().padStart(2, "0")}
+                    </Text>
+                  </View>
+                ) : (
+                  <Button
+                    title="Resend Verification Link"
+                    size="md"
+                    variant="primary"
+                    loading={resendVerification.isPending}
+                    onPress={() => {
+                      setResendError("");
+                      resendVerification.mutate(email, {
+                        onSuccess: () => {
+                          setCountdown(180);
+                        },
+                        onError: (err: any) => {
+                          setResendError(err?.message || "Failed to resend.");
+                        },
+                      });
+                    }}
+                  />
+                )}
+              </LinearGradient>
             </View>
           )}
 
