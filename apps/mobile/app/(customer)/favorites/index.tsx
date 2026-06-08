@@ -186,7 +186,7 @@ export default function FavoritesScreen() {
         }
         ListEmptyComponent={
           <EmptyState
-            iconName="folder-open"
+            iconName="folder"
             title="Empty Collection"
             description="You don't have any products saved here yet."
             actionLabel="Browse Products"

@@ -1,6 +1,10 @@
 import axios from "axios";
 import * as SecureStore from "expo-secure-store";
 import { Platform } from "react-native";
+import { z } from "zod";
+import * as Sentry from "@sentry/react-native";
+import { ENV } from "../../config";
+import { useAuthStore } from "../stores/auth-store";
 
 const isWeb = Platform.OS === "web";
 
@@ -14,8 +18,6 @@ const storage = {
     else await SecureStore.deleteItemAsync(key);
   },
 };
-
-import { ENV } from "../../config";
 
 const API_URL = ENV.API_URL;
 
@@ -33,11 +35,6 @@ apiClient.interceptors.request.use(async (config) => {
   return config;
 });
 
-import { useAuthStore } from "../stores/auth-store";
-
-import { z } from "zod";
-import * as Sentry from "@sentry/react-native";
-
 declare module "axios" {
   export interface AxiosRequestConfig {
     zodSchema?: z.ZodType<any>;
@@ -54,8 +51,6 @@ apiClient.interceptors.response.use(
         Sentry.captureException(new Error("API Contract Violation"), {
           extra: { issues: parsed.error.issues, url: response.config.url },
         });
-        // You could optionally throw here to fail hard, but returning data
-        // might allow the app to partially work if the schema mismatch is minor.
       } else {
         response.data = parsed.data;
       }
@@ -63,7 +58,6 @@ apiClient.interceptors.response.use(
     return response;
   },
   async (error) => {
-    // Extract user-friendly error message from backend
     if (error.response?.data?.message) {
       const backendMessage = error.response.data.message;
       error.message = Array.isArray(backendMessage) ? backendMessage[0] : backendMessage;
@@ -72,7 +66,6 @@ apiClient.interceptors.response.use(
     }
 
     if (error.response?.status === 401) {
-      // Not just removing from storage, but updating app state to trigger redirect
       await useAuthStore.getState().logout();
     }
     return Promise.reject(error);

@@ -1,9 +1,20 @@
-import { Controller, Post, Get, Param, Body, UseGuards, Req, Headers, ForbiddenException } from "@nestjs/common";
+import {
+  Controller,
+  Post,
+  Get,
+  Param,
+  Body,
+  UseGuards,
+  Req,
+  Headers,
+  ForbiddenException,
+} from "@nestjs/common";
 import { Throttle } from "@nestjs/throttler";
 import { ApiTags, ApiOperation, ApiBody, ApiBearerAuth } from "@nestjs/swagger";
 import { AuthGuard } from "../../guards/auth.guard";
 import { PaymentsService } from "./payments.service";
 import { InitializePaymentDto } from "./dto/initialize-payment.dto";
+import { ChargeCardDto } from "./dto/charge-card.dto";
 
 @ApiBearerAuth()
 @Controller("payments")
@@ -29,11 +40,15 @@ export class PaymentsController {
 
   @ApiOperation({ summary: "Handle payment webhook" })
   @Post("webhook")
-  handleWebhook(@Req() req: any, @Headers("x-paystack-signature") signature: string, @Body() body: any) {
+  handleWebhook(
+    @Req() req: any,
+    @Headers("x-paystack-signature") signature: string,
+    @Body() body: any
+  ) {
     const crypto = require("crypto");
     const secret = process.env.PAYSTACK_SECRET_KEY || "";
     // If rawBody is available (configured in Nest app), use it. Otherwise fallback to stringify.
-    const payload = req.rawBody ? req.rawBody.toString('utf8') : JSON.stringify(body);
+    const payload = req.rawBody ? req.rawBody.toString("utf8") : JSON.stringify(body);
     const hash = crypto.createHmac("sha512", secret).update(payload).digest("hex");
 
     if (hash !== signature) {
@@ -46,7 +61,7 @@ export class PaymentsController {
   @Post("charge-card")
   @UseGuards(AuthGuard)
   @Throttle({ default: { limit: 5, ttl: 60000 } })
-  chargeCard(@Req() req: any, @Body() body: { orderId: string; cardId: string }) {
+  chargeCard(@Req() req: any, @Body() body: ChargeCardDto) {
     return this.paymentsService.chargeAuthorization(req.user.id, body.orderId, body.cardId);
   }
 }

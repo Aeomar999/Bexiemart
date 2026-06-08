@@ -1,4 +1,15 @@
-import { Controller, Get, Post, Put, Delete, Body, Param, Query, UseGuards, Req } from "@nestjs/common";
+import {
+  Controller,
+  Get,
+  Post,
+  Put,
+  Delete,
+  Body,
+  Param,
+  Query,
+  UseGuards,
+  Req,
+} from "@nestjs/common";
 import { AuthGuard } from "../../guards/auth.guard";
 import { WalletService } from "./wallet.service";
 import { TopupDto } from "./dto/topup.dto";
@@ -6,7 +17,11 @@ import { TransferDto } from "./dto/transfer.dto";
 import { PinDto } from "./dto/pin.dto";
 import { ChangePinDto } from "./dto/change-pin.dto";
 import { CreateCardDto, UpdateCardDto, VerifyCardDto } from "./dto/card.dto";
-import { LinkBankAccountDto, LinkMomoAccountDto } from "./dto/linked-accounts.dto";
+import {
+  LinkBankAccountDto,
+  LinkMomoAccountDto,
+  ResolveBankAccountDto,
+} from "./dto/linked-accounts.dto";
 import { WithdrawDto } from "./dto/withdraw.dto";
 import { ApiTags, ApiOperation, ApiBody, ApiBearerAuth } from "@nestjs/swagger";
 import { Throttle } from "@nestjs/throttler";
@@ -48,7 +63,13 @@ export class WalletController {
   @ApiOperation({ summary: "Withdraw funds to a bank or momo account" })
   @ApiBody({ type: WithdrawDto })
   withdraw(@Req() req: any, @Body() body: WithdrawDto) {
-    return this.walletService.withdraw(req.user.id, body.amount, body.accountId, body.accountType, body.pin);
+    return this.walletService.withdraw(
+      req.user.id,
+      body.amount,
+      body.accountId,
+      body.accountType,
+      body.pin
+    );
   }
 
   @Post("transfer")
@@ -147,8 +168,8 @@ export class WalletController {
 
   @Get("resolve-account")
   @ApiOperation({ summary: "Resolve/verify a bank account number via Paystack" })
-  resolveAccount(@Query("bankCode") bankCode: string, @Query("accountNumber") accountNumber: string) {
-    return this.walletService.resolveBankAccount(bankCode, accountNumber);
+  resolveAccount(@Query() query: ResolveBankAccountDto) {
+    return this.walletService.resolveBankAccount(query.bankCode, query.accountNumber);
   }
 
   /* ─── Mobile Money Accounts ─── */
@@ -176,6 +197,11 @@ export class WalletController {
   @ApiOperation({ summary: "Verify a Paystack transaction and save the card token" })
   @ApiBody({ type: VerifyCardDto })
   verifyAndSaveCard(@Req() req: any, @Body() body: VerifyCardDto) {
-    return this.walletService.verifyAndSaveCard(req.user.id, body.reference, body.cardholderName, body.isDefault);
+    return this.walletService.verifyAndSaveCard(
+      req.user.id,
+      body.reference,
+      body.cardholderName,
+      body.isDefault
+    );
   }
 }

@@ -26,6 +26,7 @@ import { RegisterDto } from "./dto/register.dto";
 import { LoginDto } from "./dto/login.dto";
 import { ForgotPasswordDto } from "./dto/forgot-password.dto";
 import { ResetPasswordDto } from "./dto/reset-password.dto";
+import { ResendVerificationDto } from "./dto/resend-verification.dto";
 
 @ApiTags("Auth")
 @ApiBearerAuth()
@@ -209,7 +210,7 @@ export class AuthController {
   @ApiOperation({ summary: "Resend verification email" })
   @Post("resend-verification")
   @HttpCode(HttpStatus.OK)
-  async resendVerification(@Body() body: { email: string }) {
+  async resendVerification(@Body() body: ResendVerificationDto) {
     const { email } = body;
     const user = await this.prisma.user.findUnique({ where: { email } });
     if (!user) {
@@ -247,7 +248,7 @@ export class AuthController {
   @HttpCode(HttpStatus.OK)
   async resetPassword(@Body() body: ResetPasswordDto) {
     await this.auth.api.resetPassword({
-      body: { newPassword: body.newPassword },
+      body: { newPassword: body.newPassword, token: body.token },
     });
     return { message: "Password reset successfully." };
   }

@@ -1,7 +1,19 @@
-import { Controller, Get, Post, Delete, Patch, Body, Param, UseGuards, Req, BadRequestException } from "@nestjs/common";
+import {
+  Controller,
+  Get,
+  Post,
+  Delete,
+  Patch,
+  Body,
+  Param,
+  UseGuards,
+  Req,
+  BadRequestException,
+} from "@nestjs/common";
 import { AuthGuard } from "../../guards/auth.guard";
 import { WalletService } from "./wallet.service";
 import { ApiTags, ApiOperation, ApiBearerAuth } from "@nestjs/swagger";
+import { AddCardPaymentMethodDto, AddMomoPaymentMethodDto } from "./dto/payment-method.dto";
 
 @ApiTags("Payment Methods")
 @ApiBearerAuth()
@@ -20,7 +32,7 @@ export class PaymentMethodsController {
     ]);
 
     // Map to a unified format expected by the frontend
-    const mappedCards = cards.map(c => ({
+    const mappedCards = cards.map((c) => ({
       id: c.id,
       type: "card",
       provider: c.type,
@@ -29,7 +41,7 @@ export class PaymentMethodsController {
       isDefault: c.isDefault,
     }));
 
-    const mappedMomo = momoAccounts.map(m => ({
+    const mappedMomo = momoAccounts.map((m) => ({
       id: m.id,
       type: "momo",
       provider: m.provider,
@@ -46,10 +58,7 @@ export class PaymentMethodsController {
 
   @Post("card")
   @ApiOperation({ summary: "Add a card" })
-  async addCard(@Req() req: any, @Body() body: any) {
-    if (!body.details || !body.expiry) {
-        throw new BadRequestException("Card details and expiry are required");
-    }
+  async addCard(@Req() req: any, @Body() body: AddCardPaymentMethodDto) {
     const [month, year] = body.expiry.split("/");
 
     const newCard = await this.walletService.addCard(req.user.id, {
@@ -66,11 +75,7 @@ export class PaymentMethodsController {
 
   @Post("momo")
   @ApiOperation({ summary: "Add a momo account" })
-  async addMomo(@Req() req: any, @Body() body: any) {
-    if (!body.details || !body.provider) {
-        throw new BadRequestException("Momo provider and phone number are required");
-    }
-
+  async addMomo(@Req() req: any, @Body() body: AddMomoPaymentMethodDto) {
     const newMomo = await this.walletService.linkMomoAccount(req.user.id, {
       provider: body.provider.toUpperCase(),
       phoneNumber: body.details,

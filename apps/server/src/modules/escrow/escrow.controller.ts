@@ -2,6 +2,7 @@ import { Controller, Get, Post, Param, Body, UseGuards, Req } from "@nestjs/comm
 import { AuthGuard } from "../../guards/auth.guard";
 import { EscrowService } from "./escrow.service";
 import { ApiTags, ApiOperation, ApiBearerAuth } from "@nestjs/swagger";
+import { DisputeEscrowDto } from "./dto/dispute-escrow.dto";
 
 @ApiTags("Escrow")
 @ApiBearerAuth()
@@ -26,8 +27,8 @@ export class EscrowController {
   @Post(":id/dispute")
   @UseGuards(AuthGuard)
   @ApiOperation({ summary: "Open a dispute on an escrow" })
-  dispute(@Req() req: any, @Param("id") id: string, @Body("reason") reason: string) {
-    return this.escrowService.dispute(req.user.id, id, reason);
+  dispute(@Req() req: any, @Param("id") id: string, @Body() body: DisputeEscrowDto) {
+    return this.escrowService.dispute(req.user.id, id, body.reason);
   }
 
   @Post(":id/release")

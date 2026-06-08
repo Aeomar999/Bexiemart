@@ -4,6 +4,7 @@ import { ApiTags, ApiOperation, ApiBody, ApiBearerAuth } from "@nestjs/swagger";
 import { AuthGuard } from "../../guards/auth.guard";
 import { OrdersService } from "./orders.service";
 import { CreateOrderDto } from "./dto/create-order.dto";
+import { RequestRefundDto } from "./dto/request-refund.dto";
 
 @ApiBearerAuth()
 @Controller("orders")
@@ -43,7 +44,7 @@ export class OrdersController {
   @ApiBody({ schema: { type: "object", properties: { reason: { type: "string" } } } })
   @Post(":id/request-refund")
   @Throttle({ default: { limit: 5, ttl: 60000 } })
-  requestRefund(@Req() req: any, @Param("id") id: string, @Body("reason") reason: string) {
-    return this.ordersService.requestRefund(req.user.id, id, reason);
+  requestRefund(@Req() req: any, @Param("id") id: string, @Body() dto: RequestRefundDto) {
+    return this.ordersService.requestRefund(req.user.id, id, dto.reason);
   }
 }

@@ -2,6 +2,7 @@ import { Controller, Get, Post, Delete, Body, Param, Req, UseGuards, Query } fro
 import { StoryService } from "./story.service";
 import { AuthGuard } from "../../guards/auth.guard";
 import { ApiTags, ApiOperation, ApiBearerAuth } from "@nestjs/swagger";
+import { CreateStoryDto } from "./dto/create-story.dto";
 
 @ApiTags("Stories")
 @ApiBearerAuth()
@@ -18,7 +19,7 @@ export class StoryController {
 
   @Post()
   @ApiOperation({ summary: "Create a new story" })
-  createStory(@Req() req: any, @Body() body: { mediaUrl: string; caption?: string }) {
+  createStory(@Req() req: any, @Body() body: CreateStoryDto) {
     return this.storyService.createStory(req.user.id, body);
   }
 

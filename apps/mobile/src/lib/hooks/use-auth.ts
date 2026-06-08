@@ -25,7 +25,6 @@ export function useRegister() {
 
 export function useCurrentUser() {
   const setUser = useAuthStore((s) => s.setUser);
-  const logout = useAuthStore((s) => s.logout);
   const token = useAuthStore((s) => s.token);
 
   return useQuery({
@@ -64,7 +63,6 @@ export function useResendVerification() {
 
 export function useLogout() {
   const logout = useAuthStore((s) => s.logout);
-  const clearCart = () => {};
   const queryClient = useQueryClient();
 
   return useMutation({

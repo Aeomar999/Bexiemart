@@ -1,6 +1,7 @@
 import { create } from "zustand";
 import * as SecureStore from "expo-secure-store";
 import { Platform } from "react-native";
+import { authClient } from "../api/better-auth";
 
 const isWeb = Platform.OS === "web";
 
@@ -67,7 +68,6 @@ export const useAuthStore = create<AuthState>((set) => ({
 
   logout: async () => {
     try {
-      const { authClient } = require("../api/better-auth");
       await authClient.signOut();
     } catch (e) {}
     await storage.removeItem("bexiemart_token");
@@ -97,15 +97,17 @@ export const useAuthStore = create<AuthState>((set) => ({
       const hasLaunchedBefore = launchedStatus === "true";
 
       // Better Auth handles its own session state, but we still check it here
-      const { authClient } = require("../api/better-auth");
       const { data, error } = await authClient.getSession();
 
       if (data && data.user) {
-        // User is authenticated via better-auth
+        const tokenVal = data.session?.token || data.session?.id || token;
+        if (!tokenVal && token) {
+          await storage.removeItem("bexiemart_token");
+        }
         set({
-          token: data.session?.token || data.session?.id || token || "better-auth-token",
-          user: data.user as any,
-          isAuthenticated: true,
+          token: tokenVal,
+          user: { ...data.user, role: (data.user as any).role?.toUpperCase() },
+          isAuthenticated: !!tokenVal,
           isLoading: false,
           hasSeenOnboarding,
           hasLaunchedBefore,

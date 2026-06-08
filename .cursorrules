@@ -1,0 +1,61 @@
+### 🛡️ Global Input Validation & Security Standards
+
+**Objective:** Ensure that all data entering the application—from user forms, API endpoints, external webhooks, or database queries—is strictly validated, sanitized, and typed before being processed. "Never trust the client" is our foundational rule.
+
+#### 1. Core Philosophy (Zero Trust)
+- **Deny by Default:** Reject any request containing unexpected, malformed, or extra fields. Allow only explicitly defined parameters.
+- **Fail Fast:** Validate data at the earliest possible boundary (e.g., at the API controller or frontend form submission layer) before any business logic is executed.
+- **Single Source of Truth:** Define validation schemas centrally. Share schemas between the frontend (React Native/Expo) and backend (NestJS/Node) whenever possible to prevent logic drift.
+
+#### 2. Backend Validation Standards (API Layer)
+- **Use Validation Libraries:** All incoming payloads (Body, Query, Params) MUST be validated against strict schemas.
+  - *If using NestJS:* Use `class-validator` and `class-transformer` with a global `ValidationPipe` configured with `whitelist: true` and `forbidNonWhitelisted: true`.
+  - *If using standard Node/Express:* Use Zod (`z.object({...}).strict()`) or Joi.
+- **Type Coercion:** Ensure query strings and URL parameters (which are strings by default) are explicitly cast and validated as their intended types (e.g., converting `"42"` to the number `42` safely).
+- **Rate Limiting & Payload Size:** Implement global rate limiting and strict body size limits to prevent Denial of Service (DoS) attacks via massive payloads.
+
+#### 3. Frontend Validation Standards (UI Layer)
+- **Library Stack:** Use `react-hook-form` paired with a schema validation resolver (like `@hookform/resolvers/zod`).
+- **Client-Side Pre-validation:** Validate all forms on the client side to provide immediate feedback to the user, reducing unnecessary API calls.
+- **Visual Feedback:** 
+  - Do not use generic error messages (e.g., "Invalid input"). 
+  - Provide specific, actionable error messages (e.g., "Password must be at least 8 characters and include a number").
+  - Highlight the exact field causing the error with visual cues (e.g., red borders, error text below the input).
+- **Disable Submissions:** Disable the submit button or show a loading state while form validation or submission is in progress to prevent double-posting.
+
+#### 4. Sanitization & Injection Prevention
+- **SQL Injection:** NEVER use string concatenation for database queries. Always use parameterized queries, prepared statements, or a secure ORM (like Prisma or Drizzle).
+- **Cross-Site Scripting (XSS):** 
+  - Sanitize all user-generated content before rendering it in the UI. 
+  - Use libraries like `DOMPurify` if rendering rich text/HTML. 
+  - Rely on React/React Native's built-in escaping mechanisms for standard text interpolation.
+- **Path Traversal:** If accepting file names or paths from the user, strip out `../` and absolute path indicators. Validate filenames against a strict regex whitelist (e.g., `^[a-zA-Z0-9_.-]+$`).
+
+#### 5. Specific Data Type Rules
+- **Emails:** Must be validated using a robust email regex or library (e.g., Zod's `.email()`). Ensure emails are stored in lowercase to prevent duplicate account creation bugs.
+- **Passwords:** Must enforce a minimum length (e.g., 8 characters) and complexity (e.g., at least one uppercase letter, one lowercase letter, and one number). Never log passwords in plain text.
+- **Phone Numbers:** Use specialized libraries (like `libphonenumber-js`) to parse, validate, and format phone numbers in E.164 format before saving to the database.
+- **IDs & UUIDs:** Validate that database IDs match their expected format (e.g., valid UUIDv4 or MongoDB ObjectId) before querying the database to prevent unhandled cast errors.
+- **Currency/Amounts:** Always validate financial amounts as strictly positive integers (e.g., processing amounts in cents) to avoid floating-point precision errors and negative-value exploits.
+
+#### 6. Error Handling & Logging
+- **Standardized Error Responses:** API validation failures must return a `400 Bad Request` status code with a structured JSON payload:
+  ```json
+  {
+    "error": "Bad Request",
+    "message": "Validation failed",
+    "details": [
+      { "field": "email", "issue": "Invalid email format" },
+      { "field": "password", "issue": "Must be at least 8 characters" }
+    ]
+  }
+  ```
+- **Security Auditing:** Log validation failures that appear malicious (e.g., SQL syntax in an email field or repeated failed requests) to monitoring tools (like Sentry or Datadog), but **never log sensitive data** (like passwords or credit card numbers) in the error payloads.
+
+#### 7. Ripple Effect Checking
+- **Global Impact Analysis:** Before modifying any shared component, utility function, or database schema, you must identify all files and modules that depend on it. Ensure that your changes do not introduce breaking bugs in those dependents.
+- **Verification After Implementation:** After implementing a new feature, fixing a bug, or refactoring code:
+  - Run the entire test suite to ensure existing tests still pass.
+  - Check related screens and workflows to confirm no unintended regressions occurred.
+  - If a change is made to an API endpoint payload or response, explicitly update the frontend client code that consumes it.
+- **No Isolated Fixes:** A bug fix is not complete until you have verified that the fix does not break the original functionality for other use cases or edge cases.

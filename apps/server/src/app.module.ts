@@ -4,6 +4,8 @@ import { ThrottlerModule, ThrottlerGuard } from "@nestjs/throttler";
 import { APP_GUARD } from "@nestjs/core";
 import { CorrelationIdMiddleware } from "./middleware/correlation-id.middleware";
 import { AuditLoggerMiddleware } from "./middleware/audit-logger.middleware";
+import { InputSanitizerMiddleware } from "./middleware/input-sanitizer.middleware";
+import { SsrfGuardMiddleware } from "./middleware/ssrf-guard.middleware";
 import { AuthModule } from "./auth/auth.module";
 import { UsersModule } from "./modules/users/users.module";
 import { ProductsModule } from "./modules/products/products.module";
@@ -102,6 +104,20 @@ import * as winston from "winston";
 })
 export class AppModule {
   configure(consumer: MiddlewareConsumer) {
-    consumer.apply(CorrelationIdMiddleware, AuditLoggerMiddleware).forRoutes("*");
+    consumer
+      .apply(CorrelationIdMiddleware, InputSanitizerMiddleware, AuditLoggerMiddleware)
+      .forRoutes("*")
+      .apply(SsrfGuardMiddleware)
+      .forRoutes(
+        { path: "api/v1/story", method: 1 },
+        { path: "api/v1/upload", method: 1 },
+        { path: "api/v1/vendor/products", method: 1 },
+        { path: "api/v1/payments/webhook", method: 1 },
+        { path: "api/v1/collections", method: 1 },
+        { path: "api/v1/coupons/validate", method: 1 },
+        { path: "api/v1/referrals/generate", method: 1 },
+        { path: "api/v1/referrals/apply", method: 1 },
+        { path: "api/v1/reviews", method: 1 }
+      );
   }
 }

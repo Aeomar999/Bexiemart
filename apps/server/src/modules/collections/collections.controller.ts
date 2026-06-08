@@ -2,6 +2,8 @@ import { Controller, Get, Post, Delete, Param, Body, UseGuards, Req } from "@nes
 import { ApiTags, ApiOperation, ApiBearerAuth } from "@nestjs/swagger";
 import { CollectionsService } from "./collections.service";
 import { AuthGuard } from "../../guards/auth.guard";
+import { CreateCollectionDto } from "./dto/create-collection.dto";
+import { AddCollectionItemDto } from "./dto/add-collection-item.dto";
 
 @ApiBearerAuth()
 @Controller("collections")
@@ -24,7 +26,7 @@ export class CollectionsController {
 
   @ApiOperation({ summary: "Create a new collection" })
   @Post()
-  createCollection(@Req() req: any, @Body() body: { name: string; description?: string }) {
+  createCollection(@Req() req: any, @Body() body: CreateCollectionDto) {
     return this.collectionsService.createCollection(req.user.id, body.name, body.description);
   }
 
@@ -39,7 +41,7 @@ export class CollectionsController {
   addItemToCollection(
     @Req() req: any,
     @Param("id") id: string,
-    @Body() body: { productId: string }
+    @Body() body: AddCollectionItemDto
   ) {
     return this.collectionsService.addItemToCollection(req.user.id, id, body.productId);
   }

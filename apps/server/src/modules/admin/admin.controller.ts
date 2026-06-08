@@ -7,6 +7,7 @@ import { AdminService } from "./admin.service";
 import { UpdateRoleDto } from "./dto/update-role.dto";
 import { UpdateConfigDto } from "./dto/update-config.dto";
 import { UpdateOrderStatusDto } from "./dto/update-order-status.dto";
+import { ResolveDisputeDto } from "./dto/resolve-dispute.dto";
 
 @ApiTags("Admin")
 @ApiBearerAuth()
@@ -79,7 +80,7 @@ export class AdminController {
   listOrders(
     @Query("status") status?: string,
     @Query("page") page?: string,
-    @Query("limit") limit?: string,
+    @Query("limit") limit?: string
   ) {
     return this.adminService.listOrders(status, Number(page) || 1, Number(limit) || 20);
   }
@@ -106,9 +107,17 @@ export class AdminController {
   }
 
   @ApiOperation({ summary: "Resolve a dispute" })
-  @ApiBody({ schema: { type: 'object', properties: { action: { type: 'string', enum: ['REFUND', 'RELEASE'] }, reason: { type: 'string' } } } })
+  @ApiBody({
+    schema: {
+      type: "object",
+      properties: {
+        action: { type: "string", enum: ["REFUND", "RELEASE"] },
+        reason: { type: "string" },
+      },
+    },
+  })
   @Post("disputes/:id/resolve")
-  resolveDispute(@Param("id") id: string, @Body() body: { action: "REFUND" | "RELEASE", reason: string }) {
+  resolveDispute(@Param("id") id: string, @Body() body: ResolveDisputeDto) {
     return this.adminService.resolveDispute(id, body.action, body.reason);
   }
 

@@ -5,6 +5,8 @@ import {
   HttpException,
   HttpStatus,
   Logger,
+  UnprocessableEntityException,
+  BadRequestException,
 } from "@nestjs/common";
 import { Request, Response } from "express";
 import { Prisma } from "@prisma/client";
@@ -12,6 +14,17 @@ import { Prisma } from "@prisma/client";
 @Catch()
 export class GlobalExceptionFilter implements ExceptionFilter {
   private readonly logger = new Logger(GlobalExceptionFilter.name);
+
+  private logValidationFailure(request: Request, status: number, message: string, errors: any) {
+    const userId = (request as any).user?.id || "anonymous";
+    const ip = request.headers["x-forwarded-for"] || request.socket.remoteAddress;
+    const correlationId = (request as any).correlationId;
+
+    this.logger.warn(
+      `[VALIDATION_FAILURE] User: ${userId} | IP: ${ip} | ${request.method} ${request.url} | ${status} - ${message}`,
+      { correlationId, errors, userId }
+    );
+  }
 
   catch(exception: unknown, host: ArgumentsHost) {
     const ctx = host.switchToHttp();
@@ -31,6 +44,10 @@ export class GlobalExceptionFilter implements ExceptionFilter {
         const obj = res as any;
         message = obj.message ?? message;
         errors = Array.isArray(obj.message) ? obj.message : undefined;
+      }
+
+      if (status === 400 || status === 422) {
+        this.logValidationFailure(request, status, message, errors);
       }
     } else if (exception instanceof Prisma.PrismaClientKnownRequestError) {
       switch (exception.code) {

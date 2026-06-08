@@ -6,11 +6,21 @@ import {
   OnGatewayDisconnect,
   ConnectedSocket,
   MessageBody,
+  WsException,
 } from "@nestjs/websockets";
 import { Server, Socket } from "socket.io";
-import { UnauthorizedException, Logger, Inject } from "@nestjs/common";
+import { Logger, Inject } from "@nestjs/common";
+import { validate } from "class-validator";
+import { plainToInstance } from "class-transformer";
 import { AUTH } from "../../auth/auth.constants";
 import { ChatService } from "./chat.service";
+import {
+  WsPresenceSubscriptionDto,
+  WsConversationJoinDto,
+  WsSendMessageDto,
+  WsTypingDto,
+  WsMessageReadDto,
+} from "./dto/ws-message.dto";
 
 interface AuthenticatedSocket extends Socket {
   userId?: string;
@@ -23,16 +33,35 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
   private logger = new Logger("ChatGateway");
 
-  // Track active socket IDs per user
   private userSockets = new Map<string, Set<string>>();
 
-  // Rate limiting for messages
   private messageRateLimits = new Map<string, number[]>();
 
   constructor(
     private readonly chatService: ChatService,
     @Inject(AUTH) private readonly auth: any
   ) {}
+
+  private async validateWs<T extends object>(dtoClass: new () => T, data: unknown): Promise<T> {
+    if (!data || typeof data !== "object") {
+      throw new WsException("Invalid message payload");
+    }
+    const dto = plainToInstance(dtoClass, data, {
+      enableImplicitConversion: true,
+    });
+    const errors = await validate(dto, {
+      whitelist: true,
+      forbidNonWhitelisted: true,
+    });
+    if (errors.length > 0) {
+      const messages = errors
+        .map((err) => Object.values(err.constraints || {}))
+        .flat()
+        .join("; ");
+      throw new WsException(`Validation failed: ${messages}`);
+    }
+    return dto;
+  }
 
   async handleConnection(client: AuthenticatedSocket) {
     try {
@@ -97,14 +126,13 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
   @SubscribeMessage("subscribe_presence")
   async handleSubscribePresence(
     @ConnectedSocket() client: AuthenticatedSocket,
-    @MessageBody() data: { userIds: string[] }
+    @MessageBody() data: unknown
   ) {
-    if (!client.userId || !data.userIds) return;
+    if (!client.userId) return;
+    const dto = await this.validateWs(WsPresenceSubscriptionDto, data);
 
-    // Join a presence room for each user
-    data.userIds.forEach((id) => {
+    dto.userIds.forEach((id) => {
       client.join(`presence:${id}`);
-      // Emit current status immediately to this client
       client.emit("presence_update", { userId: id, isOnline: this.isUserOnline(id) });
     });
   }
@@ -112,10 +140,11 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
   @SubscribeMessage("unsubscribe_presence")
   async handleUnsubscribePresence(
     @ConnectedSocket() client: AuthenticatedSocket,
-    @MessageBody() data: { userIds: string[] }
+    @MessageBody() data: unknown
   ) {
-    if (!client.userId || !data.userIds) return;
-    data.userIds.forEach((id) => {
+    if (!client.userId) return;
+    const dto = await this.validateWs(WsPresenceSubscriptionDto, data);
+    dto.userIds.forEach((id) => {
       client.leave(`presence:${id}`);
     });
   }
@@ -123,30 +152,36 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
   @SubscribeMessage("join_conversation")
   async handleJoinConversation(
     @ConnectedSocket() client: AuthenticatedSocket,
-    @MessageBody() data: { conversationId: string }
+    @MessageBody() data: unknown
   ) {
     if (!client.userId) return;
-    client.join(`conversation:${data.conversationId}`);
+    const dto = await this.validateWs(WsConversationJoinDto, data);
+    client.join(`conversation:${dto.conversationId}`);
   }
 
   @SubscribeMessage("leave_conversation")
   async handleLeaveConversation(
     @ConnectedSocket() client: AuthenticatedSocket,
-    @MessageBody() data: { conversationId: string }
+    @MessageBody() data: unknown
   ) {
     if (!client.userId) return;
-    client.leave(`conversation:${data.conversationId}`);
+    const dto = await this.validateWs(WsConversationJoinDto, data);
+    client.leave(`conversation:${dto.conversationId}`);
   }
 
   @SubscribeMessage("send_message")
   async handleSendMessage(
     @ConnectedSocket() client: AuthenticatedSocket,
-    @MessageBody()
-    data: { conversationId: string; content?: string; type?: "TEXT" | "IMAGE"; mediaUrl?: string }
+    @MessageBody() data: unknown
   ) {
     if (!client.userId) return;
+    const dto = await this.validateWs(WsSendMessageDto, data);
 
-    // Rate limiting: max 30 messages per minute per user
+    if (!dto.content && !dto.mediaUrl) {
+      client.emit("error", "Message must have content or mediaUrl");
+      return;
+    }
+
     const now = Date.now();
     const window = 60000;
     const limit = 30;
@@ -160,21 +195,19 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
     this.messageRateLimits.set(client.userId, timestamps);
 
     const message = await this.chatService.createMessage(
-      data.conversationId,
+      dto.conversationId,
       client.userId,
-      data.content,
-      data.type,
-      data.mediaUrl
+      dto.content,
+      dto.type,
+      dto.mediaUrl
     );
-    this.server.to(`conversation:${data.conversationId}`).emit("new_message", message);
+    this.server.to(`conversation:${dto.conversationId}`).emit("new_message", message);
 
-    // Also emit to the participants personal rooms in case they aren't actively in the conversation screen
-    // so their app can show a push notification or update the unread count
-    const conv = await this.chatService.getConversation(data.conversationId, client.userId);
+    const conv = await this.chatService.getConversation(dto.conversationId, client.userId);
     conv.participants.forEach((p) => {
       if (p.userId !== client.userId) {
         this.server.to(`user:${p.userId}`).emit("message_notification", {
-          conversationId: data.conversationId,
+          conversationId: dto.conversationId,
           message,
         });
       }
@@ -186,28 +219,26 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
   @SubscribeMessage("message_read")
   async handleMessageRead(
     @ConnectedSocket() client: AuthenticatedSocket,
-    @MessageBody() data: { conversationId: string }
+    @MessageBody() data: unknown
   ) {
     if (!client.userId) return;
-    await this.chatService.markAsRead(data.conversationId, client.userId);
-    // Broadcast that this user has read the conversation up to now
-    this.server.to(`conversation:${data.conversationId}`).emit("read_receipt", {
-      conversationId: data.conversationId,
+    const dto = await this.validateWs(WsMessageReadDto, data);
+    await this.chatService.markAsRead(dto.conversationId, client.userId);
+    this.server.to(`conversation:${dto.conversationId}`).emit("read_receipt", {
+      conversationId: dto.conversationId,
       userId: client.userId,
       readAt: new Date(),
     });
   }
 
   @SubscribeMessage("typing")
-  async handleTyping(
-    @ConnectedSocket() client: AuthenticatedSocket,
-    @MessageBody() data: { conversationId: string; isTyping: boolean }
-  ) {
+  async handleTyping(@ConnectedSocket() client: AuthenticatedSocket, @MessageBody() data: unknown) {
     if (!client.userId) return;
-    client.to(`conversation:${data.conversationId}`).emit("typing", {
-      conversationId: data.conversationId,
+    const dto = await this.validateWs(WsTypingDto, data);
+    client.to(`conversation:${dto.conversationId}`).emit("typing", {
+      conversationId: dto.conversationId,
       userId: client.userId,
-      isTyping: data.isTyping,
+      isTyping: dto.isTyping,
     });
   }
 }
