@@ -9,7 +9,7 @@ export function useVendorCoupons() {
 
 export function useCreateCoupon() {
   const qc = useQueryClient();
-  return useMutation({ mutationFn: vendorCouponsApi.create, onSuccess: () => qc.invalidateQueries({ queryKey: KEYS.all }) });
+  return useMutation({ mutationFn: (data) => vendorCouponsApi.create(data), onSuccess: () => qc.invalidateQueries({ queryKey: KEYS.all }) });
 }
 
 export function useUpdateCoupon() {
@@ -19,10 +19,10 @@ export function useUpdateCoupon() {
 
 export function useDeleteCoupon() {
   const qc = useQueryClient();
-  return useMutation({ mutationFn: vendorCouponsApi.remove, onSuccess: () => qc.invalidateQueries({ queryKey: KEYS.all }) });
+  return useMutation({ mutationFn: (data) => vendorCouponsApi.remove(data), onSuccess: () => qc.invalidateQueries({ queryKey: KEYS.all }) });
 }
 
 export function useToggleCoupon() {
   const qc = useQueryClient();
-  return useMutation({ mutationFn: vendorCouponsApi.toggle, onSuccess: () => qc.invalidateQueries({ queryKey: KEYS.all }) });
+  return useMutation({ mutationFn: (data) => vendorCouponsApi.toggle(data), onSuccess: () => qc.invalidateQueries({ queryKey: KEYS.all }) });
 }

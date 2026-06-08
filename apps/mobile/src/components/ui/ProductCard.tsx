@@ -94,6 +94,7 @@ export function ProductCard({
                 <Pressable
                   style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
                   onPress={onFavoriteToggle}
+                  accessibilityRole="button"
                   className="p-1"
                 >
                   <Icon name="heart" size={16} color={isFavorite ? "#ef4444" : "#cbd5e1"} />
@@ -150,6 +151,7 @@ export function ProductCard({
           {onFavoriteToggle && (
             <Pressable
               style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
+              accessibilityRole="button"
               className="absolute top-2 right-2 w-8 h-8 rounded-full bg-card/90 items-center justify-center"
               onPress={onFavoriteToggle}
             >

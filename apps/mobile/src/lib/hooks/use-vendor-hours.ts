@@ -9,5 +9,5 @@ export function useVendorHours() {
 
 export function useUpdateVendorHours() {
   const qc = useQueryClient();
-  return useMutation({ mutationFn: vendorHoursApi.update, onSuccess: () => qc.invalidateQueries({ queryKey: KEYS.all }) });
+  return useMutation({ mutationFn: (data) => vendorHoursApi.update(data), onSuccess: () => qc.invalidateQueries({ queryKey: KEYS.all }) });
 }

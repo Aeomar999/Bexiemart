@@ -33,6 +33,7 @@ export function BackButton({
   return (
     <TouchableOpacity
       onPress={handlePress}
+      accessibilityRole="button"
       className={`w-10 h-10 rounded-full bg-card border border-border items-center justify-center ${className}`}
       {...props}
     >

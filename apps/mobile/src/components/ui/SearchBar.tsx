@@ -26,6 +26,7 @@ export function SearchBar({
 
   return (
     <TouchableOpacity 
+      accessibilityRole="button"
       className="flex-row items-center bg-background h-[48px] rounded-[16px] px-4 border border-border"
       onPress={handlePress}
       activeOpacity={0.9}

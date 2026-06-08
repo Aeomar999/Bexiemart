@@ -15,6 +15,7 @@ export function SocialLogins() {
 
       <View className="flex-row justify-center gap-4">
         <TouchableOpacity
+          accessibilityRole="button"
           className="w-14 h-14 rounded-2xl border border-border bg-card items-center justify-center active:bg-background"
           activeOpacity={0.7}
         >
@@ -22,6 +23,7 @@ export function SocialLogins() {
         </TouchableOpacity>
 
         <TouchableOpacity
+          accessibilityRole="button"
           className="w-14 h-14 rounded-2xl border border-border bg-card items-center justify-center active:bg-background"
           activeOpacity={0.7}
         >
@@ -29,6 +31,7 @@ export function SocialLogins() {
         </TouchableOpacity>
 
         <TouchableOpacity
+          accessibilityRole="button"
           className="w-14 h-14 rounded-2xl border border-border bg-card items-center justify-center active:bg-background"
           activeOpacity={0.7}
         >

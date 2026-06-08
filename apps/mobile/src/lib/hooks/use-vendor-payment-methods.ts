@@ -9,12 +9,12 @@ export function useVendorPaymentMethods() {
 
 export function useAddBankAccount() {
   const qc = useQueryClient();
-  return useMutation({ mutationFn: vendorPaymentMethodsApi.addBank, onSuccess: () => qc.invalidateQueries({ queryKey: KEYS.all }) });
+  return useMutation({ mutationFn: (data) => vendorPaymentMethodsApi.addBank(data), onSuccess: () => qc.invalidateQueries({ queryKey: KEYS.all }) });
 }
 
 export function useAddMomoAccount() {
   const qc = useQueryClient();
-  return useMutation({ mutationFn: vendorPaymentMethodsApi.addMomo, onSuccess: () => qc.invalidateQueries({ queryKey: KEYS.all }) });
+  return useMutation({ mutationFn: (data) => vendorPaymentMethodsApi.addMomo(data), onSuccess: () => qc.invalidateQueries({ queryKey: KEYS.all }) });
 }
 
 export function useRemovePaymentMethod() {

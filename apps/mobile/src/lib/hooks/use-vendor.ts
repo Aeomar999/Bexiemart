@@ -37,7 +37,7 @@ import { PRODUCT_KEYS } from "./use-products";
 export function useCreateProduct() {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: vendorApi.createProduct,
+    mutationFn: (data) => vendorApi.createProduct(data),
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: VENDOR_KEYS.products });
       qc.invalidateQueries({ queryKey: PRODUCT_KEYS.all });
@@ -56,7 +56,7 @@ export function useUpdateProduct() {
 export function useDeleteProduct() {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: vendorApi.deleteProduct,
+    mutationFn: (data) => vendorApi.deleteProduct(data),
     onSuccess: () => qc.invalidateQueries({ queryKey: VENDOR_KEYS.products }),
   });
 }
@@ -106,7 +106,7 @@ export function useWithdrawEarnings() {
 export function useUpdateShop() {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: vendorApi.updateShop,
+    mutationFn: (data) => vendorApi.updateShop(data),
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: VENDOR_KEYS.stats });
       qc.invalidateQueries({ queryKey: VENDOR_KEYS.profile });

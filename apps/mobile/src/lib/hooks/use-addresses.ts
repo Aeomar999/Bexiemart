@@ -23,7 +23,7 @@ export function useCreateAddress() {
   const addAddress = useAddressStore((s) => s.addAddress);
 
   return useMutation({
-    mutationFn: addressesApi.create,
+    mutationFn: (data) => addressesApi.create(data),
     onSuccess: () => qc.invalidateQueries({ queryKey: ADDRESS_KEYS.all }),
   });
 }

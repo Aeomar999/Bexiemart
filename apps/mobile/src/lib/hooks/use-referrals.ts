@@ -18,7 +18,7 @@ export function useReferralStats() {
 export function useGenerateReferralCode() {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: referralsApi.generate,
+    mutationFn: (data) => referralsApi.generate(data),
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ["referrals", "profile"] });
     },

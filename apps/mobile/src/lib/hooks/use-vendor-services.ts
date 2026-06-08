@@ -9,7 +9,7 @@ export function useVendorServices() {
 
 export function useCreateService() {
   const qc = useQueryClient();
-  return useMutation({ mutationFn: vendorServicesApi.create, onSuccess: () => qc.invalidateQueries({ queryKey: KEYS.all }) });
+  return useMutation({ mutationFn: (data) => vendorServicesApi.create(data), onSuccess: () => qc.invalidateQueries({ queryKey: KEYS.all }) });
 }
 
 export function useUpdateService() {
@@ -19,5 +19,5 @@ export function useUpdateService() {
 
 export function useDeleteService() {
   const qc = useQueryClient();
-  return useMutation({ mutationFn: vendorServicesApi.remove, onSuccess: () => qc.invalidateQueries({ queryKey: KEYS.all }) });
+  return useMutation({ mutationFn: (data) => vendorServicesApi.remove(data), onSuccess: () => qc.invalidateQueries({ queryKey: KEYS.all }) });
 }

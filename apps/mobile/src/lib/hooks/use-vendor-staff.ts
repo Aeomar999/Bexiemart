@@ -9,7 +9,7 @@ export function useVendorStaff() {
 
 export function useCreateStaff() {
   const qc = useQueryClient();
-  return useMutation({ mutationFn: vendorStaffApi.create, onSuccess: () => qc.invalidateQueries({ queryKey: KEYS.all }) });
+  return useMutation({ mutationFn: (data) => vendorStaffApi.create(data), onSuccess: () => qc.invalidateQueries({ queryKey: KEYS.all }) });
 }
 
 export function useUpdateStaff() {
@@ -19,10 +19,10 @@ export function useUpdateStaff() {
 
 export function useDeleteStaff() {
   const qc = useQueryClient();
-  return useMutation({ mutationFn: vendorStaffApi.remove, onSuccess: () => qc.invalidateQueries({ queryKey: KEYS.all }) });
+  return useMutation({ mutationFn: (data) => vendorStaffApi.remove(data), onSuccess: () => qc.invalidateQueries({ queryKey: KEYS.all }) });
 }
 
 export function useToggleStaff() {
   const qc = useQueryClient();
-  return useMutation({ mutationFn: vendorStaffApi.toggle, onSuccess: () => qc.invalidateQueries({ queryKey: KEYS.all }) });
+  return useMutation({ mutationFn: (data) => vendorStaffApi.toggle(data), onSuccess: () => qc.invalidateQueries({ queryKey: KEYS.all }) });
 }

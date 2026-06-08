@@ -9,10 +9,10 @@ export function useVendorReels() {
 
 export function useCreateReel() {
   const qc = useQueryClient();
-  return useMutation({ mutationFn: vendorReelsApi.create, onSuccess: () => qc.invalidateQueries({ queryKey: KEYS.all }) });
+  return useMutation({ mutationFn: (data) => vendorReelsApi.create(data), onSuccess: () => qc.invalidateQueries({ queryKey: KEYS.all }) });
 }
 
 export function useDeleteReel() {
   const qc = useQueryClient();
-  return useMutation({ mutationFn: vendorReelsApi.remove, onSuccess: () => qc.invalidateQueries({ queryKey: KEYS.all }) });
+  return useMutation({ mutationFn: (data) => vendorReelsApi.remove(data), onSuccess: () => qc.invalidateQueries({ queryKey: KEYS.all }) });
 }

@@ -1,3 +1,4 @@
+jest.unmock("@/lib/stores/cart-store");
 import { useCartStore } from "./cart-store";
 
 describe("Cart Store", () => {

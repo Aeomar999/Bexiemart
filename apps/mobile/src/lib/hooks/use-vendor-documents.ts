@@ -9,10 +9,10 @@ export function useVendorDocuments() {
 
 export function useUploadDocument() {
   const qc = useQueryClient();
-  return useMutation({ mutationFn: vendorDocumentsApi.create, onSuccess: () => qc.invalidateQueries({ queryKey: KEYS.all }) });
+  return useMutation({ mutationFn: (data) => vendorDocumentsApi.create(data), onSuccess: () => qc.invalidateQueries({ queryKey: KEYS.all }) });
 }
 
 export function useDeleteDocument() {
   const qc = useQueryClient();
-  return useMutation({ mutationFn: vendorDocumentsApi.remove, onSuccess: () => qc.invalidateQueries({ queryKey: KEYS.all }) });
+  return useMutation({ mutationFn: (data) => vendorDocumentsApi.remove(data), onSuccess: () => qc.invalidateQueries({ queryKey: KEYS.all }) });
 }
