@@ -57,7 +57,11 @@ describe("OrdersService", () => {
       };
       dto.items = [{ productId: "p1", quantity: 1, price: 100 }];
       prisma.product.findUnique.mockResolvedValue({
-        id: "p1", name: "Old Product", isActive: false, isDeleted: false, stock: 10,
+        id: "p1",
+        name: "Old Product",
+        isActive: false,
+        isDeleted: false,
+        stock: 10,
       });
       await expect(service.create("u1", dto)).rejects.toThrow(BadRequestException);
     });
@@ -75,7 +79,11 @@ describe("OrdersService", () => {
       };
       dto.items = [{ productId: "p1", quantity: 10, price: 100 }];
       prisma.product.findUnique.mockResolvedValue({
-        id: "p1", name: "Test", isActive: true, isDeleted: false, stock: 5,
+        id: "p1",
+        name: "Test",
+        isActive: true,
+        isDeleted: false,
+        stock: 5,
       });
       await expect(service.create("u1", dto)).rejects.toThrow(BadRequestException);
     });
@@ -97,8 +105,20 @@ describe("OrdersService", () => {
       ];
 
       prisma.product.findUnique
-        .mockResolvedValueOnce({ id: "p1", name: "Product 1", isActive: true, isDeleted: false, stock: 10 })
-        .mockResolvedValueOnce({ id: "p2", name: "Product 2", isActive: true, isDeleted: false, stock: 5 });
+        .mockResolvedValueOnce({
+          id: "p1",
+          name: "Product 1",
+          isActive: true,
+          isDeleted: false,
+          stock: 10,
+        })
+        .mockResolvedValueOnce({
+          id: "p2",
+          name: "Product 2",
+          isActive: true,
+          isDeleted: false,
+          stock: 5,
+        });
 
       prisma.$transaction.mockImplementation(async (cb: any) => cb(prisma));
 
@@ -112,8 +132,24 @@ describe("OrdersService", () => {
         tax: 412.5,
         total: 5912.5,
         items: [
-          { productId: "p1", productName: "", productSlug: "", price: 2000, quantity: 2, total: 4000, imageUrl: undefined },
-          { productId: "p2", productName: "", productSlug: "", price: 1500, quantity: 1, total: 1500, imageUrl: undefined },
+          {
+            productId: "p1",
+            productName: "",
+            productSlug: "",
+            price: 2000,
+            quantity: 2,
+            total: 4000,
+            imageUrl: undefined,
+          },
+          {
+            productId: "p2",
+            productName: "",
+            productSlug: "",
+            price: 1500,
+            quantity: 1,
+            total: 1500,
+            imageUrl: undefined,
+          },
         ],
         shippingAddress: { id: "addr1" },
       });
@@ -131,16 +167,20 @@ describe("OrdersService", () => {
 
   describe("findAll", () => {
     it("should return orders for user", async () => {
-      const orders = [
-        { id: "o1", userId: "u1", total: 100, items: [], shippingAddress: {} },
-      ];
+      const orders = [{ id: "o1", userId: "u1", total: 100, items: [], shippingAddress: {} }];
       prisma.order.findMany.mockResolvedValue(orders);
+      prisma.order.count.mockResolvedValue(1);
       const result = await service.findAll("u1");
-      expect(result).toEqual(orders);
+      expect(result).toEqual({
+        data: orders,
+        meta: { total: 1, page: 1, limit: 20, totalPages: 1 },
+      });
       expect(prisma.order.findMany).toHaveBeenCalledWith({
         where: { userId: "u1" },
         include: { items: true, shippingAddress: true },
         orderBy: { createdAt: "desc" },
+        skip: 0,
+        take: 20,
       });
     });
   });
@@ -165,7 +205,9 @@ describe("OrdersService", () => {
       expect(prisma.order.findFirst).toHaveBeenCalledWith({
         where: { id: "o1", userId: "u1" },
         include: {
-          items: { include: { product: { include: { images: { take: 1, orderBy: { order: "asc" } } } } } },
+          items: {
+            include: { product: { include: { images: { take: 1, orderBy: { order: "asc" } } } } },
+          },
           shippingAddress: true,
           payment: true,
         },

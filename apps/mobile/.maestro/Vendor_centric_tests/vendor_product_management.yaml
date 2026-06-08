@@ -1,0 +1,65 @@
+appId: com.bexiemart.app
+---
+- launchApp:
+    clearState: true
+- tapOn: "you@school.edu.gh"
+- inputText: "vendor@example.com"
+- tapOn: "Enter your password"
+- inputText: "password123!"
+- tapOn: "Back"
+- tapOn: "Sign In"
+- extendedWaitUntil:
+    visible: "Dashboard"
+    timeout: 15000
+- assertVisible: "Store Performance"
+- tapOn: "Total Products"
+- extendedWaitUntil:
+    visible: "My Listings"
+    timeout: 10000
+- assertVisible: "My Listings"
+- tapOn:
+    point: 92%, 92%
+- assertVisible: "Create New Listing"
+- tapOn: "Physical Product"
+- extendedWaitUntil:
+    visible: "Add Product"
+    timeout: 10000
+- tapOn: "Product Name"
+- inputText: "Test Product E2E"
+- tapOn: "Category"
+- inputText: "Electronics"
+- tapOn: "Description"
+- inputText: "Automated test product description"
+- tapOn: "Price (GHS)"
+- inputText: "49.99"
+- tapOn: "Compare at Price"
+- inputText: "79.99"
+- tapOn: "Quantity in Stock"
+- inputText: "100"
+- tapOn: "SKU (Optional)"
+- inputText: "E2E-001"
+- tapOn: "Publish Product"
+- assertVisible: "Published"
+- tapOn: "OK"
+
+# Navigate back to products list and open the new product
+- tapOn:
+    point: 4%, 6%
+- extendedWaitUntil:
+    visible: "My Listings"
+    timeout: 10000
+- tapOn:
+    point: 50%, 40%
+- extendedWaitUntil:
+    visible: "Product Details"
+    timeout: 10000
+- assertVisible: "E2E-001"
+- tapOn: "Edit Listing"
+- extendedWaitUntil:
+    visible: "Edit Product"
+    timeout: 10000
+- tapOn: "Price (GHS)"
+- inputText: "39.99"
+- tapOn: "Update Product"
+- assertVisible: "Updated"
+- tapOn: "OK"

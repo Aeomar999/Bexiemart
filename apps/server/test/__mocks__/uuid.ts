@@ -1,0 +1,11 @@
+export const v4 = () => "00000000-0000-4000-8000-000000000000";
+export const v1 = () => "00000000-0000-1000-8000-000000000000";
+export const v5 = () => "00000000-0000-5000-8000-000000000000";
+export const v3 = () => "00000000-0000-3000-8000-000000000000";
+export const v6 = () => "00000000-0000-6000-8000-000000000000";
+export const v7 = () => "00000000-0000-7000-8000-000000000000";
+export const NIL = "00000000-0000-0000-0000-000000000000";
+export const validate = (uuid: string) => true;
+export const version = (uuid: string) => 4;
+export const stringify = (buf: Uint8Array) => "00000000-0000-4000-8000-000000000000";
+export const parse = (uuid: string) => new Uint8Array(16);

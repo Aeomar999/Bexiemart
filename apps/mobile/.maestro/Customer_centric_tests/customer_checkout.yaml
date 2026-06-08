@@ -1,0 +1,35 @@
+appId: com.bexiemart.app
+---
+- launchApp:
+    clearState: true
+- tapOn: "you@school.edu.gh"
+- inputText: "customer@mail.com"
+- tapOn: "Enter your password"
+- inputText: "seller@123!"
+- tapOn: "Back"
+- tapOn: "Sign In"
+- extendedWaitUntil:
+    visible: "Shop"
+    timeout: 15000
+- tapOn: "Shop"
+- assertVisible: "Search for food, groceries..."
+- tapOn:
+    point: 50%, 40%
+- assertVisible: "Add to Cart"
+- tapOn: "Add to Cart"
+- tapOn: "Cart"
+- assertVisible: "Proceed to Checkout"
+- tapOn: "Proceed to Checkout"
+- assertVisible: "Delivery Details"
+- tapOn: "Full name"
+- inputText: "Kofi Mensah"
+- tapOn: "Phone number"
+- inputText: "0241234567"
+- tapOn: "Delivery address"
+- inputText: "Legon Hall, Room 12"
+- tapOn: "City"
+- inputText: "Accra"
+- tapOn: "Standard Delivery"
+- tapOn: "Card Payment"
+- tapOn: "Pay GHS.*"
+- assertVisible: "Payment Successful"

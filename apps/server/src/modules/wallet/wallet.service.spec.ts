@@ -18,16 +18,33 @@ describe("WalletService", () => {
 
   describe("getWallet", () => {
     it("should return existing wallet", async () => {
-      const wallet = { id: "w1", userId: "u1", balance: 100, currency: "GHS", status: "ACTIVE", user: { id: "u1" } };
+      const wallet = {
+        id: "w1",
+        userId: "u1",
+        balance: 100,
+        currency: "GHS",
+        status: "ACTIVE",
+        user: { id: "u1" },
+      };
       prisma.wallet.findUnique.mockResolvedValue(wallet);
       const result = await service.getWallet("u1");
       expect(result).toEqual(wallet);
-      expect(prisma.wallet.findUnique).toHaveBeenCalledWith({ where: { userId: "u1" }, include: { user: true } });
+      expect(prisma.wallet.findUnique).toHaveBeenCalledWith({
+        where: { userId: "u1" },
+        include: { user: true },
+      });
     });
 
     it("should create wallet if not found", async () => {
       prisma.wallet.findUnique.mockResolvedValue(null);
-      const newWallet = { id: "w2", userId: "u1", balance: 0, currency: "GHS", status: "ACTIVE", user: { id: "u1" } };
+      const newWallet = {
+        id: "w2",
+        userId: "u1",
+        balance: 0,
+        currency: "GHS",
+        status: "ACTIVE",
+        user: { id: "u1" },
+      };
       prisma.wallet.create.mockResolvedValue(newWallet);
       const result = await service.getWallet("u1");
       expect(result).toEqual(newWallet);
@@ -73,7 +90,15 @@ describe("WalletService", () => {
         .mockResolvedValueOnce(wallet)
         .mockResolvedValue({ ...wallet, balance: 150 });
       prisma.transaction.findUnique.mockResolvedValue(transaction);
-      prisma.$transaction.mockImplementation((args: any) => Promise.all(args));
+      jest
+        .spyOn(globalThis, "fetch")
+        .mockResolvedValue({
+          ok: true,
+          json: async () => ({ status: true, data: { status: "success" } }),
+        } as any);
+      prisma.$transaction.mockImplementation((arg: any, opts?: any) =>
+        typeof arg === "function" ? arg(prisma) : Promise.all(arg)
+      );
       prisma.transaction.update.mockResolvedValue({ ...transaction, status: "COMPLETED" });
       prisma.wallet.update.mockResolvedValue({ ...wallet, balance: 150 });
       const result = await service.verifyTopUp("u1", "ref1");
@@ -85,14 +110,19 @@ describe("WalletService", () => {
     it("should throw BadRequestException if insufficient balance", async () => {
       const wallet = { id: "w1", userId: "u1", balance: 10, user: { name: "Sender" } };
       prisma.wallet.findUnique.mockResolvedValue(wallet);
-      await expect(service.transfer("u1", "recip@test.com", 100, "1234")).rejects.toThrow(BadRequestException);
+      await expect(service.transfer("u1", "recip@test.com", 100, "1234")).rejects.toThrow(
+        BadRequestException
+      );
     });
 
     it("should throw NotFoundException if recipient not found", async () => {
       const wallet = { id: "w1", userId: "u1", balance: 200, user: { name: "Sender" } };
       prisma.wallet.findUnique.mockResolvedValue(wallet);
       prisma.user.findUnique.mockResolvedValue(null);
-      await expect(service.transfer("u1", "missing@test.com", 100, "1234")).rejects.toThrow(NotFoundException);
+      jest.spyOn(service, "verifyPin").mockResolvedValue({ valid: true });
+      await expect(service.transfer("u1", "missing@test.com", 100, "1234")).rejects.toThrow(
+        NotFoundException
+      );
     });
 
     it("should create sent+received transactions and update both wallets", async () => {
@@ -106,7 +136,9 @@ describe("WalletService", () => {
         .mockResolvedValueOnce(recipientWallet)
         .mockResolvedValueOnce(updatedSender);
       prisma.user.findUnique.mockResolvedValue(recipientUser);
-      prisma.$transaction.mockImplementation((args: any) => Promise.all(args));
+      prisma.$transaction.mockImplementation((arg: any, opts?: any) =>
+        typeof arg === "function" ? arg(prisma) : Promise.all(arg)
+      );
 
       jest.spyOn(service, "verifyPin").mockResolvedValue({ valid: true });
       const result = await service.transfer("u1", "recip@test.com", 100, "1234");
@@ -138,13 +170,25 @@ describe("WalletService", () => {
 
     it("should throw ForbiddenException if locked", async () => {
       const future = new Date(Date.now() + 60000);
-      const wallet = { id: "w1", userId: "u1", pinHash: "hash", pinLockedUntil: future, pinFailures: 5 };
+      const wallet = {
+        id: "w1",
+        userId: "u1",
+        pinHash: "hash",
+        pinLockedUntil: future,
+        pinFailures: 5,
+      };
       prisma.wallet.findUnique.mockResolvedValue(wallet);
       await expect(service.verifyPin("u1", "1234")).rejects.toThrow(ForbiddenException);
     });
 
     it("should throw BadRequestException on wrong PIN", async () => {
-      const wallet = { id: "w1", userId: "u1", pinHash: "hash", pinLockedUntil: null, pinFailures: 2 };
+      const wallet = {
+        id: "w1",
+        userId: "u1",
+        pinHash: "hash",
+        pinLockedUntil: null,
+        pinFailures: 2,
+      };
       prisma.wallet.findUnique.mockResolvedValue(wallet);
       jest.spyOn(bcrypt, "compare").mockResolvedValue(false as never);
       await expect(service.verifyPin("u1", "wrong")).rejects.toThrow(BadRequestException);
@@ -155,7 +199,13 @@ describe("WalletService", () => {
     });
 
     it("should return valid on correct PIN", async () => {
-      const wallet = { id: "w1", userId: "u1", pinHash: "hash", pinLockedUntil: null, pinFailures: 1 };
+      const wallet = {
+        id: "w1",
+        userId: "u1",
+        pinHash: "hash",
+        pinLockedUntil: null,
+        pinFailures: 1,
+      };
       prisma.wallet.findUnique.mockResolvedValue(wallet);
       jest.spyOn(bcrypt, "compare").mockResolvedValue(true as never);
       prisma.wallet.update.mockResolvedValue({ ...wallet, pinFailures: 0, pinLockedUntil: null });
@@ -164,7 +214,13 @@ describe("WalletService", () => {
     });
 
     it("should lock after 5 failures", async () => {
-      const wallet = { id: "w1", userId: "u1", pinHash: "hash", pinLockedUntil: null, pinFailures: 4 };
+      const wallet = {
+        id: "w1",
+        userId: "u1",
+        pinHash: "hash",
+        pinLockedUntil: null,
+        pinFailures: 4,
+      };
       prisma.wallet.findUnique.mockResolvedValue(wallet);
       jest.spyOn(bcrypt, "compare").mockResolvedValue(false as never);
       await expect(service.verifyPin("u1", "wrong")).rejects.toThrow(ForbiddenException);
@@ -177,7 +233,13 @@ describe("WalletService", () => {
 
   describe("getPinStatus", () => {
     it("should return isLocked, hasPin, failuresRemaining", async () => {
-      const wallet = { id: "w1", userId: "u1", pinHash: "hash", pinLockedUntil: null, pinFailures: 2 };
+      const wallet = {
+        id: "w1",
+        userId: "u1",
+        pinHash: "hash",
+        pinLockedUntil: null,
+        pinFailures: 2,
+      };
       prisma.wallet.findUnique.mockResolvedValue(wallet);
       const result = await service.getPinStatus("u1");
       expect(result).toEqual({ hasPin: true, isLocked: false, failuresRemaining: 3 });

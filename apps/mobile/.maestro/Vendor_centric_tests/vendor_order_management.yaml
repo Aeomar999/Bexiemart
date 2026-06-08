@@ -1,0 +1,37 @@
+appId: com.bexiemart.app
+---
+- launchApp:
+    clearState: true
+- tapOn: "you@school.edu.gh"
+- inputText: "vendor@example.com"
+- tapOn: "Enter your password"
+- inputText: "password123!"
+- tapOn: "Back"
+- tapOn: "Sign In"
+- extendedWaitUntil:
+    visible: "Dashboard"
+    timeout: 15000
+- assertVisible: "Store Performance"
+- tapOn: "Total Orders"
+- extendedWaitUntil:
+    visible: "Orders"
+    timeout: 10000
+- assertVisible: "Orders"
+- tapOn: "New"
+- tapOn:
+    point: 50%, 40%
+- extendedWaitUntil:
+    visible: "Order Details"
+    timeout: 10000
+- assertVisible: "Customer Info"
+- tapOn: "Accept Order"
+- extendedWaitUntil:
+    visible: "Mark as Ready"
+    timeout: 10000
+- tapOn: "Mark as Ready"
+- extendedWaitUntil:
+    visible: "Request BexieMart Rider"
+    timeout: 10000
+- tapOn:
+    point: 4%, 6%
+- assertVisible: "Orders"

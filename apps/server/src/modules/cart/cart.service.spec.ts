@@ -56,6 +56,8 @@ describe("CartService", () => {
         quantity: 2,
         imageUrl: "img1.jpg",
         stock: 10,
+        vendorId: null,
+        vendorName: "Unknown Store",
       });
     });
   });
@@ -68,21 +70,35 @@ describe("CartService", () => {
 
     it("should throw BadRequestException if insufficient stock", async () => {
       prisma.product.findUnique.mockResolvedValue({
-        id: "p1", name: "Test", price: 100, stock: 0, isActive: true, isDeleted: false,
+        id: "p1",
+        name: "Test",
+        price: 100,
+        stock: 0,
+        isActive: true,
+        isDeleted: false,
       });
       await expect(service.addItem("u1", "p1", 1)).rejects.toThrow(BadRequestException);
     });
 
     it("should update quantity on existing item", async () => {
       prisma.product.findUnique.mockResolvedValue({
-        id: "p1", name: "Product 1", price: 100, stock: 10, isActive: true, isDeleted: false,
+        id: "p1",
+        name: "Product 1",
+        price: 100,
+        stock: 10,
+        isActive: true,
+        isDeleted: false,
       });
       prisma.cart.findUnique.mockResolvedValue({
         id: "cart1",
         userId: "u1",
         items: [
           {
-            id: "ci1", productId: "p1", productName: "Product 1", price: 100, quantity: 1,
+            id: "ci1",
+            productId: "p1",
+            productName: "Product 1",
+            price: 100,
+            quantity: 1,
             product: { stock: 10, images: [] },
           },
         ],
@@ -96,7 +112,12 @@ describe("CartService", () => {
 
     it("should create new cart item", async () => {
       prisma.product.findUnique.mockResolvedValue({
-        id: "p1", name: "Product 1", price: 100, stock: 10, isActive: true, isDeleted: false,
+        id: "p1",
+        name: "Product 1",
+        price: 100,
+        stock: 10,
+        isActive: true,
+        isDeleted: false,
       });
       prisma.cart.findUnique.mockResolvedValue({
         id: "cart1",
@@ -105,7 +126,13 @@ describe("CartService", () => {
       });
       await service.addItem("u1", "p1", 2);
       expect(prisma.cartItem.create).toHaveBeenCalledWith({
-        data: { cartId: "cart1", productId: "p1", productName: "Product 1", price: 100, quantity: 2 },
+        data: {
+          cartId: "cart1",
+          productId: "p1",
+          productName: "Product 1",
+          price: 100,
+          quantity: 2,
+        },
       });
     });
   });

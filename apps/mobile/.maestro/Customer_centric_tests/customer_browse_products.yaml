@@ -1,0 +1,27 @@
+appId: com.bexiemart.app
+---
+- launchApp:
+    clearState: true
+- tapOn: "you@school.edu.gh"
+- inputText: "customer@mail.com"
+- tapOn: "Enter your password"
+- inputText: "seller@123!"
+- tapOn: "Back"
+- tapOn: "Sign In"
+- extendedWaitUntil:
+    visible: "Home"
+    timeout: 15000
+- assertVisible: "Bexiemart"
+- tapOn: "Shop"
+- assertVisible: "Search for food, groceries..."
+- tapOn: "Search for food, groceries..."
+- inputText: "Wireless"
+- tapOn:
+    point: 50%, 40%
+- assertVisible: "Add to Cart"
+- assertVisible: "heart"
+- tapOn:
+    point: 90%, 20%
+- tapOn: "Back"
+- tapOn: "Home"
+- assertVisible: "Bexiemart"

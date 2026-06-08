@@ -6,6 +6,25 @@ on:
   pull_request:
 
 jobs:
+  coverage-gate:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: apps/server
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+          cache-dependency-path: apps/server/package-lock.json
+      - run: npm ci
+      - run: npx prisma generate
+      - run: npm run test:cov
+      - name: Check coverage thresholds
+        run: |
+          npx jest --coverage --coverageThreshold='{"global":{"lines":60,"branches":50,"statements":60}}'
+
   mobile:
     runs-on: ubuntu-latest
     defaults:
@@ -21,7 +40,7 @@ jobs:
       - run: npm ci
       - run: npx tsc --noEmit
       - run: npm run lint
-      - run: npm run test
+      - run: npm run test -- --coverage --coverageThreshold='{"global":{"lines":30,"branches":25,"statements":30}}'
 
   server:
     runs-on: ubuntu-latest

@@ -5,21 +5,57 @@ const mockPrisma = (): any => ({
   $queryRaw: jest.fn(),
   $transaction: jest.fn((cb: any) => cb(mockPrisma())),
   wallet: { findUnique: jest.fn(), create: jest.fn(), update: jest.fn() },
-  transaction: { findUnique: jest.fn(), findMany: jest.fn(), create: jest.fn(), count: jest.fn(), update: jest.fn() },
-  product: { findUnique: jest.fn(), findMany: jest.fn(), findFirst: jest.fn(), create: jest.fn(), update: jest.fn(), count: jest.fn() },
+  transaction: {
+    findUnique: jest.fn(),
+    findMany: jest.fn(),
+    create: jest.fn(),
+    count: jest.fn(),
+    update: jest.fn(),
+  },
+  product: {
+    findUnique: jest.fn(),
+    findMany: jest.fn(),
+    findFirst: jest.fn(),
+    create: jest.fn(),
+    update: jest.fn(),
+    count: jest.fn(),
+  },
   cart: { findUnique: jest.fn(), create: jest.fn() },
-  cartItem: { findMany: jest.fn(), create: jest.fn(), update: jest.fn(), delete: jest.fn(), deleteMany: jest.fn() },
-  order: { findUnique: jest.fn(), findFirst: jest.fn(), findMany: jest.fn(), create: jest.fn(), update: jest.fn(), count: jest.fn() },
+  cartItem: {
+    findMany: jest.fn(),
+    create: jest.fn(),
+    update: jest.fn(),
+    delete: jest.fn(),
+    deleteMany: jest.fn(),
+  },
+  order: {
+    findUnique: jest.fn(),
+    findFirst: jest.fn(),
+    findMany: jest.fn(),
+    create: jest.fn(),
+    update: jest.fn(),
+    count: jest.fn(),
+  },
   orderItem: { findMany: jest.fn(), create: jest.fn() },
   shippingAddress: { create: jest.fn() },
   escrow: { findUnique: jest.fn(), findMany: jest.fn(), create: jest.fn(), update: jest.fn() },
   user: { findUnique: jest.fn(), findMany: jest.fn(), update: jest.fn(), count: jest.fn() },
-  vendorProfile: { findUnique: jest.fn(), findMany: jest.fn(), update: jest.fn(), create: jest.fn() },
+  vendorProfile: {
+    findUnique: jest.fn(),
+    findMany: jest.fn(),
+    update: jest.fn(),
+    create: jest.fn(),
+  },
   referral: { findUnique: jest.fn(), findMany: jest.fn(), create: jest.fn() },
   referredUser: { findUnique: jest.fn(), create: jest.fn(), findMany: jest.fn() },
-  conversation: { findUnique: jest.fn(), findFirst: jest.fn(), create: jest.fn(), update: jest.fn() },
+  conversation: {
+    findUnique: jest.fn(),
+    findFirst: jest.fn(),
+    create: jest.fn(),
+    update: jest.fn(),
+  },
   conversationParticipant: { findMany: jest.fn(), updateMany: jest.fn() },
-  message: { findMany: jest.fn(), create: jest.fn(), count: jest.fn() },
+  message: { findMany: jest.fn(), create: jest.fn(), count: jest.fn(), groupBy: jest.fn() },
   platformConfig: { findFirst: jest.fn(), update: jest.fn(), create: jest.fn() },
   category: { findUnique: jest.fn(), findMany: jest.fn(), findFirst: jest.fn() },
 });
@@ -28,7 +64,9 @@ describe("ChatService", () => {
   let service: ChatService;
 
   beforeEach(() => {
-    service = new ChatService(mockPrisma() as any);
+    const p = mockPrisma();
+    p.$transaction.mockImplementation((cb: any, opts?: any) => cb(p));
+    service = new ChatService(p as any);
   });
 
   describe("getConversations", () => {
@@ -43,13 +81,20 @@ describe("ChatService", () => {
             updatedAt: new Date("2024-01-02"),
             createdAt: new Date("2024-01-01"),
             participants: [
-              { userId: "user1", user: { id: "user1", name: "User1", email: "u1@test.com", image: null } },
-              { userId: "user2", user: { id: "user2", name: "User2", email: "u2@test.com", image: null } },
+              {
+                userId: "user1",
+                user: { id: "user1", name: "User1", email: "u1@test.com", image: null },
+              },
+              {
+                userId: "user2",
+                user: { id: "user2", name: "User2", email: "u2@test.com", image: null },
+              },
             ],
             messages: [{ createdAt: new Date("2024-01-02"), content: "Hello" }],
           },
         },
       ];
+      (service as any).prisma.message.groupBy.mockResolvedValue([]);
       (service as any).prisma.conversationParticipant.findMany.mockResolvedValue(mockParticipants);
 
       const result = await service.getConversations("user1");
@@ -83,8 +128,14 @@ describe("ChatService", () => {
         id: "conv1",
         orderId: "order1",
         participants: [
-          { userId: "user1", user: { id: "user1", name: "User1", email: "u1@test.com", image: null } },
-          { userId: "user2", user: { id: "user2", name: "User2", email: "u2@test.com", image: null } },
+          {
+            userId: "user1",
+            user: { id: "user1", name: "User1", email: "u1@test.com", image: null },
+          },
+          {
+            userId: "user2",
+            user: { id: "user2", name: "User2", email: "u2@test.com", image: null },
+          },
         ],
       };
       (service as any).prisma.conversation.findUnique.mockResolvedValue(mockConv);
@@ -110,11 +161,8 @@ describe("ChatService", () => {
       const result = await service.getMessages("conv1", "user1", 1, 10);
 
       expect(result).toEqual({
-        data: messages,
-        total: 1,
-        page: 1,
-        pageSize: 10,
-        totalPages: 1,
+        data: messages.reverse(),
+        meta: { total: 1, page: 1, limit: 10, totalPages: 1 },
       });
     });
   });
@@ -151,8 +199,14 @@ describe("ChatService", () => {
       const newConv = {
         id: "conv2",
         participants: [
-          { userId: "user1", user: { id: "user1", name: "User1", email: "u1@test.com", image: null } },
-          { userId: "user2", user: { id: "user2", name: "User2", email: "u2@test.com", image: null } },
+          {
+            userId: "user1",
+            user: { id: "user1", name: "User1", email: "u1@test.com", image: null },
+          },
+          {
+            userId: "user2",
+            user: { id: "user2", name: "User2", email: "u2@test.com", image: null },
+          },
         ],
       };
       (service as any).prisma.conversation.create.mockResolvedValue(newConv);
@@ -211,7 +265,13 @@ describe("ChatService", () => {
 
       expect(result).toEqual(newMessage);
       expect((service as any).prisma.message.create).toHaveBeenCalledWith({
-        data: { conversationId: "conv1", senderId: "user1", content: "Hello" },
+        data: {
+          conversationId: "conv1",
+          senderId: "user1",
+          content: "Hello",
+          type: "TEXT",
+          mediaUrl: undefined,
+        },
         include: expect.any(Object),
       });
       expect((service as any).prisma.conversation.update).toHaveBeenCalledWith({

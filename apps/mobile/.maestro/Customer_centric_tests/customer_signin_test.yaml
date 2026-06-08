@@ -3,7 +3,7 @@ appId: com.bexiemart.app
 - launchApp:
     clearState: true
 - tapOn: "you@school.edu.gh"
-- inputText: "seller@mail.com"
+- inputText: "customer@mail.com"
 - tapOn: "Enter your password"
 - inputText: "seller@123!"
 - tapOn: "Back"

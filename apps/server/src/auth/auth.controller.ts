@@ -51,7 +51,7 @@ export class AuthController {
     );
 
     const res = await this.auth.api.signUpEmail({
-      body: { email, password, name },
+      body: { email, password, name, callbackURL: "bexiemart://verify-email" },
       headers: {} as Headers,
       asResponse: true,
     });

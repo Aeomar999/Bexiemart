@@ -1,0 +1,10 @@
+appId: com.bexiemart.app
+---
+- launchApp:
+    clearState: true
+- tapOn: "you@school.edu.gh"
+- inputText: "dispatcher@example.com"
+- tapOn: "Enter your password"
+- inputText: "password123!"
+- tapOn: "Back"
+- tapOn: "Sign In"

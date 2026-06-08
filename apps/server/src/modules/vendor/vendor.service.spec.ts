@@ -9,19 +9,55 @@ const mockPrisma = (): any => ({
   $queryRaw: jest.fn(),
   $transaction: jest.fn((cb: any) => cb(mockPrisma())),
   wallet: { findUnique: jest.fn(), create: jest.fn(), update: jest.fn() },
-  transaction: { findUnique: jest.fn(), findMany: jest.fn(), create: jest.fn(), count: jest.fn(), update: jest.fn() },
-  product: { findUnique: jest.fn(), findMany: jest.fn(), findFirst: jest.fn(), create: jest.fn(), update: jest.fn(), count: jest.fn() },
+  transaction: {
+    findUnique: jest.fn(),
+    findMany: jest.fn(),
+    create: jest.fn(),
+    count: jest.fn(),
+    update: jest.fn(),
+  },
+  product: {
+    findUnique: jest.fn(),
+    findMany: jest.fn(),
+    findFirst: jest.fn(),
+    create: jest.fn(),
+    update: jest.fn(),
+    count: jest.fn(),
+  },
   cart: { findUnique: jest.fn(), create: jest.fn() },
-  cartItem: { findMany: jest.fn(), create: jest.fn(), update: jest.fn(), delete: jest.fn(), deleteMany: jest.fn() },
-  order: { findUnique: jest.fn(), findFirst: jest.fn(), findMany: jest.fn(), create: jest.fn(), update: jest.fn(), count: jest.fn() },
+  cartItem: {
+    findMany: jest.fn(),
+    create: jest.fn(),
+    update: jest.fn(),
+    delete: jest.fn(),
+    deleteMany: jest.fn(),
+  },
+  order: {
+    findUnique: jest.fn(),
+    findFirst: jest.fn(),
+    findMany: jest.fn(),
+    create: jest.fn(),
+    update: jest.fn(),
+    count: jest.fn(),
+  },
   orderItem: { findMany: jest.fn(), create: jest.fn() },
   shippingAddress: { create: jest.fn() },
   escrow: { findUnique: jest.fn(), findMany: jest.fn(), create: jest.fn(), update: jest.fn() },
   user: { findUnique: jest.fn(), findMany: jest.fn(), update: jest.fn(), count: jest.fn() },
-  vendorProfile: { findUnique: jest.fn(), findMany: jest.fn(), update: jest.fn(), create: jest.fn() },
+  vendorProfile: {
+    findUnique: jest.fn(),
+    findMany: jest.fn(),
+    update: jest.fn(),
+    create: jest.fn(),
+  },
   referral: { findUnique: jest.fn(), findMany: jest.fn(), create: jest.fn() },
   referredUser: { findUnique: jest.fn(), create: jest.fn(), findMany: jest.fn() },
-  conversation: { findUnique: jest.fn(), findFirst: jest.fn(), create: jest.fn(), update: jest.fn() },
+  conversation: {
+    findUnique: jest.fn(),
+    findFirst: jest.fn(),
+    create: jest.fn(),
+    update: jest.fn(),
+  },
   conversationParticipant: { findMany: jest.fn(), updateMany: jest.fn() },
   message: { findMany: jest.fn(), create: jest.fn(), count: jest.fn() },
   platformConfig: { findFirst: jest.fn(), update: jest.fn(), create: jest.fn() },
@@ -45,7 +81,9 @@ describe("VendorService", () => {
 
     it("returns profile with user", async () => {
       const profile = {
-        id: "vp1", userId: "u1", shopName: "My Shop",
+        id: "vp1",
+        userId: "u1",
+        shopName: "My Shop",
         user: { id: "u1", name: "Alice", email: "alice@test.com", image: null },
       };
       prisma.vendorProfile.findUnique.mockResolvedValue(profile);
@@ -63,12 +101,12 @@ describe("VendorService", () => {
 
     it("updates profile with shop details", async () => {
       const existing = { id: "vp1", userId: "u1" };
-      prisma.vendorProfile.findUnique
-        .mockResolvedValueOnce(existing)
-        .mockResolvedValueOnce(null);
+      prisma.vendorProfile.findUnique.mockResolvedValueOnce(existing).mockResolvedValueOnce(null);
 
       const dto = Object.assign(new OnboardVendorDto(), {
-        shopName: "My Shop", slug: "my-shop", description: "desc",
+        shopName: "My Shop",
+        slug: "my-shop",
+        description: "desc",
       });
       const updated = { ...existing, ...dto };
       prisma.vendorProfile.update.mockResolvedValue(updated);
@@ -87,7 +125,9 @@ describe("VendorService", () => {
   describe("getStats", () => {
     it("returns totalProducts, totalOrders, pendingOrders, totalEarnings", async () => {
       prisma.vendorProfile.findUnique.mockResolvedValue({
-        id: "vp1", userId: "u1", totalEarnings: 5000,
+        id: "vp1",
+        userId: "u1",
+        totalEarnings: 5000,
       });
       prisma.product.count.mockResolvedValue(15);
       prisma.orderItem.findMany.mockResolvedValue([
@@ -102,6 +142,7 @@ describe("VendorService", () => {
         totalOrders: 2,
         pendingOrders: 2,
         totalEarnings: 5000,
+        totalCustomers: 0,
       });
     });
   });
@@ -111,7 +152,12 @@ describe("VendorService", () => {
       prisma.vendorProfile.findUnique.mockResolvedValue({ id: "vp1", userId: "u1" });
 
       const dto = Object.assign(new CreateProductDto(), {
-        name: "Product", slug: "product", description: "desc", price: 100, stock: 10, categoryId: "cat1",
+        name: "Product",
+        slug: "product",
+        description: "desc",
+        price: 100,
+        stock: 10,
+        categoryId: "cat1",
       });
       const created = { id: "p1", ...dto, vendorId: "vp1", images: [] };
       prisma.product.create.mockResolvedValue(created);
@@ -177,7 +223,10 @@ describe("VendorService", () => {
       prisma.vendorProfile.findUnique.mockResolvedValue({ id: "vp1", userId: "u1" });
 
       const sharedOrder = {
-        id: "o1", orderNumber: "ORD-001", status: "pending", total: 200,
+        id: "o1",
+        orderNumber: "ORD-001",
+        status: "pending",
+        total: 200,
         createdAt: new Date("2025-01-01"),
         shippingAddress: { address: "123 St" },
         items: [],
@@ -187,19 +236,34 @@ describe("VendorService", () => {
 
       const orderItems = [
         {
-          id: "oi1", orderId: "o1", productId: "p1", productName: "Product 1",
-          quantity: 2, price: 50, total: 100, imageUrl: "img1.jpg",
+          id: "oi1",
+          orderId: "o1",
+          productId: "p1",
+          productName: "Product 1",
+          quantity: 2,
+          price: 50,
+          total: 100,
+          imageUrl: "img1.jpg",
           product: product1,
           order: { ...sharedOrder, items: [] },
         },
         {
-          id: "oi2", orderId: "o1", productId: "p2", productName: "Product 2",
-          quantity: 1, price: 100, total: 100, imageUrl: "img2.jpg",
+          id: "oi2",
+          orderId: "o1",
+          productId: "p2",
+          productName: "Product 2",
+          quantity: 1,
+          price: 100,
+          total: 100,
+          imageUrl: "img2.jpg",
           product: product2,
           order: { ...sharedOrder, items: [] },
         },
       ];
-      prisma.orderItem.findMany.mockResolvedValue(orderItems);
+      prisma.orderItem.findMany
+        .mockResolvedValueOnce([{ orderId: "o1" }]) // paginated distinct
+        .mockResolvedValueOnce([{ orderId: "o1" }]) // total count distinct
+        .mockResolvedValueOnce(orderItems); // full data with includes
 
       const result = await service.getOrders("u1", 1, 10);
       expect(result.data).toHaveLength(1);
@@ -213,7 +277,9 @@ describe("VendorService", () => {
     it("throws NotFoundException if order not found", async () => {
       prisma.vendorProfile.findUnique.mockResolvedValue({ id: "vp1", userId: "u1" });
       prisma.order.findFirst.mockResolvedValue(null);
-      await expect(service.updateOrderStatus("u1", "o1", "shipped")).rejects.toThrow(NotFoundException);
+      await expect(service.updateOrderStatus("u1", "o1", "shipped")).rejects.toThrow(
+        NotFoundException
+      );
     });
 
     it("updates order status", async () => {
@@ -232,17 +298,28 @@ describe("VendorService", () => {
   describe("getEarnings", () => {
     it("returns availableBalance, pendingClearance, todayRevenue, thisWeekRevenue, and recentTransactions", async () => {
       prisma.vendorProfile.findUnique.mockResolvedValue({
-        id: "vp1", userId: "u1", totalEarnings: 10000, pendingPayout: 2500,
+        id: "vp1",
+        userId: "u1",
+        totalEarnings: 10000,
+        pendingPayout: 2500,
       });
       prisma.wallet.findUnique.mockResolvedValue({
-        id: "w1", userId: "u1", balance: 1500,
+        id: "w1",
+        userId: "u1",
+        balance: 1500,
       });
-      
+
       const today = new Date();
       prisma.transaction.findMany.mockResolvedValue([
         { type: "EARNINGS", status: "COMPLETED", amount: 500, createdAt: today, reference: "t1" },
         { type: "EARNINGS", status: "COMPLETED", amount: 1000, createdAt: today, reference: "t2" },
-        { type: "WITHDRAWAL", status: "COMPLETED", amount: 3000, createdAt: new Date("2023-01-01"), reference: "t3" },
+        {
+          type: "WITHDRAWAL",
+          status: "COMPLETED",
+          amount: 3000,
+          createdAt: new Date("2023-01-01"),
+          reference: "t3",
+        },
       ]);
 
       const result = await service.getEarnings("u1");
@@ -258,14 +335,20 @@ describe("VendorService", () => {
   describe("withdrawEarnings", () => {
     it("throws Error if insufficient pending payout", async () => {
       prisma.vendorProfile.findUnique.mockResolvedValue({
-        id: "vp1", userId: "u1", pendingPayout: 100,
+        id: "vp1",
+        userId: "u1",
+        pendingPayout: 100,
       });
-      await expect(service.withdrawEarnings("u1", 200, "bank")).rejects.toThrow("Insufficient pending payout");
+      await expect(service.withdrawEarnings("u1", 200, "bank")).rejects.toThrow(
+        "Insufficient pending payout"
+      );
     });
 
     it("creates withdrawal transaction via $transaction", async () => {
       prisma.vendorProfile.findUnique.mockResolvedValue({
-        id: "vp1", userId: "u1", pendingPayout: 5000,
+        id: "vp1",
+        userId: "u1",
+        pendingPayout: 5000,
       });
       prisma.wallet.findUnique.mockResolvedValue({ id: "w1", userId: "u1", currency: "NGN" });
       prisma.wallet.update.mockResolvedValue({});
@@ -273,7 +356,7 @@ describe("VendorService", () => {
       prisma.vendorProfile.update.mockResolvedValue({});
       prisma.$transaction.mockImplementation((arg: any) => {
         if (Array.isArray(arg)) return Promise.resolve(arg);
-        return arg(mockPrisma());
+        return arg(prisma);
       });
 
       const result = await service.withdrawEarnings("u1", 2000, "bank-account");

@@ -1,0 +1,23 @@
+appId: com.bexiemart.app
+---
+- launchApp:
+    clearState: true
+- tapOn: "you@school.edu.gh"
+- inputText: "dispatcher@example.com"
+- tapOn: "Enter your password"
+- inputText: "password123!"
+- tapOn: "Back"
+- tapOn: "Sign In"
+- extendedWaitUntil:
+    visible: "Tasks"
+    timeout: 15000
+- assertVisible: "Tasks"
+- assertVisible: "Available"
+- tapOn:
+    point: 50%, 35%
+- assertVisible: "Accept"
+- tapOn: "Accept"
+- tapOn: "Active"
+- assertVisible: "Active Ride"
+- tapOn: "Completed"
+- assertVisible: "No History Yet"

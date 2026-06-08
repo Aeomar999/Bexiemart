@@ -1,5 +1,5 @@
 import { Test, TestingModule } from "@nestjs/testing";
-import { INestApplication, ValidationPipe } from "@nestjs/common";
+import { INestApplication, ValidationPipe, VersioningType } from "@nestjs/common";
 import * as request from "supertest";
 import { AppModule } from "../src/app.module";
 import { PrismaService } from "../src/prisma/prisma.service";
@@ -92,10 +92,11 @@ describe("App (e2e)", () => {
 
     app = moduleFixture.createNestApplication();
     app.useGlobalPipes(
-      new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true, transform: true }),
+      new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true, transform: true })
     );
     app.useGlobalFilters(new GlobalExceptionFilter());
     app.setGlobalPrefix("api");
+    app.enableVersioning({ type: VersioningType.URI, defaultVersion: "1" });
     await app.init();
   });
 
@@ -104,8 +105,8 @@ describe("App (e2e)", () => {
   });
 
   describe("Health", () => {
-    it("GET /api/health should return ok", async () => {
-      const res = await request(app.getHttpServer()).get("/api/health");
+    it("GET /api/v1/health should return ok", async () => {
+      const res = await request(app.getHttpServer()).get("/api/v1/health");
       expect(res.status).toBe(200);
       expect(res.body.status).toBe("ok");
       expect(res.body.database.status).toBe("healthy");
@@ -113,16 +114,17 @@ describe("App (e2e)", () => {
   });
 
   describe("Products", () => {
-    it("GET /api/products should return list", async () => {
-      const res = await request(app.getHttpServer()).get("/api/products");
+    it("GET /api/v1/products should return list", async () => {
+      const res = await request(app.getHttpServer()).get("/api/v1/products");
       expect(res.status).toBe(200);
-      expect(Array.isArray(res.body)).toBe(true);
+      expect(Array.isArray(res.body.data)).toBe(true);
+      expect(res.body.meta).toBeDefined();
     });
   });
 
   describe("Cart", () => {
-    it("GET /api/cart should return cart 401 without auth", async () => {
-      const res = await request(app.getHttpServer()).get("/api/cart");
+    it("GET /api/v1/cart should return cart 401 without auth", async () => {
+      const res = await request(app.getHttpServer()).get("/api/v1/cart");
       expect(res.status).toBe(401);
     });
   });
