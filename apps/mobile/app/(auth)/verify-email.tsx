@@ -9,7 +9,11 @@ import { useVerifyEmail, useResendVerification } from "../../src/lib/hooks/use-a
 import { FontAwesome5 } from "@expo/vector-icons";
 
 export default function VerifyEmailScreen() {
-  const { token, email } = useLocalSearchParams<{ token?: string; email?: string }>();
+  const { token, email, phoneVerified } = useLocalSearchParams<{
+    token?: string;
+    email?: string;
+    phoneVerified?: string;
+  }>();
   const verifyEmail = useVerifyEmail();
   const resendVerification = useResendVerification();
   const insets = useSafeAreaInsets();
@@ -115,8 +119,13 @@ export default function VerifyEmailScreen() {
               <FontAwesome5 name="envelope-open-text" size={28} color="#004CFF" />
             </View>
             <Text className="text-display-md font-heading font-bold text-foreground mb-2 text-center">
-              Check your email
+              {phoneVerified === "true" ? "Phone verified! 🎉" : "Check your email"}
             </Text>
+            {phoneVerified === "true" && (
+              <Text className="text-body-lg text-brand-600 font-body font-bold text-center mb-2">
+                Just one last step: Check your email.
+              </Text>
+            )}
             <Text className="text-body-lg text-muted-foreground font-body text-center">
               We sent a verification link to{"\n"}
               <Text className="font-bold text-foreground">{email || "your email"}</Text>

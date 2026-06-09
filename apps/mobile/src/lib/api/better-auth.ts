@@ -23,6 +23,11 @@ const storage = {
 
 export const authClient = createAuthClient({
   baseURL: `${ENV.API_URL}/auth`,
+  fetchOptions: {
+    headers: {
+      Origin: "com.bexiemart.app://",
+    },
+  },
   plugins: [
     phoneNumberClient(),
     dashClient(),

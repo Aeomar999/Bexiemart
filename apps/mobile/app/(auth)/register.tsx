@@ -29,15 +29,24 @@ export default function RegisterScreen() {
   const handleSubmit = () => {
     if (!validate({ name, email, phone, password, confirmPassword })) return;
 
+    let normalizedPhone = phone.trim().replace(/\s+/g, "");
+    if (normalizedPhone.startsWith("0")) {
+      normalizedPhone = "+233" + normalizedPhone.slice(1);
+    } else if (normalizedPhone.length > 0 && !normalizedPhone.startsWith("+")) {
+      normalizedPhone = "+" + normalizedPhone;
+    }
+
     registerMutation.mutate(
-      { name: name.trim(), email: email.trim(), password, role, phone: phone.trim() },
+      { name: name.trim(), email: email.trim(), password, role, phone: normalizedPhone },
       {
         onSuccess: (response) => {
           if (response?.data?.token) {
             setAuth(response.data.user, response.data.token);
             router.replace("/");
           } else {
-            router.replace(`/(auth)/verify-email?email=${encodeURIComponent(email.trim())}`);
+            router.replace(
+              `/(auth)/verify-phone?phone=${encodeURIComponent(normalizedPhone)}&email=${encodeURIComponent(email.trim())}`
+            );
           }
         },
       }

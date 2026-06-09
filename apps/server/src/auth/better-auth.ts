@@ -45,8 +45,34 @@ export function createAuth(prisma: PrismaClient) {
       phoneNumber({
         sendOTP: async ({ phoneNumber, code }) => {
           console.log(
-            `\n\n=== SMS GATEWAY MOCK ===\nTo: ${phoneNumber}\nMessage: Your BexieMart verification code is: ${code}\n========================\n\n`
+            `\n\n=== SMS GATEWAY ===\nTo: ${phoneNumber}\nMessage: Your BexieMart verification code is: ${code}\n===================\n\n`
           );
+          if (process.env.ARKESEL_API_KEY) {
+            try {
+              const response = await fetch("https://sms.arkesel.com/api/v2/sms/send", {
+                method: "POST",
+                headers: {
+                  "api-key": process.env.ARKESEL_API_KEY,
+                  "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                  sender: process.env.ARKESEL_SENDER_ID || "BexieMart",
+                  message: `Your BexieMart verification code is: ${code}`,
+                  recipients: [phoneNumber],
+                }),
+              });
+              const data = await response.json();
+              if (!response.ok || data.status === "error") {
+                console.error("Arkesel SMS Failed:", data);
+              } else {
+                console.log("Arkesel SMS Sent successfully:", data);
+              }
+            } catch (error) {
+              console.error("Arkesel SMS Error:", error);
+            }
+          } else {
+            console.warn("ARKESEL_API_KEY not set, SMS was not sent to the real provider.");
+          }
         },
       }),
     ],
