@@ -1,15 +1,54 @@
 import { z } from "zod";
 
 export const loginSchema = z.object({
-  email: z.string().min(1, "Email is required").email("Valid email required"),
-  password: z.string().min(6, "Min 6 characters"),
+  email: z
+    .string()
+    .min(1, "Email is required")
+    .email("Valid email required")
+    .regex(/^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/, "Invalid email format"),
+  password: z
+    .string()
+    .min(8, "Min 8 characters")
+    .regex(/[A-Z]/, "Must contain uppercase letter")
+    .regex(/[a-z]/, "Must contain lowercase letter")
+    .regex(/[0-9]/, "Must contain number")
+    .regex(/[^A-Za-z0-9]/, "Must contain special character"),
 });
 
 export const registerSchema = loginSchema
   .extend({
     name: z.string().min(1, "Name is required"),
     phone: z.string().optional(),
-    confirmPassword: z.string().min(6, "Min 6 characters"),
+    confirmPassword: z.string().min(8, "Min 8 characters"),
+  })
+  .refine((data) => data.password === data.confirmPassword, {
+    message: "Passwords don't match",
+    path: ["confirmPassword"],
+  });
+
+export const registerStep1Schema = z.object({
+  name: z.string().min(1, "Name is required"),
+});
+
+export const registerStep2Schema = z.object({
+  email: z
+    .string()
+    .min(1, "Email is required")
+    .email("Valid email required")
+    .regex(/^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/, "Invalid email format"),
+  phone: z.string().min(10, "Phone must be at least 10 digits"),
+});
+
+export const registerStep3Schema = z
+  .object({
+    password: z
+      .string()
+      .min(8, "Min 8 characters")
+      .regex(/[A-Z]/, "Must contain uppercase letter")
+      .regex(/[a-z]/, "Must contain lowercase letter")
+      .regex(/[0-9]/, "Must contain number")
+      .regex(/[^A-Za-z0-9]/, "Must contain special character"),
+    confirmPassword: z.string().min(8, "Min 8 characters"),
   })
   .refine((data) => data.password === data.confirmPassword, {
     message: "Passwords don't match",

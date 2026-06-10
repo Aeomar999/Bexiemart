@@ -5,7 +5,7 @@ import { PrismaService } from "../../prisma/prisma.service";
 export class CustomerReelsService {
   constructor(private readonly prisma: PrismaService) {}
 
-  async findAll(userId: string) {
+  async findAll(userId: string, cursor?: string) {
     const reels = await this.prisma.reel.findMany({
       where: { isActive: true },
       include: {
@@ -32,9 +32,12 @@ export class CustomerReelsService {
       },
       orderBy: { createdAt: "desc" },
       take: 20,
+      ...(cursor ? { skip: 1, cursor: { id: cursor } } : {}),
     });
 
-    return reels.map(({ likes, ...rest }) => ({ ...rest, liked: likes.length > 0 }));
+    const data = reels.map(({ likes, ...rest }) => ({ ...rest, liked: likes.length > 0 }));
+    const nextCursor = data.length === 20 ? data[19].id : null;
+    return { data, meta: { nextCursor } };
   }
 
   async toggleLike(userId: string, reelId: string) {
@@ -69,7 +72,7 @@ export class CustomerReelsService {
     return { viewsCount: reel.viewsCount };
   }
 
-  async findFollowing(userId: string) {
+  async findFollowing(userId: string, cursor?: string) {
     const follows = await this.prisma.vendorFollow.findMany({
       where: { userId },
       select: { vendorId: true },
@@ -106,8 +109,11 @@ export class CustomerReelsService {
       },
       orderBy: { createdAt: "desc" },
       take: 20,
+      ...(cursor ? { skip: 1, cursor: { id: cursor } } : {}),
     });
 
-    return reels.map(({ likes, ...rest }) => ({ ...rest, liked: likes.length > 0 }));
+    const data = reels.map(({ likes, ...rest }) => ({ ...rest, liked: likes.length > 0 }));
+    const nextCursor = data.length === 20 ? data[19].id : null;
+    return { data, meta: { nextCursor } };
   }
 }

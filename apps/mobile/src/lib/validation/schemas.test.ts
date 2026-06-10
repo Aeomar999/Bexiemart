@@ -1,19 +1,27 @@
-import { loginSchema, registerSchema, addressSchema, checkoutSchema, transferSchema, productSchema, shopSchema } from "./schemas";
+import {
+  loginSchema,
+  registerSchema,
+  addressSchema,
+  checkoutSchema,
+  transferSchema,
+  productSchema,
+  shopSchema,
+} from "./schemas";
 
 describe("Validation Schemas", () => {
   describe("loginSchema", () => {
     it("should validate correct login data", () => {
-      const result = loginSchema.safeParse({ email: "test@test.com", password: "password123" });
+      const result = loginSchema.safeParse({ email: "test@test.com", password: "Password123!" });
       expect(result.success).toBe(true);
     });
 
     it("should reject empty email", () => {
-      const result = loginSchema.safeParse({ email: "", password: "password123" });
+      const result = loginSchema.safeParse({ email: "", password: "Password123!" });
       expect(result.success).toBe(false);
     });
 
     it("should reject invalid email format", () => {
-      const result = loginSchema.safeParse({ email: "notanemail", password: "password123" });
+      const result = loginSchema.safeParse({ email: "notanemail", password: "Password123!" });
       expect(result.success).toBe(false);
     });
 
@@ -27,9 +35,9 @@ describe("Validation Schemas", () => {
     it("should validate correct register data", () => {
       const result = registerSchema.safeParse({
         email: "test@test.com",
-        password: "password123",
+        password: "Password123!",
         name: "John Doe",
-        confirmPassword: "password123",
+        confirmPassword: "Password123!",
       });
       expect(result.success).toBe(true);
     });
@@ -37,8 +45,8 @@ describe("Validation Schemas", () => {
     it("should reject missing name", () => {
       const result = registerSchema.safeParse({
         email: "test@test.com",
-        password: "password123",
-        confirmPassword: "password123",
+        password: "Password123!",
+        confirmPassword: "Password123!",
       });
       expect(result.success).toBe(false);
     });
@@ -46,7 +54,7 @@ describe("Validation Schemas", () => {
     it("should reject mismatched passwords", () => {
       const result = registerSchema.safeParse({
         email: "test@test.com",
-        password: "password123",
+        password: "Password123!",
         name: "John",
         confirmPassword: "different",
       });
@@ -56,9 +64,9 @@ describe("Validation Schemas", () => {
     it("should accept optional phone", () => {
       const result = registerSchema.safeParse({
         email: "test@test.com",
-        password: "password123",
+        password: "Password123!",
         name: "John",
-        confirmPassword: "password123",
+        confirmPassword: "Password123!",
         phone: "1234567890",
       });
       expect(result.success).toBe(true);

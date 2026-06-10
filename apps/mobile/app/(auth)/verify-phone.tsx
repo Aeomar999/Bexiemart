@@ -139,17 +139,11 @@ export default function VerifyPhoneScreen() {
             </Text>
 
             {/* Custom Premium OTP Input */}
-            <TouchableOpacity
-              activeOpacity={1}
-              onPress={() => {
-                // Focus the hidden text input when clicking anywhere on the boxes
-                inputRef.current?.focus();
-              }}
-              className="flex-row justify-center gap-3 mt-10 mb-8 w-full relative"
-            >
+            <View className="flex-row justify-center gap-3 mt-10 mb-8 w-full relative">
               {[...Array(6)].map((_, i) => (
                 <View
                   key={i}
+                  pointerEvents="none"
                   className={`w-12 h-14 rounded-[12px] items-center justify-center border-b-2 ${
                     code.length === i
                       ? "border-brand-600 bg-brand-50"
@@ -166,18 +160,24 @@ export default function VerifyPhoneScreen() {
               <TextInput
                 ref={inputRef}
                 value={code}
-                onChangeText={setCode}
+                onChangeText={(text) => {
+                  if (status === "error") {
+                    setStatus("idle");
+                    setErrorMessage("");
+                  }
+                  setCode(text);
+                }}
                 keyboardType="number-pad"
                 textContentType="oneTimeCode"
                 autoComplete="sms-otp"
                 maxLength={6}
                 autoFocus
                 editable={status === "idle" || status === "error"}
-                className="absolute w-full h-full opacity-0"
-                style={{ color: "transparent" }}
+                className="absolute w-full h-full"
+                style={{ color: "transparent", backgroundColor: "transparent" }}
                 caretHidden={true}
               />
-            </TouchableOpacity>
+            </View>
 
             {/* Dynamic Status / Error Display */}
             <View className="h-10 justify-center items-center w-full mb-6">

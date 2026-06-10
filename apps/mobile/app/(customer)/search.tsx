@@ -31,7 +31,7 @@ export default function SearchScreen() {
     isError,
     refetch,
   } = useProducts({ search: query || undefined });
-  const rawResults = productsData?.data ?? [];
+  const rawResults = productsData?.pages?.flatMap((page: any) => page.data) ?? [];
 
   const results = useMemo(() => {
     let filtered = [...rawResults];

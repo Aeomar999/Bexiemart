@@ -25,6 +25,11 @@ export const authApi = {
     return res;
   },
 
+  checkAvailability: async (data: { email?: string; phone?: string }) => {
+    const res = await apiClient.post("/auth/check-availability", data);
+    return res;
+  },
+
   getCurrentUser: async () => {
     const res = await apiClient.get("/auth/me");
     return res;

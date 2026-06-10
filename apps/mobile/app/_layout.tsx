@@ -14,6 +14,10 @@ import { LoadingSpinner } from "../src/components/ui/LoadingSpinner";
 import { GlobalPopup } from "../src/components/ui/GlobalPopup";
 import { ErrorBoundary } from "../src/components/ui/ErrorBoundary";
 import { AnimatedSplashScreen } from "../src/components/screens/AnimatedSplashScreen";
+import * as SplashScreen from "expo-splash-screen";
+
+// Prevent the native splash screen from auto-hiding
+SplashScreen.preventAutoHideAsync();
 import { PaystackProvider } from "react-native-paystack-webview";
 import { OfflineBanner } from "../src/components/ui/OfflineBanner";
 import {
@@ -77,6 +81,12 @@ export default function RootLayout() {
   useEffect(() => {
     hydrate();
   }, []);
+
+  useEffect(() => {
+    if (fontsLoaded && !isLoading) {
+      SplashScreen.hideAsync();
+    }
+  }, [fontsLoaded, isLoading]);
 
   useEffect(() => {
     // Wait until the root layout has mounted completely, fonts loaded, auth hydrated, and splash finished

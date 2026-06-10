@@ -138,7 +138,10 @@ export function ProductCard({
       onPress={onPress}
     >
       <Card variant="flat" padding="none">
-        <View className="w-full aspect-square rounded-[16px] bg-muted mb-2 items-center justify-center relative overflow-hidden">
+        <View
+          className="w-full rounded-[16px] bg-muted mb-2 items-center justify-center relative overflow-hidden"
+          style={{ aspectRatio: 1 }}
+        >
           {imageUrl ? (
             <Image
               source={{ uri: imageUrl }}

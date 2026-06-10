@@ -128,7 +128,8 @@ export default function AddReelScreen() {
               { opacity: pressed ? 0.95 : 1, transform: [{ scale: pressed ? 0.98 : 1 }] },
             ]}
             onPress={() => setUploadModalVisible(true)}
-            className="w-full aspect-[9/16] bg-surface-900 rounded-[32px] overflow-hidden items-center justify-center relative shadow-lg shadow-black/10"
+            className="w-full bg-surface-900 rounded-[32px] overflow-hidden items-center justify-center relative shadow-lg shadow-black/10"
+            style={{ aspectRatio: 9 / 16 }}
           >
             {videoUrl ? (
               <>

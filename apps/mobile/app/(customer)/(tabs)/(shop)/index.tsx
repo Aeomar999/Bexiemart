@@ -1,4 +1,5 @@
-import { View, Text, FlatList, ActivityIndicator, TextInput, Modal, Pressable } from "react-native";
+import { View, Text, ActivityIndicator, TextInput, Modal, Pressable } from "react-native";
+import { FlashList } from "@shopify/flash-list";
 import { Image } from "expo-image";
 import { useState, useMemo } from "react";
 import { useRouter, useLocalSearchParams } from "expo-router";
@@ -24,6 +25,9 @@ export default function ShopScreen() {
     isPending: isProductsLoading,
     isError: isProductsError,
     refetch: refetchProducts,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
   } = useProducts();
   const {
     data: categoriesData,
@@ -34,7 +38,7 @@ export default function ShopScreen() {
   const addToCartMutation = useAddToCart();
   const { isFavorite, toggleFavorite } = useFavoritesStore();
 
-  const products = productsData?.data ?? [];
+  const products = productsData?.pages.flatMap((page: any) => page.data) ?? [];
   const categories = categoriesData ?? [];
 
   const [activeCategoryFilter, setActiveCategoryFilter] = useState(searchParams.category ?? "All");
@@ -166,13 +170,14 @@ export default function ShopScreen() {
             <Icon name="sliders-horizontal" size={18} color="#475569" />
           </Pressable>
         </View>
-        <FlatList
+        <FlashList
           data={categories}
           horizontal
           showsHorizontalScrollIndicator={false}
           decelerationRate="fast"
           keyExtractor={(item) => item.id}
           className="mt-4"
+          estimatedItemSize={100}
           contentContainerStyle={{ gap: 10, paddingRight: 20 }}
           renderItem={({ item }) => (
             <Pressable
@@ -208,16 +213,29 @@ export default function ShopScreen() {
         </Pressable>
       </View>
 
-      <FlatList
+      <FlashList
         data={filteredProducts}
         numColumns={2}
         contentContainerStyle={[
           { paddingHorizontal: 20, paddingBottom: 20, gap: 14 },
           filteredProducts.length === 0 && { flexGrow: 1 },
         ]}
-        columnWrapperStyle={{ gap: 14 }}
+        estimatedItemSize={300}
         keyExtractor={(item) => item.id}
         showsVerticalScrollIndicator={false}
+        onEndReached={() => {
+          if (hasNextPage) {
+            fetchNextPage();
+          }
+        }}
+        onEndReachedThreshold={0.5}
+        ListFooterComponent={
+          isFetchingNextPage ? (
+            <View className="py-4 items-center">
+              <ActivityIndicator color="#004CFF" />
+            </View>
+          ) : null
+        }
         ListEmptyComponent={
           <EmptyState
             title="No products found"
@@ -235,7 +253,10 @@ export default function ShopScreen() {
               className="flex-1 bg-card rounded-[24px] overflow-hidden border border-border pb-3"
               onPress={() => router.push(`/(customer)/product/${item.id}`)}
             >
-              <View className="w-full aspect-[4/5] bg-muted items-center justify-center relative overflow-hidden">
+              <View
+                className="w-full bg-muted items-center justify-center relative overflow-hidden"
+                style={{ aspectRatio: 0.8 }}
+              >
                 {item.image ? (
                   <Image
                     source={{ uri: item.image }}

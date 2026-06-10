@@ -436,7 +436,8 @@ export default function WithdrawFundsScreen() {
               {[1, 2, 3, 4, 5, 6, 7, 8, 9].map((num) => (
                 <Pressable
                   key={num}
-                  className="w-[28%] aspect-square items-center justify-center rounded-full bg-surface-50 border border-surface-100 shadow-sm shadow-surface-200/50"
+                  className="w-[28%] items-center justify-center rounded-full bg-surface-50 border border-surface-100 shadow-sm shadow-surface-200/50"
+                  style={{ aspectRatio: 1 }}
                   style={({ pressed }) => [
                     {
                       transform: [{ scale: pressed ? 0.95 : 1 }],
@@ -450,9 +451,10 @@ export default function WithdrawFundsScreen() {
                   </Text>
                 </Pressable>
               ))}
-              <View className="w-[28%] aspect-square" />
+              <View className="w-[28%]" style={{ aspectRatio: 1 }} />
               <Pressable
-                className="w-[28%] aspect-square items-center justify-center rounded-full bg-surface-50 border border-surface-100 shadow-sm shadow-surface-200/50"
+                className="w-[28%] items-center justify-center rounded-full bg-surface-50 border border-surface-100 shadow-sm shadow-surface-200/50"
+                style={{ aspectRatio: 1 }}
                 style={({ pressed }) => [
                   {
                     transform: [{ scale: pressed ? 0.95 : 1 }],
@@ -464,7 +466,8 @@ export default function WithdrawFundsScreen() {
                 <Text className="text-[32px] font-heading font-black text-surface-900">0</Text>
               </Pressable>
               <Pressable
-                className="w-[28%] aspect-square items-center justify-center rounded-full"
+                className="w-[28%] items-center justify-center rounded-full"
+                style={{ aspectRatio: 1 }}
                 style={({ pressed }) => [{ opacity: pressed ? 0.5 : 1 }]}
                 onPress={handlePinDelete}
               >

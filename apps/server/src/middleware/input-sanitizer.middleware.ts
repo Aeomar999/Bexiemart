@@ -107,12 +107,12 @@ export class InputSanitizerMiddleware implements NestMiddleware {
           req.body = JSON.parse(JSON.stringify(req.body));
         }
         const sanitized = this.sanitizeObject(req.body);
-        Object.assign(req.body, sanitized);
+        req.body = sanitized;
       }
 
       if (req.query && typeof req.query === "object") {
         const sanitizedQuery = this.sanitizeObject(req.query as Record<string, unknown>);
-        Object.assign(req.query, sanitizedQuery);
+        req.query = sanitizedQuery as any;
       }
 
       if (req.params && typeof req.params === "object") {

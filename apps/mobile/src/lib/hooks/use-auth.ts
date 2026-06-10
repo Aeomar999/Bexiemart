@@ -23,6 +23,12 @@ export function useRegister() {
   });
 }
 
+export function useCheckAvailability() {
+  return useMutation({
+    mutationFn: (data: { email?: string; phone?: string }) => authApi.checkAvailability(data),
+  });
+}
+
 export function useCurrentUser() {
   const setUser = useAuthStore((s) => s.setUser);
   const token = useAuthStore((s) => s.token);

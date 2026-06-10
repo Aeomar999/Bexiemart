@@ -2,12 +2,12 @@ import {
   View,
   Text,
   ScrollView,
-  FlatList,
   Pressable,
   RefreshControl,
   TextInput,
   Dimensions,
 } from "react-native";
+import { FlashList } from "@shopify/flash-list";
 import { useState, useCallback, useEffect } from "react";
 import { Image } from "expo-image";
 import { useRouter } from "expo-router";
@@ -178,7 +178,7 @@ export default function HomeScreen() {
   const { toggleFavorite, isFavorite } = useFavoritesStore();
   const activeRide = useRiderStore((s) => s.activeRide);
 
-  const allProducts = productsData?.data ?? [];
+  const allProducts = productsData?.pages?.flatMap((page: any) => page.data) ?? [];
   const categories = categoriesData ?? [];
   const topProducts = allProducts.slice(0, 5);
   const newItems = allProducts.filter((p: Product) => p.tags?.includes("New")).slice(0, 5);
@@ -249,7 +249,7 @@ export default function HomeScreen() {
       >
         {/* ===== HERO BANNER ===== */}
         <View className="mt-4">
-          <FlatList
+          <FlashList
             data={HERO_BANNERS}
             horizontal
             pagingEnabled
@@ -257,6 +257,7 @@ export default function HomeScreen() {
             decelerationRate="fast"
             snapToInterval={Dimensions.get("window").width}
             snapToAlignment="center"
+            estimatedItemSize={400}
             onViewableItemsChanged={handleViewableItemsChanged}
             viewabilityConfig={{ itemVisiblePercentThreshold: 50 }}
             keyExtractor={(item) => item.id}
@@ -339,11 +340,12 @@ export default function HomeScreen() {
         )}
 
         {/* ===== FILTER PILLS ===== */}
-        <FlatList
+        <FlashList
           data={FILTER_PILLS}
           horizontal
           showsHorizontalScrollIndicator={false}
           className="mt-6"
+          estimatedItemSize={120}
           contentContainerStyle={{ paddingHorizontal: 20, gap: 12 }}
           keyExtractor={(item) => item.id}
           renderItem={({ item }) => (
@@ -377,7 +379,8 @@ export default function HomeScreen() {
                 onPress={() => item.route !== "#" && router.push(item.route as any)}
               >
                 <View
-                  className="w-full aspect-square rounded-[24px] items-center justify-center mb-2"
+                  className="w-full rounded-[24px] items-center justify-center mb-2"
+                  style={{ aspectRatio: 1 }}
                   style={{ backgroundColor: item.bgColor }}
                 >
                   <Icon name={item.icon} size={32} color={item.iconColor} />
@@ -408,7 +411,10 @@ export default function HomeScreen() {
                 className="w-[48%] active:opacity-70"
                 onPress={() => goToShopWithCategory(cat.name)}
               >
-                <View className="w-full aspect-square rounded-[16px] bg-background mb-2 overflow-hidden flex-row flex-wrap">
+                <View
+                  className="w-full rounded-[16px] bg-background mb-2 overflow-hidden flex-row flex-wrap"
+                  style={{ aspectRatio: 1 }}
+                >
                   {[0, 1, 2, 3].map((idx) => (
                     <View
                       key={idx}
@@ -450,13 +456,14 @@ export default function HomeScreen() {
               <Text className="text-[12px] font-bold text-muted-foreground">See All</Text>
             </Pressable>
           </View>
-          <FlatList
+          <FlashList
             data={topProducts}
             horizontal
             showsHorizontalScrollIndicator={false}
             decelerationRate="fast"
             snapToInterval={88} // 72px width + 16px gap
             snapToAlignment="start"
+            estimatedItemSize={72}
             contentContainerStyle={{ paddingHorizontal: 20, gap: 16 }}
             keyExtractor={(item) => item.id}
             renderItem={({ item }) => (
@@ -499,13 +506,14 @@ export default function HomeScreen() {
                 </View>
               </Pressable>
             </View>
-            <FlatList
+            <FlashList
               data={newItems}
               horizontal
               showsHorizontalScrollIndicator={false}
               decelerationRate="fast"
               snapToInterval={156} // 140px width + 16px gap
               snapToAlignment="start"
+              estimatedItemSize={140}
               contentContainerStyle={{ paddingHorizontal: 20, gap: 16 }}
               keyExtractor={(item) => item.id}
               renderItem={({ item }) => (
@@ -513,7 +521,10 @@ export default function HomeScreen() {
                   className="w-[140px] active:opacity-70"
                   onPress={() => router.push(`/(customer)/product/${item.id}`)}
                 >
-                  <View className="w-full aspect-square rounded-[16px] bg-muted mb-2 items-center justify-center overflow-hidden">
+                  <View
+                    className="w-full rounded-[16px] bg-muted mb-2 items-center justify-center overflow-hidden"
+                    style={{ aspectRatio: 1 }}
+                  >
                     {item.image ? (
                       <Image
                         source={{ uri: item.image }}
@@ -571,7 +582,8 @@ export default function HomeScreen() {
                 return (
                   <Pressable
                     key={item.id}
-                    className="w-[31%] aspect-square rounded-[12px] bg-muted relative items-center justify-center active:opacity-70 overflow-hidden"
+                    className="w-[31%] rounded-[12px] bg-muted relative items-center justify-center active:opacity-70 overflow-hidden"
+                    style={{ aspectRatio: 1 }}
                     onPress={() => router.push(`/(customer)/product/${item.id}`)}
                   >
                     {item.image ? (
@@ -604,13 +616,14 @@ export default function HomeScreen() {
               <Text className="text-[12px] font-bold text-muted-foreground">See All</Text>
             </Pressable>
           </View>
-          <FlatList
+          <FlashList
             data={mostPopular}
             horizontal
             showsHorizontalScrollIndicator={false}
             decelerationRate="fast"
             snapToInterval={122} // 110px width + 12px gap
             snapToAlignment="start"
+            estimatedItemSize={110}
             contentContainerStyle={{ paddingHorizontal: 20, gap: 12 }}
             keyExtractor={(item) => item.id}
             renderItem={({ item }) => (
@@ -661,7 +674,10 @@ export default function HomeScreen() {
                 className="w-[48%] active:opacity-70"
                 onPress={() => router.push(`/(customer)/product/${item.id}`)}
               >
-                <View className="w-full aspect-[4/5] rounded-[16px] bg-muted mb-2 items-center justify-center relative overflow-hidden">
+                <View
+                  className="w-full rounded-[16px] bg-muted mb-2 items-center justify-center relative overflow-hidden"
+                  style={{ aspectRatio: 0.8 }}
+                >
                   {item.image ? (
                     <Image
                       source={{ uri: item.image }}

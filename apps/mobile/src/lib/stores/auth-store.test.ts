@@ -29,10 +29,9 @@ describe("Auth Store", () => {
   });
 
   it("should set auth with normalized role", async () => {
-    await useAuthStore.getState().setAuth(
-      { id: "u1", name: "Test", email: "test@test.com", role: "user" },
-      "token123"
-    );
+    await useAuthStore
+      .getState()
+      .setAuth({ id: "u1", name: "Test", email: "test@test.com", role: "user" }, "token123");
     const state = useAuthStore.getState();
     expect(state.user).toEqual({ id: "u1", name: "Test", email: "test@test.com", role: "USER" });
     expect(state.token).toBe("token123");
@@ -43,13 +42,19 @@ describe("Auth Store", () => {
 
   it("should set user without changing token", () => {
     useAuthStore.setState({ user: { id: "u1", name: "Old", email: "old@test.com", role: "USER" } });
-    useAuthStore.getState().setUser({ id: "u1", name: "New", email: "new@test.com", role: "ADMIN" });
+    useAuthStore
+      .getState()
+      .setUser({ id: "u1", name: "New", email: "new@test.com", role: "ADMIN" });
     expect(useAuthStore.getState().user?.name).toBe("New");
   });
 
   it("should logout and clear state", async () => {
     (authClient.signOut as jest.Mock).mockResolvedValue({ data: null });
-    useAuthStore.setState({ user: { id: "u1", name: "T", email: "t@t.com", role: "USER" }, token: "t", isAuthenticated: true });
+    useAuthStore.setState({
+      user: { id: "u1", name: "T", email: "t@t.com", role: "USER" },
+      token: "t",
+      isAuthenticated: true,
+    });
     await useAuthStore.getState().logout();
     const state = useAuthStore.getState();
     expect(state.user).toBeNull();
@@ -72,12 +77,23 @@ describe("Auth Store", () => {
     expect(SecureStore.setItemAsync).toHaveBeenCalledWith("bexiemart_onboarding", "true");
   });
 
-  it("should hydrate with authenticated session", async () => {
+  it("should hydrate with cached session", async () => {
+    (SecureStore.getItemAsync as jest.Mock).mockImplementation((key) => {
+      if (key === "bexiemart_token") return Promise.resolve("stored-token");
+      if (key === "bexiemart_user")
+        return Promise.resolve(
+          JSON.stringify({ id: "u1", name: "U", email: "u@u.com", role: "USER" })
+        );
+      return Promise.resolve(null);
+    });
     (authClient.getSession as jest.Mock).mockResolvedValue({
-      data: { user: { id: "u1", name: "U", email: "u@u.com", role: "user" }, session: { token: "sess-token" } },
+      data: {
+        user: { id: "u1", name: "U", email: "u@u.com", role: "user" },
+        session: { token: "stored-token" },
+      },
       error: null,
     });
-    (SecureStore.getItemAsync as jest.Mock).mockResolvedValue("stored-token");
+
     await useAuthStore.getState().hydrate();
     const state = useAuthStore.getState();
     expect(state.isAuthenticated).toBe(true);
@@ -85,9 +101,10 @@ describe("Auth Store", () => {
     expect(state.user?.role).toBe("USER");
   });
 
-  it("should hydrate with no session and clear token", async () => {
-    (authClient.getSession as jest.Mock).mockResolvedValue({ data: null, error: "no session" });
-    (SecureStore.getItemAsync as jest.Mock).mockResolvedValue("old-token");
+  it("should hydrate with no session", async () => {
+    (SecureStore.getItemAsync as jest.Mock).mockResolvedValue(null);
+    (authClient.getSession as jest.Mock).mockResolvedValue({ data: null, error: { status: 401 } });
+
     await useAuthStore.getState().hydrate();
     const state = useAuthStore.getState();
     expect(state.isAuthenticated).toBe(false);
@@ -96,7 +113,7 @@ describe("Auth Store", () => {
   });
 
   it("should handle hydrate error gracefully", async () => {
-    (authClient.getSession as jest.Mock).mockRejectedValue(new Error("network"));
+    (SecureStore.getItemAsync as jest.Mock).mockRejectedValue(new Error("Storage error"));
     await useAuthStore.getState().hydrate();
     expect(useAuthStore.getState().isLoading).toBe(false);
   });

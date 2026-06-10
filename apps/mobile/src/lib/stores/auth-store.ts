@@ -59,6 +59,7 @@ export const useAuthStore = create<AuthState>((set) => ({
   setAuth: async (user, token) => {
     await storage.setItem("bexiemart_token", token);
     const normalizedUser = { ...user, role: user.role?.toUpperCase() };
+    await storage.setItem("bexiemart_user", JSON.stringify(normalizedUser));
     set({ user: normalizedUser, token, isAuthenticated: true, isLoading: false });
   },
 
@@ -71,6 +72,7 @@ export const useAuthStore = create<AuthState>((set) => ({
       await authClient.signOut();
     } catch (e) {}
     await storage.removeItem("bexiemart_token");
+    await storage.removeItem("bexiemart_user");
     set({ user: null, token: null, isAuthenticated: false, isLoading: false });
   },
 
@@ -87,43 +89,70 @@ export const useAuthStore = create<AuthState>((set) => ({
 
   hydrate: async () => {
     try {
-      const [token, onboardingStatus, launchedStatus] = await Promise.all([
+      const [token, onboardingStatus, launchedStatus, cachedUserStr] = await Promise.all([
         storage.getItem("bexiemart_token"),
         storage.getItem("bexiemart_onboarding"),
         storage.getItem("bexiemart_launched"),
+        storage.getItem("bexiemart_user"),
       ]);
 
       const hasSeenOnboarding = onboardingStatus === "true";
       const hasLaunchedBefore = launchedStatus === "true";
 
-      // Better Auth handles its own session state, but we still check it here
-      const { data, error } = await authClient.getSession();
-
-      if (data && data.user) {
-        const tokenVal = data.session?.token || data.session?.id || token;
-        if (!tokenVal && token) {
-          await storage.removeItem("bexiemart_token");
-        }
-        set({
-          token: tokenVal,
-          user: { ...data.user, role: (data.user as any).role?.toUpperCase() },
-          isAuthenticated: !!tokenVal,
-          isLoading: false,
-          hasSeenOnboarding,
-          hasLaunchedBefore,
-        });
+      // If we have cached auth data, hydrate instantly
+      if (token && cachedUserStr) {
+        try {
+          const cachedUser = JSON.parse(cachedUserStr);
+          set({
+            token,
+            user: cachedUser,
+            isAuthenticated: true,
+            isLoading: false,
+            hasSeenOnboarding,
+            hasLaunchedBefore,
+          });
+        } catch (e) {}
       } else {
-        // Not authenticated
-        await storage.removeItem("bexiemart_token");
         set({
-          token: null,
-          user: null,
-          isAuthenticated: false,
           isLoading: false,
           hasSeenOnboarding,
           hasLaunchedBefore,
         });
       }
+
+      // Background verification
+      authClient
+        .getSession()
+        .then(async ({ data, error }) => {
+          if (data && data.user) {
+            const tokenVal = data.session?.token || data.session?.id || token;
+            const normalizedUser = { ...data.user, role: (data.user as any).role?.toUpperCase() };
+
+            if (tokenVal) await storage.setItem("bexiemart_token", tokenVal);
+            await storage.setItem("bexiemart_user", JSON.stringify(normalizedUser));
+
+            set({
+              token: tokenVal,
+              user: normalizedUser,
+              isAuthenticated: !!tokenVal,
+            });
+          } else if (!token && !cachedUserStr) {
+            // Only clear if we were already clear
+          } else {
+            // If we had cache but background check failed (e.g. token expired)
+            // we might want to log out. However, if it failed due to network error,
+            // we shouldn't log out. Better Auth returns { data: null, error: { message: "..." } }
+            // Check if error is specifically unauthorized/session expired before wiping.
+            if (error && (error.status === 401 || error.status === 403)) {
+              await storage.removeItem("bexiemart_token");
+              await storage.removeItem("bexiemart_user");
+              set({ token: null, user: null, isAuthenticated: false });
+            }
+          }
+        })
+        .catch(() => {
+          // Ignore network errors during background check
+        });
     } catch {
       set({ isLoading: false });
     }

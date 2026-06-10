@@ -3,7 +3,7 @@ npx lint-staged
 # Check for bare @Body() without DTO classes in server controllers
 STAGED_CONTROLLERS=$(git diff --cached --name-only --diff-filter=ACM | grep -E '^apps/server/.*\.controller\.ts$' || true)
 if [ -n "$STAGED_CONTROLLERS" ]; then
-  if echo "$STAGED_CONTROLLERS" | xargs grep -Pn '@Body\(\s*(?!(?:\'[^\']*\'|"[^"]*")?\s*\)\s*:\s*(Create|Update|[A-Z]\w+[Dd]to))' -- 2>/dev/null | grep -Pv '@Body\(\)\s*(:\s*)?(string|number|boolean|Record|any|unknown|object|ExpressMulter)'; then
+  if echo "$STAGED_CONTROLLERS" | xargs grep -Pn "@Body\(\s*(?!(?:'[^']*'|\"[^\"]*\")?\s*\)\s*:\s*(Create|Update|[A-Z]\w+[Dd]to))" -- 2>/dev/null | grep -Pv '@Body\(\)\s*(:\s*)?(string|number|boolean|Record|any|unknown|object|ExpressMulter)'; then
     echo "ERROR: Found @Body() parameter without a proper DTO class.
     Use typed DTO classes (e.g. @Body() dto: CreateFooDto) instead of bare parameters.
     If intentional, use a DTO class with class-validator decorators."

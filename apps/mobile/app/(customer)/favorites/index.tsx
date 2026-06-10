@@ -201,7 +201,10 @@ export default function FavoritesScreen() {
               className="flex-1 bg-card rounded-[24px] overflow-hidden shadow-[0_10px_20px_rgba(0,0,0,0.05)] border border-border pb-3"
               onPress={() => router.push(`/(customer)/product/${item.id}`)}
             >
-              <View className="w-full aspect-[4/5] bg-muted items-center justify-center relative overflow-hidden">
+              <View
+                className="w-full bg-muted items-center justify-center relative overflow-hidden"
+                style={{ aspectRatio: 0.8 }}
+              >
                 {item.images?.[0]?.url || item.image ? (
                   <Image
                     source={{ uri: item.images?.[0]?.url || item.image }}

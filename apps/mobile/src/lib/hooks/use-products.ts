@@ -1,4 +1,4 @@
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useQuery, useInfiniteQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { productsApi } from "../api/products";
 
 export const PRODUCT_KEYS = {
@@ -15,10 +15,16 @@ export function useProducts(params?: {
   vendorId?: string;
   page?: number;
   limit?: number;
+  cursor?: string;
 }) {
-  return useQuery({
+  return useInfiniteQuery({
     queryKey: PRODUCT_KEYS.list(params),
-    queryFn: () => productsApi.getProducts(params).then((r) => r.data.data ?? r.data),
+    queryFn: ({ pageParam }) =>
+      productsApi
+        .getProducts({ ...params, cursor: pageParam as string | undefined })
+        .then((r) => r.data),
+    initialPageParam: undefined,
+    getNextPageParam: (lastPage: any) => lastPage?.meta?.nextCursor ?? undefined,
     staleTime: 60_000,
   });
 }

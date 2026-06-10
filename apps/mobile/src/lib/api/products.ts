@@ -5,6 +5,7 @@ export const productsApi = {
     vendorId?: string;
     page?: number;
     limit?: number;
+    cursor?: string;
   }) => apiClient.get("/products", { params }),
 
   getProduct: (id: string) => apiClient.get(`/products/${id}`),

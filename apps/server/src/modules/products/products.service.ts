@@ -1,6 +1,7 @@
 import { Injectable, NotFoundException } from "@nestjs/common";
 import { PrismaService } from "../../prisma/prisma.service";
 import { QueryProductsDto, ProductSort } from "./dto/query-products.dto";
+import { getCache, setCache } from "../../utils/cache";
 
 @Injectable()
 export class ProductsService {
@@ -51,7 +52,7 @@ export class ProductsService {
           vendor: { select: { id: true, shopName: true, logo: true } },
         },
         orderBy,
-        skip: dto.skip,
+        ...(dto.cursor ? { skip: 1, cursor: { id: dto.cursor } } : { skip: dto.skip }),
         take: dto.limit,
       }),
       this.prisma.product.count({ where }),
@@ -79,7 +80,8 @@ export class ProductsService {
         page: dto.page ?? 1,
         limit: dto.limit ?? 20,
         totalPages: Math.ceil(total / (dto.limit ?? 20)),
-      }
+        nextCursor: data.length === dto.limit ? data[data.length - 1].id : null,
+      },
     };
   }
 
@@ -149,19 +151,25 @@ export class ProductsService {
   }
 
   async getCategories() {
+    const cached = getCache<any[]>("categories_list");
+    if (cached) return cached;
+
     const categories = await this.prisma.category.findMany({
       where: { isActive: true },
       include: { _count: { select: { products: true } } },
       orderBy: { name: "asc" },
     });
 
-    return categories.map((c) => ({
+    const result = categories.map((c) => ({
       id: c.id,
       name: c.name,
       slug: c.slug,
       icon: c.icon,
       count: c._count.products,
     }));
+
+    setCache("categories_list", result, 3600); // cache for 1 hour
+    return result;
   }
 
   async getStore(id: string) {
@@ -174,8 +182,11 @@ export class ProductsService {
     }
 
     try {
-      await this.prisma.$executeRawUnsafe(`UPDATE "VendorProfile" SET "visits" = "visits" + 1 WHERE "id" = $1`, id);
-    } catch(e) {
+      await this.prisma.$executeRawUnsafe(
+        `UPDATE "VendorProfile" SET "visits" = "visits" + 1 WHERE "id" = $1`,
+        id
+      );
+    } catch (e) {
       console.error(`Failed to track visit for store ${id}:`, e);
     }
 
@@ -202,17 +213,20 @@ export class ProductsService {
   }
 
   async getFeatured() {
+    const cached = getCache<any[]>("featured_products");
+    if (cached) return cached;
+
     const products = await this.prisma.product.findMany({
       where: { isActive: true, isDeleted: false, isFeatured: true },
       take: 10,
       include: {
         images: { orderBy: { order: "asc" }, take: 1 },
         category: true,
-        vendor: { select: { id: true, shopName: true } }
-      }
+        vendor: { select: { id: true, shopName: true } },
+      },
     });
 
-    return products.map(p => ({
+    const result = products.map((p) => ({
       id: p.id,
       name: p.name,
       slug: p.slug,
@@ -221,27 +235,30 @@ export class ProductsService {
       vendor: p.vendor?.shopName ?? null,
       image: p.images[0]?.url ?? null,
     }));
+
+    setCache("featured_products", result, 300); // Cache for 5 minutes
+    return result;
   }
 
   async searchProducts(query: string, limit: number = 20) {
     const products = await this.prisma.product.findMany({
-      where: { 
-        isActive: true, 
+      where: {
+        isActive: true,
         isDeleted: false,
         OR: [
           { name: { contains: query, mode: "insensitive" } },
           { description: { contains: query, mode: "insensitive" } },
-          { vendor: { shopName: { contains: query, mode: "insensitive" } } }
-        ]
+          { vendor: { shopName: { contains: query, mode: "insensitive" } } },
+        ],
       },
       take: limit,
       include: {
         images: { orderBy: { order: "asc" }, take: 1 },
         category: true,
-        vendor: { select: { id: true, shopName: true } }
-      }
+        vendor: { select: { id: true, shopName: true } },
+      },
     });
-    return products.map(p => ({
+    return products.map((p) => ({
       id: p.id,
       name: p.name,
       slug: p.slug,

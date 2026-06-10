@@ -85,7 +85,7 @@ export default function LoginScreen() {
             keyboardType="email-address"
             autoCapitalize="none"
             value={email}
-            onChangeText={setEmail}
+            onChangeText={(text) => setEmail(text.replace(/[^a-zA-Z0-9@._+-]/g, ""))}
             error={errors.email}
             leftIcon={<FontAwesome5 name="envelope" size={16} color="#94A3B8" solid />}
           />

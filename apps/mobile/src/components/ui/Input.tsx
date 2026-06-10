@@ -1,10 +1,4 @@
-import {
-  View,
-  Text,
-  TextInput,
-  type TextInputProps,
-  TouchableOpacity,
-} from "react-native";
+import { View, Text, TextInput, type TextInputProps, TouchableOpacity } from "react-native";
 import { useState, forwardRef } from "react";
 
 interface InputProps extends TextInputProps {
@@ -42,7 +36,7 @@ export const Input = forwardRef<TextInput, InputProps>(
         )}
 
         <View
-          className={`flex-row items-center gap-3 px-4 h-[48px] rounded-[16px] border ${isFocused ? "border-surface-300 bg-background" : "border-border bg-background"} ${error ? "border-error bg-error-light/30" : ""} ${!editable ? "bg-muted" : ""}`}
+          className={`flex-row items-center gap-3 px-4 h-[48px] rounded-[16px] border ${isFocused ? "border-primary bg-background" : "border-border bg-background"} ${error ? "border-error bg-error-light/30" : ""} ${!editable ? "bg-muted" : ""}`}
         >
           {leftIcon}
           <TextInput
@@ -72,9 +66,7 @@ export const Input = forwardRef<TextInput, InputProps>(
         {hint && !error && (
           <Text className="text-caption text-muted-foreground font-body ml-2">{hint}</Text>
         )}
-        {error && (
-          <Text className="text-caption text-error font-body ml-2">{error}</Text>
-        )}
+        {error && <Text className="text-caption text-error font-body ml-2">{error}</Text>}
       </View>
     );
   }

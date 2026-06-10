@@ -27,6 +27,7 @@ import { LoginDto } from "./dto/login.dto";
 import { ForgotPasswordDto } from "./dto/forgot-password.dto";
 import { ResetPasswordDto } from "./dto/reset-password.dto";
 import { ResendVerificationDto } from "./dto/resend-verification.dto";
+import { CheckAvailabilityDto } from "./dto/check-availability.dto";
 
 @ApiTags("Auth")
 @ApiBearerAuth()
@@ -52,7 +53,7 @@ export class AuthController {
 
     const res = await this.auth.api.signUpEmail({
       body: { email, password, name, callbackURL: "bexiemart://verify-email" },
-      headers: {} as Headers,
+      headers: new Headers({ origin: "bexiemart://" }),
       asResponse: true,
     });
 
@@ -155,7 +156,7 @@ export class AuthController {
 
     const res = await this.auth.api.signInEmail({
       body: { email, password },
-      headers: {} as Headers,
+      headers: new Headers({ origin: "bexiemart://" }),
       asResponse: true,
     });
 
@@ -220,6 +221,7 @@ export class AuthController {
     try {
       await (this.auth.api as any).sendVerificationEmail({
         body: { email, callbackURL: "bexiemart://verify-email" },
+        headers: new Headers({ origin: "bexiemart://" }),
       });
     } catch (e) {
       this.logger.error(`Resend verification error for ${email}: ${e}`);
@@ -235,6 +237,7 @@ export class AuthController {
     try {
       await (this.auth.api as any).forgetPassword({
         body: { email: body.email, redirectTo: "/reset-password" },
+        headers: new Headers({ origin: "bexiemart://" }),
       });
     } catch (e) {
       console.error("Forget password error:", e);
@@ -251,6 +254,33 @@ export class AuthController {
       body: { newPassword: body.newPassword, token: body.token },
     });
     return { message: "Password reset successfully." };
+  }
+
+  @Throttle({ default: { limit: 10, ttl: 60000 } })
+  @ApiOperation({ summary: "Check if email or phone is available" })
+  @Post("check-availability")
+  @HttpCode(HttpStatus.OK)
+  async checkAvailability(@Body() body: CheckAvailabilityDto) {
+    const { email, phone } = body;
+    const errors: Record<string, string> = {};
+
+    if (email) {
+      const existingEmail = await this.prisma.user.findUnique({ where: { email } });
+      if (existingEmail) {
+        errors.email = "This email is already registered.";
+      }
+    }
+
+    if (phone) {
+      // Phone is not marked as unique in schema implicitly for all cases, but better-auth might enforce it depending on config. Let's check DB.
+      const existingPhone = await this.prisma.user.findFirst({ where: { phoneNumber: phone } });
+      if (existingPhone) {
+        errors.phone = "This phone number is already registered.";
+      }
+    }
+
+    const isAvailable = Object.keys(errors).length === 0;
+    return { isAvailable, errors };
   }
 
   @All("/*")

@@ -1,17 +1,23 @@
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useQuery, useInfiniteQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { reelsApi } from "../api/reels";
 
 export function useReels() {
-  return useQuery({
+  return useInfiniteQuery({
     queryKey: ["reels"],
-    queryFn: () => reelsApi.getReels().then((r) => r.data),
+    queryFn: ({ pageParam }) =>
+      reelsApi.getReels(pageParam as string | undefined).then((r) => r.data),
+    initialPageParam: undefined,
+    getNextPageParam: (lastPage: any) => lastPage?.meta?.nextCursor ?? undefined,
   });
 }
 
 export function useFollowingReels() {
-  return useQuery({
+  return useInfiniteQuery({
     queryKey: ["reels", "following"],
-    queryFn: () => reelsApi.getFollowing().then((r) => r.data),
+    queryFn: ({ pageParam }) =>
+      reelsApi.getFollowing(pageParam as string | undefined).then((r) => r.data),
+    initialPageParam: undefined,
+    getNextPageParam: (lastPage: any) => lastPage?.meta?.nextCursor ?? undefined,
   });
 }
 

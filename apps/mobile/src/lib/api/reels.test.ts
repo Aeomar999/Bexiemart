@@ -11,14 +11,16 @@ describe("reelsApi", () => {
   it("should get reels", async () => {
     (apiClient.get as jest.Mock).mockResolvedValue({ data: { data: [{ id: "reel-1" }] } });
     const result = await reelsApi.getReels();
-    expect(apiClient.get).toHaveBeenCalledWith("/reels");
+    expect(apiClient.get).toHaveBeenCalledWith("/reels", { params: { cursor: undefined } });
     expect(result.data.data).toHaveLength(1);
   });
 
   it("should get following reels", async () => {
     (apiClient.get as jest.Mock).mockResolvedValue({ data: { data: [{ id: "reel-2" }] } });
     const result = await reelsApi.getFollowing();
-    expect(apiClient.get).toHaveBeenCalledWith("/reels/following");
+    expect(apiClient.get).toHaveBeenCalledWith("/reels/following", {
+      params: { cursor: undefined },
+    });
     expect(result.data.data).toHaveLength(1);
   });
 

@@ -40,7 +40,7 @@ export function Avatar({
     // Default to initials
     const initial = name ? name.charAt(0).toUpperCase() : "?";
     return (
-      <Text style={{ fontSize: size * 0.4 }} className="font-heading font-black text-brand-600">
+      <Text style={{ fontSize: size * 0.4 }} className="font-heading font-black text-primary">
         {initial}
       </Text>
     );
@@ -49,7 +49,7 @@ export function Avatar({
   const content = (
     <View
       style={{ width: size, height: size, borderRadius: size / 2 }}
-      className="bg-brand-100 items-center justify-center border-4 border-card shadow-sm overflow-hidden relative"
+      className="bg-primary-subtle items-center justify-center border-4 border-card shadow-sm overflow-hidden relative"
     >
       {uri ? (
         <Image source={{ uri }} style={{ width: "100%", height: "100%" }} contentFit="cover" />
@@ -67,7 +67,11 @@ export function Avatar({
 
   if (onPress || editable) {
     return (
-      <Pressable onPress={onPress} accessibilityRole="button" style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}>
+      <Pressable
+        onPress={onPress}
+        accessibilityRole="button"
+        style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
+      >
         {content}
       </Pressable>
     );

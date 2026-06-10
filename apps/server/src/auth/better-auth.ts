@@ -48,28 +48,29 @@ export function createAuth(prisma: PrismaClient) {
             `\n\n=== SMS GATEWAY ===\nTo: ${phoneNumber}\nMessage: Your BexieMart verification code is: ${code}\n===================\n\n`
           );
           if (process.env.ARKESEL_API_KEY) {
-            try {
-              const response = await fetch("https://sms.arkesel.com/api/v2/sms/send", {
-                method: "POST",
-                headers: {
-                  "api-key": process.env.ARKESEL_API_KEY,
-                  "Content-Type": "application/json",
-                },
-                body: JSON.stringify({
-                  sender: process.env.ARKESEL_SENDER_ID || "BexieMart",
-                  message: `Your BexieMart verification code is: ${code}`,
-                  recipients: [phoneNumber],
-                }),
+            fetch("https://sms.arkesel.com/api/v2/sms/send", {
+              method: "POST",
+              headers: {
+                "api-key": process.env.ARKESEL_API_KEY,
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({
+                sender: process.env.ARKESEL_SENDER_ID || "BexieMart",
+                message: `Your BexieMart verification code is: ${code}`,
+                recipients: [phoneNumber],
+              }),
+            })
+              .then(async (response) => {
+                const data = await response.json();
+                if (!response.ok || data.status === "error") {
+                  console.error("Arkesel SMS Failed:", data);
+                } else {
+                  console.log("Arkesel SMS Sent successfully:", data);
+                }
+              })
+              .catch((error) => {
+                console.error("Arkesel SMS Error:", error);
               });
-              const data = await response.json();
-              if (!response.ok || data.status === "error") {
-                console.error("Arkesel SMS Failed:", data);
-              } else {
-                console.log("Arkesel SMS Sent successfully:", data);
-              }
-            } catch (error) {
-              console.error("Arkesel SMS Error:", error);
-            }
           } else {
             console.warn("ARKESEL_API_KEY not set, SMS was not sent to the real provider.");
           }
@@ -89,34 +90,34 @@ export function createAuth(prisma: PrismaClient) {
         console.log(
           `\n\n=== EMAIL VERIFICATION ===\nTo: ${user.email}\nWeb: ${webUrl}\nApp: ${appUrl}\n==========================\n\n`
         );
-        try {
-          const info = await transporter.sendMail({
+
+        // Fire and forget: Do not await this promise so the auth API responds immediately
+        transporter
+          .sendMail({
             from: process.env.EMAIL_FROM || "BexieMart <onboarding@bexiemart.com>",
             to: user.email,
             subject: "Verify your BexieMart Email",
             html: `
-              <p>Hi ${user.name},</p>
-              <p>Click the button below to verify your email:</p>
-              <br/>
-              <a href="${webUrl}" style="display:inline-block;padding:14px 32px;background-color:#004CFF;color:#ffffff;text-decoration:none;border-radius:8px;font-weight:bold;font-size:16px;">
-                Verify Email
-              </a>
-              <br/><br/>
-              <p style="color:#64748B;font-size:14px;">
-                If the button above doesn't work, copy this link into your browser:<br/>
-                <a href="${webUrl}" style="color:#004CFF;">${webUrl}</a>
-              </p>
-              <br/>
-              <p style="color:#64748B;font-size:13px;">
-                <strong>Already have the app installed?</strong><br/>
-                <a href="${appUrl}" style="color:#64748B;">bexiemart://verify-email?token=${token}</a>
-              </p>
-            `,
-          });
-          console.log("Email sent successfully via Nodemailer:", info.messageId);
-        } catch (error) {
-          console.error("Failed to send email via Nodemailer:", error);
-        }
+            <p>Hi ${user.name},</p>
+            <p>Click the button below to verify your email:</p>
+            <br/>
+            <a href="${webUrl}" style="display:inline-block;padding:14px 32px;background-color:#004CFF;color:#ffffff;text-decoration:none;border-radius:8px;font-weight:bold;font-size:16px;">
+              Verify Email
+            </a>
+            <br/><br/>
+            <p style="color:#64748B;font-size:14px;">
+              If the button above doesn't work, copy this link into your browser:<br/>
+              <a href="${webUrl}" style="color:#004CFF;">${webUrl}</a>
+            </p>
+            <br/>
+            <p style="color:#64748B;font-size:13px;">
+              <strong>Already have the app installed?</strong><br/>
+              <a href="${appUrl}" style="color:#64748B;">bexiemart://verify-email?token=${token}</a>
+            </p>
+          `,
+          })
+          .then((info) => console.log("Email sent successfully via Nodemailer:", info.messageId))
+          .catch((error) => console.error("Failed to send email via Nodemailer:", error));
       },
     },
     session: {

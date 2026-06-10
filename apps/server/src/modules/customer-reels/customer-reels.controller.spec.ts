@@ -17,9 +17,7 @@ describe("CustomerReelsController", () => {
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       controllers: [CustomerReelsController],
-      providers: [
-        { provide: CustomerReelsService, useValue: mockService },
-      ],
+      providers: [{ provide: CustomerReelsService, useValue: mockService }],
     })
       .overrideGuard(AuthGuard)
       .useValue({ canActivate: jest.fn(() => true) })
@@ -44,7 +42,7 @@ describe("CustomerReelsController", () => {
       const req = { user: { id: "user-1" } };
 
       expect(await controller.findAll(req)).toEqual(result);
-      expect(mockService.findAll).toHaveBeenCalledWith("user-1");
+      expect(mockService.findAll).toHaveBeenCalledWith("user-1", undefined);
     });
   });
 
@@ -76,7 +74,7 @@ describe("CustomerReelsController", () => {
       const req = { user: { id: "user-1" } };
 
       expect(await controller.findFollowing(req)).toEqual(result);
-      expect(mockService.findFollowing).toHaveBeenCalledWith("user-1");
+      expect(mockService.findFollowing).toHaveBeenCalledWith("user-1", undefined);
     });
   });
 });

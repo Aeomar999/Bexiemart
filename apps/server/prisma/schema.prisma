@@ -235,6 +235,8 @@ model Product {
   @@index([slug])
   @@index([isActive])
   @@index([isFeatured])
+  @@index([categoryId, isActive])
+  @@index([vendorId, isActive])
 }
 
 model ProductImage {
@@ -323,6 +325,7 @@ model Order {
   @@index([orderNumber])
   @@index([status])
   @@index([userId, status])
+  @@index([userId, status, createdAt])
 }
 
 model OrderItem {

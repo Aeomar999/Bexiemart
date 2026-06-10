@@ -17,18 +17,18 @@ interface ButtonProps extends TouchableOpacityProps {
 }
 
 const variantStyles: Record<string, string> = {
-  primary: "bg-brand-600 active:bg-brand-700",
-  secondary: "bg-accent-600 active:bg-accent-700",
-  outline: "bg-transparent border border-surface-300 active:bg-muted",
+  primary: "bg-primary active:bg-primary-active",
+  secondary: "bg-secondary active:bg-secondary-hover",
+  outline: "bg-transparent border border-border active:bg-muted",
   ghost: "bg-transparent active:bg-muted",
-  danger: "bg-error active:bg-red-600",
+  danger: "bg-error active:opacity-80",
 };
 
 const textColors: Record<string, string> = {
-  primary: "text-white",
-  secondary: "text-white",
+  primary: "text-primary-text",
+  secondary: "text-secondary-text",
   outline: "text-foreground",
-  ghost: "text-brand-600",
+  ghost: "text-primary",
   danger: "text-white",
 };
 
@@ -80,7 +80,9 @@ export const Button = forwardRef<View, ButtonProps>(
         {loading ? (
           <ActivityIndicator
             color={
-              variant === "outline" || variant === "ghost" ? "#004CFF" : "#FFFFFF"
+              variant === "outline" || variant === "ghost"
+                ? "var(--color-primary)"
+                : "var(--color-primary-text)"
             }
             size="small"
           />

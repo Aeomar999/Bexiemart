@@ -61,6 +61,7 @@ async function bootstrap() {
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup("api/docs", app, document);
 
+  app.enableShutdownHooks();
   const port = process.env.PORT ?? 3000;
   await app.listen(port, "0.0.0.0");
   console.log(`BexieMart API running on port ${port}`);
