@@ -269,7 +269,7 @@ export default function HomeScreen() {
               <View style={{ width: Dimensions.get("window").width, paddingHorizontal: 20 }}>
                 <Pressable
                   onPress={() => router.push("/(customer)/flash-sales")}
-                  className="w-full h-[180px] rounded-[24px] overflow-hidden relative bg-slate-900 active:opacity-70"
+                  className="w-full h-[180px] rounded-[24px] overflow-hidden relative bg-surface-900 active:opacity-70"
                 >
                   <Image
                     source={{ uri: item.bgImage }}
@@ -569,13 +569,13 @@ export default function HomeScreen() {
               >
                 <Icon name="clock" size={14} color="#0f172a" />
                 <View className="bg-muted px-1.5 py-0.5 rounded">
-                  <Text className="text-[11px] font-bold text-rose-600">{hours}</Text>
+                  <Text className="text-[11px] font-bold text-error">{hours}</Text>
                 </View>
                 <View className="bg-muted px-1.5 py-0.5 rounded">
-                  <Text className="text-[11px] font-bold text-rose-600">{minutes}</Text>
+                  <Text className="text-[11px] font-bold text-error">{minutes}</Text>
                 </View>
                 <View className="bg-muted px-1.5 py-0.5 rounded">
-                  <Text className="text-[11px] font-bold text-rose-600">{seconds}</Text>
+                  <Text className="text-[11px] font-bold text-error">{seconds}</Text>
                 </View>
                 <Icon name="chevron-right" size={16} color="#0f172a" />
               </Pressable>
@@ -599,7 +599,7 @@ export default function HomeScreen() {
                     ) : (
                       <Icon name="image" size={24} color="#cbd5e1" />
                     )}
-                    <View className="absolute top-1 right-1 bg-rose-500 px-1.5 py-0.5 rounded-sm">
+                    <View className="absolute top-1 right-1 bg-error px-1.5 py-0.5 rounded-sm">
                       <Text className="text-[9px] font-bold text-white">-{discount}%</Text>
                     </View>
                   </Pressable>

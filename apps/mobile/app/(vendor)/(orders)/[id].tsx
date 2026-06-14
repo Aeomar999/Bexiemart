@@ -51,7 +51,7 @@ export default function OrderDetailsScreen() {
             onPress={() => handleAction("cancelled")}
             className="flex-1 py-4 items-center rounded-full bg-rose-50 border border-rose-100"
           >
-            <Text className="text-[15px] font-bold text-rose-600">Reject</Text>
+            <Text className="text-[15px] font-bold text-error">Reject</Text>
           </Pressable>
           <View className="flex-1">
             <Button

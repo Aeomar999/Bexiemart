@@ -236,7 +236,7 @@ export default function AddFoodScreen() {
                 }
               >
                 <Text
-                  className={`text-[14px] font-bold ${status === "sold_out" ? "text-rose-600" : "text-muted-foreground"}`}
+                  className={`text-[14px] font-bold ${status === "sold_out" ? "text-error" : "text-muted-foreground"}`}
                 >
                   Sold Out
                 </Text>

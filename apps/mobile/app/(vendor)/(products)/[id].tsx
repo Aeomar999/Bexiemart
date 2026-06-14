@@ -156,7 +156,7 @@ export default function ListingDetailsScreen() {
           className={`px-3 py-1 rounded-full ${item.status === "active" || item.status === "available" ? "bg-green-100" : "bg-secondary"}`}
         >
           <Text
-            className={`text-[12px] font-bold ${item.status === "active" || item.status === "available" ? "text-green-700" : "text-muted-foreground"}`}
+            className={`text-[12px] font-bold ${item.status === "active" || item.status === "available" ? "text-success" : "text-muted-foreground"}`}
           >
             {item.status.toUpperCase().replace("_", " ")}
           </Text>
@@ -241,7 +241,7 @@ export default function ListingDetailsScreen() {
             onPress={handleDelete}
             className="w-full py-4 items-center rounded-full bg-rose-50 border border-rose-100"
           >
-            <Text className="text-[15px] font-bold text-rose-600">Delete Listing</Text>
+            <Text className="text-[15px] font-bold text-error">Delete Listing</Text>
           </Pressable>
         </View>
       </ScrollView>

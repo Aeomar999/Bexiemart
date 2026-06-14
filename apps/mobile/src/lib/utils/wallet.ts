@@ -2,12 +2,18 @@ import type { Transaction, TransactionType } from "@/lib/stores/wallet-store";
 
 export function getTransactionIcon(type: TransactionType | string): string {
   switch (type) {
-    case "DEPOSIT": return "arrow-down-left";
-    case "WITHDRAWAL": return "arrow-up-right";
-    case "ORDER_PAYMENT": return "shopping-bag";
-    case "TRANSFER_RECEIVED": return "arrow-down-left";
-    case "FEE": return "info";
-    default: return "file-text";
+    case "DEPOSIT":
+      return "arrow-down-left";
+    case "WITHDRAWAL":
+      return "arrow-up-right";
+    case "ORDER_PAYMENT":
+      return "shopping-bag";
+    case "TRANSFER_RECEIVED":
+      return "arrow-down-left";
+    case "FEE":
+      return "info";
+    default:
+      return "file-text";
   }
 }
 
@@ -43,10 +49,12 @@ export function getCardColors(id?: string, type?: string): readonly [string, str
 
 export function getTransactionColors(type: TransactionType | string) {
   switch (type) {
-    case "DEPOSIT": case "TRANSFER_RECEIVED":
+    case "DEPOSIT":
+    case "TRANSFER_RECEIVED":
       return { bg: "#d1fae5", icon: "#059669", text: "text-emerald-600" };
-    case "WITHDRAWAL": case "FEE":
-      return { bg: "#fee2e2", icon: "#dc2626", text: "text-rose-600" };
+    case "WITHDRAWAL":
+    case "FEE":
+      return { bg: "#fee2e2", icon: "#dc2626", text: "text-error" };
     default:
       return { bg: "#f1f5f9", icon: "#64748b", text: "text-muted-foreground" };
   }
@@ -54,8 +62,11 @@ export function getTransactionColors(type: TransactionType | string) {
 
 export function getAmountPrefix(type: TransactionType | string): string {
   switch (type) {
-    case "DEPOSIT": case "TRANSFER_RECEIVED": return "+";
-    default: return "-";
+    case "DEPOSIT":
+    case "TRANSFER_RECEIVED":
+      return "+";
+    default:
+      return "-";
   }
 }
 
@@ -71,7 +82,11 @@ export function formatDate(dateStr: string): string {
 export function formatDateTime(dateStr: string): string {
   const d = new Date(dateStr);
   return d.toLocaleDateString("en-GB", {
-    day: "numeric", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit"
+    day: "numeric",
+    month: "short",
+    year: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
   });
 }
 

@@ -53,7 +53,7 @@ export default function VendorInboxScreen() {
                 <View className="w-12 h-12 rounded-full bg-secondary items-center justify-center mr-3 relative">
                   <Icon name="user" size={20} color="#64748b" />
                   {chat.unread && (
-                    <View className="absolute top-0 right-0 w-3 h-3 rounded-full bg-rose-500 border-2 border-card" />
+                    <View className="absolute top-0 right-0 w-3 h-3 rounded-full bg-error border-2 border-card" />
                   )}
                 </View>
                 <View className="flex-1">

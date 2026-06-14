@@ -161,13 +161,13 @@ export default function LoginScreen() {
                 </View>
 
                 {resendError ? (
-                  <Text className="text-[13px] text-red-600 font-body mb-3 px-1 text-center">
+                  <Text className="text-[13px] text-error font-body mb-3 px-1 text-center">
                     {resendError}
                   </Text>
                 ) : resendVerification.isSuccess && countdown > 0 ? (
                   <View className="flex-row items-center justify-center gap-2 mb-4">
                     <FontAwesome5 name="check-circle" size={14} color="#16A34A" />
-                    <Text className="text-[13px] font-bold text-green-700">
+                    <Text className="text-[13px] font-bold text-success">
                       Link sent! Check your email.
                     </Text>
                   </View>

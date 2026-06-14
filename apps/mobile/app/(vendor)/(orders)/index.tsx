@@ -29,7 +29,7 @@ export default function OrdersManagerScreen() {
       case "Ready":
         return "bg-indigo-100 text-indigo-700";
       case "Completed":
-        return "bg-green-100 text-green-700";
+        return "bg-green-100 text-success";
       case "Cancelled":
         return "bg-rose-100 text-rose-700";
       default:

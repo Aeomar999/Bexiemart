@@ -96,7 +96,7 @@ export default function FoodDeliveryScreen() {
           >
             <Icon name="shopping-bag" size={20} color="#0f172a" />
             {cartItemCount > 0 && (
-              <View className="absolute top-0 right-0 w-4 h-4 bg-rose-500 rounded-full items-center justify-center">
+              <View className="absolute top-0 right-0 w-4 h-4 bg-error rounded-full items-center justify-center">
                 <Text className="text-white font-bold text-[9px]">{cartItemCount}</Text>
               </View>
             )}

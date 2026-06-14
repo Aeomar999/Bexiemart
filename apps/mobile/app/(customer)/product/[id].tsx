@@ -160,7 +160,7 @@ export default function ProductDetailsScreen() {
 
           {/* Discount Badge */}
           {product.discount > 0 && (
-            <View className="absolute top-44 left-4 bg-rose-500 px-3 py-1.5 rounded-full">
+            <View className="absolute top-44 left-4 bg-error px-3 py-1.5 rounded-full">
               <Text className="text-body-sm font-bold text-white font-body">
                 -{product.discount}% OFF
               </Text>
@@ -198,7 +198,7 @@ export default function ProductDetailsScreen() {
             )}
             {product.discount > 0 && (
               <View className="bg-rose-50 px-2 py-0.5 rounded-lg">
-                <Text className="text-caption font-bold text-rose-600 font-body">
+                <Text className="text-caption font-bold text-error font-body">
                   Save GHS {(product.oldPrice - product.price).toFixed(2)}
                 </Text>
               </View>
@@ -227,10 +227,10 @@ export default function ProductDetailsScreen() {
             </View>
             <View className="flex-row items-center gap-1.5">
               <View
-                className={`w-2 h-2 rounded-full ${product.stock > 0 ? "bg-emerald-500" : "bg-rose-500"}`}
+                className={`w-2 h-2 rounded-full ${product.stock > 0 ? "bg-emerald-500" : "bg-error"}`}
               />
               <Text
-                className={`text-body-sm font-semibold font-body ${product.stock > 0 ? "text-emerald-600" : "text-rose-600"}`}
+                className={`text-body-sm font-semibold font-body ${product.stock > 0 ? "text-emerald-600" : "text-error"}`}
               >
                 {product.stock > 0 ? `In Stock (${product.stock} left)` : "Out of Stock"}
               </Text>

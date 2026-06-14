@@ -46,7 +46,7 @@ export default function AnalyticsScreen() {
                 </View>
                 <View className="bg-green-100 px-2 py-1 rounded-full flex-row items-center">
                   <Icon name="trending-up" size={14} color="#16a34a" style={{ marginRight: 4 }} />
-                  <Text className="text-[12px] font-bold text-green-700">
+                  <Text className="text-[12px] font-bold text-success">
                     {analytics?.revenueGrowth ?? "+0%"}
                   </Text>
                 </View>

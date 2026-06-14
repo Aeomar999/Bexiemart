@@ -43,7 +43,7 @@ describe("Wallet Utils", () => {
 
     it("returns negative styling for WITHDRAWAL", () => {
       const colors = getTransactionColors("WITHDRAWAL");
-      expect(colors.text).toBe("text-rose-600");
+      expect(colors.text).toBe("text-error");
     });
   });
 

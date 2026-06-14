@@ -124,7 +124,7 @@ export default function VendorPromotionsScreen() {
                       className={`px-2 py-0.5 rounded-full ${promo.active ? "bg-green-100" : "bg-secondary"}`}
                     >
                       <Text
-                        className={`text-[10px] font-bold ${promo.active ? "text-green-700" : "text-muted-foreground"}`}
+                        className={`text-[10px] font-bold ${promo.active ? "text-success" : "text-muted-foreground"}`}
                       >
                         {promo.active ? "ACTIVE" : "INACTIVE"}
                       </Text>

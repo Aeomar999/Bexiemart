@@ -298,7 +298,7 @@ export default function StaffManagementScreen() {
                   <Icon name="trash-2" size={20} color="#ef4444" />
                 </View>
                 <View className="ml-4 flex-1">
-                  <Text className="text-[16px] font-bold text-rose-600 mb-0.5">Remove Staff</Text>
+                  <Text className="text-[16px] font-bold text-error mb-0.5">Remove Staff</Text>
                   <Text className="text-[13px] font-body text-rose-500">
                     Revoke access permanently
                   </Text>

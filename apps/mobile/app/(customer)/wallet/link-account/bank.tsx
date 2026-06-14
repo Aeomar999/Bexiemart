@@ -237,7 +237,7 @@ export default function AddBankAccountScreen() {
                   <Text className="text-green-800 text-xs font-bold uppercase tracking-wider mb-0.5">
                     Account Verified
                   </Text>
-                  <Text className="text-green-700 font-bold text-[15px]">{resolvedName}</Text>
+                  <Text className="text-success font-bold text-[15px]">{resolvedName}</Text>
                 </View>
               </View>
             ) : resolveError ? (

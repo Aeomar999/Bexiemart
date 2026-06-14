@@ -36,7 +36,7 @@ export function ErrorState({
         <Pressable
           onPress={onRetry}
           style={({ pressed }) => [{ opacity: pressed ? 0.8 : 1 }]}
-          className="bg-rose-500 px-8 py-4 rounded-full flex-row items-center justify-center shadow-[0_4px_12px_rgba(239,68,68,0.15)]"
+          className="bg-error px-8 py-4 rounded-full flex-row items-center justify-center shadow-[0_4px_12px_rgba(239,68,68,0.15)]"
         >
           <View className="mr-2">
             <Icon name="refresh-cw" size={18} color="white" />

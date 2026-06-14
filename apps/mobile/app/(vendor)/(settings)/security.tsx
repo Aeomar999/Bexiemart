@@ -139,7 +139,7 @@ export default function SecurityScreen() {
                 }}
               >
                 <Icon name="log-out" size={20} color="#ef4444" style={{ marginRight: 8 }} />
-                <Text className="text-[16px] font-bold text-red-600">Log out of this device</Text>
+                <Text className="text-[16px] font-bold text-error">Log out of this device</Text>
               </Pressable>
 
               <Pressable

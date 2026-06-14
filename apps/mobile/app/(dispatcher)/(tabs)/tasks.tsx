@@ -88,7 +88,7 @@ export default function DispatcherTasks() {
 
             <View className="gap-2 mb-4">
               <View className="flex-row items-center gap-3">
-                <View className="w-2 h-2 rounded-full bg-rose-500" />
+                <View className="w-2 h-2 rounded-full bg-error" />
                 <Text
                   className="text-muted-foreground text-[14px] font-body flex-1"
                   numberOfLines={1}
@@ -200,7 +200,7 @@ export default function DispatcherTasks() {
 
             <View className="gap-2 mb-4">
               <View className="flex-row items-center gap-3">
-                <View className="w-2 h-2 rounded-full bg-rose-500" />
+                <View className="w-2 h-2 rounded-full bg-error" />
                 <Text
                   className="text-muted-foreground text-[14px] font-body flex-1"
                   numberOfLines={1}

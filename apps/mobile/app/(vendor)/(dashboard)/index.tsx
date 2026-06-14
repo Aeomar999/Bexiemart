@@ -98,7 +98,7 @@ export default function DashboardScreen() {
               onPress={() => router.push("/(vendor)/inbox")}
             >
               <Icon name="message-square" size={20} color="#64748b" />
-              <View className="absolute top-2 right-2 w-2 h-2 bg-rose-500 rounded-full border border-card" />
+              <View className="absolute top-2 right-2 w-2 h-2 bg-error rounded-full border border-card" />
             </Pressable>
             <Pressable
               style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}

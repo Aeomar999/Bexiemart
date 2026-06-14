@@ -185,7 +185,7 @@ export default function TrackOrderScreen() {
         {/* Drop-off Marker */}
         <Marker coordinate={dropoffCoords} anchor={{ x: 0.5, y: 0.5 }}>
           <View className="items-center">
-            <View className="w-6 h-6 bg-rose-500 rounded-full items-center justify-center border-2 border-white shadow-sm">
+            <View className="w-6 h-6 bg-error rounded-full items-center justify-center border-2 border-white shadow-sm">
               <View className="w-2 h-2 bg-white rounded-full" />
             </View>
             <View className="bg-white px-2 py-0.5 rounded mt-1 shadow-sm">
@@ -233,7 +233,7 @@ export default function TrackOrderScreen() {
             onPress={handleCancel}
           >
             <Icon name="x" size={14} color="#ef4444" />
-            <Text className="text-[13px] font-bold text-rose-600 font-heading">Cancel</Text>
+            <Text className="text-[13px] font-bold text-error font-heading">Cancel</Text>
           </Pressable>
         </View>
       </View>

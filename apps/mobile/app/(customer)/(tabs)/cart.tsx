@@ -341,7 +341,7 @@ export default function CartScreen() {
                 style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
                 onPress={handleRemoveCoupon}
               >
-                <Text className="text-[14px] font-bold text-rose-600 font-body">Remove</Text>
+                <Text className="text-[14px] font-bold text-error font-body">Remove</Text>
               </Pressable>
             </View>
           )}

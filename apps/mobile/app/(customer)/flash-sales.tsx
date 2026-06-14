@@ -53,7 +53,7 @@ export default function FlashSalesScreen() {
             {sale?.endDate && (
               <View className="flex-row items-center gap-1 bg-rose-50 px-3 py-1.5 rounded-full border border-rose-200">
                 <Icon name="clock" size={12} color="#e11d48" />
-                <Text className="text-[11px] font-bold text-rose-600 font-body">
+                <Text className="text-[11px] font-bold text-error font-body">
                   {formatNumber(timeLeft.hours)}:{formatNumber(timeLeft.minutes)}:
                   {formatNumber(timeLeft.seconds)}
                 </Text>
@@ -110,7 +110,7 @@ export default function FlashSalesScreen() {
                   ) : (
                     <Icon name="image" size={32} color="#cbd5e1" />
                   )}
-                  <View className="absolute top-0 left-0 bg-rose-500 px-2 py-1 rounded-br-[12px] rounded-tl-[16px]">
+                  <View className="absolute top-0 left-0 bg-error px-2 py-1 rounded-br-[12px] rounded-tl-[16px]">
                     <Text className="text-[10px] font-bold text-white uppercase">
                       {item.discountPercent}% OFF
                     </Text>
@@ -126,7 +126,7 @@ export default function FlashSalesScreen() {
                       {item.product.name}
                     </Text>
                     <View className="flex-row items-center gap-2 mb-2">
-                      <Text className="text-[18px] font-black text-rose-600 font-heading">
+                      <Text className="text-[18px] font-black text-error font-heading">
                         GHS {Number(item.discountedPrice).toFixed(2)}
                       </Text>
                       <Text className="text-body-sm text-muted-foreground line-through">

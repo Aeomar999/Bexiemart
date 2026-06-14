@@ -102,7 +102,7 @@ export default function PaymentMethodsScreen() {
                   </View>
                   {method.isDefault && (
                     <View className="bg-green-100 px-2 py-1 rounded-full">
-                      <Text className="text-[10px] font-bold text-green-700">DEFAULT</Text>
+                      <Text className="text-[10px] font-bold text-success">DEFAULT</Text>
                     </View>
                   )}
                 </View>

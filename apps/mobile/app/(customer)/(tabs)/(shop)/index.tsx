@@ -267,7 +267,7 @@ export default function ShopScreen() {
                   <Icon name="image" size={32} color="#cbd5e1" />
                 )}
                 {discount > 0 && (
-                  <View className="absolute top-2 left-2 bg-rose-500 px-2 py-0.5 rounded-lg">
+                  <View className="absolute top-2 left-2 bg-error px-2 py-0.5 rounded-lg">
                     <Text className="text-[10px] font-bold text-white font-body">-{discount}%</Text>
                   </View>
                 )}

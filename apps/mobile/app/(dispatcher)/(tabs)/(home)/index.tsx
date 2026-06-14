@@ -142,7 +142,7 @@ export default function DispatcherMap() {
       <>
         {/* Pickup Marker */}
         <Marker coordinate={pickupCoords} title="Pickup">
-          <View className="w-8 h-8 bg-rose-500 rounded-full items-center justify-center border-2 border-white shadow-sm">
+          <View className="w-8 h-8 bg-error rounded-full items-center justify-center border-2 border-white shadow-sm">
             <Icon name="package" size={16} color="white" />
           </View>
         </Marker>
@@ -245,7 +245,7 @@ export default function DispatcherMap() {
 
               <View className="gap-2 mb-6">
                 <View className="flex-row items-center gap-3">
-                  <View className="w-2 h-2 rounded-full bg-rose-500" />
+                  <View className="w-2 h-2 rounded-full bg-error" />
                   <Text
                     className="text-muted-foreground text-[14px] font-body flex-1"
                     numberOfLines={1}
