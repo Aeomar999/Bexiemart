@@ -102,7 +102,7 @@ export default function TransactionsScreen() {
               style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
               key={f}
               onPress={() => setFilter(f as any)}
-              className={`px-4 py-2 rounded-full border ${filter === f ? "bg-foreground border-surface-900" : "bg-card border-border"}`}
+              className={`px-4 py-2 rounded-full border ${filter === f ? "bg-foreground border-border" : "bg-card border-border"}`}
             >
               <Text
                 className={`text-[14px] font-bold ${filter === f ? "text-white" : "text-muted-foreground"}`}

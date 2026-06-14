@@ -99,7 +99,7 @@ export default function ChatDetailScreen() {
           </View>
         )}
         <View
-          className={`max-w-[75%] rounded-[16px] px-4 py-2.5 ${isMine ? "bg-brand-600 rounded-tr-sm" : "bg-accent rounded-tl-sm"}`}
+          className={`max-w-[75%] rounded-[16px] px-4 py-2.5 ${isMine ? "bg-primary rounded-tr-sm" : "bg-secondary rounded-tl-sm"}`}
         >
           {item.type === "IMAGE" && item.mediaUrl ? (
             <Image
@@ -161,18 +161,18 @@ export default function ChatDetailScreen() {
         style={{ paddingBottom: Math.max(insets.bottom, 12) }}
       >
         <Pressable
-          className="w-10 h-10 items-center justify-center bg-accent rounded-full mb-1 active:opacity-70"
+          className="w-10 h-10 items-center justify-center bg-secondary rounded-full mb-1 active:opacity-70"
           onPress={handlePickImage}
           disabled={isUploading}
         >
           {isUploading ? (
-            <ActivityIndicator size="small" color="#004CFF" />
+            <ActivityIndicator size="small" color="var(--color-primary)" />
           ) : (
             <Icon name="image" size={20} color="#64748b" />
           )}
         </Pressable>
 
-        <View className="flex-1 bg-accent rounded-[20px] px-4 pt-3 pb-3 ml-2 mr-2 max-h-[100px] min-h-[44px]">
+        <View className="flex-1 bg-secondary rounded-[20px] px-4 pt-3 pb-3 ml-2 mr-2 max-h-[100px] min-h-[44px]">
           <TextInput
             className="flex-1 text-[15px] font-body text-foreground p-0 m-0 leading-tight"
             placeholder="Message..."
@@ -187,7 +187,7 @@ export default function ChatDetailScreen() {
         </View>
 
         <Pressable
-          className={`w-10 h-10 items-center justify-center rounded-full mb-1 ${content.trim() ? "bg-brand-600" : "bg-muted"}`}
+          className={`w-10 h-10 items-center justify-center rounded-full mb-1 ${content.trim() ? "bg-primary" : "bg-muted"}`}
           onPress={handleSendText}
           disabled={!content.trim()}
         >

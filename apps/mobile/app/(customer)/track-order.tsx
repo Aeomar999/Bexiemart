@@ -100,7 +100,7 @@ export default function TrackOrderScreen() {
           </View>
         </View>
         <View className="flex-1 items-center justify-center p-5">
-          <View className="w-20 h-20 bg-accent rounded-full items-center justify-center mb-6">
+          <View className="w-20 h-20 bg-secondary rounded-full items-center justify-center mb-6">
             <Icon name="truck" size={32} color="#94a3b8" />
           </View>
           <Text className="text-[20px] font-heading font-black text-foreground mb-2">
@@ -111,7 +111,7 @@ export default function TrackOrderScreen() {
           </Text>
 
           <Pressable
-            className="bg-brand-600 px-6 py-3 rounded-full"
+            className="bg-primary px-6 py-3 rounded-full"
             onPress={() => router.replace("/(customer)/book-rider")}
           >
             <Text className="text-white font-bold text-[16px]">Book a Rider</Text>
@@ -138,7 +138,7 @@ export default function TrackOrderScreen() {
       case "on_the_way":
         return "bg-emerald-500";
       case "arrived":
-        return "bg-brand-500";
+        return "bg-primary";
       default:
         return "bg-background0";
     }
@@ -176,7 +176,7 @@ export default function TrackOrderScreen() {
         {activeRide.status !== "searching" && (
           <Polyline
             coordinates={[riderCoords, dropoffCoords]}
-            strokeColor="#004CFF" // brand-600
+            strokeColor="var(--color-primary)" // brand-600
             strokeWidth={4}
             lineDashPattern={[10, 10]}
           />
@@ -198,7 +198,7 @@ export default function TrackOrderScreen() {
         {activeRide.status !== "searching" && (
           <Marker coordinate={riderCoords} anchor={{ x: 0.5, y: 0.5 }}>
             <View className="items-center">
-              <View className="w-10 h-10 bg-brand-600 rounded-full items-center justify-center border-4 border-white shadow-sm">
+              <View className="w-10 h-10 bg-primary rounded-full items-center justify-center border-4 border-white shadow-sm">
                 <Icon
                   name={
                     activeRide.riderType === "Motorbike"
@@ -244,7 +244,7 @@ export default function TrackOrderScreen() {
           className="bg-card rounded-t-[32px] p-6 border-t border-border shadow-sm"
           style={{ paddingBottom: Math.max(insets.bottom, 24) }}
         >
-          <View className="w-12 h-1.5 bg-accent rounded-full mx-auto mb-6" />
+          <View className="w-12 h-1.5 bg-secondary rounded-full mx-auto mb-6" />
 
           {/* Status Header */}
           <View className="flex-row justify-between items-end mb-6">
@@ -282,7 +282,7 @@ export default function TrackOrderScreen() {
           {activeRide.status !== "searching" ? (
             <View className="flex-row items-center justify-between bg-background p-4 rounded-[24px] border border-border mb-6">
               <View className="flex-row items-center gap-4">
-                <View className="w-12 h-12 rounded-full bg-accent items-center justify-center border border-surface-300">
+                <View className="w-12 h-12 rounded-full bg-secondary items-center justify-center border border-border">
                   <Icon name="user" size={24} color="#64748b" />
                 </View>
                 <View>
@@ -303,7 +303,7 @@ export default function TrackOrderScreen() {
               <View className="flex-row gap-2">
                 <Pressable
                   style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
-                  className="w-10 h-10 rounded-full bg-brand-50 items-center justify-center border border-brand-100"
+                  className="w-10 h-10 rounded-full bg-primary-subtle items-center justify-center border border-border"
                   onPress={() => {
                     router.push({
                       pathname: "/(customer)/chats",
@@ -311,7 +311,7 @@ export default function TrackOrderScreen() {
                     });
                   }}
                 >
-                  <Icon name="message-circle" size={18} color="#004CFF" />
+                  <Icon name="message-circle" size={18} color="var(--color-primary)" />
                 </Pressable>
                 <Pressable
                   style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
@@ -340,8 +340,8 @@ export default function TrackOrderScreen() {
 
           {/* Order Details Snippet */}
           <View className="flex-row items-start gap-4">
-            <View className="w-12 h-12 rounded-[16px] bg-brand-50 items-center justify-center border border-brand-100">
-              <Icon name="package" size={20} color="#004CFF" />
+            <View className="w-12 h-12 rounded-[16px] bg-primary-subtle items-center justify-center border border-border">
+              <Icon name="package" size={20} color="var(--color-primary)" />
             </View>
             <View className="flex-1">
               <Text className="text-[14px] font-bold text-foreground font-heading">

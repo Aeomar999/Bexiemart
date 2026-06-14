@@ -41,7 +41,8 @@ export default function ForgotPasswordScreen() {
             Check your email
           </Text>
           <Text className="text-body-md text-muted-foreground font-body text-center max-w-[280] leading-relaxed mb-8">
-            We sent a password reset link to <Text className="font-bold text-muted-foreground">{email}</Text>
+            We sent a password reset link to{" "}
+            <Text className="font-bold text-muted-foreground">{email}</Text>
           </Text>
           <View className="w-full">
             <Button
@@ -54,8 +55,8 @@ export default function ForgotPasswordScreen() {
         </View>
       ) : (
         <View>
-          <View className="w-16 h-16 rounded-2xl bg-brand-100 items-center justify-center mb-6">
-            <FontAwesome5 name="key" size={24} color="#004CFF" solid />
+          <View className="w-16 h-16 rounded-2xl bg-primary-subtle items-center justify-center mb-6">
+            <FontAwesome5 name="key" size={24} color="var(--color-primary)" solid />
           </View>
           <Text className="text-display-md font-heading font-bold text-foreground mb-2">
             Forgot password?

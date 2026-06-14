@@ -6,11 +6,9 @@ export function SocialLogins() {
   return (
     <View className="mt-8">
       <View className="flex-row items-center justify-center mb-6">
-        <View className="h-[1px] flex-1 bg-accent" />
-        <Text className="text-body-sm text-muted-foreground font-body px-4">
-          Or continue with
-        </Text>
-        <View className="h-[1px] flex-1 bg-accent" />
+        <View className="h-[1px] flex-1 bg-secondary" />
+        <Text className="text-body-sm text-muted-foreground font-body px-4">Or continue with</Text>
+        <View className="h-[1px] flex-1 bg-secondary" />
       </View>
 
       <View className="flex-row justify-center gap-4">

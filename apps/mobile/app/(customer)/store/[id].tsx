@@ -110,14 +110,17 @@ export default function StoreProfileScreen() {
         ListFooterComponent={
           isFetchingNextPage ? (
             <View className="py-4 items-center">
-              <ActivityIndicator color="#004CFF" />
+              <ActivityIndicator color="var(--color-primary)" />
             </View>
           ) : null
         }
         ListHeaderComponent={
           <View className="mb-6">
             {/* Premium Banner */}
-            <View style={{ height: 224 }} className="w-full bg-brand-900 relative overflow-hidden">
+            <View
+              style={{ height: 224 }}
+              className="w-full bg-primary-hover relative overflow-hidden"
+            >
               {store.banner ? (
                 <Image
                   source={{ uri: store.banner }}
@@ -125,7 +128,7 @@ export default function StoreProfileScreen() {
                   contentFit="cover"
                 />
               ) : (
-                <View className="flex-1 items-center justify-center bg-brand-800">
+                <View className="flex-1 items-center justify-center bg-primary-hover">
                   <Icon name="store" size={64} color="#3b82f6" />
                 </View>
               )}
@@ -143,19 +146,19 @@ export default function StoreProfileScreen() {
                         contentFit="cover"
                       />
                     ) : (
-                      <Text className="text-heading-lg font-bold text-brand-600 font-heading">
+                      <Text className="text-heading-lg font-bold text-primary font-heading">
                         {store.name.charAt(0).toUpperCase()}
                       </Text>
                     )}
                   </View>
 
                   <Pressable
-                    className="bg-brand-50 rounded-full px-5 py-2.5 flex-row items-center gap-2 border border-brand-100 active:opacity-70"
+                    className="bg-primary-subtle rounded-full px-5 py-2.5 flex-row items-center gap-2 border border-border active:opacity-70"
                     style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
                     onPress={() => router.push(`/chat?vendorId=${store.id}`)}
                   >
-                    <Icon name="message-circle" size={16} color="#004CFF" />
-                    <Text className="text-brand-600 font-bold font-body text-body-sm">
+                    <Icon name="message-circle" size={16} color="var(--color-primary)" />
+                    <Text className="text-primary font-bold font-body text-body-sm">
                       Contact Seller
                     </Text>
                   </Pressable>
@@ -272,7 +275,7 @@ export default function StoreProfileScreen() {
               </View>
               <View className="p-3">
                 <Text
-                  className="text-caption text-brand-600 font-bold font-body uppercase tracking-wide"
+                  className="text-caption text-primary font-bold font-body uppercase tracking-wide"
                   numberOfLines={1}
                 >
                   {item.vendor}
@@ -285,7 +288,7 @@ export default function StoreProfileScreen() {
                 </Text>
                 <View className="flex-row items-center justify-between mt-3">
                   <View>
-                    <Text className="text-heading-sm font-bold text-brand-600 font-heading">
+                    <Text className="text-heading-sm font-bold text-primary font-heading">
                       GHS {item.price.toFixed(2)}
                     </Text>
                     {item.oldPrice > item.price && (
@@ -296,7 +299,7 @@ export default function StoreProfileScreen() {
                   </View>
                   <Pressable
                     style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
-                    className="w-9 h-9 rounded-full bg-brand-600 items-center justify-center active:scale-95"
+                    className="w-9 h-9 rounded-full bg-primary items-center justify-center active:scale-95"
                     onPress={() => handleAddToCart(item)}
                   >
                     <Icon name="plus" size={16} color="#fff" />

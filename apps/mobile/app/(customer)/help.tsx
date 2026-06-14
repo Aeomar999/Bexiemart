@@ -44,7 +44,7 @@ export default function HelpCenterScreen() {
             return (
               <Pressable
                 key={i}
-                className={`bg-card p-5 rounded-[24px] border ${isExpanded ? "border-brand-200 shadow-sm" : "border-border"}`}
+                className={`bg-card p-5 rounded-[24px] border ${isExpanded ? "border-border shadow-sm" : "border-border"}`}
                 onPress={() => setExpandedIndex(isExpanded ? null : i)}
               >
                 <View className="flex-row justify-between items-center">
@@ -54,7 +54,7 @@ export default function HelpCenterScreen() {
                   <Icon
                     name={isExpanded ? "chevron-up" : "chevron-down"}
                     size={20}
-                    color={isExpanded ? "#004CFF" : "#64748b"}
+                    color={isExpanded ? "var(--color-primary)" : "#64748b"}
                   />
                 </View>
                 {isExpanded && (

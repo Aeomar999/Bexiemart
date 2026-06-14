@@ -133,7 +133,7 @@ export default function OperatingHoursScreen() {
                     <Switch
                       value={data.isOpen}
                       onValueChange={() => toggleDay(day.id)}
-                      trackColor={{ false: "#e2e8f0", true: "#004CFF" }}
+                      trackColor={{ false: "#e2e8f0", true: "var(--color-primary)" }}
                       thumbColor={"#ffffff"}
                     />
                   </View>
@@ -214,7 +214,7 @@ export default function OperatingHoursScreen() {
         <View className="flex-1 justify-end bg-black/40">
           <Pressable className="absolute inset-0" onPress={() => setPickerConfig(null)} />
           <View className="bg-card rounded-t-[32px] p-6 pb-12 h-[60%]">
-            <View className="w-12 h-1.5 bg-accent rounded-full self-center mb-6" />
+            <View className="w-12 h-1.5 bg-secondary rounded-full self-center mb-6" />
             <Text className="text-[20px] font-heading font-bold text-foreground mb-6">
               Select {pickerConfig?.type === "open" ? "Opening" : "Closing"} Time
             </Text>
@@ -230,17 +230,19 @@ export default function OperatingHoursScreen() {
                     style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
                     onPress={() => handleTimeSelect(item)}
                     className={`flex-row items-center justify-between p-4 rounded-[16px] mb-2 border ${
-                      isSelected ? "bg-brand-50 border-brand-200" : "bg-card border-border"
+                      isSelected ? "bg-primary-subtle border-border" : "bg-card border-border"
                     }`}
                   >
                     <Text
                       className={`text-[16px] font-bold ${
-                        isSelected ? "text-brand-700" : "text-foreground"
+                        isSelected ? "text-primary-hover" : "text-foreground"
                       }`}
                     >
                       {item}
                     </Text>
-                    {isSelected && <Icon name="check-circle" size={20} color="#004CFF" />}
+                    {isSelected && (
+                      <Icon name="check-circle" size={20} color="var(--color-primary)" />
+                    )}
                   </Pressable>
                 );
               }}

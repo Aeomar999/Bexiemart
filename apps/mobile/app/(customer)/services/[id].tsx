@@ -50,10 +50,7 @@ export default function ProviderDetailsScreen() {
     return (
       <View className="flex-1 bg-background items-center justify-center">
         <Text className="font-heading text-[16px] text-foreground">Service not found.</Text>
-        <Pressable
-          onPress={() => router.back()}
-          className="mt-4 px-6 py-3 bg-brand-600 rounded-full"
-        >
+        <Pressable onPress={() => router.back()} className="mt-4 px-6 py-3 bg-primary rounded-full">
           <Text className="text-white font-bold">Go Back</Text>
         </Pressable>
       </View>
@@ -133,7 +130,7 @@ export default function ProviderDetailsScreen() {
             <Text className="text-[24px] font-heading font-black text-foreground text-center mb-1">
               {service.vendor?.shopName ?? service.name}
             </Text>
-            <Text className="text-[14px] text-brand-600 font-bold mb-4">{service.name}</Text>
+            <Text className="text-[14px] text-primary font-bold mb-4">{service.name}</Text>
 
             <View className="flex-row items-center justify-center gap-6">
               <View className="items-center">
@@ -147,7 +144,7 @@ export default function ProviderDetailsScreen() {
                   {service.ratingCount} reviews
                 </Text>
               </View>
-              <View className="w-[1px] h-8 bg-accent" />
+              <View className="w-[1px] h-8 bg-secondary" />
               <View className="items-center">
                 <Text className="text-[16px] font-bold text-foreground mb-1">
                   {service.priceDisplay ?? `GHS ${Number(service.price).toFixed(2)}`}
@@ -169,7 +166,7 @@ export default function ProviderDetailsScreen() {
         {/* Contact Actions */}
         <View className="px-5 mt-6 flex-row gap-3">
           <Pressable
-            className="flex-1 bg-brand-50 border border-brand-200 py-3 rounded-xl flex-row items-center justify-center gap-2"
+            className="flex-1 bg-primary-subtle border border-border py-3 rounded-xl flex-row items-center justify-center gap-2"
             onPress={() =>
               showPopup({
                 type: "success",
@@ -179,14 +176,14 @@ export default function ProviderDetailsScreen() {
             }
           >
             <Icon name="message-circle" size={18} color="#0284c7" />
-            <Text className="text-brand-700 font-bold text-[14px]">Chat</Text>
+            <Text className="text-primary-hover font-bold text-[14px]">Chat</Text>
           </Pressable>
           <Pressable
-            className="flex-1 bg-brand-50 border border-brand-200 py-3 rounded-xl flex-row items-center justify-center gap-2"
+            className="flex-1 bg-primary-subtle border border-border py-3 rounded-xl flex-row items-center justify-center gap-2"
             onPress={() => Linking.openURL("tel:+233555555555")}
           >
             <Icon name="phone" size={18} color="#0284c7" />
-            <Text className="text-brand-700 font-bold text-[14px]">Call</Text>
+            <Text className="text-primary-hover font-bold text-[14px]">Call</Text>
           </Pressable>
         </View>
 
@@ -201,11 +198,11 @@ export default function ProviderDetailsScreen() {
             {DATES.map((date) => (
               <Pressable
                 key={date}
-                className={`mr-3 px-5 py-3 rounded-full border ${selectedDate === date ? "border-brand-500 bg-brand-50" : "border-border bg-card"}`}
+                className={`mr-3 px-5 py-3 rounded-full border ${selectedDate === date ? "border-primary bg-primary-subtle" : "border-border bg-card"}`}
                 onPress={() => setSelectedDate(date)}
               >
                 <Text
-                  className={`font-bold ${selectedDate === date ? "text-brand-700" : "text-muted-foreground"}`}
+                  className={`font-bold ${selectedDate === date ? "text-primary-hover" : "text-muted-foreground"}`}
                 >
                   {date}
                 </Text>
@@ -247,11 +244,11 @@ export default function ProviderDetailsScreen() {
                 {["10:00 AM", "12:30 PM", "3:00 PM", "5:00 PM"].map((time) => (
                   <Pressable
                     key={time}
-                    className={`w-[30%] py-3 rounded-[16px] border items-center justify-center ${selectedTime === time ? "border-brand-500 bg-brand-50" : "border-border bg-card"}`}
+                    className={`w-[30%] py-3 rounded-[16px] border items-center justify-center ${selectedTime === time ? "border-primary bg-primary-subtle" : "border-border bg-card"}`}
                     onPress={() => setSelectedTime(time)}
                   >
                     <Text
-                      className={`font-bold text-[13px] ${selectedTime === time ? "text-brand-700" : "text-muted-foreground"}`}
+                      className={`font-bold text-[13px] ${selectedTime === time ? "text-primary-hover" : "text-muted-foreground"}`}
                     >
                       {time}
                     </Text>
@@ -289,7 +286,7 @@ export default function ProviderDetailsScreen() {
         </View>
 
         <Pressable
-          className={`h-14 rounded-full flex-row items-center justify-center shadow-sm ${isFormValid ? "bg-brand-600" : "bg-accent"}`}
+          className={`h-14 rounded-full flex-row items-center justify-center shadow-sm ${isFormValid ? "bg-primary" : "bg-secondary"}`}
           disabled={!isFormValid}
           onPress={handleBook}
         >
@@ -332,7 +329,7 @@ export default function ProviderDetailsScreen() {
               {addresses.map((addr) => (
                 <Pressable
                   key={addr.id}
-                  className={`p-4 rounded-[20px] border mb-4 ${selectedAddress?.id === addr.id ? "border-brand-500 bg-brand-50" : "border-border bg-card"}`}
+                  className={`p-4 rounded-[20px] border mb-4 ${selectedAddress?.id === addr.id ? "border-primary bg-primary-subtle" : "border-border bg-card"}`}
                   onPress={() => {
                     setSelectedAddress(addr);
                     setAddressModalVisible(false);
@@ -351,7 +348,7 @@ export default function ProviderDetailsScreen() {
                       color={selectedAddress?.id === addr.id ? "#3b82f6" : "#64748b"}
                     />
                     <Text
-                      className={`font-bold ml-2 ${selectedAddress?.id === addr.id ? "text-brand-700" : "text-foreground"}`}
+                      className={`font-bold ml-2 ${selectedAddress?.id === addr.id ? "text-primary-hover" : "text-foreground"}`}
                     >
                       {addr.name}
                     </Text>

@@ -36,7 +36,7 @@ const PROFILE_SECTIONS = [
         icon: "shopping-bag",
         label: "Order History",
         route: "/(customer)/orders",
-        color: "#004CFF",
+        color: "var(--color-primary)",
       },
       {
         id: "favorites",
@@ -236,7 +236,7 @@ export default function ProfileScreen() {
                           <Switch
                             value={isDarkMode}
                             onValueChange={setIsDarkMode}
-                            trackColor={{ false: "#e2e8f0", true: "#004CFF" }}
+                            trackColor={{ false: "#e2e8f0", true: "var(--color-primary)" }}
                             thumbColor={"#ffffff"}
                           />
                         ) : (

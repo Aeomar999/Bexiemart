@@ -12,9 +12,9 @@ import { useOrders } from "@/lib/hooks/use-orders";
 
 const statusConfig: Record<string, { label: string; color: string; bg: string; icon: string }> = {
   processing: { label: "Processing", color: "#d97706", bg: "#fef3c7", icon: "loader" },
-  shipped: { label: "Shipped", color: "#004CFF", bg: "#e0e7ff", icon: "truck" },
+  shipped: { label: "Shipped", color: "var(--color-primary)", bg: "#e0e7ff", icon: "truck" },
   delivered: { label: "Delivered", color: "#059669", bg: "#d1fae5", icon: "check-circle" },
-  cancelled: { label: "Cancelled", color: "#ef4444", bg: "#fee2e2", icon: "x-circle" }
+  cancelled: { label: "Cancelled", color: "#ef4444", bg: "#fee2e2", icon: "x-circle" },
 };
 
 export default function OrdersScreen() {
@@ -41,30 +41,27 @@ export default function OrdersScreen() {
   return (
     <View className="flex-1 bg-background">
       {/* Header */}
-      <View 
+      <View
         className="px-5 pb-4 bg-card border-b border-border"
         style={{ paddingTop: (insets.top || 12) + 12 }}
       >
         <View className="flex-row items-center gap-3">
           <BackButton />
-          <Text className="text-[20px] font-heading font-black text-foreground">
-            Order History
-          </Text>
+          <Text className="text-[20px] font-heading font-black text-foreground">Order History</Text>
         </View>
 
         {/* Filters */}
         <View className="flex-row mt-6 gap-3">
           {["all", "active", "past"].map((f) => (
-            <Pressable style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
+            <Pressable
+              style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
               key={f}
               onPress={() => setFilter(f)}
               className={`px-5 py-2.5 rounded-full border ${
-                filter === f 
-                  ? "bg-foreground border-surface-900" 
-                  : "bg-card border-border"
+                filter === f ? "bg-foreground border-border" : "bg-card border-border"
               }`}
             >
-              <Text 
+              <Text
                 className={`text-[14px] font-bold capitalize ${
                   filter === f ? "text-white" : "text-muted-foreground"
                 }`}
@@ -90,22 +87,32 @@ export default function OrdersScreen() {
       ) : (
         <FlatList
           data={filteredOrders}
-          keyExtractor={item => item.id}
+          keyExtractor={(item) => item.id}
           contentContainerStyle={{ padding: 20, paddingBottom: 40 }}
           showsVerticalScrollIndicator={false}
-          refreshControl={<RefreshControl refreshing={false} onRefresh={refetch} tintColor="#004CFF" />}
+          refreshControl={
+            <RefreshControl
+              refreshing={false}
+              onRefresh={refetch}
+              tintColor="var(--color-primary)"
+            />
+          }
           renderItem={({ item }) => {
             const status = statusConfig[item.status];
-            
+
             return (
-              <Pressable 
-                style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]} 
+              <Pressable
+                style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
                 className="bg-card p-5 rounded-[24px] border border-border shadow-[0_10px_20px_rgba(0,0,0,0.03)] mb-4"
                 onPress={() => {
-                  if (item.status !== 'delivered' && item.status !== 'cancelled') {
+                  if (item.status !== "delivered" && item.status !== "cancelled") {
                     router.push("/(customer)/track-order");
                   } else {
-                    Toast.show({ type: "info", text1: "Reorder", text2: "Reorder functionality coming soon." });
+                    Toast.show({
+                      type: "info",
+                      text1: "Reorder",
+                      text2: "Reorder functionality coming soon.",
+                    });
                   }
                 }}
               >
@@ -119,15 +126,12 @@ export default function OrdersScreen() {
                       {item.date}
                     </Text>
                   </View>
-                  <View 
+                  <View
                     className="flex-row items-center px-3 py-1.5 rounded-full"
                     style={{ backgroundColor: status.bg }}
                   >
                     <Icon name={status.icon} size={12} color={status.color} />
-                    <Text 
-                      className="text-[12px] font-bold ml-1.5"
-                      style={{ color: status.color }}
-                    >
+                    <Text className="text-[12px] font-bold ml-1.5" style={{ color: status.color }}>
                       {status.label}
                     </Text>
                   </View>
@@ -136,8 +140,14 @@ export default function OrdersScreen() {
                 {/* Items */}
                 <View className="bg-background p-4 rounded-[16px] mb-4">
                   {item.items.map((cartItem: any, idx: number) => (
-                    <View key={idx} className={`flex-row justify-between items-center ${idx !== item.items.length - 1 ? "mb-2" : ""}`}>
-                      <Text className="text-[14px] font-body font-medium text-muted-foreground flex-1" numberOfLines={1}>
+                    <View
+                      key={idx}
+                      className={`flex-row justify-between items-center ${idx !== item.items.length - 1 ? "mb-2" : ""}`}
+                    >
+                      <Text
+                        className="text-[14px] font-body font-medium text-muted-foreground flex-1"
+                        numberOfLines={1}
+                      >
                         {cartItem.qty}x {cartItem.name}
                       </Text>
                     </View>
@@ -147,24 +157,31 @@ export default function OrdersScreen() {
                 {/* Footer */}
                 <View className="flex-row justify-between items-center pt-2">
                   <View>
-                    <Text className="text-caption font-body text-muted-foreground mb-0.5">Total Amount</Text>
-                    <Text className="text-[16px] font-heading font-black text-brand-600">
+                    <Text className="text-caption font-body text-muted-foreground mb-0.5">
+                      Total Amount
+                    </Text>
+                    <Text className="text-[16px] font-heading font-black text-primary">
                       GHS {item.total.toFixed(2)}
                     </Text>
                   </View>
-                  
-                  <Pressable style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]} 
-                    className="bg-brand-50 px-5 py-2.5 rounded-full"
+
+                  <Pressable
+                    style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
+                    className="bg-primary-subtle px-5 py-2.5 rounded-full"
                     onPress={() => {
-                      if (item.status !== 'delivered' && item.status !== 'cancelled') {
+                      if (item.status !== "delivered" && item.status !== "cancelled") {
                         router.push("/(customer)/track-order");
                       } else {
-                        Toast.show({ type: "info", text1: "Reorder", text2: "Reorder functionality coming soon." });
+                        Toast.show({
+                          type: "info",
+                          text1: "Reorder",
+                          text2: "Reorder functionality coming soon.",
+                        });
                       }
                     }}
                   >
-                    <Text className="text-[14px] font-bold text-brand-600">
-                      {item.status === 'delivered' ? 'Reorder' : 'Track'}
+                    <Text className="text-[14px] font-bold text-primary">
+                      {item.status === "delivered" ? "Reorder" : "Track"}
                     </Text>
                   </Pressable>
                 </View>

@@ -158,7 +158,7 @@ export default function DispatcherMap() {
         {userLocation && (taskStatus === "available" || taskStatus === "accepted") && (
           <Polyline
             coordinates={[userLocation, pickupCoords]}
-            strokeColor="#004CFF"
+            strokeColor="var(--color-primary)"
             strokeWidth={4}
             lineDashPattern={[10, 10]} // Dashed line to indicate navigating to pickup
           />
@@ -167,7 +167,7 @@ export default function DispatcherMap() {
         {/* Route from Pickup to Dropoff */}
         <Polyline
           coordinates={[pickupCoords, dropoffCoords]}
-          strokeColor={taskStatus === "delivering" ? "#004CFF" : "#94a3b8"}
+          strokeColor={taskStatus === "delivering" ? "var(--color-primary)" : "#94a3b8"}
           strokeWidth={taskStatus === "delivering" ? 4 : 3}
           lineDashPattern={taskStatus === "delivering" ? undefined : [5, 5]} // Solid if delivering, dashed otherwise
         />
@@ -233,12 +233,12 @@ export default function DispatcherMap() {
             <View className="bg-background rounded-2xl p-4 border border-border">
               <View className="flex-row items-center justify-between mb-3">
                 <View className="flex-row items-center gap-2">
-                  <View className="bg-brand-100 p-2 rounded-full">
-                    <Icon name="package" size={16} color="#004CFF" />
+                  <View className="bg-primary-subtle p-2 rounded-full">
+                    <Icon name="package" size={16} color="var(--color-primary)" />
                   </View>
                   <Text className="font-bold text-foreground font-body">Ride Request</Text>
                 </View>
-                <Text className="font-black text-brand-600 text-[18px] font-heading">
+                <Text className="font-black text-primary text-[18px] font-heading">
                   GH₵ {Number(displayRide.price).toFixed(2)}
                 </Text>
               </View>
@@ -266,7 +266,7 @@ export default function DispatcherMap() {
 
               <SwipeButton
                 text={acceptTask.isPending ? "Accepting..." : "Slide to Accept"}
-                buttonColor="#004CFF"
+                buttonColor="var(--color-primary)"
                 onComplete={() => {
                   acceptTask.mutate(
                     { taskId: displayRide.id, type: "ride" },
@@ -333,9 +333,9 @@ export default function DispatcherMap() {
                 </Pressable>
                 <Pressable
                   onPress={handleCall}
-                  className="w-10 h-10 rounded-full bg-brand-100 items-center justify-center"
+                  className="w-10 h-10 rounded-full bg-primary-subtle items-center justify-center"
                 >
-                  <Icon name="phone" size={18} color="#004CFF" />
+                  <Icon name="phone" size={18} color="var(--color-primary)" />
                 </Pressable>
               </View>
             </View>
@@ -401,7 +401,7 @@ export default function DispatcherMap() {
             {taskStatus === "delivering" && (
               <SwipeButton
                 text={updateStatus.isPending ? "Updating..." : "Slide to Deliver"}
-                buttonColor="#004CFF"
+                buttonColor="var(--color-primary)"
                 iconName="check-circle"
                 onComplete={() => {
                   updateStatus.mutate(
@@ -440,8 +440,8 @@ export default function DispatcherMap() {
         {/* Dispatcher (User) Marker - Always visible when online/location known */}
         {userLocation && (
           <Marker coordinate={userLocation} title="You" zIndex={999}>
-            <View className="w-10 h-10 bg-brand-50 rounded-full items-center justify-center border border-brand-200">
-              <View className="w-6 h-6 bg-brand-600 rounded-full border-2 border-white items-center justify-center shadow-lg">
+            <View className="w-10 h-10 bg-primary-subtle rounded-full items-center justify-center border border-border">
+              <View className="w-6 h-6 bg-primary rounded-full border-2 border-white items-center justify-center shadow-lg">
                 <Icon name="truck" size={12} color="white" />
               </View>
             </View>
@@ -488,7 +488,7 @@ export default function DispatcherMap() {
         className="absolute right-5 bg-card p-3 rounded-full shadow-md border border-border"
         style={{ top: Math.max(insets.top, 12) + 90 }}
       >
-        <Icon name="navigation" size={20} color="#004CFF" />
+        <Icon name="navigation" size={20} color="var(--color-primary)" />
       </Pressable>
 
       {renderBottomSheet()}

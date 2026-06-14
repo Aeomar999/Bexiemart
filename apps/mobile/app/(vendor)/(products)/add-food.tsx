@@ -28,7 +28,7 @@ export default function AddFoodScreen() {
   const [description, setDescription] = useState(isEdit ? "A delicious spicy chicken burger." : "");
   const [price, setPrice] = useState(isEdit ? "45.00" : "");
   const [prepTime, setPrepTime] = useState(isEdit ? "15-20 mins" : "");
-  
+
   const [status, setStatus] = useState<"available" | "sold_out">("available");
 
   const [dietaryTags, setDietaryTags] = useState({
@@ -39,7 +39,7 @@ export default function AddFoodScreen() {
   });
 
   const toggleTag = (key: keyof typeof dietaryTags) => {
-    setDietaryTags(prev => ({ ...prev, [key]: !prev[key] }));
+    setDietaryTags((prev) => ({ ...prev, [key]: !prev[key] }));
   };
 
   const loading = createMutation.isPending;
@@ -50,14 +50,21 @@ export default function AddFoodScreen() {
       return;
     }
     const formData = {
-      name, category, description,
+      name,
+      category,
+      description,
       price: parseFloat(price),
       prepTime,
-      dietaryTags: Object.entries(dietaryTags).filter(([,v]) => v).map(([k]) => k),
+      dietaryTags: Object.entries(dietaryTags)
+        .filter(([, v]) => v)
+        .map(([k]) => k),
       status: saveStatus === "active" ? status : "draft",
     };
     createMutation.mutate(formData, {
-      onSuccess: () => { Alert.alert("Published", "Food item published successfully!"); router.back(); },
+      onSuccess: () => {
+        Alert.alert("Published", "Food item published successfully!");
+        router.back();
+      },
       onError: () => Alert.alert("Error", "Failed to create food item."),
     });
   };
@@ -65,7 +72,7 @@ export default function AddFoodScreen() {
   return (
     <View className="flex-1 bg-background">
       {/* Custom Header */}
-      <View 
+      <View
         className="px-5 pb-4 bg-card border-b border-border flex-row items-center"
         style={{ paddingTop: (insets.top || 12) + 12 }}
       >
@@ -81,148 +88,179 @@ export default function AddFoodScreen() {
         keyboardShouldPersistTaps="handled"
         showsVerticalScrollIndicator={false}
       >
-
-      {/* Image Upload Area */}
-      <Pressable 
-        style={({ pressed }) => [{ opacity: pressed ? 0.8 : 1 }]}
-        className="w-full h-48 bg-muted rounded-[20px] items-center justify-center border-2 border-dashed border-border mb-8"
-      >
-        <View className="w-14 h-14 bg-card rounded-full items-center justify-center mb-3">
-          <Icon name="camera" size={24} color="#64748b" />
-        </View>
-        <Text className="text-[14px] font-bold text-muted-foreground">Add Mouthwatering Photos</Text>
-        <Text className="text-[12px] text-muted-foreground mt-1">Upload up to 3 images</Text>
-      </Pressable>
-
-      <View className="gap-5">
-        <View>
-          <Text className="text-[16px] font-bold text-foreground mb-4">Meal Details</Text>
-          <View className="gap-4">
-            <Input
-              label="Item Name"
-              placeholder="e.g. Spicy Jollof Rice"
-              value={name}
-              onChangeText={setName}
-            />
-            
-            {/* Horizontal Category Selector */}
-            <View>
-              <Text className="text-[14px] font-bold text-muted-foreground mb-2">Category</Text>
-              <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-                <View className="flex-row gap-2">
-                  {CATEGORIES.map(cat => (
-                    <Pressable 
-                      key={cat}
-                      onPress={() => setCategory(cat)}
-                      className={`px-4 py-2 rounded-full border ${category === cat ? 'bg-foreground border-surface-900' : 'bg-card border-border'}`}
-                    >
-                      <Text className={`text-[13px] font-bold ${category === cat ? 'text-white' : 'text-muted-foreground'}`}>{cat}</Text>
-                    </Pressable>
-                  ))}
-                </View>
-              </ScrollView>
-            </View>
-
-            <Input
-              label="Description & Ingredients"
-              placeholder="Describe the meal and main ingredients..."
-              value={description}
-              onChangeText={setDescription}
-              multiline
-              numberOfLines={4}
-            />
+        {/* Image Upload Area */}
+        <Pressable
+          style={({ pressed }) => [{ opacity: pressed ? 0.8 : 1 }]}
+          className="w-full h-48 bg-muted rounded-[20px] items-center justify-center border-2 border-dashed border-border mb-8"
+        >
+          <View className="w-14 h-14 bg-card rounded-full items-center justify-center mb-3">
+            <Icon name="camera" size={24} color="#64748b" />
           </View>
-        </View>
+          <Text className="text-[14px] font-bold text-muted-foreground">
+            Add Mouthwatering Photos
+          </Text>
+          <Text className="text-[12px] text-muted-foreground mt-1">Upload up to 3 images</Text>
+        </Pressable>
 
-        <View className="h-px bg-accent my-2" />
-
-        <View>
-          <Text className="text-[16px] font-bold text-foreground mb-4">Pricing & Timing</Text>
-          <View className="flex-row gap-4">
-            <View className="flex-1">
+        <View className="gap-5">
+          <View>
+            <Text className="text-[16px] font-bold text-foreground mb-4">Meal Details</Text>
+            <View className="gap-4">
               <Input
-                label="Price (GHS)"
-                placeholder="0.00"
-                keyboardType="decimal-pad"
-                value={price}
-                onChangeText={setPrice}
+                label="Item Name"
+                placeholder="e.g. Spicy Jollof Rice"
+                value={name}
+                onChangeText={setName}
               />
-            </View>
-            <View className="flex-1">
+
+              {/* Horizontal Category Selector */}
+              <View>
+                <Text className="text-[14px] font-bold text-muted-foreground mb-2">Category</Text>
+                <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+                  <View className="flex-row gap-2">
+                    {CATEGORIES.map((cat) => (
+                      <Pressable
+                        key={cat}
+                        onPress={() => setCategory(cat)}
+                        className={`px-4 py-2 rounded-full border ${category === cat ? "bg-foreground border-border" : "bg-card border-border"}`}
+                      >
+                        <Text
+                          className={`text-[13px] font-bold ${category === cat ? "text-white" : "text-muted-foreground"}`}
+                        >
+                          {cat}
+                        </Text>
+                      </Pressable>
+                    ))}
+                  </View>
+                </ScrollView>
+              </View>
+
               <Input
-                label="Prep Time"
-                placeholder="e.g. 15-20 mins"
-                value={prepTime}
-                onChangeText={setPrepTime}
+                label="Description & Ingredients"
+                placeholder="Describe the meal and main ingredients..."
+                value={description}
+                onChangeText={setDescription}
+                multiline
+                numberOfLines={4}
               />
             </View>
           </View>
-        </View>
 
-        <View className="h-px bg-accent my-2" />
+          <View className="h-px bg-secondary my-2" />
 
-        <View>
-          <Text className="text-[16px] font-bold text-foreground mb-4">Dietary Tags</Text>
-          <View className="flex-row flex-wrap gap-3">
-            {[
-              { id: "spicy", label: "Spicy", icon: "activity" },
-              { id: "vegan", label: "Vegan", icon: "feather" },
-              { id: "glutenFree", label: "Gluten-Free", icon: "shield" },
-              { id: "halal", label: "Halal", icon: "check-circle" },
-            ].map((tag) => (
+          <View>
+            <Text className="text-[16px] font-bold text-foreground mb-4">Pricing & Timing</Text>
+            <View className="flex-row gap-4">
+              <View className="flex-1">
+                <Input
+                  label="Price (GHS)"
+                  placeholder="0.00"
+                  keyboardType="decimal-pad"
+                  value={price}
+                  onChangeText={setPrice}
+                />
+              </View>
+              <View className="flex-1">
+                <Input
+                  label="Prep Time"
+                  placeholder="e.g. 15-20 mins"
+                  value={prepTime}
+                  onChangeText={setPrepTime}
+                />
+              </View>
+            </View>
+          </View>
+
+          <View className="h-px bg-secondary my-2" />
+
+          <View>
+            <Text className="text-[16px] font-bold text-foreground mb-4">Dietary Tags</Text>
+            <View className="flex-row flex-wrap gap-3">
+              {[
+                { id: "spicy", label: "Spicy", icon: "activity" },
+                { id: "vegan", label: "Vegan", icon: "feather" },
+                { id: "glutenFree", label: "Gluten-Free", icon: "shield" },
+                { id: "halal", label: "Halal", icon: "check-circle" },
+              ].map((tag) => (
+                <Pressable
+                  key={tag.id}
+                  onPress={() => toggleTag(tag.id as keyof typeof dietaryTags)}
+                  className={`flex-row items-center px-4 py-2.5 rounded-xl border ${dietaryTags[tag.id as keyof typeof dietaryTags] ? "bg-primary-subtle border-border" : "bg-card border-border"}`}
+                >
+                  <Icon
+                    name={tag.icon}
+                    size={14}
+                    color={
+                      dietaryTags[tag.id as keyof typeof dietaryTags]
+                        ? "var(--color-primary)"
+                        : "#64748b"
+                    }
+                  />
+                  <Text
+                    className={`ml-2 text-[13px] font-bold ${dietaryTags[tag.id as keyof typeof dietaryTags] ? "text-primary-hover" : "text-muted-foreground"}`}
+                  >
+                    {tag.label}
+                  </Text>
+                </Pressable>
+              ))}
+            </View>
+          </View>
+
+          <View className="h-px bg-secondary my-2" />
+
+          <View>
+            <Text className="text-[16px] font-bold text-foreground mb-4">Availability</Text>
+            <View className="flex-row bg-muted p-1 rounded-xl">
               <Pressable
-                key={tag.id}
-                onPress={() => toggleTag(tag.id as keyof typeof dietaryTags)}
-                className={`flex-row items-center px-4 py-2.5 rounded-xl border ${dietaryTags[tag.id as keyof typeof dietaryTags] ? 'bg-brand-50 border-brand-200' : 'bg-card border-border'}`}
+                onPress={() => setStatus("available")}
+                className={`flex-1 py-3 items-center justify-center rounded-lg ${status === "available" ? "bg-card border border-border shadow-sm" : ""}`}
+                style={
+                  status === "available"
+                    ? { elevation: 2, shadowColor: "#000", shadowOpacity: 0.05, shadowRadius: 5 }
+                    : {}
+                }
               >
-                <Icon name={tag.icon} size={14} color={dietaryTags[tag.id as keyof typeof dietaryTags] ? "#004CFF" : "#64748b"} />
-                <Text className={`ml-2 text-[13px] font-bold ${dietaryTags[tag.id as keyof typeof dietaryTags] ? 'text-brand-700' : 'text-muted-foreground'}`}>
-                  {tag.label}
+                <Text
+                  className={`text-[14px] font-bold ${status === "available" ? "text-green-600" : "text-muted-foreground"}`}
+                >
+                  Available
                 </Text>
               </Pressable>
-            ))}
+              <Pressable
+                onPress={() => setStatus("sold_out")}
+                className={`flex-1 py-3 items-center justify-center rounded-lg ${status === "sold_out" ? "bg-card border border-border shadow-sm" : ""}`}
+                style={
+                  status === "sold_out"
+                    ? { elevation: 2, shadowColor: "#000", shadowOpacity: 0.05, shadowRadius: 5 }
+                    : {}
+                }
+              >
+                <Text
+                  className={`text-[14px] font-bold ${status === "sold_out" ? "text-rose-600" : "text-muted-foreground"}`}
+                >
+                  Sold Out
+                </Text>
+              </Pressable>
+            </View>
+          </View>
+
+          <View className="mt-6 gap-3">
+            <Button
+              title={isEdit ? "Update Food Item" : "Publish Food Item"}
+              size="lg"
+              loading={loading}
+              onPress={() => handleSubmit("active")}
+              className="w-full"
+            />
+            <Pressable
+              onPress={() => handleSubmit("draft")}
+              className="w-full py-4 items-center rounded-full border border-border bg-card"
+            >
+              <Text className="text-[15px] font-bold text-muted-foreground">Save as Draft</Text>
+            </Pressable>
           </View>
         </View>
-
-        <View className="h-px bg-accent my-2" />
-
-        <View>
-          <Text className="text-[16px] font-bold text-foreground mb-4">Availability</Text>
-          <View className="flex-row bg-muted p-1 rounded-xl">
-            <Pressable 
-              onPress={() => setStatus("available")}
-              className={`flex-1 py-3 items-center justify-center rounded-lg ${status === "available" ? "bg-card border border-border shadow-sm" : ""}`}
-              style={status === "available" ? { elevation: 2, shadowColor: "#000", shadowOpacity: 0.05, shadowRadius: 5 } : {}}
-            >
-              <Text className={`text-[14px] font-bold ${status === "available" ? "text-green-600" : "text-muted-foreground"}`}>Available</Text>
-            </Pressable>
-            <Pressable 
-              onPress={() => setStatus("sold_out")}
-              className={`flex-1 py-3 items-center justify-center rounded-lg ${status === "sold_out" ? "bg-card border border-border shadow-sm" : ""}`}
-              style={status === "sold_out" ? { elevation: 2, shadowColor: "#000", shadowOpacity: 0.05, shadowRadius: 5 } : {}}
-            >
-              <Text className={`text-[14px] font-bold ${status === "sold_out" ? "text-rose-600" : "text-muted-foreground"}`}>Sold Out</Text>
-            </Pressable>
-          </View>
-        </View>
-
-        <View className="mt-6 gap-3">
-          <Button
-            title={isEdit ? "Update Food Item" : "Publish Food Item"}
-            size="lg"
-            loading={loading}
-            onPress={() => handleSubmit("active")}
-            className="w-full"
-          />
-          <Pressable 
-            onPress={() => handleSubmit("draft")}
-            className="w-full py-4 items-center rounded-full border border-border bg-card"
-          >
-            <Text className="text-[15px] font-bold text-muted-foreground">Save as Draft</Text>
-          </Pressable>
-        </View>
-      </View>
-    </ScrollView>
+      </ScrollView>
     </View>
   );
 }

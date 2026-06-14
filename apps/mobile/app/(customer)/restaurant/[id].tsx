@@ -92,7 +92,7 @@ export default function RestaurantScreen() {
               resizeMode="cover"
             />
           ) : (
-            <View className="absolute w-full h-full bg-accent items-center justify-center">
+            <View className="absolute w-full h-full bg-secondary items-center justify-center">
               <Icon name="image" size={48} color="#94a3b8" />
             </View>
           )}
@@ -132,7 +132,7 @@ export default function RestaurantScreen() {
               </View>
               <Text className="text-[12px] text-muted-foreground mt-1">Location</Text>
             </View>
-            <View className="w-[1px] bg-accent" />
+            <View className="w-[1px] bg-secondary" />
             <View className="items-center">
               <View className="flex-row items-center">
                 <Icon name="shopping-bag" size={16} color="#64748b" />
@@ -143,7 +143,7 @@ export default function RestaurantScreen() {
               </View>
               <Text className="text-[12px] text-muted-foreground mt-1">Menu Items</Text>
             </View>
-            <View className="w-[1px] bg-accent" />
+            <View className="w-[1px] bg-secondary" />
             <View className="items-center">
               <View className="flex-row items-center">
                 <Icon name="clock" size={16} color="#64748b" />
@@ -210,7 +210,7 @@ export default function RestaurantScreen() {
                       >
                         {item.description}
                       </Text>
-                      <Text className="text-[15px] font-bold text-brand-600 font-heading">
+                      <Text className="text-[15px] font-bold text-primary font-heading">
                         GHS {item.price.toFixed(2)}
                       </Text>
                     </View>
@@ -241,11 +241,11 @@ export default function RestaurantScreen() {
         <View className="absolute bottom-0 left-0 right-0 bg-card border-t border-border p-4 pb-8 shadow-2xl">
           <Pressable
             style={({ pressed }) => [{ opacity: pressed ? 0.9 : 1 }]}
-            className="bg-brand-600 rounded-2xl flex-row justify-between items-center px-5 py-4"
+            className="bg-primary rounded-2xl flex-row justify-between items-center px-5 py-4"
             onPress={() => router.push("/(customer)/food-cart")}
           >
             <View className="flex-row items-center gap-3">
-              <View className="bg-brand-800 w-8 h-8 rounded-full items-center justify-center">
+              <View className="bg-primary-hover w-8 h-8 rounded-full items-center justify-center">
                 <Text className="text-white font-bold text-[14px]">{cartItemCount}</Text>
               </View>
               <Text className="text-white font-bold text-[16px]">View Cart</Text>

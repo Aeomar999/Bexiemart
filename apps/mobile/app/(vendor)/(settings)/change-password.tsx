@@ -27,7 +27,7 @@ export default function ChangePasswordScreen() {
   const strength = getStrength(newPassword);
   const strengthColor =
     strength === 0
-      ? "bg-accent"
+      ? "bg-secondary"
       : strength === 1
         ? "bg-red-500"
         : strength === 2
@@ -87,13 +87,13 @@ export default function ChangePasswordScreen() {
             <View className="mt-3 flex-row items-center justify-between">
               <View className="flex-row gap-1 flex-1 mr-4">
                 <View
-                  className={`h-1.5 flex-1 rounded-full ${strength >= 1 ? strengthColor : "bg-accent"}`}
+                  className={`h-1.5 flex-1 rounded-full ${strength >= 1 ? strengthColor : "bg-secondary"}`}
                 />
                 <View
-                  className={`h-1.5 flex-1 rounded-full ${strength >= 2 ? strengthColor : "bg-accent"}`}
+                  className={`h-1.5 flex-1 rounded-full ${strength >= 2 ? strengthColor : "bg-secondary"}`}
                 />
                 <View
-                  className={`h-1.5 flex-1 rounded-full ${strength >= 3 ? strengthColor : "bg-accent"}`}
+                  className={`h-1.5 flex-1 rounded-full ${strength >= 3 ? strengthColor : "bg-secondary"}`}
                 />
               </View>
               <Text
@@ -131,7 +131,7 @@ export default function ChangePasswordScreen() {
           }}
         />
         <Pressable className="mt-6 self-center" onPress={() => {}}>
-          <Text className="text-[14px] font-bold text-brand-600">Forgot Current Password?</Text>
+          <Text className="text-[14px] font-bold text-primary">Forgot Current Password?</Text>
         </Pressable>
       </ScrollView>
     </View>

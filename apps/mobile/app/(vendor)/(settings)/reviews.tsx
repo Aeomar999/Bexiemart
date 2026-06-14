@@ -95,7 +95,7 @@ export default function VendorReviewsScreen() {
                   </Text>
                   <View className="flex-1 h-2 bg-muted rounded-full mx-2 overflow-hidden">
                     <View
-                      className="h-full bg-brand-500 rounded-full"
+                      className="h-full bg-primary rounded-full"
                       style={{ width: `${item.percentage}%` }}
                     />
                   </View>
@@ -111,7 +111,7 @@ export default function VendorReviewsScreen() {
               <View key={review.id} className="bg-card rounded-[20px] border border-border p-5">
                 <View className="flex-row justify-between items-start mb-3">
                   <View className="flex-row items-center">
-                    <View className="w-10 h-10 rounded-full bg-accent items-center justify-center mr-3">
+                    <View className="w-10 h-10 rounded-full bg-secondary items-center justify-center mr-3">
                       <Text className="text-[16px] font-bold text-muted-foreground">
                         {review.customer?.charAt(0) || "?"}
                       </Text>
@@ -153,15 +153,15 @@ export default function VendorReviewsScreen() {
                       setReplyModalId(review.id);
                       setReplyText("");
                     }}
-                    className="flex-row items-center justify-center py-2.5 bg-brand-50 rounded-[12px] border border-brand-100"
+                    className="flex-row items-center justify-center py-2.5 bg-primary-subtle rounded-[12px] border border-border"
                   >
                     <Icon
                       name="message-circle"
                       size={16}
-                      color="#004CFF"
+                      color="var(--color-primary)"
                       style={{ marginRight: 6 }}
                     />
-                    <Text className="text-[14px] font-bold text-brand-600">Reply to Customer</Text>
+                    <Text className="text-[14px] font-bold text-primary">Reply to Customer</Text>
                   </Pressable>
                 )}
               </View>
@@ -180,7 +180,7 @@ export default function VendorReviewsScreen() {
         <View className="flex-1 justify-end bg-black/40">
           <Pressable className="absolute inset-0" onPress={() => setReplyModalId(null)} />
           <View className="bg-card rounded-t-[32px] p-6 pb-12">
-            <View className="w-12 h-1.5 bg-accent rounded-full self-center mb-6" />
+            <View className="w-12 h-1.5 bg-secondary rounded-full self-center mb-6" />
             <Text className="text-[20px] font-heading font-bold text-foreground mb-6">
               Reply to Review
             </Text>

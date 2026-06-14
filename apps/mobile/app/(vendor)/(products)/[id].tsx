@@ -153,7 +153,7 @@ export default function ListingDetailsScreen() {
           </Text>
         </View>
         <View
-          className={`px-3 py-1 rounded-full ${item.status === "active" || item.status === "available" ? "bg-green-100" : "bg-accent"}`}
+          className={`px-3 py-1 rounded-full ${item.status === "active" || item.status === "available" ? "bg-green-100" : "bg-secondary"}`}
         >
           <Text
             className={`text-[12px] font-bold ${item.status === "active" || item.status === "available" ? "text-green-700" : "text-muted-foreground"}`}
@@ -179,7 +179,7 @@ export default function ListingDetailsScreen() {
             {item.images.map((img: any, idx: number) => (
               <View
                 key={idx}
-                className="w-64 h-64 bg-accent rounded-[24px] overflow-hidden border border-border"
+                className="w-64 h-64 bg-secondary rounded-[24px] overflow-hidden border border-border"
               >
                 <Image
                   source={{ uri: img.url }}
@@ -190,7 +190,7 @@ export default function ListingDetailsScreen() {
             ))}
           </ScrollView>
         ) : (
-          <View className="w-full h-64 bg-accent rounded-[24px] items-center justify-center mb-6 border border-border">
+          <View className="w-full h-64 bg-secondary rounded-[24px] items-center justify-center mb-6 border border-border">
             <Icon name="image" size={48} color="#94a3b8" />
             <Text className="text-[14px] text-muted-foreground mt-4">No images available</Text>
           </View>
@@ -201,7 +201,7 @@ export default function ListingDetailsScreen() {
           <Text className="text-[28px] font-heading font-bold text-foreground mb-2">
             {item.name}
           </Text>
-          <Text className="text-[24px] font-bold text-brand-600 mb-4">
+          <Text className="text-[24px] font-bold text-primary mb-4">
             GHS {item.price.toFixed(2)}
           </Text>
           <Text className="text-[15px] font-body text-muted-foreground leading-relaxed">
@@ -209,7 +209,7 @@ export default function ListingDetailsScreen() {
           </Text>
         </View>
 
-        <View className="h-px bg-accent my-2 mb-6" />
+        <View className="h-px bg-secondary my-2 mb-6" />
 
         {/* Specifications */}
         <View className="mb-8">

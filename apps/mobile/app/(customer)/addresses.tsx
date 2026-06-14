@@ -173,10 +173,10 @@ export default function AddressesScreen() {
         </View>
         <Pressable
           style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
-          className="w-10 h-10 rounded-full bg-brand-50 items-center justify-center border border-brand-100"
+          className="w-10 h-10 rounded-full bg-primary-subtle items-center justify-center border border-border"
           onPress={openAddModal}
         >
-          <Icon name="plus" size={20} color="#004CFF" />
+          <Icon name="plus" size={20} color="var(--color-primary)" />
         </Pressable>
       </View>
 
@@ -186,18 +186,18 @@ export default function AddressesScreen() {
             <Pressable
               style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
               key={address.id}
-              className={`bg-card rounded-[24px] p-5 border shadow-[0_10px_20px_rgba(0,0,0,0.02)] ${address.isDefault ? "border-brand-500 bg-brand-50/20" : "border-border"}`}
+              className={`bg-card rounded-[24px] p-5 border shadow-[0_10px_20px_rgba(0,0,0,0.02)] ${address.isDefault ? "border-primary bg-primary-subtle/20" : "border-border"}`}
               onPress={() => handleSetDefault(address.id)}
             >
               <View className="flex-row justify-between items-start mb-3">
                 <View className="flex-row items-center gap-2">
                   <View
-                    className={`w-8 h-8 rounded-full items-center justify-center ${address.isDefault ? "bg-brand-100" : "bg-muted"}`}
+                    className={`w-8 h-8 rounded-full items-center justify-center ${address.isDefault ? "bg-primary-subtle" : "bg-muted"}`}
                   >
                     <Icon
                       name={getIcon(address.type)}
                       size={14}
-                      color={address.isDefault ? "#004CFF" : "#64748b"}
+                      color={address.isDefault ? "var(--color-primary)" : "#64748b"}
                     />
                   </View>
                   <Text className="text-[14px] font-heading font-bold text-foreground uppercase tracking-wider">
@@ -206,7 +206,7 @@ export default function AddressesScreen() {
                 </View>
                 <View className="flex-row gap-2">
                   {address.isDefault && (
-                    <View className="bg-brand-500 px-2 py-0.5 rounded-md justify-center">
+                    <View className="bg-primary px-2 py-0.5 rounded-md justify-center">
                       <Text className="text-[10px] font-bold text-white uppercase tracking-wider">
                         Default
                       </Text>
@@ -243,7 +243,7 @@ export default function AddressesScreen() {
                     openEditModal(address);
                   }}
                 >
-                  <Text className="text-[13px] font-bold text-brand-600 font-heading">Edit</Text>
+                  <Text className="text-[13px] font-bold text-primary font-heading">Edit</Text>
                 </Pressable>
                 {!address.isDefault && (
                   <Pressable
@@ -308,15 +308,15 @@ export default function AddressesScreen() {
                     <Pressable
                       key={type}
                       onPress={() => setFormData({ ...formData, type })}
-                      className={`flex-1 py-3 items-center rounded-xl border ${formData.type === type ? "border-brand-500 bg-brand-50" : "border-border bg-card"}`}
+                      className={`flex-1 py-3 items-center rounded-xl border ${formData.type === type ? "border-primary bg-primary-subtle" : "border-border bg-card"}`}
                     >
                       <Icon
                         name={getIcon(type)}
                         size={18}
-                        color={formData.type === type ? "#004CFF" : "#64748b"}
+                        color={formData.type === type ? "var(--color-primary)" : "#64748b"}
                       />
                       <Text
-                        className={`text-[12px] mt-1 font-bold ${formData.type === type ? "text-brand-700" : "text-muted-foreground"}`}
+                        className={`text-[12px] mt-1 font-bold ${formData.type === type ? "text-primary-hover" : "text-muted-foreground"}`}
                       >
                         {type}
                       </Text>
@@ -363,7 +363,7 @@ export default function AddressesScreen() {
 
               <Pressable
                 onPress={handleSave}
-                className="bg-brand-600 py-4 rounded-full items-center mt-2"
+                className="bg-primary py-4 rounded-full items-center mt-2"
               >
                 <Text className="text-white font-bold text-[16px]">Save Address</Text>
               </Pressable>

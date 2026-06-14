@@ -35,8 +35,8 @@ export default function ContactUsScreen() {
               )
             }
           >
-            <View className="w-12 h-12 bg-brand-100 rounded-full items-center justify-center">
-              <Icon name="mail" size={24} color="#004CFF" />
+            <View className="w-12 h-12 bg-primary-subtle rounded-full items-center justify-center">
+              <Icon name="mail" size={24} color="var(--color-primary)" />
             </View>
             <Text className="text-heading-sm font-bold text-foreground font-heading">
               Email Support

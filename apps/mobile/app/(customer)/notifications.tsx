@@ -12,7 +12,7 @@ import {
 } from "@/lib/hooks/use-notifications";
 
 const typeIcons: Record<string, { icon: string; color: string; bg: string }> = {
-  order: { icon: "shopping-bag", color: "#004CFF", bg: "#e0e7ff" },
+  order: { icon: "shopping-bag", color: "var(--color-primary)", bg: "#e0e7ff" },
   payment: { icon: "banknote", color: "#059669", bg: "#d1fae5" },
   shipping: { icon: "truck", color: "#d97706", bg: "#fef3c7" },
   promotion: { icon: "percent", color: "#db2777", bg: "#fce7f3" },
@@ -52,10 +52,10 @@ export default function NotificationsScreen() {
           {unreadCount > 0 && (
             <Pressable
               style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
-              className="px-4 py-2 rounded-full bg-brand-50 border border-brand-100"
+              className="px-4 py-2 rounded-full bg-primary-subtle border border-border"
               onPress={markAllAsRead}
             >
-              <Text className="text-body-sm font-bold text-brand-600 font-body">Mark all read</Text>
+              <Text className="text-body-sm font-bold text-primary font-body">Mark all read</Text>
             </Pressable>
           )}
         </View>
@@ -74,7 +74,11 @@ export default function NotificationsScreen() {
           keyExtractor={(item: any) => item.id}
           showsVerticalScrollIndicator={false}
           refreshControl={
-            <RefreshControl refreshing={isLoading} onRefresh={refetch} tintColor="#004CFF" />
+            <RefreshControl
+              refreshing={isLoading}
+              onRefresh={refetch}
+              tintColor="var(--color-primary)"
+            />
           }
           renderItem={({ item }: { item: any }) => {
             const typeData = typeIcons[item.type] || typeIcons.system;
@@ -82,7 +86,7 @@ export default function NotificationsScreen() {
               <Pressable
                 style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
                 className={`flex-row gap-4 p-5 rounded-[24px] border mb-3 ${
-                  item.read ? "bg-card border-border" : "bg-brand-50/40 border-brand-100"
+                  item.read ? "bg-card border-border" : "bg-primary-subtle/40 border-border"
                 }`}
                 onPress={() => markAsRead(item.id)}
               >
@@ -94,7 +98,7 @@ export default function NotificationsScreen() {
                     <Icon name={typeData.icon} size={22} color={typeData.color} />
                   </View>
                   {!item.read && (
-                    <View className="absolute -top-0.5 -right-0.5 w-3 h-3 rounded-full bg-brand-600 border-2 border-card" />
+                    <View className="absolute -top-0.5 -right-0.5 w-3 h-3 rounded-full bg-primary border-2 border-card" />
                   )}
                 </View>
 

@@ -21,7 +21,7 @@ const QUICK_ACTIONS = [
     id: "topup",
     label: "Top Up",
     icon: "plus",
-    color: "#004CFF",
+    color: "var(--color-primary)",
     route: "/(customer)/wallet/topup",
   },
   {
@@ -339,7 +339,7 @@ export default function WalletScreen() {
               style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
               onPress={() => router.push("/(customer)/wallet/transactions")}
             >
-              <Text className="text-[14px] font-bold text-brand-600 font-body">View All</Text>
+              <Text className="text-[14px] font-bold text-primary font-body">View All</Text>
             </Pressable>
           </View>
 

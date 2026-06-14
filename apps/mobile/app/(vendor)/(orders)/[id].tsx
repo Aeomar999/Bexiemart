@@ -86,7 +86,7 @@ export default function OrderDetailsScreen() {
             size="lg"
             loading={updateStatus.isPending}
             onPress={() => handleAction("rider_requested")}
-            className="w-full bg-brand-600"
+            className="w-full bg-primary"
           />
           <Pressable
             onPress={() => handleAction("completed")}
@@ -208,7 +208,7 @@ export default function OrderDetailsScreen() {
             </View>
             <View className="flex-row justify-between mt-2 pt-2 border-t border-border">
               <Text className="text-[16px] font-bold text-foreground">Total</Text>
-              <Text className="text-[18px] font-black text-brand-600">
+              <Text className="text-[18px] font-black text-primary">
                 GHS {order.total.toFixed(2)}
               </Text>
             </View>

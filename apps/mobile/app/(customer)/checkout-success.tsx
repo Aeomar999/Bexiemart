@@ -35,7 +35,7 @@ export default function CheckoutSuccessScreen() {
         className="flex-1 bg-background items-center justify-center px-8"
         style={{ paddingTop: insets.top }}
       >
-        <View className="w-24 h-24 rounded-full bg-brand-50 items-center justify-center mb-8">
+        <View className="w-24 h-24 rounded-full bg-primary-subtle items-center justify-center mb-8">
           <ListSkeleton />
         </View>
         <Text className="text-display-sm font-heading font-bold text-foreground text-center mb-3">
@@ -47,7 +47,7 @@ export default function CheckoutSuccessScreen() {
             : `Processing via ${paymentMethod === "momo" ? "Mobile Money" : "Card"}...`}
         </Text>
         {parsedTotal > 0 && (
-          <Text className="text-[32px] font-black text-brand-600 font-heading mt-6">
+          <Text className="text-[32px] font-black text-primary font-heading mt-6">
             GHS {Number(parsedTotal).toFixed(2)}
           </Text>
         )}
@@ -116,7 +116,7 @@ export default function CheckoutSuccessScreen() {
         </View>
         <View className="flex-row justify-between py-1.5 border-b border-border">
           <Text className="text-body-sm text-muted-foreground font-body">Total</Text>
-          <Text className="text-body-sm font-bold text-brand-600 font-heading">
+          <Text className="text-body-sm font-bold text-primary font-heading">
             GHS {Number(parsedTotal).toFixed(2)}
           </Text>
         </View>

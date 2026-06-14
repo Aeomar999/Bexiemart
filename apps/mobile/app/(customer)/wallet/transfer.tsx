@@ -76,7 +76,7 @@ export default function TransferScreen() {
   if (isSuccess) {
     return (
       <View
-        className="flex-1 bg-brand-600 justify-center items-center px-5"
+        className="flex-1 bg-primary justify-center items-center px-5"
         style={{ paddingTop: insets.top }}
       >
         <View className="w-20 h-20 bg-card rounded-full items-center justify-center mb-6">
@@ -175,21 +175,21 @@ export default function TransferScreen() {
                 onPress={() => setRecipient(contact.phone)}
                 className={`flex-row items-center p-4 ${!isLast ? "border-b border-border" : ""}`}
               >
-                <View className="w-10 h-10 rounded-full bg-brand-100 items-center justify-center mr-4">
-                  <Text className="font-bold text-[16px] text-brand-600 font-heading">
+                <View className="w-10 h-10 rounded-full bg-primary-subtle items-center justify-center mr-4">
+                  <Text className="font-bold text-[16px] text-primary font-heading">
                     {contact.initial}
                   </Text>
                 </View>
                 <View className="flex-1">
                   <Text
-                    className={`text-[15px] font-bold ${isSelected ? "text-brand-700" : "text-foreground"}`}
+                    className={`text-[15px] font-bold ${isSelected ? "text-primary-hover" : "text-foreground"}`}
                   >
                     {contact.name}
                   </Text>
                   <Text className="text-[13px] text-muted-foreground mt-0.5">{contact.phone}</Text>
                 </View>
                 <View
-                  className={`w-5 h-5 rounded-full border-2 items-center justify-center ${isSelected ? "border-brand-500 bg-brand-500" : "border-surface-300 bg-transparent"}`}
+                  className={`w-5 h-5 rounded-full border-2 items-center justify-center ${isSelected ? "border-primary bg-primary" : "border-border bg-transparent"}`}
                 >
                   {isSelected && <Icon name="check" size={10} color="#fff" />}
                 </View>
@@ -226,7 +226,7 @@ export default function TransferScreen() {
               {[0, 1, 2, 3].map((i) => (
                 <View
                   key={i}
-                  className={`w-5 h-5 rounded-full border-2 ${pin.length > i ? "bg-brand-600 border-brand-600" : "bg-transparent border-surface-300"}`}
+                  className={`w-5 h-5 rounded-full border-2 ${pin.length > i ? "bg-primary border-primary" : "bg-transparent border-border"}`}
                 />
               ))}
             </View>

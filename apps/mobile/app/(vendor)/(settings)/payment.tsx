@@ -141,17 +141,27 @@ export default function PaymentMethodsScreen() {
           <View className="gap-3">
             <Pressable
               onPress={() => openAddModal("momo")}
-              className="bg-brand-50 border border-brand-200 border-dashed rounded-[20px] p-6 items-center justify-center flex-row"
+              className="bg-primary-subtle border border-border border-dashed rounded-[20px] p-6 items-center justify-center flex-row"
             >
-              <Icon name="smartphone" size={20} color="#004CFF" style={{ marginRight: 8 }} />
-              <Text className="text-[16px] font-bold text-brand-600">Add Mobile Money</Text>
+              <Icon
+                name="smartphone"
+                size={20}
+                color="var(--color-primary)"
+                style={{ marginRight: 8 }}
+              />
+              <Text className="text-[16px] font-bold text-primary">Add Mobile Money</Text>
             </Pressable>
             <Pressable
               onPress={() => openAddModal("bank")}
-              className="bg-brand-50 border border-brand-200 border-dashed rounded-[20px] p-6 items-center justify-center flex-row"
+              className="bg-primary-subtle border border-border border-dashed rounded-[20px] p-6 items-center justify-center flex-row"
             >
-              <Icon name="briefcase" size={20} color="#004CFF" style={{ marginRight: 8 }} />
-              <Text className="text-[16px] font-bold text-brand-600">Add Bank Account</Text>
+              <Icon
+                name="briefcase"
+                size={20}
+                color="var(--color-primary)"
+                style={{ marginRight: 8 }}
+              />
+              <Text className="text-[16px] font-bold text-primary">Add Bank Account</Text>
             </Pressable>
           </View>
         </ScrollView>
@@ -167,7 +177,7 @@ export default function PaymentMethodsScreen() {
         <View className="flex-1 justify-end bg-black/40">
           <Pressable className="absolute inset-0" onPress={() => setAddModalVisible(false)} />
           <View className="bg-card rounded-t-[32px] p-6 pb-12">
-            <View className="w-12 h-1.5 bg-accent rounded-full self-center mb-6" />
+            <View className="w-12 h-1.5 bg-secondary rounded-full self-center mb-6" />
             <Text className="text-[20px] font-heading font-bold text-foreground mb-6">
               Add {addType === "bank" ? "Bank Account" : "Mobile Money"}
             </Text>

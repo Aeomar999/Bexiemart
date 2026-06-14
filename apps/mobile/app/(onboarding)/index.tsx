@@ -84,20 +84,18 @@ export default function OnboardingScreen() {
       {/* Header */}
       <View className="absolute top-14 left-0 right-0 flex-row justify-between items-center px-6 z-20">
         {currentIndex > 0 ? (
-          <TouchableOpacity 
+          <TouchableOpacity
             onPress={handleBack}
-            className="w-10 h-10 rounded-full bg-brand-50 items-center justify-center"
+            className="w-10 h-10 rounded-full bg-primary-subtle items-center justify-center"
           >
-            <ArrowLeft color="#004CFF" size={20} />
+            <ArrowLeft color="var(--color-primary)" size={20} />
           </TouchableOpacity>
         ) : (
           <View className="w-10 h-10" /> /* Spacer */
         )}
-        
+
         <TouchableOpacity onPress={handleComplete}>
-          <Text className="text-body-md font-bold text-brand-600 font-body">
-            Skip
-          </Text>
+          <Text className="text-body-md font-bold text-primary font-body">Skip</Text>
         </TouchableOpacity>
       </View>
 
@@ -121,7 +119,6 @@ export default function OnboardingScreen() {
 
       {/* Fixed UI Layer underneath the invisible ScrollView */}
       <View className="flex-1 items-center pt-32 pb-[120px] px-6" pointerEvents="none">
-        
         {/* Overlapping Cards Container */}
         <View className="relative w-[280px] h-[340px] items-center justify-center mb-8">
           {SLIDES.map((slide, index) => {
@@ -132,7 +129,7 @@ export default function OnboardingScreen() {
                   rotate: [0, -12, 12],
                   scale: [1, 0.9, 0.9],
                   opacity: [1, 0.4, 0.4],
-                  zIndex: [3, 1, 2]
+                  zIndex: [3, 1, 2],
                 };
               } else if (i === 1) {
                 return {
@@ -140,7 +137,7 @@ export default function OnboardingScreen() {
                   rotate: [12, 0, -12],
                   scale: [0.9, 1, 0.9],
                   opacity: [0.4, 1, 0.4],
-                  zIndex: [2, 3, 1]
+                  zIndex: [2, 3, 1],
                 };
               } else {
                 return {
@@ -148,7 +145,7 @@ export default function OnboardingScreen() {
                   rotate: [-12, 12, 0],
                   scale: [0.9, 0.9, 1],
                   opacity: [0.4, 0.4, 1],
-                  zIndex: [1, 2, 3]
+                  zIndex: [1, 2, 3],
                 };
               }
             };
@@ -156,30 +153,57 @@ export default function OnboardingScreen() {
             const arrays = getInterpolationArrays(index);
 
             const cardStyle = useAnimatedStyle(() => {
-              const tx = interpolate(scrollX.value, [0, width, width * 2], arrays.translateX, Extrapolation.CLAMP);
-              const rot = interpolate(scrollX.value, [0, width, width * 2], arrays.rotate, Extrapolation.CLAMP);
-              const sc = interpolate(scrollX.value, [0, width, width * 2], arrays.scale, Extrapolation.CLAMP);
-              const op = interpolate(scrollX.value, [0, width, width * 2], arrays.opacity, Extrapolation.CLAMP);
-              const zi = Math.round(interpolate(scrollX.value, [0, width, width * 2], arrays.zIndex, Extrapolation.CLAMP));
+              const tx = interpolate(
+                scrollX.value,
+                [0, width, width * 2],
+                arrays.translateX,
+                Extrapolation.CLAMP
+              );
+              const rot = interpolate(
+                scrollX.value,
+                [0, width, width * 2],
+                arrays.rotate,
+                Extrapolation.CLAMP
+              );
+              const sc = interpolate(
+                scrollX.value,
+                [0, width, width * 2],
+                arrays.scale,
+                Extrapolation.CLAMP
+              );
+              const op = interpolate(
+                scrollX.value,
+                [0, width, width * 2],
+                arrays.opacity,
+                Extrapolation.CLAMP
+              );
+              const zi = Math.round(
+                interpolate(
+                  scrollX.value,
+                  [0, width, width * 2],
+                  arrays.zIndex,
+                  Extrapolation.CLAMP
+                )
+              );
 
               return {
-                transform: [
-                  { translateX: tx },
-                  { rotate: `${rot}deg` },
-                  { scale: sc }
-                ],
+                transform: [{ translateX: tx }, { rotate: `${rot}deg` }, { scale: sc }],
                 opacity: op,
                 zIndex: zi,
               };
             });
 
             return (
-              <Animated.View 
+              <Animated.View
                 key={slide.id}
-                className="absolute w-[280px] h-[340px] rounded-[32px] overflow-hidden shadow-2xl shadow-brand-900/20 bg-brand-50"
+                className="absolute w-[280px] h-[340px] rounded-[32px] overflow-hidden shadow-2xl shadow-none bg-primary-subtle"
                 style={cardStyle}
               >
-                <Image source={slide.image} style={{ width: '100%', height: '100%' }} contentFit="cover" />
+                <Image
+                  source={slide.image}
+                  style={{ width: "100%", height: "100%" }}
+                  contentFit="cover"
+                />
               </Animated.View>
             );
           })}
@@ -190,12 +214,12 @@ export default function OnboardingScreen() {
           <View className="flex-row gap-2 relative">
             {/* Background Dots */}
             {SLIDES.map((_, i) => (
-              <View key={`dot-${i}`} className="w-2 h-2 rounded-full bg-brand-100" />
+              <View key={`dot-${i}`} className="w-2 h-2 rounded-full bg-primary-subtle" />
             ))}
-            
+
             {/* The Animated Worm */}
-            <Animated.View 
-              className="absolute left-0 top-0 h-2 bg-brand-600 rounded-full"
+            <Animated.View
+              className="absolute left-0 top-0 h-2 bg-primary rounded-full"
               style={useAnimatedStyle(() => {
                 const tx = interpolate(
                   scrollX.value,
@@ -203,7 +227,7 @@ export default function OnboardingScreen() {
                   [0, 0, 16, 16, 32],
                   Extrapolation.CLAMP
                 );
-                
+
                 const w = interpolate(
                   scrollX.value,
                   [0, width * 0.5, width, width * 1.5, width * 2],
@@ -230,7 +254,7 @@ export default function OnboardingScreen() {
                 [0, 1, 0],
                 Extrapolation.CLAMP
               );
-              
+
               const translateY = interpolate(
                 scrollX.value,
                 [(index - 1) * width, index * width, (index + 1) * width],
@@ -241,20 +265,22 @@ export default function OnboardingScreen() {
               return {
                 opacity,
                 transform: [{ translateY }],
-                position: 'absolute',
+                position: "absolute",
                 left: 0,
                 right: 0,
-                alignItems: 'center'
+                alignItems: "center",
               };
             });
 
             return (
               <Animated.View key={`text-${slide.id}`} style={textStyle}>
                 <Text className="text-[38px] font-heading text-center leading-[46px] text-muted-foreground mb-4">
-                  {slide.titleStart} <Text className="font-bold text-foreground">{slide.titleBold}</Text>{"\n"}
+                  {slide.titleStart}{" "}
+                  <Text className="font-bold text-foreground">{slide.titleBold}</Text>
+                  {"\n"}
                   {slide.titleEnd}
                 </Text>
-                
+
                 <Text className="text-[18px] text-muted-foreground font-body text-center leading-[28px] px-4">
                   {slide.description}
                 </Text>
@@ -262,7 +288,6 @@ export default function OnboardingScreen() {
             );
           })}
         </View>
-
       </View>
 
       {/* Footer / Button (Needs z-40 so it's clickable above invisible ScrollView) */}
@@ -271,7 +296,7 @@ export default function OnboardingScreen() {
           title={currentIndex === SLIDES.length - 1 ? "Get Started" : "Continue"}
           size="lg"
           onPress={handleNext}
-          className="rounded-full py-4 bg-brand-600"
+          className="rounded-full py-4 bg-primary"
           textClassName="text-lg font-bold text-white"
         />
       </View>

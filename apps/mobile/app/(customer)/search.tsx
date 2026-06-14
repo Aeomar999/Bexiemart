@@ -86,7 +86,7 @@ export default function SearchScreen() {
       >
         <BackButton />
 
-        <View className="flex-1 flex-row items-center bg-background h-[48px] rounded-[16px] px-4 border border-border focus:border-brand-500">
+        <View className="flex-1 flex-row items-center bg-background h-[48px] rounded-[16px] px-4 border border-border focus:border-primary">
           <Icon name="search" size={18} color="#64748b" />
           <TextInput
             className="flex-1 ml-2 text-[15px] font-body text-foreground h-full"
@@ -107,10 +107,10 @@ export default function SearchScreen() {
 
         <Pressable
           style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
-          className={`w-12 h-[48px] rounded-[16px] items-center justify-center ${showFilters ? "bg-brand-50 border border-brand-100" : "bg-background border border-border"}`}
+          className={`w-12 h-[48px] rounded-[16px] items-center justify-center ${showFilters ? "bg-primary-subtle border border-border" : "bg-background border border-border"}`}
           onPress={() => setShowFilters(!showFilters)}
         >
-          <Icon name="sliders" size={20} color={showFilters ? "#004CFF" : "#0f172a"} />
+          <Icon name="sliders" size={20} color={showFilters ? "var(--color-primary)" : "#0f172a"} />
         </Pressable>
       </View>
 
@@ -158,10 +158,10 @@ export default function SearchScreen() {
                   <Pressable
                     style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
                     key={idx}
-                    className="px-4 py-2 bg-brand-50 rounded-full border border-brand-100"
+                    className="px-4 py-2 bg-primary-subtle rounded-full border border-border"
                     onPress={() => setQuery(tag)}
                   >
-                    <Text className="text-[13px] font-bold text-brand-600 font-body">{tag}</Text>
+                    <Text className="text-[13px] font-bold text-primary font-body">{tag}</Text>
                   </Pressable>
                 ))}
               </View>
@@ -207,7 +207,7 @@ export default function SearchScreen() {
                       )}
                     </View>
                     <View className="flex-1 ml-4 justify-center">
-                      <Text className="text-caption text-brand-600 font-bold uppercase tracking-wide mb-1">
+                      <Text className="text-caption text-primary font-bold uppercase tracking-wide mb-1">
                         {item.vendor}
                       </Text>
                       <Text className="text-[16px] font-bold text-foreground font-heading mb-1">
@@ -285,7 +285,7 @@ export default function SearchScreen() {
                 <Pressable
                   style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
                   key={idx}
-                  className={`px-4 py-2 rounded-full border ${idx === sortOption ? "bg-foreground border-surface-900" : "bg-card border-border"}`}
+                  className={`px-4 py-2 rounded-full border ${idx === sortOption ? "bg-foreground border-border" : "bg-card border-border"}`}
                   onPress={() => setSortOption(idx)}
                 >
                   <Text

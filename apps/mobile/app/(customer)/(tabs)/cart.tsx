@@ -166,7 +166,7 @@ export default function CartScreen() {
             {/* Vendor Header */}
             <View className="flex-row items-center justify-between mb-3 px-1">
               <View className="flex-row items-center gap-2">
-                <View className="w-[22px] h-[22px] rounded-[6px] bg-brand-600 items-center justify-center">
+                <View className="w-[22px] h-[22px] rounded-[6px] bg-primary items-center justify-center">
                   <Icon name="check" size={14} color="#fff" />
                 </View>
                 <Icon name="store" size={16} color="#475569" />
@@ -179,7 +179,7 @@ export default function CartScreen() {
                   style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
                   onPress={() => router.push(`/(customer)/store/${group.vendorId}`)}
                 >
-                  <Text className="text-[12px] font-bold text-brand-600">Visit Store</Text>
+                  <Text className="text-[12px] font-bold text-primary">Visit Store</Text>
                 </Pressable>
               )}
             </View>
@@ -193,7 +193,7 @@ export default function CartScreen() {
                 onPress={() => router.push(`/(customer)/product/${item.productId}`)}
               >
                 <View className="flex-row items-center mr-1">
-                  <View className="w-[22px] h-[22px] rounded-[6px] bg-brand-600 items-center justify-center">
+                  <View className="w-[22px] h-[22px] rounded-[6px] bg-primary items-center justify-center">
                     <Icon name="check" size={14} color="#fff" />
                   </View>
                 </View>
@@ -230,7 +230,7 @@ export default function CartScreen() {
                   <View className="flex-row items-center justify-between mt-2">
                     <View className="flex-1 mr-2">
                       <Text
-                        className="text-[16px] font-black text-brand-600 font-heading"
+                        className="text-[16px] font-black text-primary font-heading"
                         numberOfLines={1}
                         adjustsFontSizeToFit
                       >
@@ -318,7 +318,7 @@ export default function CartScreen() {
               </View>
               <Pressable
                 style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
-                className="bg-brand-600 rounded-full px-5 h-11 items-center justify-center active:scale-95"
+                className="bg-primary rounded-full px-5 h-11 items-center justify-center active:scale-95"
                 onPress={handleApplyCoupon}
               >
                 <Text className="text-[14px] font-bold text-white font-body">Apply</Text>
@@ -386,7 +386,7 @@ export default function CartScreen() {
               <Text className="text-[18px] font-bold text-foreground font-heading">Total</Text>
               <View className="flex-1 items-end pl-4">
                 <Text
-                  className="text-[24px] font-bold text-brand-600 font-heading"
+                  className="text-[24px] font-bold text-primary font-heading"
                   numberOfLines={1}
                   adjustsFontSizeToFit
                 >
@@ -403,7 +403,7 @@ export default function CartScreen() {
           <Pressable
             style={({ pressed }) => [{ opacity: pressed ? 0.8 : 1 }]}
             onPress={handleCheckout}
-            className="w-full h-14 bg-brand-600 rounded-full flex-row items-center justify-between px-6 active:scale-[0.98]"
+            className="w-full h-14 bg-primary rounded-full flex-row items-center justify-between px-6 active:scale-[0.98]"
           >
             <Text className="text-[16px] font-bold text-white font-heading">
               Proceed to Checkout

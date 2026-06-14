@@ -58,7 +58,7 @@ export function AddToCollectionModal({ visible, productId, onClose }: Props) {
                   disabled={addItem.isPending}
                 >
                   <View className="flex-row items-center gap-3">
-                    <Icon name="folder" size={20} color="#004CFF" />
+                    <Icon name="folder" size={20} color="var(--color-primary)" />
                     <Text className="text-[16px] font-bold text-foreground font-body">
                       {item.name}
                     </Text>

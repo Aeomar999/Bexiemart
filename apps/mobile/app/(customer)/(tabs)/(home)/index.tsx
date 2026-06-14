@@ -244,7 +244,11 @@ export default function HomeScreen() {
         contentContainerClassName="pb-40"
         showsVerticalScrollIndicator={false}
         refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor="#004CFF" />
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+            tintColor="var(--color-primary)"
+          />
         }
       >
         {/* ===== HERO BANNER ===== */}
@@ -302,7 +306,7 @@ export default function HomeScreen() {
             {HERO_BANNERS.map((_, i) => (
               <View
                 key={i}
-                className={`h-1.5 rounded-full ${i === activeHeroIndex ? "w-4 bg-brand-600" : "w-1.5 bg-accent"}`}
+                className={`h-1.5 rounded-full ${i === activeHeroIndex ? "w-4 bg-primary" : "w-1.5 bg-secondary"}`}
               />
             ))}
           </View>
@@ -312,7 +316,7 @@ export default function HomeScreen() {
         {activeRide && (
           <View className="px-5 mt-6">
             <Pressable
-              className="bg-brand-600 rounded-[20px] p-4 flex-row items-center justify-between shadow-sm border border-brand-700"
+              className="bg-primary rounded-[20px] p-4 flex-row items-center justify-between shadow-sm border border-primary-hover"
               onPress={() => router.push("/(customer)/track-order")}
             >
               <View className="flex-row items-center gap-3">
@@ -418,7 +422,7 @@ export default function HomeScreen() {
                   {[0, 1, 2, 3].map((idx) => (
                     <View
                       key={idx}
-                      className={`w-1/2 h-1/2 border border-card items-center justify-center ${idx === 0 || idx === 3 ? "bg-muted" : "bg-accent"}`}
+                      className={`w-1/2 h-1/2 border border-card items-center justify-center ${idx === 0 || idx === 3 ? "bg-muted" : "bg-secondary"}`}
                     >
                       {(cat as any).imageUrls?.[idx] ? (
                         <Image
@@ -436,8 +440,8 @@ export default function HomeScreen() {
                   <Text className="text-[12px] font-bold text-foreground w-2/3" numberOfLines={1}>
                     {cat.name}
                   </Text>
-                  <View className="bg-brand-50 px-2 py-0.5 rounded-full">
-                    <Text className="text-[10px] font-bold text-brand-600">{cat.count}</Text>
+                  <View className="bg-primary-subtle px-2 py-0.5 rounded-full">
+                    <Text className="text-[10px] font-bold text-primary">{cat.count}</Text>
                   </View>
                 </View>
               </Pressable>
@@ -660,9 +664,9 @@ export default function HomeScreen() {
         <View className="px-5 mt-10">
           <View className="flex-row items-center mb-4 gap-2">
             <Text className="text-[18px] font-heading font-bold text-foreground">Just For You</Text>
-            <View className="bg-brand-50 px-2 py-0.5 rounded-md border border-brand-100 flex-row items-center gap-1">
-              <Icon name="zap" size={10} color="#004CFF" />
-              <Text className="text-[10px] font-bold text-brand-600 uppercase tracking-wider">
+            <View className="bg-primary-subtle px-2 py-0.5 rounded-md border border-border flex-row items-center gap-1">
+              <Icon name="zap" size={10} color="var(--color-primary)" />
+              <Text className="text-[10px] font-bold text-primary uppercase tracking-wider">
                 Personalized
               </Text>
             </View>

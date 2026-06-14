@@ -28,8 +28,8 @@ export function EmptyState({
       className={`items-center justify-center ${fullScreen ? "w-full bg-background" : "p-8 py-12"}`}
       style={fullScreen ? { flex: 1, justifyContent: "center", alignItems: "center" } : undefined}
     >
-      <View className="h-20 w-20 rounded-full bg-brand-50 items-center justify-center mb-6">
-        <Icon name={finalIcon as any} size={32} color="#004CFF" />
+      <View className="h-20 w-20 rounded-full bg-primary-subtle items-center justify-center mb-6">
+        <Icon name={finalIcon as any} size={32} color="var(--color-primary)" />
       </View>
 
       <Text className="text-[24px] font-heading font-black text-foreground mb-3 text-center">
@@ -44,7 +44,7 @@ export function EmptyState({
         <Pressable
           onPress={onAction}
           style={({ pressed }) => [{ opacity: pressed ? 0.8 : 1 }]}
-          className="bg-brand-600 px-8 py-4 rounded-full flex-row items-center justify-center shadow-[0_4px_12px_rgba(0,76,255,0.15)]"
+          className="bg-primary px-8 py-4 rounded-full flex-row items-center justify-center shadow-[0_4px_12px_rgba(0,76,255,0.15)]"
         >
           <Text className="text-white font-heading font-bold text-[16px]">{actionLabel}</Text>
         </Pressable>

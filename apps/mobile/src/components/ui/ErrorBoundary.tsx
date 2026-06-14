@@ -73,7 +73,7 @@ export class ErrorBoundary extends React.Component<ErrorBoundaryProps, State> {
               className="bg-primary px-10 py-4 rounded-full active:opacity-80 flex-row items-center w-full justify-center"
               style={({ pressed }) => [
                 { opacity: pressed ? 0.7 : 1 },
-                { backgroundColor: "#004CFF" },
+                { backgroundColor: "var(--color-primary)" },
               ]}
             >
               <Icon name="refresh-cw" size={20} color="white" />

@@ -9,32 +9,32 @@ function TabIcon({ name, color }: { name: string; color: string }) {
 
 function CustomTabBar({ state, descriptors, navigation }: any) {
   const insets = useSafeAreaInsets();
-  
+
   return (
     <View
       style={{
         paddingBottom: insets.bottom + 16,
         paddingTop: 16,
         paddingHorizontal: 20,
-        backgroundColor: '#FFFFFF',
+        backgroundColor: "#FFFFFF",
         borderTopWidth: 1,
-        borderTopColor: '#F8FAFC',
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        alignItems: 'center',
+        borderTopColor: "#F8FAFC",
+        flexDirection: "row",
+        justifyContent: "space-between",
+        alignItems: "center",
       }}
     >
       {state.routes.map((route: any, index: number) => {
         const { options } = descriptors[route.key];
-        
+
         if (options.href === null || !options.tabBarIcon) return null;
 
         const isFocused = state.index === index;
         const label = options.title !== undefined ? options.title : route.name;
-        
+
         const onPress = () => {
           const event = navigation.emit({
-            type: 'tabPress',
+            type: "tabPress",
             target: route.key,
             canPreventDefault: true,
           });
@@ -49,23 +49,24 @@ function CustomTabBar({ state, descriptors, navigation }: any) {
             key={route.key}
             onPress={onPress}
             style={{
-              flexDirection: 'row',
-              alignItems: 'center',
-              justifyContent: 'center',
+              flexDirection: "row",
+              alignItems: "center",
+              justifyContent: "center",
               borderRadius: 9999,
               paddingHorizontal: 16,
               paddingVertical: 12,
-              backgroundColor: isFocused ? '#eff6ff' : 'transparent',
+              backgroundColor: isFocused ? "#eff6ff" : "transparent",
             }}
           >
-            {options.tabBarIcon && options.tabBarIcon({ color: isFocused ? '#004CFF' : '#94A3B8' })}
+            {options.tabBarIcon &&
+              options.tabBarIcon({ color: isFocused ? "var(--color-primary)" : "#94A3B8" })}
             {isFocused && (
-              <Text 
-                style={{ 
-                  color: '#004CFF', 
-                  fontWeight: 'bold', 
-                  fontSize: 14, 
-                  marginLeft: 8 
+              <Text
+                style={{
+                  color: "var(--color-primary)",
+                  fontWeight: "bold",
+                  fontSize: 14,
+                  marginLeft: 8,
                 }}
               >
                 {label}

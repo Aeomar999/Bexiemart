@@ -126,7 +126,7 @@ export default function VendorChatScreen() {
           onContentSizeChange={() => scrollRef.current?.scrollToEnd()}
         >
           <View className="items-center mb-6">
-            <Text className="text-[12px] font-bold text-muted-foreground bg-accent px-3 py-1 rounded-full">
+            <Text className="text-[12px] font-bold text-muted-foreground bg-secondary px-3 py-1 rounded-full">
               Today
             </Text>
           </View>
@@ -139,7 +139,7 @@ export default function VendorChatScreen() {
                 className={`max-w-[80%] mb-4 ${isVendor ? "self-end" : "self-start"}`}
               >
                 <View
-                  className={`p-3 rounded-[16px] ${isVendor ? "bg-brand-600 rounded-br-none" : "bg-card border border-border rounded-bl-none"}`}
+                  className={`p-3 rounded-[16px] ${isVendor ? "bg-primary rounded-br-none" : "bg-card border border-border rounded-bl-none"}`}
                 >
                   <Text className={`text-[14px] ${isVendor ? "text-white" : "text-foreground"}`}>
                     {msg.content || msg.text}
@@ -178,7 +178,7 @@ export default function VendorChatScreen() {
         </View>
         <Pressable
           onPress={sendMessage}
-          className={`w-12 h-12 rounded-full items-center justify-center ${message.trim() ? "bg-brand-600" : "bg-accent"}`}
+          className={`w-12 h-12 rounded-full items-center justify-center ${message.trim() ? "bg-primary" : "bg-secondary"}`}
         >
           <Icon
             name="send"

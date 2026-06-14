@@ -169,12 +169,16 @@ export default function RegisterScreen() {
       keyboardShouldPersistTaps="handled"
     >
       <View className="mb-8 mt-4">
-        <BackButton onPress={handleBack} className="mb-6 border-brand-100" color="#004CFF" />
+        <BackButton
+          onPress={handleBack}
+          className="mb-6 border-border"
+          color="var(--color-primary)"
+        />
 
         {/* Progress Bar */}
-        <View className="w-full h-2 bg-brand-50 rounded-full mb-6 overflow-hidden border border-brand-100">
+        <View className="w-full h-2 bg-primary-subtle rounded-full mb-6 overflow-hidden border border-border">
           <View
-            className="h-full bg-brand-600 rounded-full"
+            className="h-full bg-primary rounded-full"
             style={{ width: `${progressPercentage}%` }}
           />
         </View>
@@ -219,11 +223,11 @@ export default function RegisterScreen() {
                   <FontAwesome5
                     name="shopping-bag"
                     size={14}
-                    color={role === "customer" ? "#004CFF" : "#64748B"}
+                    color={role === "customer" ? "var(--color-primary)" : "#64748B"}
                   />
                   <Text
                     className="font-heading font-semibold"
-                    style={{ color: role === "customer" ? "#004CFF" : "#64748B" }}
+                    style={{ color: role === "customer" ? "var(--color-primary)" : "#64748B" }}
                   >
                     Shop
                   </Text>
@@ -249,11 +253,11 @@ export default function RegisterScreen() {
                   <FontAwesome5
                     name="store"
                     size={14}
-                    color={role === "vendor" ? "#004CFF" : "#64748B"}
+                    color={role === "vendor" ? "var(--color-primary)" : "#64748B"}
                   />
                   <Text
                     className="font-heading font-semibold"
-                    style={{ color: role === "vendor" ? "#004CFF" : "#64748B" }}
+                    style={{ color: role === "vendor" ? "var(--color-primary)" : "#64748B" }}
                   >
                     Sell
                   </Text>
@@ -357,7 +361,7 @@ export default function RegisterScreen() {
           Already have an account?
         </Text>
         <TouchableOpacity onPress={() => router.replace("/(auth)/login")}>
-          <Text className="text-body-md text-brand-600 font-bold font-body">Sign in</Text>
+          <Text className="text-body-md text-primary font-bold font-body">Sign in</Text>
         </TouchableOpacity>
       </View>
     </ScrollView>

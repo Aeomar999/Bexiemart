@@ -6,7 +6,11 @@ import Toast from "@/lib/toast-polyfill";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Icon } from "@/components/ui/Icon";
 import { Button } from "@/components/ui/Button";
-import { useReferralProfile, useReferralStats, useGenerateReferralCode } from "@/lib/hooks/use-referrals";
+import {
+  useReferralProfile,
+  useReferralStats,
+  useGenerateReferralCode,
+} from "@/lib/hooks/use-referrals";
 import { useState } from "react";
 
 export default function ReferralsScreen() {
@@ -25,7 +29,11 @@ export default function ReferralsScreen() {
     setIsGenerating(true);
     try {
       await generateCode.mutateAsync();
-      Toast.show({ type: "success", text1: "Code Generated", text2: "Your referral code is ready!" });
+      Toast.show({
+        type: "success",
+        text1: "Code Generated",
+        text2: "Your referral code is ready!",
+      });
     } catch {
       Toast.show({ type: "error", text1: "Error", text2: "Could not generate referral code." });
     } finally {
@@ -46,15 +54,13 @@ export default function ReferralsScreen() {
   return (
     <View className="flex-1 bg-background">
       {/* Header */}
-      <View 
+      <View
         className="px-5 pt-4 pb-4 bg-card border-b border-border"
         style={{ paddingTop: (insets.top || 12) + 12 }}
       >
         <View className="flex-row items-center gap-3">
           <BackButton />
-          <Text className="text-[20px] font-heading font-black text-foreground">
-            Refer & Earn
-          </Text>
+          <Text className="text-[20px] font-heading font-black text-foreground">Refer & Earn</Text>
         </View>
       </View>
 
@@ -81,31 +87,42 @@ export default function ReferralsScreen() {
             Your Referral Code
           </Text>
           {isLoading ? (
-            <ActivityIndicator size="small" color="#004CFF" />
+            <ActivityIndicator size="small" color="var(--color-primary)" />
           ) : referralCode ? (
-          <View className="flex-row items-center gap-3">
-            <View className="flex-1 bg-background rounded-[16px] border border-border py-4 items-center justify-center border-dashed">
-              <Text className="text-[20px] font-mono font-bold text-brand-600 tracking-wider">
-                {referralCode}
-              </Text>
+            <View className="flex-row items-center gap-3">
+              <View className="flex-1 bg-background rounded-[16px] border border-border py-4 items-center justify-center border-dashed">
+                <Text className="text-[20px] font-mono font-bold text-primary tracking-wider">
+                  {referralCode}
+                </Text>
+              </View>
+              <Pressable
+                style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
+                className="w-14 h-14 bg-primary-subtle rounded-[16px] items-center justify-center border border-border"
+                onPress={async () => {
+                  await Clipboard.setStringAsync(referralCode);
+                  Toast.show({
+                    type: "success",
+                    text1: "Copied!",
+                    text2: "Referral code copied to clipboard.",
+                  });
+                }}
+              >
+                <Icon name="copy" size={24} color="var(--color-primary)" />
+              </Pressable>
             </View>
-            <Pressable style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]} 
-              className="w-14 h-14 bg-brand-50 rounded-[16px] items-center justify-center border border-brand-100"
-              onPress={async () => {
-                await Clipboard.setStringAsync(referralCode);
-                Toast.show({ type: "success", text1: "Copied!", text2: "Referral code copied to clipboard." });
-              }}
-            >
-              <Icon name="copy" size={24} color="#004CFF" />
-            </Pressable>
-          </View>
           ) : (
-            <Pressable className="bg-brand-600 rounded-[16px] py-4 items-center" onPress={handleGenerateCode} disabled={isGenerating}>
-              <Text className="text-white font-bold text-[16px]">{isGenerating ? "Generating..." : "Generate Referral Code"}</Text>
+            <Pressable
+              className="bg-primary rounded-[16px] py-4 items-center"
+              onPress={handleGenerateCode}
+              disabled={isGenerating}
+            >
+              <Text className="text-white font-bold text-[16px]">
+                {isGenerating ? "Generating..." : "Generate Referral Code"}
+              </Text>
             </Pressable>
           )}
-          
-          <Button 
+
+          <Button
             title={referralCode ? "Share via WhatsApp" : "Generate Code First"}
             size="lg"
             className="w-full mt-4 rounded-full bg-[#25D366]"
@@ -119,12 +136,18 @@ export default function ReferralsScreen() {
         <View className="flex-row gap-4 mb-6">
           <View className="flex-1 bg-card p-5 rounded-[24px] border border-border items-center">
             <Icon name="users" size={24} color="#64748b" />
-            <Text className="text-[24px] font-heading font-black text-foreground mt-2">{referredCount}</Text>
-            <Text className="text-caption font-body text-muted-foreground mt-1">Friends Joined</Text>
+            <Text className="text-[24px] font-heading font-black text-foreground mt-2">
+              {referredCount}
+            </Text>
+            <Text className="text-caption font-body text-muted-foreground mt-1">
+              Friends Joined
+            </Text>
           </View>
           <View className="flex-1 bg-card p-5 rounded-[24px] border border-border items-center">
             <Icon name="award" size={24} color="#f59e0b" />
-            <Text className="text-[24px] font-heading font-black text-amber-500 mt-2">{rewardsEarned}</Text>
+            <Text className="text-[24px] font-heading font-black text-amber-500 mt-2">
+              {rewardsEarned}
+            </Text>
             <Text className="text-caption font-body text-muted-foreground mt-1">Coins Earned</Text>
           </View>
         </View>
@@ -134,34 +157,40 @@ export default function ReferralsScreen() {
           <Text className="text-body-md font-bold text-foreground font-heading mb-4">
             How it works
           </Text>
-          
+
           <View className="flex-row items-start gap-4 mb-4">
-            <View className="w-8 h-8 rounded-full bg-accent items-center justify-center">
+            <View className="w-8 h-8 rounded-full bg-secondary items-center justify-center">
               <Text className="font-bold text-muted-foreground">1</Text>
             </View>
             <View className="flex-1">
               <Text className="font-bold text-foreground font-body">Share your code</Text>
-              <Text className="text-body-sm text-muted-foreground mt-1">Send your unique code to friends.</Text>
+              <Text className="text-body-sm text-muted-foreground mt-1">
+                Send your unique code to friends.
+              </Text>
             </View>
           </View>
 
           <View className="flex-row items-start gap-4 mb-4">
-            <View className="w-8 h-8 rounded-full bg-accent items-center justify-center">
+            <View className="w-8 h-8 rounded-full bg-secondary items-center justify-center">
               <Text className="font-bold text-muted-foreground">2</Text>
             </View>
             <View className="flex-1">
               <Text className="font-bold text-foreground font-body">Friend signs up</Text>
-              <Text className="text-body-sm text-muted-foreground mt-1">They enter your code during registration.</Text>
+              <Text className="text-body-sm text-muted-foreground mt-1">
+                They enter your code during registration.
+              </Text>
             </View>
           </View>
 
           <View className="flex-row items-start gap-4">
-            <View className="w-8 h-8 rounded-full bg-accent items-center justify-center">
+            <View className="w-8 h-8 rounded-full bg-secondary items-center justify-center">
               <Text className="font-bold text-muted-foreground">3</Text>
             </View>
             <View className="flex-1">
               <Text className="font-bold text-foreground font-body">You both get rewarded</Text>
-              <Text className="text-body-sm text-muted-foreground mt-1">Once they make a purchase, you both receive 50 BexieCoins!</Text>
+              <Text className="text-body-sm text-muted-foreground mt-1">
+                Once they make a purchase, you both receive 50 BexieCoins!
+              </Text>
             </View>
           </View>
         </View>

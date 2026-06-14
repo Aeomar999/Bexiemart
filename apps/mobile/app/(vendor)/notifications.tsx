@@ -33,7 +33,7 @@ export default function VendorNotificationsScreen() {
           <Text className="text-[20px] font-heading font-black text-foreground">Notifications</Text>
         </View>
         <Pressable onPress={() => markAllRead.mutate()}>
-          <Text className="text-[13px] font-bold text-brand-600">Mark all as read</Text>
+          <Text className="text-[13px] font-bold text-primary">Mark all as read</Text>
         </Pressable>
       </View>
 
@@ -62,7 +62,7 @@ export default function VendorNotificationsScreen() {
                 onPress={() => {
                   if (notif.unread) markRead.mutate(notif.id);
                 }}
-                className={`flex-row items-start p-4 bg-card border border-border rounded-[16px] mb-3 ${notif.unread ? "bg-brand-50/30" : ""}`}
+                className={`flex-row items-start p-4 bg-card border border-border rounded-[16px] mb-3 ${notif.unread ? "bg-primary-subtle/30" : ""}`}
               >
                 <View
                   className="w-12 h-12 rounded-full items-center justify-center mr-4"
@@ -85,7 +85,7 @@ export default function VendorNotificationsScreen() {
                   </Text>
                   <Text className="text-[12px] text-muted-foreground">{notif.time}</Text>
                 </View>
-                {notif.unread && <View className="w-2.5 h-2.5 rounded-full bg-brand-500 mt-1.5" />}
+                {notif.unread && <View className="w-2.5 h-2.5 rounded-full bg-primary mt-1.5" />}
               </Pressable>
             ))
           )}

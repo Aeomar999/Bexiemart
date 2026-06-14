@@ -68,7 +68,7 @@ export default function DispatcherProfile() {
           </View>
           <View className="flex-1 bg-card border border-border p-3 rounded-2xl items-center">
             <View className="flex-row items-center gap-1 mb-1">
-              <Icon name="truck" size={14} color="#004CFF" />
+              <Icon name="truck" size={14} color="var(--color-primary)" />
               <Text className="font-bold text-foreground font-heading">142</Text>
             </View>
             <Text className="text-[12px] text-muted-foreground font-body text-center">
@@ -111,8 +111,8 @@ export default function DispatcherProfile() {
         <View className="bg-card rounded-[24px] border border-border overflow-hidden mb-8 shadow-[0_10px_20px_rgba(0,0,0,0.02)]">
           <View className="flex-row items-center justify-between p-4 border-b border-border">
             <View className="flex-row items-center gap-3">
-              <View className="w-10 h-10 rounded-full bg-brand-50 items-center justify-center">
-                <Icon name="zap" size={18} color="#004CFF" />
+              <View className="w-10 h-10 rounded-full bg-primary-subtle items-center justify-center">
+                <Icon name="zap" size={18} color="var(--color-primary)" />
               </View>
               <View>
                 <Text className="text-[15px] font-body font-semibold text-foreground">
@@ -126,7 +126,7 @@ export default function DispatcherProfile() {
             <Switch
               value={autoAccept}
               onValueChange={setAutoAccept}
-              trackColor={{ false: "#e2e8f0", true: "#004CFF" }}
+              trackColor={{ false: "#e2e8f0", true: "var(--color-primary)" }}
               thumbColor={"#ffffff"}
             />
           </View>

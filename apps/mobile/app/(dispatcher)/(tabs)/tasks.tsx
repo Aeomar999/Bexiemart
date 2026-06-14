@@ -76,12 +76,12 @@ export default function DispatcherTasks() {
           <View key={ride.id} className="bg-card rounded-2xl p-4 border border-border">
             <View className="flex-row items-center justify-between mb-3">
               <View className="flex-row items-center gap-2">
-                <View className="bg-brand-100 p-2 rounded-full">
-                  <Icon name="package" size={16} color="#004CFF" />
+                <View className="bg-primary-subtle p-2 rounded-full">
+                  <Icon name="package" size={16} color="var(--color-primary)" />
                 </View>
                 <Text className="font-bold text-foreground font-body">Ride Request</Text>
               </View>
-              <Text className="font-black text-brand-600 text-[18px] font-heading">
+              <Text className="font-black text-primary text-[18px] font-heading">
                 GH₵ {Number(ride.price).toFixed(2)}
               </Text>
             </View>
@@ -145,7 +145,7 @@ export default function DispatcherTasks() {
                     }
                   );
                 }}
-                className="bg-brand-600 px-4 py-2 rounded-full"
+                className="bg-primary px-4 py-2 rounded-full"
               >
                 <Text className="text-white font-bold font-body">Accept</Text>
               </Pressable>
@@ -166,8 +166,8 @@ export default function DispatcherTasks() {
     if (rides.length === 0) {
       return (
         <View className="items-center justify-center py-20">
-          <View className="w-20 h-20 bg-brand-50 rounded-full items-center justify-center mb-4">
-            <Icon name="truck" size={32} color="#004CFF" />
+          <View className="w-20 h-20 bg-primary-subtle rounded-full items-center justify-center mb-4">
+            <Icon name="truck" size={32} color="var(--color-primary)" />
           </View>
           <Text className="text-[18px] font-bold font-heading text-foreground mb-2">
             No Active Tasks
@@ -184,12 +184,12 @@ export default function DispatcherTasks() {
         {rides.map((ride: any) => (
           <View
             key={ride.id}
-            className="bg-card rounded-2xl p-4 border border-border border-l-4 border-l-brand-500 shadow-sm"
+            className="bg-card rounded-2xl p-4 border border-border border-l-4 border-l-primary shadow-sm"
           >
             <View className="flex-row items-center justify-between mb-3">
               <View>
                 <Text className="font-bold text-foreground font-body">Active Ride</Text>
-                <Text className="text-brand-600 font-bold text-[12px] uppercase tracking-wider">
+                <Text className="text-primary font-bold text-[12px] uppercase tracking-wider">
                   {ride.status}
                 </Text>
               </View>
@@ -358,7 +358,7 @@ export default function DispatcherTasks() {
           <RefreshControl
             refreshing={isManualRefreshing}
             onRefresh={handleRefresh}
-            tintColor="#004CFF"
+            tintColor="var(--color-primary)"
           />
         }
       >

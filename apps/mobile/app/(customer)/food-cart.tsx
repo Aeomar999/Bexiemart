@@ -83,7 +83,7 @@ export default function FoodCartScreen() {
           </View>
         </View>
         <View className="flex-1 items-center justify-center p-5">
-          <View className="w-24 h-24 bg-accent rounded-full items-center justify-center mb-4">
+          <View className="w-24 h-24 bg-secondary rounded-full items-center justify-center mb-4">
             <Icon name="shopping-bag" size={40} color="#94a3b8" />
           </View>
           <Text className="text-[20px] font-heading font-bold text-foreground mb-2">
@@ -94,7 +94,7 @@ export default function FoodCartScreen() {
           </Text>
           <Pressable
             style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
-            className="bg-brand-600 px-8 py-4 rounded-full"
+            className="bg-primary px-8 py-4 rounded-full"
             onPress={() => router.back()}
           >
             <Text className="text-white font-bold text-[16px]">Browse Restaurants</Text>
@@ -128,7 +128,7 @@ export default function FoodCartScreen() {
       >
         <View className="px-5 pt-6 pb-2">
           <Text className="text-[16px] font-bold text-foreground mb-4">
-            Order from <Text className="text-brand-600">{restaurantName}</Text>
+            Order from <Text className="text-primary">{restaurantName}</Text>
           </Text>
 
           <View className="bg-card rounded-[24px] border border-border overflow-hidden">
@@ -142,7 +142,7 @@ export default function FoodCartScreen() {
                     <Text className="text-[16px] font-bold text-foreground mb-1">
                       {item.foodItem?.name ?? item.name}
                     </Text>
-                    <Text className="text-[15px] font-bold text-brand-600">
+                    <Text className="text-[15px] font-bold text-primary">
                       GHS {Number(item.price).toFixed(2)}
                     </Text>
                   </View>
@@ -211,7 +211,7 @@ export default function FoodCartScreen() {
 
             <View className="flex-row justify-between items-center">
               <Text className="text-[16px] font-bold text-foreground">Total</Text>
-              <Text className="text-[20px] font-black text-brand-600">GHS {total.toFixed(2)}</Text>
+              <Text className="text-[20px] font-black text-primary">GHS {total.toFixed(2)}</Text>
             </View>
           </View>
         </View>

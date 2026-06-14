@@ -146,10 +146,10 @@ export default function VerifyPhoneScreen() {
                   pointerEvents="none"
                   className={`w-12 h-14 rounded-[12px] items-center justify-center border-b-2 ${
                     code.length === i
-                      ? "border-brand-600 bg-brand-50"
+                      ? "border-primary bg-primary-subtle"
                       : code.length > i
-                        ? "border-foreground bg-surface-100"
-                        : "border-border bg-surface-50"
+                        ? "border-foreground bg-muted"
+                        : "border-border bg-background"
                   }`}
                 >
                   <Text className="text-[28px] font-heading font-bold text-foreground">
@@ -183,15 +183,15 @@ export default function VerifyPhoneScreen() {
             <View className="h-10 justify-center items-center w-full mb-6">
               {status === "verifying" && (
                 <View className="flex-row items-center gap-2">
-                  <ActivityIndicator size="small" color="#004CFF" />
-                  <Text className="text-body-md text-brand-600 font-bold font-body">
+                  <ActivityIndicator size="small" color="var(--color-primary)" />
+                  <Text className="text-body-md text-primary font-bold font-body">
                     Verifying...
                   </Text>
                 </View>
               )}
               {status === "sending" && (
                 <View className="flex-row items-center gap-2">
-                  <ActivityIndicator size="small" color="#004CFF" />
+                  <ActivityIndicator size="small" color="var(--color-primary)" />
                   <Text className="text-body-md text-muted-foreground font-body">
                     Sending code...
                   </Text>
@@ -211,7 +211,7 @@ export default function VerifyPhoneScreen() {
               className="py-2 px-4"
             >
               <Text
-                className={`text-body-md font-bold font-body ${countdown > 0 ? "text-muted-foreground" : "text-brand-600"}`}
+                className={`text-body-md font-bold font-body ${countdown > 0 ? "text-muted-foreground" : "text-primary"}`}
               >
                 {countdown > 0 ? `Resend code in ${countdown}s` : "Resend code"}
               </Text>

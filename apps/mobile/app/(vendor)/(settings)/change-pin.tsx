@@ -90,7 +90,7 @@ export default function ChangePinScreen() {
           }}
         />
         <Pressable className="mt-6 self-center" onPress={() => {}}>
-          <Text className="text-[14px] font-bold text-brand-600">Forgot PIN?</Text>
+          <Text className="text-[14px] font-bold text-primary">Forgot PIN?</Text>
         </Pressable>
       </ScrollView>
     </View>

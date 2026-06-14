@@ -1,4 +1,12 @@
-import { View, Text, ScrollView, Pressable, Alert, ActivityIndicator, RefreshControl } from "react-native";
+import {
+  View,
+  Text,
+  ScrollView,
+  Pressable,
+  Alert,
+  ActivityIndicator,
+  RefreshControl,
+} from "react-native";
 import { useRouter } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Icon } from "@/components/ui/Icon";
@@ -44,11 +52,11 @@ export default function TransactionsScreen() {
 
   return (
     <View className="flex-1 bg-background">
-      <View 
+      <View
         className="px-5 pb-4 bg-card border-b border-border flex-row items-center"
         style={{ paddingTop: (insets.top || 12) + 12 }}
       >
-        <Pressable 
+        <Pressable
           style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
           className="w-10 h-10 rounded-full bg-background items-center justify-center mr-3"
           onPress={() => router.back()}
@@ -61,21 +69,23 @@ export default function TransactionsScreen() {
       </View>
 
       <View className="bg-card border-b border-border">
-        <ScrollView 
-          horizontal 
+        <ScrollView
+          horizontal
           showsHorizontalScrollIndicator={false}
           className="px-5 py-3"
           contentContainerClassName="gap-2 pr-10"
         >
-          {FILTERS.map(filter => {
+          {FILTERS.map((filter) => {
             const isActive = activeFilter === filter;
             return (
               <Pressable
                 key={filter}
                 onPress={() => setActiveFilter(filter)}
-                className={`px-4 py-2 rounded-full border ${isActive ? 'bg-foreground border-surface-900' : 'bg-card border-border'}`}
+                className={`px-4 py-2 rounded-full border ${isActive ? "bg-foreground border-border" : "bg-card border-border"}`}
               >
-                <Text className={`text-[13px] font-bold ${isActive ? 'text-white' : 'text-muted-foreground'}`}>
+                <Text
+                  className={`text-[13px] font-bold ${isActive ? "text-white" : "text-muted-foreground"}`}
+                >
                   {filter}
                 </Text>
               </Pressable>
@@ -84,17 +94,27 @@ export default function TransactionsScreen() {
         </ScrollView>
       </View>
 
-      <ScrollView className="flex-1 px-5 pt-6 pb-12" showsVerticalScrollIndicator={false}
-        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor="#004CFF" />}
+      <ScrollView
+        className="flex-1 px-5 pt-6 pb-12"
+        showsVerticalScrollIndicator={false}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+            tintColor="var(--color-primary)"
+          />
+        }
       >
         <View className="bg-card rounded-[20px] border border-border overflow-hidden mb-12">
           {isLoading ? (
             <View className="p-10 items-center justify-center">
-              <ActivityIndicator size="small" color="#004CFF" />
+              <ActivityIndicator size="small" color="var(--color-primary)" />
             </View>
           ) : isError ? (
             <View className="p-10 items-center justify-center">
-              <Text className="text-[15px] font-bold text-red-500">Failed to load transactions</Text>
+              <Text className="text-[15px] font-bold text-red-500">
+                Failed to load transactions
+              </Text>
             </View>
           ) : filteredTransactions.length === 0 ? (
             <View className="p-10 items-center justify-center">
@@ -108,26 +128,41 @@ export default function TransactionsScreen() {
             filteredTransactions.map((trx: any, index: number) => {
               const isWithdrawal = trx.type === "withdrawal";
               return (
-                <Pressable 
-                  key={trx.id} 
-                  className={`p-4 flex-row items-center justify-between ${index < filteredTransactions.length - 1 ? 'border-b border-border' : ''}`}
-                  style={({ pressed }) => [{ backgroundColor: pressed ? '#f8fafc' : 'white' }]}
+                <Pressable
+                  key={trx.id}
+                  className={`p-4 flex-row items-center justify-between ${index < filteredTransactions.length - 1 ? "border-b border-border" : ""}`}
+                  style={({ pressed }) => [{ backgroundColor: pressed ? "#f8fafc" : "white" }]}
                   onPress={() => handleTransactionPress(trx)}
                 >
                   <View className="flex-row items-center flex-1">
-                    <View className={`w-10 h-10 rounded-full items-center justify-center mr-3 ${isWithdrawal ? 'bg-rose-50' : 'bg-green-50'}`}>
-                      <Icon name={isWithdrawal ? "arrow-up-right" : "arrow-down-left"} size={18} color={isWithdrawal ? "#e11d48" : "#16a34a"} />
+                    <View
+                      className={`w-10 h-10 rounded-full items-center justify-center mr-3 ${isWithdrawal ? "bg-rose-50" : "bg-green-50"}`}
+                    >
+                      <Icon
+                        name={isWithdrawal ? "arrow-up-right" : "arrow-down-left"}
+                        size={18}
+                        color={isWithdrawal ? "#e11d48" : "#16a34a"}
+                      />
                     </View>
                     <View className="flex-1 pr-4">
-                      <Text className="text-[15px] font-bold text-foreground mb-0.5" numberOfLines={1}>{trx.title}</Text>
+                      <Text
+                        className="text-[15px] font-bold text-foreground mb-0.5"
+                        numberOfLines={1}
+                      >
+                        {trx.title}
+                      </Text>
                       <Text className="text-[13px] text-muted-foreground">{trx.date}</Text>
                     </View>
                   </View>
                   <View className="items-end">
-                    <Text className={`text-[15px] font-bold ${isWithdrawal ? 'text-foreground' : 'text-green-600'}`}>
-                      {isWithdrawal ? '' : '+'}GHS {Math.abs(trx.amount).toFixed(2)}
+                    <Text
+                      className={`text-[15px] font-bold ${isWithdrawal ? "text-foreground" : "text-green-600"}`}
+                    >
+                      {isWithdrawal ? "" : "+"}GHS {Math.abs(trx.amount).toFixed(2)}
                     </Text>
-                    <Text className="text-[12px] text-muted-foreground capitalize mt-0.5">{trx.status}</Text>
+                    <Text className="text-[12px] text-muted-foreground capitalize mt-0.5">
+                      {trx.status}
+                    </Text>
                   </View>
                 </Pressable>
               );

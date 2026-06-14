@@ -19,12 +19,7 @@ interface CarouselProps {
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
 
-export function Carousel({
-  items,
-  autoPlay = true,
-  interval = 4000,
-  height = 180,
-}: CarouselProps) {
+export function Carousel({ items, autoPlay = true, interval = 4000, height = 180 }: CarouselProps) {
   const flatListRef = useRef<FlatList>(null);
   const [activeIndex, setActiveIndex] = useState(0);
 
@@ -44,14 +39,11 @@ export function Carousel({
     return () => clearInterval(timer);
   }, [activeIndex, autoPlay, items.length, interval, scrollToIndex]);
 
-  const onViewableItemsChanged = useCallback(
-    ({ viewableItems }: any) => {
-      if (viewableItems.length > 0) {
-        setActiveIndex(viewableItems[0].index ?? 0);
-      }
-    },
-    []
-  );
+  const onViewableItemsChanged = useCallback(({ viewableItems }: any) => {
+    if (viewableItems.length > 0) {
+      setActiveIndex(viewableItems[0].index ?? 0);
+    }
+  }, []);
 
   if (items.length === 0) return null;
 
@@ -69,7 +61,7 @@ export function Carousel({
         renderItem={({ item }) => (
           <View
             style={{ width: SCREEN_WIDTH - 32 }}
-            className="mx-4 rounded-3xl overflow-hidden shadow-md bg-accent"
+            className="mx-4 rounded-3xl overflow-hidden shadow-md bg-secondary"
           >
             <View className="w-full relative" style={{ height }}>
               {item.imageUrl ? (
@@ -80,15 +72,15 @@ export function Carousel({
                 />
               ) : (
                 <LinearGradient
-                  colors={['#3b82f6', '#8b5cf6']}
+                  colors={["#3b82f6", "#8b5cf6"]}
                   start={{ x: 0, y: 0 }}
                   end={{ x: 1, y: 1 }}
                   className="w-full h-full absolute"
                 />
               )}
-              
+
               <LinearGradient
-                colors={['transparent', item.imageUrl ? 'rgba(0,0,0,0.6)' : 'transparent']}
+                colors={["transparent", item.imageUrl ? "rgba(0,0,0,0.6)" : "transparent"]}
                 className="absolute bottom-0 w-full h-full justify-end p-5 rounded-b-3xl"
               >
                 <Text className="text-white text-display-sm font-heading font-bold mb-1 shadow-sm">
@@ -109,7 +101,7 @@ export function Carousel({
           {items.map((_, index) => (
             <View
               key={index}
-              className={`h-2 rounded-full ${index === activeIndex ? "bg-brand-600 w-6" : "bg-accent w-2"}`}
+              className={`h-2 rounded-full ${index === activeIndex ? "bg-primary w-6" : "bg-secondary w-2"}`}
             />
           ))}
         </View>

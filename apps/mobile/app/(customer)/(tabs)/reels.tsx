@@ -146,7 +146,7 @@ export default function ReelsScreen() {
           style={{ paddingBottom: Math.max(insets.bottom, 20) }}
         >
           <View className="flex-row items-center gap-3 mb-3">
-            <View className="w-10 h-10 rounded-full bg-accent border-2 border-card items-center justify-center overflow-hidden">
+            <View className="w-10 h-10 rounded-full bg-secondary border-2 border-card items-center justify-center overflow-hidden">
               <Icon name="user" size={20} color="#94a3b8" />
             </View>
             <Text className="text-white font-bold text-[15px] shadow-sm">
@@ -191,7 +191,7 @@ export default function ReelsScreen() {
               </View>
             </View>
             <Pressable
-              className="bg-brand-600 px-5 py-2.5 rounded-full"
+              className="bg-primary px-5 py-2.5 rounded-full"
               onPress={() => {
                 showPopup({
                   type: "success",
@@ -296,7 +296,7 @@ export default function ReelsScreen() {
               }
               renderItem={({ item }: { item: any }) => (
                 <View className="flex-row gap-3 mb-6">
-                  <View className="w-8 h-8 rounded-full bg-accent items-center justify-center">
+                  <View className="w-8 h-8 rounded-full bg-secondary items-center justify-center">
                     <Text className="text-muted-foreground font-bold text-[12px]">
                       {item.username.charAt(0).toUpperCase()}
                     </Text>
@@ -327,7 +327,7 @@ export default function ReelsScreen() {
                 onSubmitEditing={handlePostComment}
               />
               <Pressable
-                className={`w-10 h-10 rounded-full items-center justify-center ${newComment.trim() ? "bg-brand-600" : "bg-accent"}`}
+                className={`w-10 h-10 rounded-full items-center justify-center ${newComment.trim() ? "bg-primary" : "bg-secondary"}`}
                 onPress={handlePostComment}
               >
                 <Icon name="send" size={16} color={newComment.trim() ? "#fff" : "#94a3b8"} />

@@ -273,7 +273,7 @@ export default function AddCardScreen() {
               className="flex-row items-center mb-6 pl-1"
             >
               <View
-                className={`w-6 h-6 rounded-md items-center justify-center border mr-3 ${isDefault ? "bg-brand-600 border-brand-600" : "border-gray-300 bg-gray-50"}`}
+                className={`w-6 h-6 rounded-md items-center justify-center border mr-3 ${isDefault ? "bg-primary border-primary" : "border-gray-300 bg-gray-50"}`}
               >
                 {isDefault && <Icon name="check" size={14} color="#fff" />}
               </View>
@@ -283,7 +283,7 @@ export default function AddCardScreen() {
             <Pressable
               onPress={handleAdd}
               disabled={addCard.isPending}
-              className={`w-full rounded-2xl py-4 flex-row justify-center items-center ${addCard.isPending ? "bg-brand-400" : "bg-brand-600"}`}
+              className={`w-full rounded-2xl py-4 flex-row justify-center items-center ${addCard.isPending ? "bg-primary-subtle" : "bg-primary"}`}
               style={{
                 shadowColor: "#4f2ae8",
                 shadowOffset: { width: 0, height: 4 },

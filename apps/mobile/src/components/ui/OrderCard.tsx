@@ -21,7 +21,7 @@ export interface OrderCardProps {
 
 const statusConfig: Record<string, { label: string; color: string; bg: string; icon: string }> = {
   processing: { label: "Processing", color: "#d97706", bg: "#fef3c7", icon: "loader" },
-  shipped: { label: "Shipped", color: "#004CFF", bg: "#e0e7ff", icon: "truck" },
+  shipped: { label: "Shipped", color: "var(--color-primary)", bg: "#e0e7ff", icon: "truck" },
   delivered: { label: "Delivered", color: "#059669", bg: "#d1fae5", icon: "check-circle" },
   cancelled: { label: "Cancelled", color: "#ef4444", bg: "#fee2e2", icon: "x-circle" },
 };
@@ -91,7 +91,7 @@ export function OrderCard({
             <Text className="text-caption font-body text-muted-foreground mb-0.5">
               Total Amount
             </Text>
-            <Text className="text-[16px] font-heading font-black text-brand-600">
+            <Text className="text-[16px] font-heading font-black text-primary">
               GHS {total.toFixed(2)}
             </Text>
           </View>
@@ -99,10 +99,10 @@ export function OrderCard({
           {actionLabel && onActionPress && (
             <Pressable
               style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
-              className="bg-brand-50 px-5 py-2.5 rounded-full"
+              className="bg-primary-subtle px-5 py-2.5 rounded-full"
               onPress={onActionPress}
             >
-              <Text className="text-[14px] font-bold text-brand-600">{actionLabel}</Text>
+              <Text className="text-[14px] font-bold text-primary">{actionLabel}</Text>
             </Pressable>
           )}
         </View>

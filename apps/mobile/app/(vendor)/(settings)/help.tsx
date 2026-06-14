@@ -56,16 +56,16 @@ export default function VendorHelpScreen() {
           ))}
         </View>
 
-        <View className="bg-brand-50 border border-brand-100 rounded-[24px] p-6 items-center">
-          <View className="w-16 h-16 rounded-full bg-brand-100 items-center justify-center mb-4">
-            <Icon name="life-buoy" size={24} color="#004CFF" />
+        <View className="bg-primary-subtle border border-border rounded-[24px] p-6 items-center">
+          <View className="w-16 h-16 rounded-full bg-primary-subtle items-center justify-center mb-4">
+            <Icon name="life-buoy" size={24} color="var(--color-primary)" />
           </View>
           <Text className="text-[18px] font-bold text-foreground mb-2">Need more help?</Text>
           <Text className="text-[14px] text-muted-foreground text-center mb-6">
             Our dedicated seller support team is here to assist you 24/7.
           </Text>
           <Pressable
-            className="bg-brand-600 w-full py-4 rounded-full items-center"
+            className="bg-primary w-full py-4 rounded-full items-center"
             onPress={() => router.push("/(vendor)/(settings)/contact")}
           >
             <Text className="text-white font-bold text-[15px]">Contact Support</Text>

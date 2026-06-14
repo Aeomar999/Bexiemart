@@ -35,11 +35,11 @@ export function Announcement({ message, type = "error" }: AnnouncementProps) {
       iconColor = "#f59e0b";
       break;
     case "info":
-      bgClass = "bg-brand-500/10";
-      borderClass = "border-brand-500/20";
-      textClass = "text-brand-600";
+      bgClass = "bg-primary/10";
+      borderClass = "border-primary/20";
+      textClass = "text-primary";
       iconName = "info-circle";
-      iconColor = "#004CFF";
+      iconColor = "var(--color-primary)";
       break;
   }
 

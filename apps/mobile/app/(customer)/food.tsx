@@ -215,7 +215,7 @@ export default function FoodDeliveryScreen() {
                   {PROMO_BANNERS.map((_, i) => (
                     <View
                       key={i}
-                      className={`h-1.5 rounded-full ${i === activePromoIndex ? "w-4 bg-orange-500" : "w-1.5 bg-accent"}`}
+                      className={`h-1.5 rounded-full ${i === activePromoIndex ? "w-4 bg-orange-500" : "w-1.5 bg-secondary"}`}
                     />
                   ))}
                 </View>
@@ -247,7 +247,7 @@ export default function FoodDeliveryScreen() {
                       className="bg-card rounded-[24px] overflow-hidden border border-border"
                       onPress={() => router.push(`/(customer)/restaurant/${restaurant.id}`)}
                     >
-                      <View className="h-32 bg-accent items-center justify-center">
+                      <View className="h-32 bg-secondary items-center justify-center">
                         {restaurant.banner ? (
                           <Image
                             source={{ uri: restaurant.banner }}

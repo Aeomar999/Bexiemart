@@ -28,7 +28,14 @@ const RIDER_TYPES = [
     price: 8.0,
     color: "#059669",
   },
-  { id: "car", label: "Car", icon: "car", time: "5-10 min", price: 15.0, color: "#004CFF" },
+  {
+    id: "car",
+    label: "Car",
+    icon: "car",
+    time: "5-10 min",
+    price: 15.0,
+    color: "var(--color-primary)",
+  },
   { id: "van", label: "Van", icon: "package", time: "15-20 min", price: 25.0, color: "#7c3aed" },
 ];
 
@@ -190,7 +197,7 @@ export default function BookRiderScreen() {
             return (
               <Pressable
                 key={rider.id}
-                className={`flex-row items-center gap-4 p-5 rounded-[24px] border ${isSelected ? "border-brand-600 bg-brand-50" : "border-border bg-card"}`}
+                className={`flex-row items-center gap-4 p-5 rounded-[24px] border ${isSelected ? "border-primary bg-primary-subtle" : "border-border bg-card"}`}
                 onPress={() => setSelectedRider(rider.id)}
               >
                 <View
@@ -201,18 +208,18 @@ export default function BookRiderScreen() {
                 </View>
                 <View className="flex-1">
                   <Text
-                    className={`text-[16px] font-bold font-body ${isSelected ? "text-brand-900" : "text-foreground"}`}
+                    className={`text-[16px] font-bold font-body ${isSelected ? "text-foreground" : "text-foreground"}`}
                   >
                     {rider.label}
                   </Text>
                   <Text
-                    className={`text-[13px] font-body ${isSelected ? "text-brand-600" : "text-muted-foreground"}`}
+                    className={`text-[13px] font-body ${isSelected ? "text-primary" : "text-muted-foreground"}`}
                   >
                     Arrives in {rider.time}
                   </Text>
                 </View>
                 <Text
-                  className={`text-[16px] font-bold font-heading ${isSelected ? "text-brand-700" : "text-foreground"}`}
+                  className={`text-[16px] font-bold font-heading ${isSelected ? "text-primary-hover" : "text-foreground"}`}
                 >
                   GHS {rider.price.toFixed(2)}
                 </Text>
@@ -229,7 +236,7 @@ export default function BookRiderScreen() {
       >
         <Pressable
           style={({ pressed }) => [{ opacity: pressed ? 0.8 : 1 }]}
-          className="bg-brand-600 w-full h-14 rounded-full items-center justify-center"
+          className="bg-primary w-full h-14 rounded-full items-center justify-center"
           onPress={handleBook}
         >
           <Text className="text-white font-bold text-[16px]">
@@ -265,15 +272,15 @@ export default function BookRiderScreen() {
                   onPress={handleUseCurrentLocation}
                   disabled={isLocating}
                 >
-                  <View className="w-10 h-10 rounded-full bg-brand-50 items-center justify-center border border-brand-100">
+                  <View className="w-10 h-10 rounded-full bg-primary-subtle items-center justify-center border border-border">
                     {isLocating ? (
-                      <ActivityIndicator size="small" color="#004CFF" />
+                      <ActivityIndicator size="small" color="var(--color-primary)" />
                     ) : (
-                      <Icon name="navigation" size={18} color="#004CFF" />
+                      <Icon name="navigation" size={18} color="var(--color-primary)" />
                     )}
                   </View>
                   <View className="flex-1">
-                    <Text className="text-[16px] font-bold text-brand-600 font-heading">
+                    <Text className="text-[16px] font-bold text-primary font-heading">
                       Use Current Location
                     </Text>
                     <Text className="text-[13px] text-muted-foreground mt-1">
@@ -311,8 +318,8 @@ export default function BookRiderScreen() {
                     <View className="flex-row items-center gap-2">
                       <Text className="text-[16px] font-bold text-foreground">{addr.type}</Text>
                       {addr.isDefault && (
-                        <View className="bg-brand-100 px-2 py-0.5 rounded text-[10px]">
-                          <Text className="text-brand-700 text-[10px] font-bold">Default</Text>
+                        <View className="bg-primary-subtle px-2 py-0.5 rounded text-[10px]">
+                          <Text className="text-primary-hover text-[10px] font-bold">Default</Text>
                         </View>
                       )}
                     </View>

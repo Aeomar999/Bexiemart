@@ -164,7 +164,7 @@ export default function AddProductScreen() {
             </View>
           </View>
 
-          <View className="h-px bg-accent my-2" />
+          <View className="h-px bg-secondary my-2" />
 
           <View>
             <Text className="text-[16px] font-bold text-foreground mb-4">Pricing</Text>
@@ -191,7 +191,7 @@ export default function AddProductScreen() {
             </View>
           </View>
 
-          <View className="h-px bg-accent my-2" />
+          <View className="h-px bg-secondary my-2" />
 
           <View>
             <Text className="text-[16px] font-bold text-foreground mb-4">Inventory</Text>
@@ -217,7 +217,7 @@ export default function AddProductScreen() {
             </View>
           </View>
 
-          <View className="h-px bg-accent my-2" />
+          <View className="h-px bg-secondary my-2" />
 
           <View>
             <Text className="text-[16px] font-bold text-foreground mb-4">Shipping</Text>
@@ -232,7 +232,7 @@ export default function AddProductScreen() {
                 </Text>
               </View>
               <View
-                className={`w-12 h-7 rounded-full p-1 ${shippingRequired ? "bg-brand-600" : "bg-accent"}`}
+                className={`w-12 h-7 rounded-full p-1 ${shippingRequired ? "bg-primary" : "bg-secondary"}`}
               >
                 <View
                   className={`w-5 h-5 rounded-full bg-card ${shippingRequired ? "translate-x-5" : "translate-x-0"}`}

@@ -11,8 +11,8 @@ import Toast from "@/lib/toast-polyfill";
 export default function BecomeDispatcherScreen() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
-  const user = useAuthStore(s => s.user);
-  const setUser = useAuthStore(s => s.setUser);
+  const user = useAuthStore((s) => s.user);
+  const setUser = useAuthStore((s) => s.setUser);
   const createProfile = useCreateDispatcherProfile();
 
   const [form, setForm] = useState({
@@ -33,34 +33,40 @@ export default function BecomeDispatcherScreen() {
         if (user) {
           setUser({ ...user, role: "dispatcher" });
         }
-        Toast.show({ type: "success", text1: "Welcome!", text2: "You are now a Bexiemart Dispatcher." });
-        
+        Toast.show({
+          type: "success",
+          text1: "Welcome!",
+          text2: "You are now a Bexiemart Dispatcher.",
+        });
+
         // Root index.tsx will auto-redirect based on role
         router.replace("/");
       },
       onError: (err: any) => {
-        Toast.show({ type: "error", text1: "Application Failed", text2: err.response?.data?.message || err.message });
-      }
+        Toast.show({
+          type: "error",
+          text1: "Application Failed",
+          text2: err.response?.data?.message || err.message,
+        });
+      },
     });
   };
 
   return (
     <View className="flex-1 bg-background">
       {/* Header */}
-      <View 
+      <View
         className="px-5 pb-4 bg-card flex-row items-center border-b border-border"
         style={{ paddingTop: Math.max(insets.top, 12) + 12 }}
       >
         <BackButton className="-ml-2 mr-2" />
-        <Text className="text-[20px] font-heading font-black text-foreground">
-          Drive with us
-        </Text>
+        <Text className="text-[20px] font-heading font-black text-foreground">Drive with us</Text>
       </View>
 
       <ScrollView className="flex-1 px-5 pt-6" contentContainerClassName="pb-10">
         <View className="items-center mb-8">
-          <View className="w-20 h-20 bg-brand-100 rounded-full items-center justify-center mb-4">
-            <Icon name="truck" size={32} color="#004CFF" />
+          <View className="w-20 h-20 bg-primary-subtle rounded-full items-center justify-center mb-4">
+            <Icon name="truck" size={32} color="var(--color-primary)" />
           </View>
           <Text className="text-2xl font-black font-heading text-foreground mb-2 text-center">
             Earn money on your schedule
@@ -73,16 +79,22 @@ export default function BecomeDispatcherScreen() {
         {/* Vehicle Type Selection */}
         <Text className="text-[15px] font-bold font-body text-foreground mb-2">Vehicle Type</Text>
         <View className="flex-row gap-3 mb-6">
-          {['bike', 'car'].map((type) => {
+          {["bike", "car"].map((type) => {
             const isSelected = form.vehicleType === type;
             return (
               <Pressable
                 key={type}
-                onPress={() => setForm(prev => ({ ...prev, vehicleType: type }))}
-                className={`flex-1 p-4 rounded-xl items-center border ${isSelected ? 'border-brand-600 bg-brand-50' : 'border-border bg-card'}`}
+                onPress={() => setForm((prev) => ({ ...prev, vehicleType: type }))}
+                className={`flex-1 p-4 rounded-xl items-center border ${isSelected ? "border-primary bg-primary-subtle" : "border-border bg-card"}`}
               >
-                <Icon name={type === 'bike' ? 'briefcase' : 'truck'} size={24} color={isSelected ? '#004CFF' : '#64748b'} />
-                <Text className={`mt-2 font-bold font-body capitalize ${isSelected ? 'text-brand-700' : 'text-muted-foreground'}`}>
+                <Icon
+                  name={type === "bike" ? "briefcase" : "truck"}
+                  size={24}
+                  color={isSelected ? "var(--color-primary)" : "#64748b"}
+                />
+                <Text
+                  className={`mt-2 font-bold font-body capitalize ${isSelected ? "text-primary-hover" : "text-muted-foreground"}`}
+                >
                   {type}
                 </Text>
               </Pressable>
@@ -90,19 +102,23 @@ export default function BecomeDispatcherScreen() {
           })}
         </View>
 
-        <Text className="text-[15px] font-bold font-body text-foreground mb-2">License Plate Number</Text>
+        <Text className="text-[15px] font-bold font-body text-foreground mb-2">
+          License Plate Number
+        </Text>
         <TextInput
           value={form.licensePlate}
-          onChangeText={(val) => setForm(prev => ({ ...prev, licensePlate: val }))}
+          onChangeText={(val) => setForm((prev) => ({ ...prev, licensePlate: val }))}
           placeholder="e.g. AS-1234-21"
           className="bg-card border border-border p-4 rounded-xl font-body text-[16px] mb-6 text-foreground"
           placeholderTextColor="#94a3b8"
         />
 
-        <Text className="text-[15px] font-bold font-body text-foreground mb-2">Driver's License ID</Text>
+        <Text className="text-[15px] font-bold font-body text-foreground mb-2">
+          Driver's License ID
+        </Text>
         <TextInput
           value={form.licenseNumber}
-          onChangeText={(val) => setForm(prev => ({ ...prev, licenseNumber: val }))}
+          onChangeText={(val) => setForm((prev) => ({ ...prev, licenseNumber: val }))}
           placeholder="Enter license ID"
           className="bg-card border border-border p-4 rounded-xl font-body text-[16px] mb-8 text-foreground"
           placeholderTextColor="#94a3b8"
@@ -111,7 +127,7 @@ export default function BecomeDispatcherScreen() {
         <Pressable
           onPress={handleSubmit}
           disabled={createProfile.isPending}
-          className="bg-brand-600 p-4 rounded-xl items-center justify-center flex-row h-14"
+          className="bg-primary p-4 rounded-xl items-center justify-center flex-row h-14"
         >
           {createProfile.isPending ? (
             <ActivityIndicator color="#ffffff" />

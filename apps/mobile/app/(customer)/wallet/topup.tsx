@@ -63,7 +63,7 @@ export default function TopUpScreen() {
   if (isSuccess) {
     return (
       <View
-        className="flex-1 bg-brand-600 justify-center items-center px-5"
+        className="flex-1 bg-primary justify-center items-center px-5"
         style={{ paddingTop: insets.top }}
       >
         <View className="w-20 h-20 bg-card rounded-full items-center justify-center mb-6">
@@ -207,7 +207,11 @@ export default function TopUpScreen() {
                     backgroundColor: isSelected ? "#ffffff" : "#e2e8f0",
                   }}
                 >
-                  <Icon name={method.icon} size={18} color={isSelected ? "#004CFF" : "#64748b"} />
+                  <Icon
+                    name={method.icon}
+                    size={18}
+                    color={isSelected ? "var(--color-primary)" : "#64748b"}
+                  />
                 </View>
                 <Text
                   style={{

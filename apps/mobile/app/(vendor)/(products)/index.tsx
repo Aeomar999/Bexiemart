@@ -128,7 +128,7 @@ export default function ListingsScreen() {
                 style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
                 onPress={() => setFilter(item.id)}
                 className={`px-4 py-2 rounded-full border ${
-                  filter === item.id ? "bg-foreground border-surface-900" : "bg-card border-border"
+                  filter === item.id ? "bg-foreground border-border" : "bg-card border-border"
                 }`}
               >
                 <Text
@@ -198,7 +198,7 @@ export default function ListingsScreen() {
       <View className="absolute bottom-6 right-6">
         <Pressable
           style={({ pressed }) => [{ opacity: pressed ? 0.8 : 1 }]}
-          className="w-14 h-14 bg-brand-600 rounded-full items-center justify-center border-4 border-brand-100"
+          className="w-14 h-14 bg-primary rounded-full items-center justify-center border-4 border-border"
           onPress={() => setAddModalVisible(true)}
         >
           <Icon name="plus" size={24} color="#ffffff" />
@@ -215,7 +215,7 @@ export default function ListingsScreen() {
         <View className="flex-1 justify-end bg-black/40">
           <Pressable className="absolute inset-0" onPress={() => setAddModalVisible(false)} />
           <View className="bg-card rounded-t-[32px] p-6 pb-12">
-            <View className="w-12 h-1.5 bg-accent rounded-full self-center mb-6" />
+            <View className="w-12 h-1.5 bg-secondary rounded-full self-center mb-6" />
             <Text className="text-[20px] font-heading font-bold text-foreground mb-6">
               Create New Listing
             </Text>

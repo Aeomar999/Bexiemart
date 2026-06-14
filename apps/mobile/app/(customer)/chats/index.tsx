@@ -33,7 +33,7 @@ export default function ChatListScreen() {
 
     return (
       <Pressable
-        className="flex-row items-center p-4 border-b border-border active:bg-accent/50"
+        className="flex-row items-center p-4 border-b border-border active:bg-secondary/50"
         onPress={() => router.push(`/(customer)/chats/${item.id}`)}
       >
         <View className="relative">
@@ -73,7 +73,7 @@ export default function ChatListScreen() {
             </Text>
 
             {item.unreadCount > 0 && (
-              <View className="bg-brand-600 w-5 h-5 rounded-full items-center justify-center">
+              <View className="bg-primary w-5 h-5 rounded-full items-center justify-center">
                 <Text className="text-white text-[10px] font-bold">
                   {item.unreadCount > 9 ? "9+" : item.unreadCount}
                 </Text>

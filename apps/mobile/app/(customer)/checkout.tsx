@@ -176,7 +176,7 @@ export default function CheckoutScreen() {
         {/* Delivery Details */}
         <View className="px-5 mt-4">
           <View className="flex-row items-center gap-2 mb-4">
-            <View className="w-7 h-7 rounded-full bg-brand-600 items-center justify-center">
+            <View className="w-7 h-7 rounded-full bg-primary items-center justify-center">
               <Icon name="map-pin" size={14} color="#fff" />
             </View>
             <Text className="text-heading-sm font-heading font-bold text-foreground">
@@ -233,7 +233,7 @@ export default function CheckoutScreen() {
         {/* Delivery Method */}
         <View className="px-5 mt-6">
           <View className="flex-row items-center gap-2 mb-4">
-            <View className="w-7 h-7 rounded-full bg-accent-600 items-center justify-center">
+            <View className="w-7 h-7 rounded-full bg-secondary items-center justify-center">
               <Icon name="truck" size={14} color="#fff" />
             </View>
             <Text className="text-heading-sm font-heading font-bold text-foreground">
@@ -246,16 +246,16 @@ export default function CheckoutScreen() {
               style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
               className={`flex-row items-center gap-4 p-5 rounded-[24px] border ${
                 deliveryMethod === "standard"
-                  ? "border-brand-600 bg-brand-50/30"
+                  ? "border-primary bg-primary-subtle/30"
                   : "border-border bg-card"
               }`}
               onPress={() => setDeliveryMethod("standard")}
             >
               <View
-                className={`w-5 h-5 rounded-full border-2 items-center justify-center ${deliveryMethod === "standard" ? "border-brand-600" : "border-surface-300"}`}
+                className={`w-5 h-5 rounded-full border-2 items-center justify-center ${deliveryMethod === "standard" ? "border-primary" : "border-border"}`}
               >
                 {deliveryMethod === "standard" && (
-                  <View className="w-3 h-3 rounded-full bg-brand-600" />
+                  <View className="w-3 h-3 rounded-full bg-primary" />
                 )}
               </View>
               <View className="flex-1">
@@ -266,23 +266,23 @@ export default function CheckoutScreen() {
                   2-3 business days
                 </Text>
               </View>
-              <Text className="text-body-md font-bold text-brand-600 font-heading">GHS 5.00</Text>
+              <Text className="text-body-md font-bold text-primary font-heading">GHS 5.00</Text>
             </Pressable>
 
             <Pressable
               style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
               className={`flex-row items-center gap-4 p-5 rounded-[24px] border ${
                 deliveryMethod === "express"
-                  ? "border-brand-600 bg-brand-50/30"
+                  ? "border-primary bg-primary-subtle/30"
                   : "border-border bg-card"
               }`}
               onPress={() => setDeliveryMethod("express")}
             >
               <View
-                className={`w-5 h-5 rounded-full border-2 items-center justify-center ${deliveryMethod === "express" ? "border-brand-600" : "border-surface-300"}`}
+                className={`w-5 h-5 rounded-full border-2 items-center justify-center ${deliveryMethod === "express" ? "border-primary" : "border-border"}`}
               >
                 {deliveryMethod === "express" && (
-                  <View className="w-3 h-3 rounded-full bg-brand-600" />
+                  <View className="w-3 h-3 rounded-full bg-primary" />
                 )}
               </View>
               <View className="flex-1">
@@ -293,7 +293,7 @@ export default function CheckoutScreen() {
                   Same day delivery
                 </Text>
               </View>
-              <Text className="text-body-md font-bold text-brand-600 font-heading">GHS 12.00</Text>
+              <Text className="text-body-md font-bold text-primary font-heading">GHS 12.00</Text>
             </Pressable>
           </View>
         </View>
@@ -314,18 +314,18 @@ export default function CheckoutScreen() {
               style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
               className={`flex-row items-center gap-4 p-5 rounded-[24px] border ${
                 paymentMethod === "card"
-                  ? "border-brand-600 bg-brand-50/30"
+                  ? "border-primary bg-primary-subtle/30"
                   : "border-border bg-card"
               }`}
               onPress={() => setPaymentMethod("card")}
             >
               <View
-                className={`w-5 h-5 rounded-full border-2 items-center justify-center ${paymentMethod === "card" ? "border-brand-600" : "border-surface-300"}`}
+                className={`w-5 h-5 rounded-full border-2 items-center justify-center ${paymentMethod === "card" ? "border-primary" : "border-border"}`}
               >
-                {paymentMethod === "card" && <View className="w-3 h-3 rounded-full bg-brand-600" />}
+                {paymentMethod === "card" && <View className="w-3 h-3 rounded-full bg-primary" />}
               </View>
               <View className="w-10 h-10 rounded-xl bg-blue-50 items-center justify-center">
-                <Icon name="credit-card" size={20} color="#004CFF" />
+                <Icon name="credit-card" size={20} color="var(--color-primary)" />
               </View>
               <View className="flex-1">
                 <Text className="text-body-md font-bold text-foreground font-body">
@@ -341,15 +341,15 @@ export default function CheckoutScreen() {
               style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
               className={`flex-row items-center gap-4 p-5 rounded-[24px] border ${
                 paymentMethod === "momo"
-                  ? "border-brand-600 bg-brand-50/30"
+                  ? "border-primary bg-primary-subtle/30"
                   : "border-border bg-card"
               }`}
               onPress={() => setPaymentMethod("momo")}
             >
               <View
-                className={`w-5 h-5 rounded-full border-2 items-center justify-center ${paymentMethod === "momo" ? "border-brand-600" : "border-surface-300"}`}
+                className={`w-5 h-5 rounded-full border-2 items-center justify-center ${paymentMethod === "momo" ? "border-primary" : "border-border"}`}
               >
-                {paymentMethod === "momo" && <View className="w-3 h-3 rounded-full bg-brand-600" />}
+                {paymentMethod === "momo" && <View className="w-3 h-3 rounded-full bg-primary" />}
               </View>
               <View className="w-10 h-10 rounded-xl bg-amber-50 items-center justify-center">
                 <Icon name="phone" size={20} color="#d97706" />
@@ -368,17 +368,15 @@ export default function CheckoutScreen() {
               style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
               className={`flex-row items-center gap-4 p-5 rounded-[24px] border ${
                 paymentMethod === "wallet"
-                  ? "border-brand-600 bg-brand-50/30"
+                  ? "border-primary bg-primary-subtle/30"
                   : "border-border bg-card"
               }`}
               onPress={() => setPaymentMethod("wallet")}
             >
               <View
-                className={`w-5 h-5 rounded-full border-2 items-center justify-center ${paymentMethod === "wallet" ? "border-brand-600" : "border-surface-300"}`}
+                className={`w-5 h-5 rounded-full border-2 items-center justify-center ${paymentMethod === "wallet" ? "border-primary" : "border-border"}`}
               >
-                {paymentMethod === "wallet" && (
-                  <View className="w-3 h-3 rounded-full bg-brand-600" />
-                )}
+                {paymentMethod === "wallet" && <View className="w-3 h-3 rounded-full bg-primary" />}
               </View>
               <View className="w-10 h-10 rounded-xl bg-purple-50 items-center justify-center">
                 <Icon name="wallet" size={20} color="#9333ea" />
@@ -413,7 +411,7 @@ export default function CheckoutScreen() {
             </View>
             <Pressable
               style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
-              className={`w-12 h-6 rounded-full justify-center px-1 ${useBexieCoins ? "bg-amber-500 items-end" : "bg-accent items-start"}`}
+              className={`w-12 h-6 rounded-full justify-center px-1 ${useBexieCoins ? "bg-amber-500 items-end" : "bg-secondary items-start"}`}
               onPress={() => {
                 if (!useBexieCoins && bexieCoins < 1000) {
                   Toast.show({
@@ -482,7 +480,7 @@ export default function CheckoutScreen() {
               )}
               <View className="flex-row justify-between pt-2 border-t border-border">
                 <Text className="text-body-lg font-bold text-foreground font-heading">Total</Text>
-                <Text className="text-body-lg font-bold text-brand-600 font-heading">
+                <Text className="text-body-lg font-bold text-primary font-heading">
                   GHS {total.toFixed(2)}
                 </Text>
               </View>

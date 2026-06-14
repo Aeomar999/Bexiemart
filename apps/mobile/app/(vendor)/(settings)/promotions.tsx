@@ -72,7 +72,7 @@ export default function VendorPromotionsScreen() {
       ) : (
         <ScrollView className="flex-1 px-5 pt-6 pb-12">
           {/* Flash Sales Opt-in */}
-          <View className="bg-brand-600 rounded-[20px] p-5 mb-8 relative overflow-hidden">
+          <View className="bg-primary rounded-[20px] p-5 mb-8 relative overflow-hidden">
             <View className="absolute top-0 right-0 w-32 h-32 bg-card/10 rounded-full -mr-10 -mt-10" />
             <View className="flex-row items-center justify-between mb-2">
               <View className="flex-row items-center">
@@ -99,10 +99,10 @@ export default function VendorPromotionsScreen() {
             <Text className="text-[18px] font-bold text-foreground">Store Coupons</Text>
             <Pressable
               onPress={openCreate}
-              className="bg-brand-50 px-3 py-1.5 rounded-full flex-row items-center"
+              className="bg-primary-subtle px-3 py-1.5 rounded-full flex-row items-center"
             >
-              <Icon name="plus" size={14} color="#004CFF" style={{ marginRight: 4 }} />
-              <Text className="text-[12px] font-bold text-brand-600">Create New</Text>
+              <Icon name="plus" size={14} color="var(--color-primary)" style={{ marginRight: 4 }} />
+              <Text className="text-[12px] font-bold text-primary">Create New</Text>
             </Pressable>
           </View>
 
@@ -121,7 +121,7 @@ export default function VendorPromotionsScreen() {
                       {promo.code}
                     </Text>
                     <View
-                      className={`px-2 py-0.5 rounded-full ${promo.active ? "bg-green-100" : "bg-accent"}`}
+                      className={`px-2 py-0.5 rounded-full ${promo.active ? "bg-green-100" : "bg-secondary"}`}
                     >
                       <Text
                         className={`text-[10px] font-bold ${promo.active ? "text-green-700" : "text-muted-foreground"}`}
@@ -137,7 +137,7 @@ export default function VendorPromotionsScreen() {
                 <Switch
                   value={promo.active}
                   onValueChange={() => toggleCoupon.mutate(promo.id)}
-                  trackColor={{ false: "#e2e8f0", true: "#004CFF" }}
+                  trackColor={{ false: "#e2e8f0", true: "var(--color-primary)" }}
                   thumbColor={"#ffffff"}
                 />
               </View>
@@ -156,7 +156,7 @@ export default function VendorPromotionsScreen() {
         <View className="flex-1 justify-end bg-black/40">
           <Pressable className="absolute inset-0" onPress={() => setModalVisible(false)} />
           <View className="bg-card rounded-t-[32px] p-6 pb-12">
-            <View className="w-12 h-1.5 bg-accent rounded-full self-center mb-6" />
+            <View className="w-12 h-1.5 bg-secondary rounded-full self-center mb-6" />
             <Text className="text-[20px] font-heading font-bold text-foreground mb-6">
               {editingId ? "Edit Coupon" : "Create Coupon"}
             </Text>

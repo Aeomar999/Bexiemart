@@ -139,7 +139,7 @@ export default function VendorProfileScreen() {
               setPhotoTarget("banner");
               setPhotoModalVisible(true);
             }}
-            className="w-full h-32 bg-accent rounded-[20px] items-center justify-center overflow-hidden mb-[-40px]"
+            className="w-full h-32 bg-secondary rounded-[20px] items-center justify-center overflow-hidden mb-[-40px]"
           >
             {bannerUrl ? (
               <Image
@@ -167,8 +167,8 @@ export default function VendorProfileScreen() {
                 contentFit="cover"
               />
             ) : (
-              <View className="w-full h-full bg-brand-100 items-center justify-center">
-                <Text className="text-[32px] font-heading font-black text-brand-600">
+              <View className="w-full h-full bg-primary-subtle items-center justify-center">
+                <Text className="text-[32px] font-heading font-black text-primary">
                   {storeName ? storeName.charAt(0).toUpperCase() : "S"}
                 </Text>
               </View>
@@ -242,7 +242,7 @@ export default function VendorProfileScreen() {
             onPress={() => !isUploading && setPhotoModalVisible(false)}
           />
           <View className="bg-card rounded-t-[32px] p-6 pb-12">
-            <View className="w-12 h-1.5 bg-accent rounded-full self-center mb-6" />
+            <View className="w-12 h-1.5 bg-secondary rounded-full self-center mb-6" />
             <Text className="text-[20px] font-heading font-bold text-foreground mb-6">
               Update {photoTarget === "banner" ? "Cover Photo" : "Store Logo"}
             </Text>

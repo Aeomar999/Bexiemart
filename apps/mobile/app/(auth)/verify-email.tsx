@@ -106,23 +106,21 @@ export default function VerifyEmailScreen() {
               </View>
             )}
             <TouchableOpacity className="mt-4" onPress={() => router.replace("/(auth)/login")}>
-              <Text className="text-body-md text-brand-600 font-bold font-body">
-                Back to sign in
-              </Text>
+              <Text className="text-body-md text-primary font-bold font-body">Back to sign in</Text>
             </TouchableOpacity>
           </View>
         )}
 
         {status === "idle" && !token && (
           <View className="items-center">
-            <View className="w-16 h-16 rounded-2xl bg-brand-100 items-center justify-center mb-6">
-              <FontAwesome5 name="envelope-open-text" size={28} color="#004CFF" />
+            <View className="w-16 h-16 rounded-2xl bg-primary-subtle items-center justify-center mb-6">
+              <FontAwesome5 name="envelope-open-text" size={28} color="var(--color-primary)" />
             </View>
             <Text className="text-display-md font-heading font-bold text-foreground mb-2 text-center">
               {phoneVerified === "true" ? "Phone verified! 🎉" : "Check your email"}
             </Text>
             {phoneVerified === "true" && (
-              <Text className="text-body-lg text-brand-600 font-body font-bold text-center mb-2">
+              <Text className="text-body-lg text-primary font-body font-bold text-center mb-2">
                 Just one last step: Check your email.
               </Text>
             )}
@@ -151,7 +149,7 @@ export default function VerifyEmailScreen() {
 
             <TouchableOpacity className="mt-4" onPress={() => router.replace("/(auth)/login")}>
               <Text className="text-body-md text-muted-foreground font-body">
-                Already verified? <Text className="text-brand-600 font-bold">Sign in</Text>
+                Already verified? <Text className="text-primary font-bold">Sign in</Text>
               </Text>
             </TouchableOpacity>
           </View>

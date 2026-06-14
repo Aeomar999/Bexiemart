@@ -67,8 +67,8 @@ export default function LoginScreen() {
       </View>
       <View className="flex-1 justify-center py-12">
         <View className="mb-10 items-center">
-          <View className="w-16 h-16 rounded-2xl bg-brand-100 items-center justify-center mb-6">
-            <FontAwesome5 name="store" size={28} color="#004CFF" />
+          <View className="w-16 h-16 rounded-2xl bg-primary-subtle items-center justify-center mb-6">
+            <FontAwesome5 name="store" size={28} color="var(--color-primary)" />
           </View>
           <Text className="text-display-md font-heading font-bold text-foreground mb-2 text-center">
             Welcome back
@@ -102,7 +102,7 @@ export default function LoginScreen() {
 
           <View className="self-end -mt-2">
             <TouchableOpacity onPress={() => router.push("/(auth)/forgot-password")}>
-              <Text className="text-body-sm text-brand-600 font-bold font-body">
+              <Text className="text-body-sm text-primary font-bold font-body">
                 Forgot password?
               </Text>
             </TouchableOpacity>
@@ -116,7 +116,7 @@ export default function LoginScreen() {
           )}
 
           {isEmailNotVerified && (
-            <View className="mt-2 overflow-hidden rounded-3xl border border-brand-200">
+            <View className="mt-2 overflow-hidden rounded-3xl border border-border">
               <LinearGradient
                 colors={["#F0F4FF", "#FAFCFF"]}
                 start={{ x: 0, y: 0 }}
@@ -124,31 +124,35 @@ export default function LoginScreen() {
                 className="p-5"
               >
                 <View className="flex-row items-center gap-4 mb-5">
-                  <View className="w-14 h-14 bg-white rounded-full shadow-sm items-center justify-center border border-brand-100">
-                    <FontAwesome5 name="envelope-open-text" size={22} color="#004CFF" />
+                  <View className="w-14 h-14 bg-white rounded-full shadow-sm items-center justify-center border border-border">
+                    <FontAwesome5
+                      name="envelope-open-text"
+                      size={22}
+                      color="var(--color-primary)"
+                    />
                   </View>
                   <View className="flex-1">
-                    <Text className="text-[18px] font-heading font-black text-brand-900 mb-1">
+                    <Text className="text-[18px] font-heading font-black text-foreground mb-1">
                       Check your inbox
                     </Text>
-                    <Text className="text-[13px] text-brand-700 font-body leading-relaxed">
-                      We sent a link to <Text className="font-bold text-brand-900">{email}</Text>
+                    <Text className="text-[13px] text-primary-hover font-body leading-relaxed">
+                      We sent a link to <Text className="font-bold text-foreground">{email}</Text>
                     </Text>
                   </View>
                 </View>
 
                 <View className="bg-white/60 p-4 rounded-2xl mb-5 border border-white">
-                  <Text className="text-[13px] text-brand-800 font-body leading-relaxed">
+                  <Text className="text-[13px] text-foreground font-body leading-relaxed">
                     Tap the verification link in your email before signing in.
                   </Text>
-                  <View className="mt-2 flex-row items-start gap-2 bg-brand-50 p-3 rounded-xl border border-brand-100">
+                  <View className="mt-2 flex-row items-start gap-2 bg-primary-subtle p-3 rounded-xl border border-border">
                     <FontAwesome5
                       name="info-circle"
                       size={14}
-                      color="#004CFF"
+                      color="var(--color-primary)"
                       style={{ marginTop: 2 }}
                     />
-                    <Text className="flex-1 text-[12px] text-brand-700 leading-tight">
+                    <Text className="flex-1 text-[12px] text-primary-hover leading-tight">
                       <Text className="font-bold">Testing locally?</Text> Phone browsers can't open
                       "localhost" links. Copy the link to your PC browser, or update your .env to
                       use your local IP address (e.g., 192.168.x.x) instead of localhost.
@@ -170,9 +174,9 @@ export default function LoginScreen() {
                 ) : null}
 
                 {countdown > 0 ? (
-                  <View className="bg-white/80 border border-brand-100 py-3.5 px-4 rounded-full flex-row items-center justify-center gap-2">
-                    <FontAwesome5 name="clock" size={14} color="#004CFF" />
-                    <Text className="text-[14px] font-bold text-brand-900">
+                  <View className="bg-white/80 border border-border py-3.5 px-4 rounded-full flex-row items-center justify-center gap-2">
+                    <FontAwesome5 name="clock" size={14} color="var(--color-primary)" />
+                    <Text className="text-[14px] font-bold text-foreground">
                       Resend available in {Math.floor(countdown / 60)}:
                       {(countdown % 60).toString().padStart(2, "0")}
                     </Text>
@@ -212,7 +216,7 @@ export default function LoginScreen() {
             Don't have an account?
           </Text>
           <TouchableOpacity onPress={() => router.push("/(auth)/register")}>
-            <Text className="text-body-md text-brand-600 font-bold font-body">Create one</Text>
+            <Text className="text-body-md text-primary font-bold font-body">Create one</Text>
           </TouchableOpacity>
         </View>
       </View>

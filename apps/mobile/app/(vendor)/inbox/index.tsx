@@ -48,9 +48,9 @@ export default function VendorInboxScreen() {
               <Pressable
                 key={chat.id}
                 onPress={() => router.push(`/(vendor)/inbox/${chat.id}`)}
-                className={`flex-row items-center p-4 bg-card border border-border rounded-[16px] mb-3 ${chat.unread ? "bg-brand-50/50 border-brand-100" : ""}`}
+                className={`flex-row items-center p-4 bg-card border border-border rounded-[16px] mb-3 ${chat.unread ? "bg-primary-subtle/50 border-border" : ""}`}
               >
-                <View className="w-12 h-12 rounded-full bg-accent items-center justify-center mr-3 relative">
+                <View className="w-12 h-12 rounded-full bg-secondary items-center justify-center mr-3 relative">
                   <Icon name="user" size={20} color="#64748b" />
                   {chat.unread && (
                     <View className="absolute top-0 right-0 w-3 h-3 rounded-full bg-rose-500 border-2 border-card" />

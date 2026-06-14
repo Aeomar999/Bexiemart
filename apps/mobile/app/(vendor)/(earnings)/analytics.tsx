@@ -12,7 +12,7 @@ export default function AnalyticsScreen() {
 
   return (
     <View className="flex-1 bg-background">
-      <View 
+      <View
         className="px-5 pb-4 bg-card border-b border-border flex-row items-center"
         style={{ paddingTop: (insets.top || 12) + 12 }}
       >
@@ -25,7 +25,7 @@ export default function AnalyticsScreen() {
       <ScrollView className="flex-1 px-5 pt-6 pb-12" showsVerticalScrollIndicator={false}>
         {isLoading ? (
           <View className="items-center justify-center py-20">
-            <ActivityIndicator size="small" color="#004CFF" />
+            <ActivityIndicator size="small" color="var(--color-primary)" />
           </View>
         ) : isError ? (
           <View className="items-center justify-center py-20">
@@ -33,58 +33,94 @@ export default function AnalyticsScreen() {
           </View>
         ) : (
           <>
-        {/* Mock Chart Area */}
-        <View className="bg-card p-5 rounded-[24px] border border-border mb-6">
-          <View className="flex-row justify-between items-end mb-6">
-            <View>
-              <Text className="text-[13px] font-bold text-muted-foreground mb-1">Total Revenue (30 Days)</Text>
-              <Text className="text-[28px] font-heading font-black text-foreground">GHS {analytics?.totalRevenue30d?.toFixed(2) ?? "0.00"}</Text>
-            </View>
-            <View className="bg-green-100 px-2 py-1 rounded-full flex-row items-center">
-              <Icon name="trending-up" size={14} color="#16a34a" style={{ marginRight: 4 }} />
-              <Text className="text-[12px] font-bold text-green-700">{analytics?.revenueGrowth ?? "+0%"}</Text>
-            </View>
-          </View>
-          
-          <View className="h-40 border-b border-border flex-row items-end justify-between pb-2 pt-4 px-2">
-            {(analytics?.chartData ?? [40, 60, 50, 80, 100, 70]).map((bar: number, i: number) => {
-              const tints = ["bg-brand-200", "bg-brand-300", "bg-brand-400", "bg-brand-500", "bg-brand-600", "bg-brand-400"];
-              return (
-                <View key={i} className={`w-8 ${tints[i]} rounded-t-md`} style={{ height: `${bar}%` }} />
-              );
-            })}
-          </View>
-          <View className="flex-row justify-between mt-2 px-2">
-            {["Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map((day) => (
-              <Text key={day} className="text-[10px] text-muted-foreground font-bold">{day}</Text>
-            ))}
-          </View>
-        </View>
+            {/* Mock Chart Area */}
+            <View className="bg-card p-5 rounded-[24px] border border-border mb-6">
+              <View className="flex-row justify-between items-end mb-6">
+                <View>
+                  <Text className="text-[13px] font-bold text-muted-foreground mb-1">
+                    Total Revenue (30 Days)
+                  </Text>
+                  <Text className="text-[28px] font-heading font-black text-foreground">
+                    GHS {analytics?.totalRevenue30d?.toFixed(2) ?? "0.00"}
+                  </Text>
+                </View>
+                <View className="bg-green-100 px-2 py-1 rounded-full flex-row items-center">
+                  <Icon name="trending-up" size={14} color="#16a34a" style={{ marginRight: 4 }} />
+                  <Text className="text-[12px] font-bold text-green-700">
+                    {analytics?.revenueGrowth ?? "+0%"}
+                  </Text>
+                </View>
+              </View>
 
-        {/* Top Selling Products */}
-        <Text className="text-[16px] font-bold text-foreground mb-3 ml-1">Top Selling Items</Text>
-        <View className="bg-card rounded-[24px] border border-border overflow-hidden mb-12">
-          {(analytics?.topProducts ?? []).map((product: any, index: number, arr: any[]) => (
-            <View 
-              key={product.id} 
-              className={`p-4 flex-row items-center justify-between ${index < arr.length - 1 ? 'border-b border-border' : ''}`}
-            >
-              <View className="w-10 h-10 rounded-full bg-muted items-center justify-center mr-3">
-                <Text className="text-[14px] font-bold text-muted-foreground">#{index + 1}</Text>
+              <View className="h-40 border-b border-border flex-row items-end justify-between pb-2 pt-4 px-2">
+                {(analytics?.chartData ?? [40, 60, 50, 80, 100, 70]).map(
+                  (bar: number, i: number) => {
+                    const tints = [
+                      "bg-primary-subtle",
+                      "bg-primary-subtle",
+                      "bg-primary-subtle",
+                      "bg-primary",
+                      "bg-primary",
+                      "bg-primary-subtle",
+                    ];
+                    return (
+                      <View
+                        key={i}
+                        className={`w-8 ${tints[i]} rounded-t-md`}
+                        style={{ height: `${bar}%` }}
+                      />
+                    );
+                  }
+                )}
               </View>
-              <View className="flex-1 pr-4">
-                <Text className="text-[15px] font-bold text-foreground mb-0.5" numberOfLines={1}>{product.name}</Text>
-                <Text className="text-[12px] text-muted-foreground">{product.sales} units sold</Text>
-              </View>
-              <View className="items-end">
-                <Text className="text-[14px] font-bold text-foreground">GHS {product.revenue.toFixed(2)}</Text>
-                <Text className={`text-[12px] font-bold mt-0.5 ${product.trend?.startsWith('+') ? 'text-green-600' : 'text-red-500'}`}>
-                  {product.trend}
-                </Text>
+              <View className="flex-row justify-between mt-2 px-2">
+                {["Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map((day) => (
+                  <Text key={day} className="text-[10px] text-muted-foreground font-bold">
+                    {day}
+                  </Text>
+                ))}
               </View>
             </View>
-          ))}
-        </View>
+
+            {/* Top Selling Products */}
+            <Text className="text-[16px] font-bold text-foreground mb-3 ml-1">
+              Top Selling Items
+            </Text>
+            <View className="bg-card rounded-[24px] border border-border overflow-hidden mb-12">
+              {(analytics?.topProducts ?? []).map((product: any, index: number, arr: any[]) => (
+                <View
+                  key={product.id}
+                  className={`p-4 flex-row items-center justify-between ${index < arr.length - 1 ? "border-b border-border" : ""}`}
+                >
+                  <View className="w-10 h-10 rounded-full bg-muted items-center justify-center mr-3">
+                    <Text className="text-[14px] font-bold text-muted-foreground">
+                      #{index + 1}
+                    </Text>
+                  </View>
+                  <View className="flex-1 pr-4">
+                    <Text
+                      className="text-[15px] font-bold text-foreground mb-0.5"
+                      numberOfLines={1}
+                    >
+                      {product.name}
+                    </Text>
+                    <Text className="text-[12px] text-muted-foreground">
+                      {product.sales} units sold
+                    </Text>
+                  </View>
+                  <View className="items-end">
+                    <Text className="text-[14px] font-bold text-foreground">
+                      GHS {product.revenue.toFixed(2)}
+                    </Text>
+                    <Text
+                      className={`text-[12px] font-bold mt-0.5 ${product.trend?.startsWith("+") ? "text-green-600" : "text-red-500"}`}
+                    >
+                      {product.trend}
+                    </Text>
+                  </View>
+                </View>
+              ))}
+            </View>
           </>
         )}
       </ScrollView>

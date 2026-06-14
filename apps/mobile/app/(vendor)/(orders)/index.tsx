@@ -33,7 +33,7 @@ export default function OrdersManagerScreen() {
       case "Cancelled":
         return "bg-rose-100 text-rose-700";
       default:
-        return "bg-accent text-muted-foreground";
+        return "bg-secondary text-muted-foreground";
     }
   };
 
@@ -60,7 +60,7 @@ export default function OrdersManagerScreen() {
               <Pressable
                 key={filter}
                 onPress={() => setActiveFilter(filter)}
-                className={`flex-row items-center px-4 py-2 rounded-full border ${isActive ? "bg-foreground border-surface-900" : "bg-card border-border"}`}
+                className={`flex-row items-center px-4 py-2 rounded-full border ${isActive ? "bg-foreground border-border" : "bg-card border-border"}`}
               >
                 <Text
                   className={`text-[13px] font-bold ${isActive ? "text-white" : "text-muted-foreground"}`}
@@ -131,7 +131,7 @@ export default function OrdersManagerScreen() {
                       {order.items} {order.items === 1 ? "item" : "items"}
                     </Text>
                   </View>
-                  <Text className="text-[16px] font-black text-brand-600">
+                  <Text className="text-[16px] font-black text-primary">
                     GHS {order.total.toFixed(2)}
                   </Text>
                 </View>

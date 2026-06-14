@@ -1,6 +1,6 @@
-import React, { useRef, useState, useEffect } from 'react';
-import { View, Text, Animated, PanResponder, StyleSheet, Dimensions } from 'react-native';
-import { Icon } from './Icon';
+import React, { useRef, useState, useEffect } from "react";
+import { View, Text, Animated, PanResponder, StyleSheet, Dimensions } from "react-native";
+import { Icon } from "./Icon";
 
 interface SwipeButtonProps {
   onComplete: () => void;
@@ -14,10 +14,10 @@ interface SwipeButtonProps {
 export const SwipeButton: React.FC<SwipeButtonProps> = ({
   onComplete,
   text,
-  buttonColor = '#004CFF',
-  sliderColor = '#FFFFFF',
-  iconName = 'chevron-right',
-  resetOnComplete = true
+  buttonColor = "var(--color-primary)",
+  sliderColor = "#FFFFFF",
+  iconName = "chevron-right",
+  resetOnComplete = true,
 }) => {
   const [containerWidth, setContainerWidth] = useState(0);
   const sliderWidth = 56;
@@ -29,7 +29,7 @@ export const SwipeButton: React.FC<SwipeButtonProps> = ({
       onStartShouldSetPanResponder: () => true,
       onPanResponderMove: (_, gestureState) => {
         if (isCompleted) return;
-        
+
         let newX = gestureState.dx;
         const maxX = containerWidth - sliderWidth - 8; // 8 for padding
 
@@ -42,15 +42,15 @@ export const SwipeButton: React.FC<SwipeButtonProps> = ({
         if (isCompleted) return;
 
         const maxX = containerWidth - sliderWidth - 8;
-        
+
         if (gestureState.dx >= maxX * 0.9) {
           // Completed!
           Animated.spring(pan, {
             toValue: { x: maxX, y: 0 },
             useNativeDriver: false,
-            bounciness: 0
+            bounciness: 0,
           }).start();
-          
+
           setIsCompleted(true);
           onComplete();
 
@@ -68,7 +68,7 @@ export const SwipeButton: React.FC<SwipeButtonProps> = ({
           Animated.spring(pan, {
             toValue: { x: 0, y: 0 },
             useNativeDriver: false,
-            bounciness: 10
+            bounciness: 10,
           }).start();
         }
       },
@@ -79,31 +79,28 @@ export const SwipeButton: React.FC<SwipeButtonProps> = ({
   const fillWidth = pan.x.interpolate({
     inputRange: [0, Math.max(1, containerWidth - sliderWidth - 8)],
     outputRange: [sliderWidth, containerWidth - 8],
-    extrapolate: 'clamp'
+    extrapolate: "clamp",
   });
 
   return (
-    <View 
-      style={[styles.container, { backgroundColor: buttonColor + '20' }]}
+    <View
+      style={[styles.container, { backgroundColor: buttonColor + "20" }]}
       onLayout={(e) => setContainerWidth(e.nativeEvent.layout.width)}
     >
       <Text style={[styles.text, { color: buttonColor }]}>{text}</Text>
-      
-      <Animated.View 
-        style={[
-          styles.fill,
-          { width: fillWidth, backgroundColor: buttonColor + '40' }
-        ]} 
+
+      <Animated.View
+        style={[styles.fill, { width: fillWidth, backgroundColor: buttonColor + "40" }]}
       />
 
       <Animated.View
         {...panResponder.panHandlers}
         style={[
           styles.slider,
-          { backgroundColor: sliderColor, transform: [{ translateX: pan.x }] }
+          { backgroundColor: sliderColor, transform: [{ translateX: pan.x }] },
         ]}
       >
-        <Icon name={isCompleted ? 'check' : iconName} size={24} color={buttonColor} />
+        <Icon name={isCompleted ? "check" : iconName} size={24} color={buttonColor} />
       </Animated.View>
     </View>
   );
@@ -113,19 +110,19 @@ const styles = StyleSheet.create({
   container: {
     height: 64,
     borderRadius: 32,
-    justifyContent: 'center',
-    alignItems: 'center',
-    position: 'relative',
+    justifyContent: "center",
+    alignItems: "center",
+    position: "relative",
     padding: 4,
   },
   text: {
     fontSize: 16,
-    fontWeight: 'bold',
-    position: 'absolute',
+    fontWeight: "bold",
+    position: "absolute",
     zIndex: 1,
   },
   fill: {
-    position: 'absolute',
+    position: "absolute",
     left: 4,
     height: 56,
     borderRadius: 28,
@@ -135,15 +132,15 @@ const styles = StyleSheet.create({
     height: 56,
     width: 56,
     borderRadius: 28,
-    position: 'absolute',
+    position: "absolute",
     left: 4,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
     zIndex: 3,
-    shadowColor: '#000',
+    shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
     elevation: 4,
-  }
+  },
 });

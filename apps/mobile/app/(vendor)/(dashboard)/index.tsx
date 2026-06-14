@@ -40,7 +40,7 @@ const QUICK_ACTIONS = [
     id: "2",
     label: "Withdraw\nFunds",
     icon: "dollar-sign",
-    color: "#004CFF",
+    color: "var(--color-primary)",
     bg: "#e0e7ff",
     route: "/(vendor)/(earnings)",
   },
@@ -106,7 +106,7 @@ export default function DashboardScreen() {
               onPress={() => router.push("/(vendor)/notifications")}
             >
               <Icon name="bell" size={20} color="#64748b" />
-              <View className="absolute top-2 right-2 w-2 h-2 bg-brand-500 rounded-full border border-card" />
+              <View className="absolute top-2 right-2 w-2 h-2 bg-primary rounded-full border border-card" />
             </Pressable>
           </View>
         </View>
@@ -117,7 +117,11 @@ export default function DashboardScreen() {
         contentContainerClassName="pb-10 pt-4"
         showsVerticalScrollIndicator={false}
         refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor="#004CFF" />
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+            tintColor="var(--color-primary)"
+          />
         }
       >
         {/* ===== HERO / EARNINGS ===== */}
@@ -129,7 +133,7 @@ export default function DashboardScreen() {
             Overview
           </Text>
 
-          <View className="bg-foreground rounded-[24px] p-6 border border-surface-800">
+          <View className="bg-foreground rounded-[24px] p-6 border border-border">
             <View className="flex-row justify-between items-start mb-6">
               <View>
                 <Text className="text-muted-foreground font-body text-[13px] mb-1">
@@ -143,7 +147,7 @@ export default function DashboardScreen() {
 
             <Pressable
               style={({ pressed }) => [{ opacity: pressed ? 0.8 : 1 }]}
-              className="bg-brand-600 rounded-xl py-3 items-center justify-center flex-row gap-2"
+              className="bg-primary rounded-xl py-3 items-center justify-center flex-row gap-2"
               onPress={() => router.push("/(vendor)/(earnings)")}
             >
               <Text className="text-white font-bold font-body text-[15px]">Withdraw Funds</Text>
@@ -209,7 +213,7 @@ export default function DashboardScreen() {
           <View className="flex-row flex-wrap justify-between gap-y-4">
             {statsLoading ? (
               <View className="w-full items-center py-8">
-                <ActivityIndicator size="small" color="#004CFF" />
+                <ActivityIndicator size="small" color="var(--color-primary)" />
               </View>
             ) : statsError ? (
               <View className="w-full items-center py-8">

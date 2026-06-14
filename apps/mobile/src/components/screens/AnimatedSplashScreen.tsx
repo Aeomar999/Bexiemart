@@ -55,25 +55,34 @@ export function AnimatedSplashScreen({ onAnimationComplete }: AnimatedSplashScre
 
     // Phase 2: Pulse rings ripple outward sequentially
     ring1Opacity.value = withDelay(300, withTiming(0.15, { duration: 300 }));
-    ring1Scale.value = withDelay(300, withTiming(1, { duration: 800, easing: Easing.out(Easing.ease) }));
-    ring1Opacity.value = withDelay(300, withSequence(
-      withTiming(0.15, { duration: 300 }),
-      withTiming(0, { duration: 500 })
-    ));
+    ring1Scale.value = withDelay(
+      300,
+      withTiming(1, { duration: 800, easing: Easing.out(Easing.ease) })
+    );
+    ring1Opacity.value = withDelay(
+      300,
+      withSequence(withTiming(0.15, { duration: 300 }), withTiming(0, { duration: 500 }))
+    );
 
     ring2Opacity.value = withDelay(500, withTiming(0.1, { duration: 300 }));
-    ring2Scale.value = withDelay(500, withTiming(1, { duration: 800, easing: Easing.out(Easing.ease) }));
-    ring2Opacity.value = withDelay(500, withSequence(
-      withTiming(0.1, { duration: 300 }),
-      withTiming(0, { duration: 500 })
-    ));
+    ring2Scale.value = withDelay(
+      500,
+      withTiming(1, { duration: 800, easing: Easing.out(Easing.ease) })
+    );
+    ring2Opacity.value = withDelay(
+      500,
+      withSequence(withTiming(0.1, { duration: 300 }), withTiming(0, { duration: 500 }))
+    );
 
     ring3Opacity.value = withDelay(700, withTiming(0.06, { duration: 300 }));
-    ring3Scale.value = withDelay(700, withTiming(1, { duration: 800, easing: Easing.out(Easing.ease) }));
-    ring3Opacity.value = withDelay(700, withSequence(
-      withTiming(0.06, { duration: 300 }),
-      withTiming(0, { duration: 500 })
-    ));
+    ring3Scale.value = withDelay(
+      700,
+      withTiming(1, { duration: 800, easing: Easing.out(Easing.ease) })
+    );
+    ring3Opacity.value = withDelay(
+      700,
+      withSequence(withTiming(0.06, { duration: 300 }), withTiming(0, { duration: 500 }))
+    );
 
     // Phase 3: Brand name slides up
     brandOpacity.value = withDelay(600, withTiming(1, { duration: 500 }));
@@ -81,7 +90,10 @@ export function AnimatedSplashScreen({ onAnimationComplete }: AnimatedSplashScre
 
     // Phase 4: Tagline wipes in from left
     taglineOpacity.value = withDelay(900, withTiming(1, { duration: 400 }));
-    taglineWidth.value = withDelay(900, withTiming(100, { duration: 600, easing: Easing.out(Easing.ease) }));
+    taglineWidth.value = withDelay(
+      900,
+      withTiming(100, { duration: 600, easing: Easing.out(Easing.ease) })
+    );
 
     // Phase 5: Hold, then fade out the entire screen
     const timeout = setTimeout(() => {
@@ -101,10 +113,7 @@ export function AnimatedSplashScreen({ onAnimationComplete }: AnimatedSplashScre
 
   const logoStyle = useAnimatedStyle(() => ({
     opacity: logoOpacity.value,
-    transform: [
-      { scale: logoScale.value },
-      { rotate: `${logoRotateZ.value}deg` },
-    ],
+    transform: [{ scale: logoScale.value }, { rotate: `${logoRotateZ.value}deg` }],
   }));
 
   const ringStyle = (scale: SharedValue<number>, opacity: SharedValue<number>, size: number) =>
@@ -137,16 +146,15 @@ export function AnimatedSplashScreen({ onAnimationComplete }: AnimatedSplashScre
   return (
     <Animated.View style={[{ flex: 1, backgroundColor: "white" }, screenStyle]}>
       <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
-        
         {/* Pulse Rings */}
         <Animated.View
-          style={[ring3Style, { position: "absolute", backgroundColor: "#004CFF" }]}
+          style={[ring3Style, { position: "absolute", backgroundColor: "var(--color-primary)" }]}
         />
         <Animated.View
-          style={[ring2Style, { position: "absolute", backgroundColor: "#004CFF" }]}
+          style={[ring2Style, { position: "absolute", backgroundColor: "var(--color-primary)" }]}
         />
         <Animated.View
-          style={[ring1Style, { position: "absolute", backgroundColor: "#004CFF" }]}
+          style={[ring1Style, { position: "absolute", backgroundColor: "var(--color-primary)" }]}
         />
 
         {/* Logo Icon */}
@@ -156,10 +164,10 @@ export function AnimatedSplashScreen({ onAnimationComplete }: AnimatedSplashScre
               width: 96,
               height: 96,
               borderRadius: 28,
-              backgroundColor: "#004CFF",
+              backgroundColor: "var(--color-primary)",
               alignItems: "center",
               justifyContent: "center",
-              shadowColor: "#004CFF",
+              shadowColor: "var(--color-primary)",
               shadowOffset: { width: 0, height: 12 },
               shadowOpacity: 0.35,
               shadowRadius: 24,
@@ -181,7 +189,7 @@ export function AnimatedSplashScreen({ onAnimationComplete }: AnimatedSplashScre
               fontFamily: "Raleway_700Bold",
             }}
           >
-            Bexie<Text style={{ color: "#004CFF" }}>Mart</Text>
+            Bexie<Text style={{ color: "var(--color-primary)" }}>Mart</Text>
           </Text>
         </Animated.View>
 

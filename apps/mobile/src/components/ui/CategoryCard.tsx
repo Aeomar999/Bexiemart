@@ -35,7 +35,7 @@ export function CategoryCard({
             <View
               key={idx}
               className={`w-1/2 h-1/2 border border-card items-center justify-center ${
-                idx === 0 || idx === 3 ? "bg-muted" : "bg-accent"
+                idx === 0 || idx === 3 ? "bg-muted" : "bg-secondary"
               }`}
             >
               {imageUrls && imageUrls[idx] ? (
@@ -54,8 +54,8 @@ export function CategoryCard({
           <Text className="text-[12px] font-bold text-foreground w-2/3" numberOfLines={1}>
             {name}
           </Text>
-          <View className="bg-brand-50 px-2 py-0.5 rounded-full">
-            <Text className="text-[10px] font-bold text-brand-600">{count}</Text>
+          <View className="bg-primary-subtle px-2 py-0.5 rounded-full">
+            <Text className="text-[10px] font-bold text-primary">{count}</Text>
           </View>
         </View>
       </Card>

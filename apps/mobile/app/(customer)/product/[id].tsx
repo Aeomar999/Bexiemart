@@ -173,7 +173,7 @@ export default function ProductDetailsScreen() {
               {product.images.map((_: string, i: number) => (
                 <View
                   key={i}
-                  className={`h-2 rounded-full ${i === activeImageIndex ? "w-6 bg-brand-600" : "w-2 bg-card/60"}`}
+                  className={`h-2 rounded-full ${i === activeImageIndex ? "w-6 bg-primary" : "w-2 bg-card/60"}`}
                 />
               ))}
             </View>
@@ -188,7 +188,7 @@ export default function ProductDetailsScreen() {
           </Text>
 
           <View className="flex-row items-center gap-3 mt-3">
-            <Text className="text-heading-lg font-bold text-brand-600 font-heading">
+            <Text className="text-heading-lg font-bold text-primary font-heading">
               GHS {product.price.toFixed(2)}
             </Text>
             {product.oldPrice > product.price && (
@@ -256,13 +256,13 @@ export default function ProductDetailsScreen() {
               onPress={() => setShowFullDesc(!showFullDesc)}
             >
               <View className="flex-row items-center gap-1">
-                <Text className="text-body-sm font-bold text-brand-600 font-body">
+                <Text className="text-body-sm font-bold text-primary font-body">
                   {showFullDesc ? "Show less" : "Read more"}
                 </Text>
                 <Icon
                   name={showFullDesc ? "chevron-up" : "chevron-down"}
                   size={14}
-                  color="#004CFF"
+                  color="var(--color-primary)"
                 />
               </View>
             </Pressable>
@@ -280,7 +280,7 @@ export default function ProductDetailsScreen() {
           </Text>
           <View className="flex-row items-center gap-3">
             <View className="w-12 h-12 rounded-full bg-muted items-center justify-center">
-              <Icon name="store" size={22} color="#004CFF" />
+              <Icon name="store" size={22} color="var(--color-primary)" />
             </View>
             <View className="flex-1">
               <Text className="text-body-md font-bold text-foreground font-body">
@@ -332,7 +332,7 @@ export default function ProductDetailsScreen() {
                     {option.duration}
                   </Text>
                 </View>
-                <Text className="text-body-md font-bold text-brand-600 font-heading">
+                <Text className="text-body-md font-bold text-primary font-heading">
                   {option.fee === 0 ? "FREE" : `GHS ${option.fee.toFixed(2)}`}
                 </Text>
               </View>
@@ -356,7 +356,7 @@ export default function ProductDetailsScreen() {
                 })
               }
             >
-              <Text className="text-body-sm font-bold text-brand-600 font-body">See All</Text>
+              <Text className="text-body-sm font-bold text-primary font-body">See All</Text>
             </Pressable>
           </View>
 
@@ -368,8 +368,8 @@ export default function ProductDetailsScreen() {
               >
                 <View className="flex-row justify-between items-start mb-2">
                   <View className="flex-row items-center gap-3">
-                    <View className="w-10 h-10 rounded-full bg-brand-100 items-center justify-center">
-                      <Text className="text-body-sm font-bold text-brand-600 font-heading">
+                    <View className="w-10 h-10 rounded-full bg-primary-subtle items-center justify-center">
+                      <Text className="text-body-sm font-bold text-primary font-heading">
                         {typeof review.user === "string"
                           ? review.user.charAt(0)
                           : review.user.name?.charAt(0) || "U"}
@@ -404,11 +404,11 @@ export default function ProductDetailsScreen() {
 
           <Pressable
             style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
-            className="w-full bg-brand-50 py-4 rounded-full items-center justify-center mt-2 border border-brand-100 flex-row gap-2"
+            className="w-full bg-primary-subtle py-4 rounded-full items-center justify-center mt-2 border border-border flex-row gap-2"
             onPress={() => router.push("/(customer)/review-modal")}
           >
-            <Icon name="edit-3" size={16} color="#004CFF" />
-            <Text className="text-body-sm font-bold text-brand-600 font-body">Write a Review</Text>
+            <Icon name="edit-3" size={16} color="var(--color-primary)" />
+            <Text className="text-body-sm font-bold text-primary font-body">Write a Review</Text>
           </Pressable>
         </View>
       </ScrollView>
@@ -445,7 +445,7 @@ export default function ProductDetailsScreen() {
           <Pressable
             style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
             className={`flex-1 h-[52px] rounded-full items-center justify-center active:scale-[0.98] ${
-              addedToCart ? "bg-emerald-500" : "bg-brand-600"
+              addedToCart ? "bg-emerald-500" : "bg-primary"
             }`}
             onPress={handleAddToCart}
             disabled={addedToCart}
@@ -462,7 +462,7 @@ export default function ProductDetailsScreen() {
         {/* Buy Now */}
         <Pressable
           style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
-          className="mt-2 h-[46px] rounded-full items-center justify-center bg-accent-600 active:scale-[0.98]"
+          className="mt-2 h-[46px] rounded-full items-center justify-center bg-secondary active:scale-[0.98]"
           onPress={handleBuyNow}
         >
           <View className="flex-row items-center gap-2">

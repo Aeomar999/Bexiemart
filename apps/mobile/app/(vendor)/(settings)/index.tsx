@@ -15,7 +15,7 @@ const SETTINGS_SECTIONS = [
         icon: "store",
         label: "Store Profile",
         route: "/(vendor)/(settings)/profile",
-        color: "#004CFF",
+        color: "var(--color-primary)",
       },
       {
         id: "hours",
@@ -198,7 +198,7 @@ export default function VendorSettingsScreen() {
                         <Switch
                           value={isDarkMode}
                           onValueChange={setIsDarkMode}
-                          trackColor={{ false: "#e2e8f0", true: "#004CFF" }}
+                          trackColor={{ false: "#e2e8f0", true: "var(--color-primary)" }}
                           thumbColor={"#ffffff"}
                         />
                       ) : (

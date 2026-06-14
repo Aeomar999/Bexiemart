@@ -183,7 +183,7 @@ export default function ShopScreen() {
             <Pressable
               style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
               className={`px-4 py-2 rounded-full ${
-                activeCategoryFilter === item.name ? "bg-brand-600" : "bg-card border border-border"
+                activeCategoryFilter === item.name ? "bg-primary" : "bg-card border border-border"
               }`}
               onPress={() => setActiveCategoryFilter(item.name)}
             >
@@ -232,7 +232,7 @@ export default function ShopScreen() {
         ListFooterComponent={
           isFetchingNextPage ? (
             <View className="py-4 items-center">
-              <ActivityIndicator color="#004CFF" />
+              <ActivityIndicator color="var(--color-primary)" />
             </View>
           ) : null
         }
@@ -281,7 +281,7 @@ export default function ShopScreen() {
               </View>
               <View className="p-3">
                 <Text
-                  className="text-caption text-brand-600 font-bold font-body uppercase tracking-wide"
+                  className="text-caption text-primary font-bold font-body uppercase tracking-wide"
                   numberOfLines={1}
                 >
                   {item.vendor}
@@ -294,7 +294,7 @@ export default function ShopScreen() {
                 </Text>
                 <View className="flex-row items-center justify-between mt-3">
                   <View>
-                    <Text className="text-heading-sm font-bold text-brand-600 font-heading">
+                    <Text className="text-heading-sm font-bold text-primary font-heading">
                       GHS {item.price.toFixed(2)}
                     </Text>
                     {item.oldPrice > item.price && (
@@ -305,7 +305,7 @@ export default function ShopScreen() {
                   </View>
                   <Pressable
                     style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
-                    className="w-9 h-9 rounded-full bg-brand-600 items-center justify-center active:scale-95"
+                    className="w-9 h-9 rounded-full bg-primary items-center justify-center active:scale-95"
                     onPress={() => handleAddToCart(item)}
                   >
                     <Icon name="plus" size={16} color="#fff" />
@@ -335,7 +335,7 @@ export default function ShopScreen() {
             className="bg-card rounded-t-[32px] pt-6 pb-10 px-5"
             onStartShouldSetResponder={() => true}
           >
-            <View className="w-10 h-1 bg-accent rounded-full self-center mb-6" />
+            <View className="w-10 h-1 bg-secondary rounded-full self-center mb-6" />
             <Text className="text-heading-sm font-heading font-bold text-foreground mb-5">
               Sort Products
             </Text>
@@ -350,11 +350,13 @@ export default function ShopScreen() {
                 }}
               >
                 <Text
-                  className={`text-body-md font-body ${sortBy === key ? "text-brand-600 font-bold" : "text-muted-foreground"}`}
+                  className={`text-body-md font-body ${sortBy === key ? "text-primary font-bold" : "text-muted-foreground"}`}
                 >
                   {sortLabels[key]}
                 </Text>
-                {sortBy === key && <Icon name="check-circle" size={20} color="#004CFF" />}
+                {sortBy === key && (
+                  <Icon name="check-circle" size={20} color="var(--color-primary)" />
+                )}
               </Pressable>
             ))}
           </View>

@@ -65,7 +65,7 @@ export function CreateCollectionModal({ visible, onClose }: Props) {
                 <Text className="text-[14px] font-bold text-foreground font-heading mb-3">
                   Collection Name
                 </Text>
-                <View className="flex-row items-center bg-background h-[52px] rounded-[16px] px-4 border border-border focus:border-brand-500">
+                <View className="flex-row items-center bg-background h-[52px] rounded-[16px] px-4 border border-border focus:border-primary">
                   <Icon name="folder" size={20} color="#94a3b8" />
                   <TextInput
                     className="flex-1 ml-3 text-[16px] font-body text-foreground h-full"

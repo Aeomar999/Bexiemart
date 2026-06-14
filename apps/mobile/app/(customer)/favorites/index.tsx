@@ -122,10 +122,10 @@ export default function FavoritesScreen() {
           </View>
           <Pressable
             style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
-            className="w-10 h-10 rounded-full bg-brand-50 border border-brand-100 items-center justify-center"
+            className="w-10 h-10 rounded-full bg-primary-subtle border border-border items-center justify-center"
             onPress={() => setShowCreateModal(true)}
           >
-            <Icon name="folder-plus" size={18} color="#004CFF" />
+            <Icon name="folder-plus" size={18} color="var(--color-primary)" />
           </Pressable>
         </View>
 
@@ -182,7 +182,11 @@ export default function FavoritesScreen() {
         keyExtractor={(item: any) => item.id}
         showsVerticalScrollIndicator={false}
         refreshControl={
-          <RefreshControl refreshing={isLoading} onRefresh={handleRefresh} tintColor="#004CFF" />
+          <RefreshControl
+            refreshing={isLoading}
+            onRefresh={handleRefresh}
+            tintColor="var(--color-primary)"
+          />
         }
         ListEmptyComponent={
           <EmptyState
@@ -220,7 +224,7 @@ export default function FavoritesScreen() {
                     className="absolute top-2 right-12 w-8 h-8 rounded-full bg-card/90 items-center justify-center shadow-sm"
                     onPress={() => handleShowAddMenu(item.id)}
                   >
-                    <Icon name="folder-plus" size={15} color="#004CFF" />
+                    <Icon name="folder-plus" size={15} color="var(--color-primary)" />
                   </Pressable>
                 )}
                 <Pressable
@@ -236,7 +240,7 @@ export default function FavoritesScreen() {
                 </Pressable>
               </View>
               <View className="p-3">
-                <Text className="text-caption text-brand-600 font-bold font-body uppercase tracking-wide">
+                <Text className="text-caption text-primary font-bold font-body uppercase tracking-wide">
                   {item.vendor?.shopName || item.vendor || "VENDOR"}
                 </Text>
                 <Text
@@ -247,7 +251,7 @@ export default function FavoritesScreen() {
                 </Text>
                 <View className="flex-row items-center justify-between mt-3">
                   <View>
-                    <Text className="text-heading-sm font-bold text-brand-600 font-heading">
+                    <Text className="text-heading-sm font-bold text-primary font-heading">
                       GHS {Number(item.price).toFixed(2)}
                     </Text>
                     <View className="flex-row items-center gap-1 mt-0.5">
@@ -259,7 +263,7 @@ export default function FavoritesScreen() {
                   </View>
                   <Pressable
                     style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
-                    className={`w-9 h-9 rounded-full ${wasAdded ? "bg-emerald-500" : "bg-brand-600"} items-center justify-center active:scale-95`}
+                    className={`w-9 h-9 rounded-full ${wasAdded ? "bg-emerald-500" : "bg-primary"} items-center justify-center active:scale-95`}
                     onPress={() => handleAddToCart(item)}
                   >
                     <Icon name={wasAdded ? "check-circle" : "plus"} size={16} color="#fff" />

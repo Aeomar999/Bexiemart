@@ -120,10 +120,10 @@ export default function StaffManagementScreen() {
         </View>
         <Pressable
           onPress={openAddForm}
-          className="bg-brand-50 px-3 py-1.5 rounded-full flex-row items-center"
+          className="bg-primary-subtle px-3 py-1.5 rounded-full flex-row items-center"
         >
-          <Icon name="plus" size={14} color="#004CFF" style={{ marginRight: 4 }} />
-          <Text className="text-[12px] font-bold text-brand-600">Add Staff</Text>
+          <Icon name="plus" size={14} color="var(--color-primary)" style={{ marginRight: 4 }} />
+          <Text className="text-[12px] font-bold text-primary">Add Staff</Text>
         </Pressable>
       </View>
 
@@ -140,8 +140,8 @@ export default function StaffManagementScreen() {
                 <View key={staff.id} className={`p-5 ${!isLast ? "border-b border-border" : ""}`}>
                   <View className="flex-row items-center justify-between mb-3">
                     <View className="flex-row items-center">
-                      <View className="w-12 h-12 rounded-full bg-brand-100 items-center justify-center mr-3 border-2 border-card shadow-sm">
-                        <Text className="text-[16px] font-heading font-black text-brand-600">
+                      <View className="w-12 h-12 rounded-full bg-primary-subtle items-center justify-center mr-3 border-2 border-card shadow-sm">
+                        <Text className="text-[16px] font-heading font-black text-primary">
                           {staff.name.charAt(0)}
                         </Text>
                       </View>
@@ -204,7 +204,7 @@ export default function StaffManagementScreen() {
         <View className="flex-1 justify-end bg-black/40">
           <Pressable className="absolute inset-0" onPress={() => setFormModalVisible(false)} />
           <View className="bg-card rounded-t-[32px] p-6 pb-12">
-            <View className="w-12 h-1.5 bg-accent rounded-full self-center mb-6" />
+            <View className="w-12 h-1.5 bg-secondary rounded-full self-center mb-6" />
             <Text className="text-[20px] font-heading font-bold text-foreground mb-6">
               {editingId ? "Edit Staff Details" : "Add New Staff"}
             </Text>
@@ -232,7 +232,7 @@ export default function StaffManagementScreen() {
                     <Pressable
                       key={r}
                       onPress={() => setRole(r)}
-                      className={`px-4 py-2 rounded-full border ${role === r ? "bg-foreground border-surface-900" : "bg-card border-border"}`}
+                      className={`px-4 py-2 rounded-full border ${role === r ? "bg-foreground border-border" : "bg-card border-border"}`}
                     >
                       <Text
                         className={`text-[13px] font-bold ${role === r ? "text-white" : "text-muted-foreground"}`}
@@ -266,7 +266,7 @@ export default function StaffManagementScreen() {
         <View className="flex-1 justify-end bg-black/40">
           <Pressable className="absolute inset-0" onPress={() => setActionModalVisible(false)} />
           <View className="bg-card rounded-t-[32px] p-6 pb-12">
-            <View className="w-12 h-1.5 bg-accent rounded-full self-center mb-6" />
+            <View className="w-12 h-1.5 bg-secondary rounded-full self-center mb-6" />
             <Text className="text-[20px] font-heading font-bold text-foreground mb-6">
               Manage Staff
             </Text>

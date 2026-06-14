@@ -129,15 +129,15 @@ export default function TaxesDocumentsScreen() {
               <View className="flex-row gap-3">
                 <Pressable
                   onPress={() => setVatRegistered(true)}
-                  className={`flex-1 flex-row items-center p-4 rounded-[12px] border ${vatRegistered ? "bg-brand-50 border-brand-200" : "bg-background border-border"}`}
+                  className={`flex-1 flex-row items-center p-4 rounded-[12px] border ${vatRegistered ? "bg-primary-subtle border-border" : "bg-background border-border"}`}
                 >
                   <View
-                    className={`w-5 h-5 rounded-full border-2 items-center justify-center mr-3 ${vatRegistered ? "border-brand-600" : "border-surface-300"}`}
+                    className={`w-5 h-5 rounded-full border-2 items-center justify-center mr-3 ${vatRegistered ? "border-primary" : "border-border"}`}
                   >
-                    {vatRegistered && <View className="w-2.5 h-2.5 bg-brand-600 rounded-full" />}
+                    {vatRegistered && <View className="w-2.5 h-2.5 bg-primary rounded-full" />}
                   </View>
                   <Text
-                    className={`text-[14px] font-bold ${vatRegistered ? "text-brand-800" : "text-muted-foreground"}`}
+                    className={`text-[14px] font-bold ${vatRegistered ? "text-foreground" : "text-muted-foreground"}`}
                   >
                     Registered
                   </Text>
@@ -145,10 +145,10 @@ export default function TaxesDocumentsScreen() {
 
                 <Pressable
                   onPress={() => setVatRegistered(false)}
-                  className={`flex-1 flex-row items-center p-4 rounded-[12px] border ${!vatRegistered ? "bg-foreground border-surface-900" : "bg-background border-border"}`}
+                  className={`flex-1 flex-row items-center p-4 rounded-[12px] border ${!vatRegistered ? "bg-foreground border-border" : "bg-background border-border"}`}
                 >
                   <View
-                    className={`w-5 h-5 rounded-full border-2 items-center justify-center mr-3 ${!vatRegistered ? "border-card" : "border-surface-300"}`}
+                    className={`w-5 h-5 rounded-full border-2 items-center justify-center mr-3 ${!vatRegistered ? "border-card" : "border-border"}`}
                   >
                     {!vatRegistered && <View className="w-2.5 h-2.5 bg-card rounded-full" />}
                   </View>
@@ -171,13 +171,13 @@ export default function TaxesDocumentsScreen() {
             <Pressable
               style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
               onPress={() => setUploadModalVisible(true)}
-              className="border-2 border-dashed border-brand-200 rounded-[16px] p-6 items-center justify-center bg-brand-50"
+              className="border-2 border-dashed border-border rounded-[16px] p-6 items-center justify-center bg-primary-subtle"
             >
-              <View className="w-12 h-12 rounded-full bg-card items-center justify-center mb-3 shadow-sm border border-brand-100">
-                <Icon name="upload-cloud" size={20} color="#004CFF" />
+              <View className="w-12 h-12 rounded-full bg-card items-center justify-center mb-3 shadow-sm border border-border">
+                <Icon name="upload-cloud" size={20} color="var(--color-primary)" />
               </View>
-              <Text className="text-[15px] font-bold text-brand-700 mb-1">Tap to Upload</Text>
-              <Text className="text-[12px] text-brand-500">PDF, JPG, or PNG (Max 5MB)</Text>
+              <Text className="text-[15px] font-bold text-primary-hover mb-1">Tap to Upload</Text>
+              <Text className="text-[12px] text-primary">PDF, JPG, or PNG (Max 5MB)</Text>
             </Pressable>
 
             {docList.length > 0 && (
@@ -188,7 +188,7 @@ export default function TaxesDocumentsScreen() {
                     className="p-3 bg-background rounded-[12px] border border-border flex-row items-center justify-between"
                   >
                     <View className="flex-row items-center flex-1 pr-2">
-                      <View className="w-8 h-8 rounded-full bg-accent items-center justify-center mr-3">
+                      <View className="w-8 h-8 rounded-full bg-secondary items-center justify-center mr-3">
                         <Icon name="file-text" size={14} color="#64748b" />
                       </View>
                       <View className="flex-1">
@@ -238,7 +238,7 @@ export default function TaxesDocumentsScreen() {
             onPress={() => !isUploading && setUploadModalVisible(false)}
           />
           <View className="bg-card rounded-t-[32px] p-6 pb-12">
-            <View className="w-12 h-1.5 bg-accent rounded-full self-center mb-6" />
+            <View className="w-12 h-1.5 bg-secondary rounded-full self-center mb-6" />
             <Text className="text-[20px] font-heading font-bold text-foreground mb-6">
               Upload Document
             </Text>

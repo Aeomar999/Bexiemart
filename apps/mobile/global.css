@@ -21,18 +21,18 @@
     --brand-900: #022d4d;
     --brand-950: #011d35;
 
-    /* Accent Colors (Warm Orange for contrast) */
-    --accent-50: #FFF3EB;
-    --accent-100: #FFE6D6;
-    --accent-200: #FFCDAD;
-    --accent-300: #FFB585;
-    --accent-400: #FF9C5C;
-    --accent-500: #FF8333;
-    --accent-600: #FF6B35;
-    --accent-700: #E05520;
-    --accent-800: #B23F10;
-    --accent-900: #852D08;
-    --accent-950: #571C02;
+    /* Accent Colors (Sky Blue for matching) */
+    --accent-50: #f0f9ff;
+    --accent-100: #e0f2fe;
+    --accent-200: #bae6fd;
+    --accent-300: #7dd3fc;
+    --accent-400: #38bdf8;
+    --accent-500: #0ea5e9;
+    --accent-600: #0284c7;
+    --accent-700: #0369a1;
+    --accent-800: #075985;
+    --accent-900: #0c4a6e;
+    --accent-950: #082f49;
 
     /* Surface Colors (Cool Grays to match Brand) */
     --surface-50: #F8FAFC;

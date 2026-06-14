@@ -25,10 +25,8 @@ export default function EarningsDashboardScreen() {
     <View className="flex-1 bg-background" style={{ paddingTop: insets.top }}>
       {/* Header */}
       <View className="px-5 py-4 bg-card border-b border-border flex-row items-center justify-between">
-        <Text className="text-[28px] font-heading font-black text-foreground">
-          Earnings
-        </Text>
-        <Pressable 
+        <Text className="text-[28px] font-heading font-black text-foreground">Earnings</Text>
+        <Pressable
           className="w-10 h-10 rounded-full bg-background items-center justify-center"
           style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
           onPress={() => router.push("/(vendor)/(settings)/help")}
@@ -44,7 +42,7 @@ export default function EarningsDashboardScreen() {
       >
         {isLoading ? (
           <View className="items-center justify-center py-20">
-            <ActivityIndicator size="small" color="#004CFF" />
+            <ActivityIndicator size="small" color="var(--color-primary)" />
           </View>
         ) : isError ? (
           <View className="items-center justify-center py-20">
@@ -52,97 +50,122 @@ export default function EarningsDashboardScreen() {
           </View>
         ) : (
           <>
-        {/* Balance Card */}
-        <View className="bg-brand-600 rounded-[24px] p-6 overflow-hidden relative">
-          <View className="absolute top-0 right-0 w-32 h-32 bg-card/10 rounded-full -mr-10 -mt-10" />
-          <View className="absolute bottom-0 left-0 w-24 h-24 bg-card/10 rounded-full -ml-8 -mb-8" />
-          
-          <Text className="text-[14px] text-white/80 font-medium mb-1">Available for Withdrawal</Text>
-          <Text className="text-[36px] font-black text-white leading-tight mb-4">GHS {earnings?.availableBalance?.toFixed(2) ?? "0.00"}</Text>
-          
-          <View className="flex-row items-center justify-between mt-2">
-            <View>
-              <Text className="text-[12px] text-white/70">Pending Clearance</Text>
-              <Text className="text-[16px] font-bold text-white">GHS {earnings?.pendingClearance?.toFixed(2) ?? "0.00"}</Text>
-            </View>
-            <Pressable 
-              onPress={() => router.push("/(vendor)/(earnings)/withdraw")}
-              className="bg-card px-5 py-2.5 rounded-full"
-            >
-              <Text className="text-[14px] font-bold text-brand-600">Withdraw</Text>
-            </Pressable>
-          </View>
-        </View>
+            {/* Balance Card */}
+            <View className="bg-primary rounded-[24px] p-6 overflow-hidden relative">
+              <View className="absolute top-0 right-0 w-32 h-32 bg-card/10 rounded-full -mr-10 -mt-10" />
+              <View className="absolute bottom-0 left-0 w-24 h-24 bg-card/10 rounded-full -ml-8 -mb-8" />
 
-        {/* Analytics Overview */}
-        <View>
-          <Text className="text-[18px] font-bold text-foreground mb-3">Overview</Text>
-          <View className="flex-row gap-3">
-            <Pressable 
-              className="flex-1 bg-card p-4 rounded-[16px] border border-border"
-              style={({ pressed }) => [{ opacity: pressed ? 0.8 : 1 }]}
-              onPress={() => router.push("/(vendor)/(earnings)/analytics")}
-            >
-              <View className="w-8 h-8 rounded-full bg-blue-50 items-center justify-center mb-2">
-                <Icon name="trending-up" size={16} color="#3b82f6" />
-              </View>
-              <Text className="text-[12px] text-muted-foreground mb-1">Today's Revenue</Text>
-              <Text className="text-[16px] font-bold text-foreground">GHS {earnings?.todayRevenue?.toFixed(2) ?? "0.00"}</Text>
-            </Pressable>
-            <Pressable 
-              className="flex-1 bg-card p-4 rounded-[16px] border border-border"
-              style={({ pressed }) => [{ opacity: pressed ? 0.8 : 1 }]}
-              onPress={() => router.push("/(vendor)/(earnings)/analytics")}
-            >
-              <View className="w-8 h-8 rounded-full bg-green-50 items-center justify-center mb-2">
-                <Icon name="calendar" size={16} color="#22c55e" />
-              </View>
-              <Text className="text-[12px] text-muted-foreground mb-1">This Week</Text>
-              <Text className="text-[16px] font-bold text-foreground">GHS {earnings?.thisWeekRevenue?.toFixed(2) ?? "0.00"}</Text>
-            </Pressable>
-          </View>
-        </View>
+              <Text className="text-[14px] text-white/80 font-medium mb-1">
+                Available for Withdrawal
+              </Text>
+              <Text className="text-[36px] font-black text-white leading-tight mb-4">
+                GHS {earnings?.availableBalance?.toFixed(2) ?? "0.00"}
+              </Text>
 
-        {/* Recent Transactions */}
-        <View>
-          <View className="flex-row items-center justify-between mb-4">
-            <Text className="text-[18px] font-bold text-foreground">Recent Transactions</Text>
-            <Pressable onPress={() => router.push("/(vendor)/(earnings)/transactions")}>
-              <Text className="text-[14px] font-bold text-brand-600">See All</Text>
-            </Pressable>
-          </View>
-
-          <View className="bg-card rounded-[20px] border border-border overflow-hidden">
-            {(earnings?.recentTransactions ?? []).map((trx: any, index: number, arr: any[]) => {
-              const isWithdrawal = trx.type === "withdrawal";
-              
-              return (
-                <Pressable 
-                  key={trx.id} 
-                  className={`p-4 flex-row items-center justify-between ${index < arr.length - 1 ? 'border-b border-border' : ''}`}
-                  style={({ pressed }) => [{ backgroundColor: pressed ? '#f8fafc' : 'white' }]}
-                  onPress={() => handleTransactionPress(trx)}
+              <View className="flex-row items-center justify-between mt-2">
+                <View>
+                  <Text className="text-[12px] text-white/70">Pending Clearance</Text>
+                  <Text className="text-[16px] font-bold text-white">
+                    GHS {earnings?.pendingClearance?.toFixed(2) ?? "0.00"}
+                  </Text>
+                </View>
+                <Pressable
+                  onPress={() => router.push("/(vendor)/(earnings)/withdraw")}
+                  className="bg-card px-5 py-2.5 rounded-full"
                 >
-                  <View className="flex-row items-center flex-1">
-                    <View className={`w-10 h-10 rounded-full items-center justify-center mr-3 ${isWithdrawal ? 'bg-rose-50' : 'bg-green-50'}`}>
-                      <Icon name={isWithdrawal ? "arrow-up-right" : "arrow-down-left"} size={18} color={isWithdrawal ? "#e11d48" : "#16a34a"} />
-                    </View>
-                    <View className="flex-1 pr-4">
-                      <Text className="text-[15px] font-bold text-foreground mb-0.5" numberOfLines={1}>{trx.title}</Text>
-                      <Text className="text-[13px] text-muted-foreground">{trx.date}</Text>
-                    </View>
-                  </View>
-                  <View className="items-end">
-                    <Text className={`text-[15px] font-bold ${isWithdrawal ? 'text-foreground' : 'text-green-600'}`}>
-                      {isWithdrawal ? '' : '+'}GHS {Math.abs(trx.amount).toFixed(2)}
-                    </Text>
-                    <Text className="text-[12px] text-muted-foreground capitalize mt-0.5">{trx.status}</Text>
-                  </View>
+                  <Text className="text-[14px] font-bold text-primary">Withdraw</Text>
                 </Pressable>
-              );
-            })}
-          </View>
-        </View>
+              </View>
+            </View>
+
+            {/* Analytics Overview */}
+            <View>
+              <Text className="text-[18px] font-bold text-foreground mb-3">Overview</Text>
+              <View className="flex-row gap-3">
+                <Pressable
+                  className="flex-1 bg-card p-4 rounded-[16px] border border-border"
+                  style={({ pressed }) => [{ opacity: pressed ? 0.8 : 1 }]}
+                  onPress={() => router.push("/(vendor)/(earnings)/analytics")}
+                >
+                  <View className="w-8 h-8 rounded-full bg-blue-50 items-center justify-center mb-2">
+                    <Icon name="trending-up" size={16} color="#3b82f6" />
+                  </View>
+                  <Text className="text-[12px] text-muted-foreground mb-1">Today's Revenue</Text>
+                  <Text className="text-[16px] font-bold text-foreground">
+                    GHS {earnings?.todayRevenue?.toFixed(2) ?? "0.00"}
+                  </Text>
+                </Pressable>
+                <Pressable
+                  className="flex-1 bg-card p-4 rounded-[16px] border border-border"
+                  style={({ pressed }) => [{ opacity: pressed ? 0.8 : 1 }]}
+                  onPress={() => router.push("/(vendor)/(earnings)/analytics")}
+                >
+                  <View className="w-8 h-8 rounded-full bg-green-50 items-center justify-center mb-2">
+                    <Icon name="calendar" size={16} color="#22c55e" />
+                  </View>
+                  <Text className="text-[12px] text-muted-foreground mb-1">This Week</Text>
+                  <Text className="text-[16px] font-bold text-foreground">
+                    GHS {earnings?.thisWeekRevenue?.toFixed(2) ?? "0.00"}
+                  </Text>
+                </Pressable>
+              </View>
+            </View>
+
+            {/* Recent Transactions */}
+            <View>
+              <View className="flex-row items-center justify-between mb-4">
+                <Text className="text-[18px] font-bold text-foreground">Recent Transactions</Text>
+                <Pressable onPress={() => router.push("/(vendor)/(earnings)/transactions")}>
+                  <Text className="text-[14px] font-bold text-primary">See All</Text>
+                </Pressable>
+              </View>
+
+              <View className="bg-card rounded-[20px] border border-border overflow-hidden">
+                {(earnings?.recentTransactions ?? []).map((trx: any, index: number, arr: any[]) => {
+                  const isWithdrawal = trx.type === "withdrawal";
+
+                  return (
+                    <Pressable
+                      key={trx.id}
+                      className={`p-4 flex-row items-center justify-between ${index < arr.length - 1 ? "border-b border-border" : ""}`}
+                      style={({ pressed }) => [{ backgroundColor: pressed ? "#f8fafc" : "white" }]}
+                      onPress={() => handleTransactionPress(trx)}
+                    >
+                      <View className="flex-row items-center flex-1">
+                        <View
+                          className={`w-10 h-10 rounded-full items-center justify-center mr-3 ${isWithdrawal ? "bg-rose-50" : "bg-green-50"}`}
+                        >
+                          <Icon
+                            name={isWithdrawal ? "arrow-up-right" : "arrow-down-left"}
+                            size={18}
+                            color={isWithdrawal ? "#e11d48" : "#16a34a"}
+                          />
+                        </View>
+                        <View className="flex-1 pr-4">
+                          <Text
+                            className="text-[15px] font-bold text-foreground mb-0.5"
+                            numberOfLines={1}
+                          >
+                            {trx.title}
+                          </Text>
+                          <Text className="text-[13px] text-muted-foreground">{trx.date}</Text>
+                        </View>
+                      </View>
+                      <View className="items-end">
+                        <Text
+                          className={`text-[15px] font-bold ${isWithdrawal ? "text-foreground" : "text-green-600"}`}
+                        >
+                          {isWithdrawal ? "" : "+"}GHS {Math.abs(trx.amount).toFixed(2)}
+                        </Text>
+                        <Text className="text-[12px] text-muted-foreground capitalize mt-0.5">
+                          {trx.status}
+                        </Text>
+                      </View>
+                    </Pressable>
+                  );
+                })}
+              </View>
+            </View>
           </>
         )}
       </ScrollView>

@@ -96,16 +96,16 @@ export default function VendorCustomersScreen() {
                     <Text className="text-[13px] font-bold text-muted-foreground">View Orders</Text>
                   </Pressable>
                   <Pressable
-                    className="flex-1 py-2.5 rounded-[12px] bg-brand-50 items-center justify-center flex-row"
+                    className="flex-1 py-2.5 rounded-[12px] bg-primary-subtle items-center justify-center flex-row"
                     onPress={() => router.push(`/(vendor)/inbox/msg_${customer.id}`)}
                   >
                     <Icon
                       name="message-circle"
                       size={16}
-                      color="#004CFF"
+                      color="var(--color-primary)"
                       style={{ marginRight: 6 }}
                     />
-                    <Text className="text-[13px] font-bold text-brand-600">Message</Text>
+                    <Text className="text-[13px] font-bold text-primary">Message</Text>
                   </Pressable>
                 </View>
               </View>
