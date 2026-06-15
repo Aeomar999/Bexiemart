@@ -77,11 +77,17 @@ export class GlobalExceptionFilter implements ExceptionFilter {
 
     const correlationId = (request as any).correlationId;
 
-    this.logger.error(
-      `${request.method} ${request.url} ${status} - ${message}`,
-      exception instanceof Error ? exception.stack : "",
-      { correlationId }
-    );
+    if (status === HttpStatus.NOT_FOUND) {
+      if (request.url !== "/favicon.ico" && request.url !== "/") {
+        this.logger.warn(`${request.method} ${request.url} 404 - Not Found`);
+      }
+    } else {
+      this.logger.error(
+        `${request.method} ${request.url} ${status} - ${message}`,
+        exception instanceof Error ? exception.stack : "",
+        { correlationId }
+      );
+    }
 
     const body: Record<string, any> = {
       success: false,

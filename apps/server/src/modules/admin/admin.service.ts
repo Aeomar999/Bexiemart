@@ -9,18 +9,26 @@ export class AdminService {
 
   // ─── Users ─────────────────────────────────────────────────────────────────────
 
-  async listUsers(page: number, limit: number) {
+  async listUsers(page: number, limit: number, search?: string) {
     const skip = (page - 1) * limit;
+    const where: any = {};
+    if (search) {
+      where.OR = [
+        { name: { contains: search, mode: "insensitive" } },
+        { email: { contains: search, mode: "insensitive" } },
+      ];
+    }
     const [data, total] = await Promise.all([
       this.prisma.user.findMany({
+        where,
         skip,
         take: limit,
         orderBy: { createdAt: "desc" },
         include: { vendorProfile: true },
       }),
-      this.prisma.user.count(),
+      this.prisma.user.count({ where }),
     ]);
-    return { data, meta: { total, page, limit, totalPages: Math.ceil(total / limit)  } };
+    return { data, meta: { total, page, limit, totalPages: Math.ceil(total / limit) } };
   }
 
   async getUser(id: string) {
@@ -45,10 +53,15 @@ export class AdminService {
 
   // ─── Vendors ───────────────────────────────────────────────────────────────────
 
-  async listVendors(page: number = 1, limit: number = 20) {
+  async listVendors(page: number = 1, limit: number = 20, search?: string) {
     const skip = (page - 1) * limit;
+    const where: any = {};
+    if (search) {
+      where.businessName = { contains: search, mode: "insensitive" };
+    }
     const [vendors, total] = await Promise.all([
       this.prisma.vendorProfile.findMany({
+        where,
         skip,
         take: limit,
         include: {
@@ -57,22 +70,29 @@ export class AdminService {
         },
         orderBy: { createdAt: "desc" },
       }),
-      this.prisma.vendorProfile.count()
+      this.prisma.vendorProfile.count({ where }),
     ]);
 
-    const vendorIds = vendors.map(v => v.id);
+    const vendorIds = vendors.map((v) => v.id);
 
     const allOrderItems = await this.prisma.orderItem.findMany({
       where: { product: { vendorId: { in: vendorIds } } },
-      select: { orderId: true, product: { select: { vendorId: true } }, order: { select: { status: true } } },
+      select: {
+        orderId: true,
+        product: { select: { vendorId: true } },
+        order: { select: { status: true } },
+      },
     });
 
-    const orderStatsByVendor = vendorIds.reduce((acc, id) => {
-      acc[id] = { totalOrders: new Set(), pendingOrders: 0 };
-      return acc;
-    }, {} as Record<string, { totalOrders: Set<string>; pendingOrders: number }>);
+    const orderStatsByVendor = vendorIds.reduce(
+      (acc, id) => {
+        acc[id] = { totalOrders: new Set(), pendingOrders: 0 };
+        return acc;
+      },
+      {} as Record<string, { totalOrders: Set<string>; pendingOrders: number }>
+    );
 
-    allOrderItems.forEach(item => {
+    allOrderItems.forEach((item) => {
       const vid = item.product?.vendorId;
       if (!vid || !orderStatsByVendor[vid]) return;
       orderStatsByVendor[vid].totalOrders.add(item.orderId);
@@ -91,7 +111,31 @@ export class AdminService {
       };
     });
 
-    return { data, meta: { total, page, limit, totalPages: Math.ceil(total / limit)  } };
+    return { data, meta: { total, page, limit, totalPages: Math.ceil(total / limit) } };
+  }
+
+  async getVendor(id: string) {
+    const vendor = await this.prisma.vendorProfile.findUnique({
+      where: { id },
+      include: {
+        user: { select: { id: true, name: true, email: true, image: true } },
+        products: true,
+      },
+    });
+    if (!vendor) throw new NotFoundException("Vendor profile not found");
+
+    const orderItems = await this.prisma.orderItem.findMany({
+      where: { product: { vendorId: id } },
+      include: { order: { select: { status: true } } },
+    });
+
+    const totalOrders = new Set(orderItems.map((item) => item.orderId)).size;
+    const pendingOrders = orderItems.filter((item) => item.order?.status === "pending").length;
+
+    return {
+      ...vendor,
+      orderStats: { totalOrders, pendingOrders },
+    };
   }
 
   async approveVendor(id: string) {
@@ -124,9 +168,10 @@ export class AdminService {
 
   // ─── Orders Oversight ──────────────────────────────────────────────────────────
 
-  async listOrders(status?: string, page: number = 1, limit: number = 20) {
+  async listOrders(status?: string, page: number = 1, limit: number = 20, search?: string) {
     const where: any = {};
     if (status) where.status = status;
+    if (search) where.id = { contains: search, mode: "insensitive" };
 
     const skip = (page - 1) * limit;
     const [data, total] = await Promise.all([
@@ -142,7 +187,7 @@ export class AdminService {
       }),
       this.prisma.order.count({ where }),
     ]);
-    return { data, meta: { total, page, limit, totalPages: Math.ceil(total / limit)  } };
+    return { data, meta: { total, page, limit, totalPages: Math.ceil(total / limit) } };
   }
 
   async getOrder(id: string) {
@@ -167,11 +212,18 @@ export class AdminService {
 
   // ─── Disputes ──────────────────────────────────────────────────────────────────
 
-  async listDisputes(page: number = 1, limit: number = 20) {
+  async listDisputes(page: number = 1, limit: number = 20, search?: string) {
     const skip = (page - 1) * limit;
+    const where: any = {};
+    if (search) {
+      where.id = { contains: search, mode: "insensitive" };
+    }
     const [data, total] = await Promise.all([
       this.prisma.escrow.findMany({
-        where: { status: "DISPUTED" },
+        where: {
+          ...where,
+          status: "DISPUTED",
+        },
         skip,
         take: limit,
         orderBy: { updatedAt: "desc" },
@@ -180,9 +232,25 @@ export class AdminService {
           vendor: { select: { shopName: true } },
         },
       }),
-      this.prisma.escrow.count({ where: { status: "DISPUTED" } }),
+      this.prisma.escrow.count({ where: { ...where, status: "DISPUTED" } }),
     ]);
-    return { data, meta: { total, page, limit, totalPages: Math.ceil(total / limit)  } };
+    return { data, meta: { total, page, limit, totalPages: Math.ceil(total / limit) } };
+  }
+
+  async getDispute(id: string) {
+    const escrow = await this.prisma.escrow.findUnique({
+      where: { id },
+      include: {
+        order: {
+          include: {
+            user: { select: { id: true, name: true, email: true } },
+          },
+        },
+        vendor: { select: { id: true, shopName: true } },
+      },
+    });
+    if (!escrow) throw new NotFoundException("Escrow not found");
+    return escrow;
   }
 
   async resolveDispute(id: string, action: "REFUND" | "RELEASE", reason: string) {
@@ -191,7 +259,8 @@ export class AdminService {
       include: { vendor: true },
     });
     if (!escrow) throw new NotFoundException("Escrow not found");
-    if (escrow.status !== "DISPUTED") throw new NotFoundException("Escrow is not in disputed state");
+    if (escrow.status !== "DISPUTED")
+      throw new NotFoundException("Escrow is not in disputed state");
 
     const reference = `admin_${action.toLowerCase()}_${id}_${Date.now()}`;
 
@@ -270,16 +339,17 @@ export class AdminService {
   // ─── Dashboard ─────────────────────────────────────────────────────────────────
 
   async getDashboardStats() {
-    const [totalUsers, totalVendors, totalOrders, pendingOrders, totalRevenueObj] = await Promise.all([
-      this.prisma.user.count(),
-      this.prisma.vendorProfile.count(),
-      this.prisma.order.count(),
-      this.prisma.order.count({ where: { status: "pending" } }),
-      this.prisma.escrow.aggregate({
-        _sum: { commission: true },
-        where: { status: "RELEASED" }
-      }),
-    ]);
+    const [totalUsers, totalVendors, totalOrders, pendingOrders, totalRevenueObj] =
+      await Promise.all([
+        this.prisma.user.count(),
+        this.prisma.vendorProfile.count(),
+        this.prisma.order.count(),
+        this.prisma.order.count({ where: { status: "pending" } }),
+        this.prisma.escrow.aggregate({
+          _sum: { commission: true },
+          where: { status: "RELEASED" },
+        }),
+      ]);
 
     return {
       totalUsers,
@@ -328,7 +398,7 @@ export class AdminService {
     const [totalUsers, usersByRole, recentUsers] = await Promise.all([
       this.prisma.user.count({ where }),
       this.prisma.user.groupBy({
-        by: ['role'],
+        by: ["role"],
         _count: true,
         where,
       }),
@@ -342,8 +412,351 @@ export class AdminService {
 
     return {
       totalUsers,
-      usersByRole: usersByRole.map(r => ({ role: r.role, count: r._count })),
+      usersByRole: usersByRole.map((r) => ({ role: r.role, count: r._count })),
       recentUsers,
     };
+  }
+
+  async getOrdersReport(startDate?: string, endDate?: string) {
+    const where: any = {};
+    if (startDate || endDate) {
+      where.createdAt = {};
+      if (startDate) where.createdAt.gte = new Date(startDate);
+      if (endDate) where.createdAt.lte = new Date(endDate);
+    }
+
+    const orders = await this.prisma.order.findMany({
+      where,
+      select: { id: true, createdAt: true, status: true, total: true },
+      orderBy: { createdAt: "asc" },
+    });
+
+    return {
+      totalOrders: orders.length,
+      data: orders,
+    };
+  }
+
+  // ─── Dispatchers & Deliveries ──────────────────────────────────────────────────
+
+  async listDispatchers(page: number = 1, limit: number = 20, search?: string) {
+    const skip = (page - 1) * limit;
+    const where: any = {};
+    if (search) {
+      where.user = {
+        OR: [
+          { name: { contains: search, mode: "insensitive" } },
+          { email: { contains: search, mode: "insensitive" } },
+        ],
+      };
+    }
+    const [data, total] = await Promise.all([
+      this.prisma.dispatcherProfile.findMany({
+        where,
+        skip,
+        take: limit,
+        orderBy: { createdAt: "desc" },
+        include: {
+          user: { select: { id: true, name: true, email: true, image: true, phoneNumber: true } },
+          _count: { select: { rides: true, deliveries: true } },
+        },
+      }),
+      this.prisma.dispatcherProfile.count({ where }),
+    ]);
+
+    const formattedData = data.map((d) => ({
+      ...d,
+      _count: undefined,
+      totalTrips: d._count.rides + d._count.deliveries,
+    }));
+
+    return {
+      data: formattedData,
+      meta: { total, page, limit, totalPages: Math.ceil(total / limit) },
+    };
+  }
+
+  async getDispatcher(id: string) {
+    const dispatcher = await this.prisma.dispatcherProfile.findUnique({
+      where: { id },
+      include: {
+        user: { select: { id: true, name: true, email: true, image: true, phoneNumber: true } },
+        rides: {
+          take: 10,
+          orderBy: { createdAt: "desc" },
+        },
+        deliveries: {
+          take: 10,
+          orderBy: { createdAt: "desc" },
+          select: { id: true, orderNumber: true, status: true, total: true, createdAt: true },
+        },
+      },
+    });
+    if (!dispatcher) throw new NotFoundException("Dispatcher not found");
+
+    const stats = {
+      totalRides: await this.prisma.rideRequest.count({ where: { dispatcherId: id } }),
+      totalDeliveries: await this.prisma.order.count({ where: { dispatcherId: id } }),
+    };
+
+    return { ...dispatcher, stats };
+  }
+
+  async updateDispatcherStatus(id: string, status: string) {
+    const dispatcher = await this.prisma.dispatcherProfile.findUnique({ where: { id } });
+    if (!dispatcher) throw new NotFoundException("Dispatcher not found");
+    return this.prisma.dispatcherProfile.update({
+      where: { id },
+      data: { status },
+    });
+  }
+
+  async listDeliveries(status?: string, page: number = 1, limit: number = 20) {
+    const where: any = {};
+    if (status) where.status = status;
+
+    const skip = (page - 1) * limit;
+    const [data, total] = await Promise.all([
+      this.prisma.rideRequest.findMany({
+        where,
+        skip,
+        take: limit,
+        orderBy: { createdAt: "desc" },
+        include: {
+          customer: { select: { id: true, name: true, phoneNumber: true } },
+          dispatcher: {
+            select: {
+              id: true,
+              vehicleType: true,
+              plateNumber: true,
+              user: { select: { name: true } },
+            },
+          },
+        },
+      }),
+      this.prisma.rideRequest.count({ where }),
+    ]);
+
+    return { data, meta: { total, page, limit, totalPages: Math.ceil(total / limit) } };
+  }
+
+  // ─── Food Delivery ─────────────────────────────────────────────────────────────
+
+  async listFoodVendors(page: number = 1, limit: number = 20) {
+    const skip = (page - 1) * limit;
+    const [data, total] = await Promise.all([
+      this.prisma.vendorProfile.findMany({
+        where: { foodItems: { some: {} } }, // Vendors that have at least one food item
+        skip,
+        take: limit,
+        orderBy: { createdAt: "desc" },
+        include: {
+          user: { select: { name: true, email: true } },
+          _count: { select: { foodItems: true, foodOrders: true } },
+        },
+      }),
+      this.prisma.vendorProfile.count({ where: { foodItems: { some: {} } } }),
+    ]);
+
+    return { data, meta: { total, page, limit, totalPages: Math.ceil(total / limit) } };
+  }
+
+  async listFoodOrders(status?: string, page: number = 1, limit: number = 20) {
+    const where: any = {};
+    if (status) where.status = status;
+
+    const skip = (page - 1) * limit;
+    const [data, total] = await Promise.all([
+      this.prisma.foodOrder.findMany({
+        where,
+        skip,
+        take: limit,
+        orderBy: { createdAt: "desc" },
+        include: {
+          user: { select: { id: true, name: true, phoneNumber: true } },
+          vendor: { select: { id: true, shopName: true } },
+        },
+      }),
+      this.prisma.foodOrder.count({ where }),
+    ]);
+
+    return { data, meta: { total, page, limit, totalPages: Math.ceil(total / limit) } };
+  }
+
+  // ─── Services ─────────────────────────────────────────────────────────────
+
+  async listServiceVendors(page: number = 1, limit: number = 20) {
+    const skip = (page - 1) * limit;
+    const [data, total] = await Promise.all([
+      this.prisma.vendorProfile.findMany({
+        where: { services: { some: {} } },
+        skip,
+        take: limit,
+        orderBy: { createdAt: "desc" },
+        include: {
+          user: { select: { name: true, email: true } },
+          _count: { select: { services: true } },
+        },
+      }),
+      this.prisma.vendorProfile.count({ where: { services: { some: {} } } }),
+    ]);
+
+    return { data, meta: { total, page, limit, totalPages: Math.ceil(total / limit) } };
+  }
+
+  async listServiceBookings(status?: string, page: number = 1, limit: number = 20) {
+    const where: any = {};
+    if (status) where.status = status;
+
+    const skip = (page - 1) * limit;
+    const [data, total] = await Promise.all([
+      this.prisma.serviceBooking.findMany({
+        where,
+        skip,
+        take: limit,
+        orderBy: { createdAt: "desc" },
+        include: {
+          user: { select: { id: true, name: true, phoneNumber: true } },
+          service: {
+            select: { id: true, name: true, price: true, vendor: { select: { shopName: true } } },
+          },
+        },
+      }),
+      this.prisma.serviceBooking.count({ where }),
+    ]);
+
+    return { data, meta: { total, page, limit, totalPages: Math.ceil(total / limit) } };
+  }
+
+  // ─── Marketing (Flash Sales & Coupons) ───────────────────────────────────
+
+  async listFlashSales(page: number = 1, limit: number = 20) {
+    const skip = (page - 1) * limit;
+    const [data, total] = await Promise.all([
+      this.prisma.flashSale.findMany({
+        skip,
+        take: limit,
+        orderBy: { createdAt: "desc" },
+        include: {
+          _count: { select: { items: true } },
+        },
+      }),
+      this.prisma.flashSale.count(),
+    ]);
+
+    return { data, meta: { total, page, limit, totalPages: Math.ceil(total / limit) } };
+  }
+
+  async createFlashSale(data: any) {
+    return this.prisma.flashSale.create({
+      data: {
+        title: data.name,
+        startDate: new Date(data.startDate),
+        endDate: new Date(data.endDate),
+        isActive: true,
+      },
+    });
+  }
+
+  async listCoupons(page: number = 1, limit: number = 20) {
+    const skip = (page - 1) * limit;
+    const [data, total] = await Promise.all([
+      this.prisma.coupon.findMany({
+        skip,
+        take: limit,
+        orderBy: { createdAt: "desc" },
+        include: {
+          vendor: { select: { shopName: true } },
+        },
+      }),
+      this.prisma.coupon.count(),
+    ]);
+
+    return { data, meta: { total, page, limit, totalPages: Math.ceil(total / limit) } };
+  }
+
+  async createCoupon(data: any) {
+    return this.prisma.coupon.create({
+      data: {
+        code: data.code,
+        discountPercent: Number(data.discountValue), // Assuming input uses discountValue for the percentage
+        minOrderAmount: data.minOrderAmount ? Number(data.minOrderAmount) : undefined,
+        expiresAt: new Date(data.endDate),
+        maxUses: data.usageLimit ? Number(data.usageLimit) : 100,
+        isActive: true,
+        vendorId: null, // Admin global coupons have no vendor
+      },
+    });
+  }
+
+  // ─── Content Moderation (Reels & Reviews) ───────────────────────────────
+
+  async listReels(page: number = 1, limit: number = 20) {
+    const skip = (page - 1) * limit;
+    const [data, total] = await Promise.all([
+      this.prisma.reel.findMany({
+        skip,
+        take: limit,
+        orderBy: { createdAt: "desc" },
+        include: {
+          user: { select: { name: true, email: true } },
+          product: { select: { name: true } },
+        },
+      }),
+      this.prisma.reel.count(),
+    ]);
+
+    return { data, meta: { total, page, limit, totalPages: Math.ceil(total / limit) } };
+  }
+
+  async toggleReelStatus(id: string) {
+    const reel = await this.prisma.reel.findUnique({ where: { id } });
+    if (!reel) throw new NotFoundException("Reel not found");
+    return this.prisma.reel.update({
+      where: { id },
+      data: { isActive: !reel.isActive },
+    });
+  }
+
+  async listReviews(page: number = 1, limit: number = 20) {
+    const skip = (page - 1) * limit;
+    const [data, total] = await Promise.all([
+      this.prisma.review.findMany({
+        skip,
+        take: limit,
+        orderBy: { createdAt: "desc" },
+        include: {
+          user: { select: { name: true } },
+          product: { select: { name: true, vendor: { select: { shopName: true } } } },
+        },
+      }),
+      this.prisma.review.count(),
+    ]);
+
+    return { data, meta: { total, page, limit, totalPages: Math.ceil(total / limit) } };
+  }
+
+  async deleteReview(id: string) {
+    return this.prisma.review.delete({ where: { id } });
+  }
+
+  // ─── Referrals ─────────────────────────────────────────────────────────────
+
+  async listReferrals(page: number = 1, limit: number = 20) {
+    const skip = (page - 1) * limit;
+    const [data, total] = await Promise.all([
+      this.prisma.referral.findMany({
+        skip,
+        take: limit,
+        orderBy: { createdAt: "desc" },
+        include: {
+          user: { select: { name: true, email: true } },
+          _count: { select: { referredUsers: true } },
+        },
+      }),
+      this.prisma.referral.count(),
+    ]);
+
+    return { data, meta: { total, page, limit, totalPages: Math.ceil(total / limit) } };
   }
 }

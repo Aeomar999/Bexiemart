@@ -21,8 +21,12 @@ export class AdminController {
 
   @ApiOperation({ summary: "List all users" })
   @Get("users")
-  listUsers(@Query("page") page?: string, @Query("limit") limit?: string) {
-    return this.adminService.listUsers(Number(page) || 1, Number(limit) || 20);
+  listUsers(
+    @Query("page") page?: string,
+    @Query("limit") limit?: string,
+    @Query("search") search?: string
+  ) {
+    return this.adminService.listUsers(Number(page) || 1, Number(limit) || 20, search);
   }
 
   @ApiOperation({ summary: "Get user by ID" })
@@ -42,8 +46,18 @@ export class AdminController {
 
   @ApiOperation({ summary: "List all vendors" })
   @Get("vendors")
-  listVendors(@Query("page") page?: string, @Query("limit") limit?: string) {
-    return this.adminService.listVendors(Number(page) || 1, Number(limit) || 20);
+  listVendors(
+    @Query("page") page?: string,
+    @Query("limit") limit?: string,
+    @Query("search") search?: string
+  ) {
+    return this.adminService.listVendors(Number(page) || 1, Number(limit) || 20, search);
+  }
+
+  @ApiOperation({ summary: "Get vendor by ID" })
+  @Get("vendors/:id")
+  getVendor(@Param("id") id: string) {
+    return this.adminService.getVendor(id);
   }
 
   @ApiOperation({ summary: "Approve a vendor" })
@@ -80,9 +94,10 @@ export class AdminController {
   listOrders(
     @Query("status") status?: string,
     @Query("page") page?: string,
-    @Query("limit") limit?: string
+    @Query("limit") limit?: string,
+    @Query("search") search?: string
   ) {
-    return this.adminService.listOrders(status, Number(page) || 1, Number(limit) || 20);
+    return this.adminService.listOrders(status, Number(page) || 1, Number(limit) || 20, search);
   }
 
   @ApiOperation({ summary: "Get order by ID" })
@@ -102,8 +117,18 @@ export class AdminController {
 
   @ApiOperation({ summary: "List disputed escrows" })
   @Get("disputes")
-  listDisputes(@Query("page") page?: string, @Query("limit") limit?: string) {
-    return this.adminService.listDisputes(Number(page) || 1, Number(limit) || 20);
+  listDisputes(
+    @Query("page") page?: string,
+    @Query("limit") limit?: string,
+    @Query("search") search?: string
+  ) {
+    return this.adminService.listDisputes(Number(page) || 1, Number(limit) || 20, search);
+  }
+
+  @ApiOperation({ summary: "Get dispute by ID" })
+  @Get("disputes/:id")
+  getDispute(@Param("id") id: string) {
+    return this.adminService.getDispute(id);
   }
 
   @ApiOperation({ summary: "Resolve a dispute" })
@@ -141,5 +166,133 @@ export class AdminController {
   @Get("reports/users")
   getUsersReport(@Query("startDate") startDate?: string, @Query("endDate") endDate?: string) {
     return this.adminService.getUsersReport(startDate, endDate);
+  }
+
+  @ApiOperation({ summary: "Get orders report" })
+  @Get("reports/orders")
+  async getOrdersReport(
+    @Query("startDate") startDate?: string,
+    @Query("endDate") endDate?: string
+  ) {
+    return this.adminService.getOrdersReport(startDate, endDate);
+  }
+
+  // ─── Dispatchers & Deliveries ──────────────────────────────────────────────────
+
+  @Get("dispatchers")
+  async listDispatchers(
+    @Query("page") page: string = "1",
+    @Query("limit") limit: string = "20",
+    @Query("search") search?: string
+  ) {
+    return this.adminService.listDispatchers(Number(page), Number(limit), search);
+  }
+
+  @Get("dispatchers/:id")
+  async getDispatcher(@Param("id") id: string) {
+    return this.adminService.getDispatcher(id);
+  }
+
+  @Patch("dispatchers/:id/status")
+  async updateDispatcherStatus(@Param("id") id: string, @Body() body: { status: string }) {
+    return this.adminService.updateDispatcherStatus(id, body.status);
+  }
+
+  @Get("deliveries")
+  async listDeliveries(
+    @Query("status") status?: string,
+    @Query("page") page: string = "1",
+    @Query("limit") limit: string = "20"
+  ) {
+    return this.adminService.listDeliveries(status, Number(page), Number(limit));
+  }
+
+  // ─── Food Delivery ─────────────────────────────────────────────────────────────
+
+  @Get("food-vendors")
+  async listFoodVendors(@Query("page") page: string = "1", @Query("limit") limit: string = "20") {
+    return this.adminService.listFoodVendors(Number(page), Number(limit));
+  }
+
+  @Get("food-orders")
+  async listFoodOrders(
+    @Query("status") status?: string,
+    @Query("page") page: string = "1",
+    @Query("limit") limit: string = "20"
+  ) {
+    return this.adminService.listFoodOrders(status, Number(page), Number(limit));
+  }
+
+  // ─── Services ─────────────────────────────────────────────────────────────
+
+  @Get("service-vendors")
+  async listServiceVendors(
+    @Query("page") page: string = "1",
+    @Query("limit") limit: string = "20"
+  ) {
+    return this.adminService.listServiceVendors(Number(page), Number(limit));
+  }
+
+  @Get("service-bookings")
+  async listServiceBookings(
+    @Query("status") status?: string,
+    @Query("page") page: string = "1",
+    @Query("limit") limit: string = "20"
+  ) {
+    return this.adminService.listServiceBookings(status, Number(page), Number(limit));
+  }
+
+  // ─── Marketing ─────────────────────────────────────────────────────────────
+
+  @Get("flash-sales")
+  async listFlashSales(@Query("page") page: string = "1", @Query("limit") limit: string = "20") {
+    return this.adminService.listFlashSales(Number(page), Number(limit));
+  }
+
+  @Post("flash-sales")
+  async createFlashSale(@Body() data: any) {
+    return this.adminService.createFlashSale(data);
+  }
+
+  @Get("coupons")
+  async listCoupons(@Query("page") page: string = "1", @Query("limit") limit: string = "20") {
+    return this.adminService.listCoupons(Number(page), Number(limit));
+  }
+
+  @Post("coupons")
+  async createCoupon(@Body() data: any) {
+    return this.adminService.createCoupon(data);
+  }
+
+  // ─── Content Moderation ─────────────────────────────────────────────────
+
+  @Get("content/reels")
+  async listReels(@Query("page") page: string = "1", @Query("limit") limit: string = "20") {
+    return this.adminService.listReels(Number(page), Number(limit));
+  }
+
+  @Patch("content/reels/:id/toggle-status")
+  async toggleReelStatus(@Param("id") id: string) {
+    return this.adminService.toggleReelStatus(id);
+  }
+
+  @Get("content/reviews")
+  async listReviews(@Query("page") page: string = "1", @Query("limit") limit: string = "20") {
+    return this.adminService.listReviews(Number(page), Number(limit));
+  }
+
+  // Use Delete decorator? Wait, let's just use Post or Patch for delete if we didn't import Delete.
+  // Or I can use Patch, but let's see if Delete is imported. It is not. I'll import it or just use Get for now?
+  // No, I can use @Patch('content/reviews/:id/delete') because Delete is not imported.
+  @Patch("content/reviews/:id/delete")
+  async deleteReview(@Param("id") id: string) {
+    return this.adminService.deleteReview(id);
+  }
+
+  // ─── Referrals ─────────────────────────────────────────────────────────────
+
+  @Get("referrals")
+  async listReferrals(@Query("page") page: string = "1", @Query("limit") limit: string = "20") {
+    return this.adminService.listReferrals(Number(page), Number(limit));
   }
 }

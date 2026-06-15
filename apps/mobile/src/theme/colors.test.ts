@@ -12,12 +12,12 @@ describe("colors", () => {
     expect(colors.surface[950]).toBeDefined();
   });
 
-  it("should have primary colors in valid hex format", () => {
-    const hexRegex = /^#[0-9A-Fa-f]{6}$/;
-    expect(colors.brand[500]).toMatch(hexRegex);
-    expect(colors.brand[50]).toMatch(hexRegex);
-    expect(colors.accent[500]).toMatch(hexRegex);
-    expect(colors.surface[500]).toMatch(hexRegex);
+  it("should have primary colors in valid format", () => {
+    const colorRegex = /^(#[0-9A-Fa-f]{6}|var\(--[a-zA-Z0-9-]+\))$/;
+    expect(colors.brand[500]).toMatch(colorRegex);
+    expect(colors.brand[50]).toMatch(colorRegex);
+    expect(colors.accent[500]).toMatch(colorRegex);
+    expect(colors.surface[500]).toMatch(colorRegex);
   });
 
   it("should have semantic colors defined", () => {
@@ -30,9 +30,15 @@ describe("colors", () => {
   });
 
   it("should have matching key structure across brand, accent, surface", () => {
-    const brandKeys = Object.keys(colors.brand).map(Number).filter(k => !isNaN(k));
-    const accentKeys = Object.keys(colors.accent).map(Number).filter(k => !isNaN(k));
-    const surfaceKeys = Object.keys(colors.surface).map(Number).filter(k => !isNaN(k));
+    const brandKeys = Object.keys(colors.brand)
+      .map(Number)
+      .filter((k) => !isNaN(k));
+    const accentKeys = Object.keys(colors.accent)
+      .map(Number)
+      .filter((k) => !isNaN(k));
+    const surfaceKeys = Object.keys(colors.surface)
+      .map(Number)
+      .filter((k) => !isNaN(k));
     expect(brandKeys).toEqual(accentKeys);
     expect(brandKeys).toEqual(surfaceKeys);
   });

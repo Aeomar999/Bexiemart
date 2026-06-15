@@ -20,7 +20,7 @@ async function bootstrap() {
   app.enableCors({
     origin: process.env.CORS_ORIGIN
       ? process.env.CORS_ORIGIN.split(",")
-      : ["bexiemart://", "exp://"],
+      : ["bexiemart://", "exp://", "http://localhost:3001", "https://admin.bexiemart.com"],
     credentials: true,
   });
 

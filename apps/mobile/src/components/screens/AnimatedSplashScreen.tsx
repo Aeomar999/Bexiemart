@@ -147,15 +147,9 @@ export function AnimatedSplashScreen({ onAnimationComplete }: AnimatedSplashScre
     <Animated.View style={[{ flex: 1, backgroundColor: "white" }, screenStyle]}>
       <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
         {/* Pulse Rings */}
-        <Animated.View
-          style={[ring3Style, { position: "absolute", backgroundColor: "var(--color-primary)" }]}
-        />
-        <Animated.View
-          style={[ring2Style, { position: "absolute", backgroundColor: "var(--color-primary)" }]}
-        />
-        <Animated.View
-          style={[ring1Style, { position: "absolute", backgroundColor: "var(--color-primary)" }]}
-        />
+        <Animated.View style={[ring3Style, { position: "absolute", backgroundColor: "#06406b" }]} />
+        <Animated.View style={[ring2Style, { position: "absolute", backgroundColor: "#06406b" }]} />
+        <Animated.View style={[ring1Style, { position: "absolute", backgroundColor: "#06406b" }]} />
 
         {/* Logo Icon */}
         <Animated.View style={logoStyle}>
@@ -164,10 +158,10 @@ export function AnimatedSplashScreen({ onAnimationComplete }: AnimatedSplashScre
               width: 96,
               height: 96,
               borderRadius: 28,
-              backgroundColor: "var(--color-primary)",
+              backgroundColor: "#06406b",
               alignItems: "center",
               justifyContent: "center",
-              shadowColor: "var(--color-primary)",
+              shadowColor: "#06406b",
               shadowOffset: { width: 0, height: 12 },
               shadowOpacity: 0.35,
               shadowRadius: 24,
@@ -189,7 +183,7 @@ export function AnimatedSplashScreen({ onAnimationComplete }: AnimatedSplashScre
               fontFamily: "Raleway_700Bold",
             }}
           >
-            Bexie<Text style={{ color: "var(--color-primary)" }}>Mart</Text>
+            Bexie<Text style={{ color: "#06406b" }}>Mart</Text>
           </Text>
         </Animated.View>
 
