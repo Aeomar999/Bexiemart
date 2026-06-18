@@ -2,7 +2,9 @@
   "name": "bexiemart-root",
   "private": true,
   "scripts": {
-    "prepare": "husky"
+    "prepare": "husky",
+    "build": "npm --prefix apps/server install && npm --prefix apps/server run prisma:generate && npm --prefix apps/server run build",
+    "start": "npm --prefix apps/server run start:prod"
   },
   "devDependencies": {
     "@babel/preset-env": "^7.29.7",
