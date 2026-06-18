@@ -1,9 +1,6 @@
 {
   "name": "bexiemart-root",
   "private": true,
-  "workspaces": [
-    "apps/*"
-  ],
   "scripts": {
     "prepare": "husky",
     "build": "npm --prefix apps/server install --legacy-peer-deps && npm --prefix apps/server run prisma:generate && npm --prefix apps/server run build",
