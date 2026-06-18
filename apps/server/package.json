@@ -31,7 +31,7 @@
     "@sentry/nestjs": "^10.55.0",
     "@sentry/profiling-node": "^10.55.0",
     "bcryptjs": "^3.0.3",
-    "better-auth": "^1.2.0",
+    "better-auth": "^1.6.19",
     "class-transformer": "^0.5.1",
     "class-validator": "^0.14.1",
     "cloudinary": "^2.10.0",
