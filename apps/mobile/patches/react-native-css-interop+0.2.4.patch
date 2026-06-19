@@ -1,3 +1,28 @@
+diff --git a/node_modules/react-native-css-interop/dist/css-to-rn/parseDeclaration.js b/node_modules/react-native-css-interop/dist/css-to-rn/parseDeclaration.js
+index 59ea66e..80136e6 100644
+--- a/node_modules/react-native-css-interop/dist/css-to-rn/parseDeclaration.js
++++ b/node_modules/react-native-css-interop/dist/css-to-rn/parseDeclaration.js
+@@ -1757,10 +1757,11 @@ function parseDisplay(display, options) {
+     }
+ }
+ function parseAspectRatio(aspectRatio) {
++    if (!aspectRatio) return undefined;
+     if (aspectRatio.auto) {
+         return "auto";
+     }
+-    else {
++    else if (aspectRatio.ratio && Array.isArray(aspectRatio.ratio) && aspectRatio.ratio.length > 1) {
+         if (aspectRatio.ratio[0] === aspectRatio.ratio[1]) {
+             return 1;
+         }
+@@ -1768,6 +1769,7 @@ function parseAspectRatio(aspectRatio) {
+             return aspectRatio.ratio.join(" / ");
+         }
+     }
++    return undefined;
+ }
+ function parseDimension({ unit, value }, options) {
+     switch (unit) {
 diff --git a/node_modules/react-native-css-interop/dist/runtime/native/render-component.js b/node_modules/react-native-css-interop/dist/runtime/native/render-component.js
 index eba25ec..15274fa 100644
 --- a/node_modules/react-native-css-interop/dist/runtime/native/render-component.js
