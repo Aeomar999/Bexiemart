@@ -1,0 +1,15 @@
+**/.git
+**/node_modules
+**/.expo
+**/coverage
+**/dist
+**/*.log
+
+**/android/build
+**/android/app/build
+**/android/.gradle
+**/android/.idea
+**/android/.cxx
+**/ios/build
+**/ios/Pods
+**/ios/.symlinks
