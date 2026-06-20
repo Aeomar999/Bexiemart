@@ -92,7 +92,8 @@
           "android": {
             "usesCleartextTraffic": true,
             "enableEdgeToEdge": true,
-            "newArchEnabled": true
+            "newArchEnabled": true,
+            "enablePngCrunchInReleaseBuilds": false
           },
           "ios": {
             "useFrameworks": "static",
