@@ -1,7 +1,8 @@
 import * as dotenv from "dotenv";
 import * as path from "path";
 dotenv.config({ path: path.resolve(__dirname, "../../.env") });
-console.log("BETTER_AUTH_URL:", process.env.BETTER_AUTH_URL);
+const isDev = process.env.NODE_ENV !== "production";
+if (isDev) console.log("BETTER_AUTH_URL:", process.env.BETTER_AUTH_URL);
 import { betterAuth } from "better-auth";
 import { prismaAdapter } from "better-auth/adapters/prisma";
 import { phoneNumber } from "better-auth/plugins";
@@ -44,9 +45,11 @@ export function createAuth(prisma: PrismaClient) {
       }),
       phoneNumber({
         sendOTP: async ({ phoneNumber, code }) => {
-          console.log(
-            `\n\n=== SMS GATEWAY ===\nTo: ${phoneNumber}\nMessage: Your BexieMart verification code is: ${code}\n===================\n\n`
-          );
+          if (isDev) {
+            console.log(
+              `\n\n=== SMS GATEWAY ===\nTo: ${phoneNumber}\nMessage: Your BexieMart verification code is: ${code}\n===================\n\n`
+            );
+          }
           if (process.env.ARKESEL_API_KEY) {
             fetch("https://sms.arkesel.com/api/v2/sms/send", {
               method: "POST",
@@ -87,9 +90,11 @@ export function createAuth(prisma: PrismaClient) {
       sendVerificationEmail: async ({ user, url, token }, request) => {
         const webUrl = url.replace("localhost", "172.20.10.2");
         const appUrl = `bexiemart://verify-email?token=${token}`;
-        console.log(
-          `\n\n=== EMAIL VERIFICATION ===\nTo: ${user.email}\nWeb: ${webUrl}\nApp: ${appUrl}\n==========================\n\n`
-        );
+        if (isDev) {
+          console.log(
+            `\n\n=== EMAIL VERIFICATION ===\nTo: ${user.email}\nWeb: ${webUrl}\nApp: ${appUrl}\n==========================\n\n`
+          );
+        }
 
         // Fire and forget: Do not await this promise so the auth API responds immediately
         transporter
