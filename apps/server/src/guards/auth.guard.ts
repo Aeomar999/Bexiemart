@@ -26,6 +26,12 @@ export class AuthGuard implements CanActivate {
         throw new UnauthorizedException("Invalid or expired session");
       }
 
+      // Account-level kill switch: a banned/deactivated user must not pass auth,
+      // even with an otherwise valid session token.
+      if (session.user.isActive === false) {
+        throw new UnauthorizedException("Account has been deactivated");
+      }
+
       (request as any).user = session.user;
       return true;
     } catch (err) {
