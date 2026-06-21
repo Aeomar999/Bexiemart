@@ -5,9 +5,13 @@ import { AuthGuard } from "../../guards/auth.guard";
 import { AdminGuard } from "../../guards/admin.guard";
 import { AdminService } from "./admin.service";
 import { UpdateRoleDto } from "./dto/update-role.dto";
+import { BanUserDto } from "./dto/ban-user.dto";
 import { UpdateConfigDto } from "./dto/update-config.dto";
 import { UpdateOrderStatusDto } from "./dto/update-order-status.dto";
 import { ResolveDisputeDto } from "./dto/resolve-dispute.dto";
+import { UpdateDispatcherStatusDto } from "./dto/update-dispatcher-status.dto";
+import { CreateFlashSaleDto } from "./dto/create-flash-sale.dto";
+import { CreateCouponDto } from "./dto/create-coupon.dto";
 
 @ApiTags("Admin")
 @ApiBearerAuth()
@@ -40,6 +44,19 @@ export class AdminController {
   @Patch("users/:id/role")
   updateUserRole(@Param("id") id: string, @Body() body: UpdateRoleDto) {
     return this.adminService.updateUserRole(id, body.role);
+  }
+
+  @ApiOperation({ summary: "Ban/deactivate a user and revoke their sessions" })
+  @ApiBody({ type: BanUserDto })
+  @Patch("users/:id/ban")
+  banUser(@Param("id") id: string, @Body() body: BanUserDto) {
+    return this.adminService.banUser(id, body.reason);
+  }
+
+  @ApiOperation({ summary: "Unban/reactivate a user" })
+  @Patch("users/:id/unban")
+  unbanUser(@Param("id") id: string) {
+    return this.adminService.unbanUser(id);
   }
 
   // ─── Vendors ───────────────────────────────────────────────────────────────────
@@ -194,7 +211,7 @@ export class AdminController {
   }
 
   @Patch("dispatchers/:id/status")
-  async updateDispatcherStatus(@Param("id") id: string, @Body() body: { status: string }) {
+  async updateDispatcherStatus(@Param("id") id: string, @Body() body: UpdateDispatcherStatusDto) {
     return this.adminService.updateDispatcherStatus(id, body.status);
   }
 
@@ -250,7 +267,7 @@ export class AdminController {
   }
 
   @Post("flash-sales")
-  async createFlashSale(@Body() data: any) {
+  async createFlashSale(@Body() data: CreateFlashSaleDto) {
     return this.adminService.createFlashSale(data);
   }
 
@@ -260,7 +277,7 @@ export class AdminController {
   }
 
   @Post("coupons")
-  async createCoupon(@Body() data: any) {
+  async createCoupon(@Body() data: CreateCouponDto) {
     return this.adminService.createCoupon(data);
   }
 

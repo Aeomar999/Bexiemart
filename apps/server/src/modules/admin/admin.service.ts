@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from "@nestjs/common";
+import { Injectable, NotFoundException, ForbiddenException } from "@nestjs/common";
 import { UserRole } from "@prisma/client";
 import { PrismaService } from "../../prisma/prisma.service";
 import { UpdateConfigDto } from "./dto/update-config.dto";
@@ -49,6 +49,34 @@ export class AdminService {
     const user = await this.prisma.user.findUnique({ where: { id } });
     if (!user) throw new NotFoundException("User not found");
     return this.prisma.user.update({ where: { id }, data: { role } });
+  }
+
+  async banUser(id: string, reason?: string) {
+    const user = await this.prisma.user.findUnique({ where: { id } });
+    if (!user) throw new NotFoundException("User not found");
+    // Prevent locking out the admin team: admins cannot be banned via this path.
+    if (user.role === UserRole.ADMIN) {
+      throw new ForbiddenException("Admin accounts cannot be banned");
+    }
+    // Deactivate the account and revoke all active sessions so the ban takes
+    // effect immediately (the AuthGuard also rejects inactive users defensively).
+    const [updated] = await this.prisma.$transaction([
+      this.prisma.user.update({
+        where: { id },
+        data: { isActive: false, bannedAt: new Date(), banReason: reason ?? null },
+      }),
+      this.prisma.session.deleteMany({ where: { userId: id } }),
+    ]);
+    return updated;
+  }
+
+  async unbanUser(id: string) {
+    const user = await this.prisma.user.findUnique({ where: { id } });
+    if (!user) throw new NotFoundException("User not found");
+    return this.prisma.user.update({
+      where: { id },
+      data: { isActive: true, bannedAt: null, banReason: null },
+    });
   }
 
   // ─── Vendors ───────────────────────────────────────────────────────────────────
