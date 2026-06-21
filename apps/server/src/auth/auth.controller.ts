@@ -214,19 +214,19 @@ export class AuthController {
   async resendVerification(@Body() body: ResendVerificationDto) {
     const { email } = body;
     const user = await this.prisma.user.findUnique({ where: { email } });
-    if (!user) {
-      throw new UnauthorizedException("No account found with this email.");
+    // Do not reveal whether an account exists (prevents user enumeration).
+    if (user) {
+      this.logger.log(`Resending verification email to: ${email}`);
+      try {
+        await (this.auth.api as any).sendVerificationEmail({
+          body: { email, callbackURL: "bexiemart://verify-email" },
+          headers: new Headers({ origin: "bexiemart://" }),
+        });
+      } catch (e) {
+        this.logger.error(`Resend verification error for ${email}: ${e}`);
+      }
     }
-    this.logger.log(`Resending verification email to: ${email}`);
-    try {
-      await (this.auth.api as any).sendVerificationEmail({
-        body: { email, callbackURL: "bexiemart://verify-email" },
-        headers: new Headers({ origin: "bexiemart://" }),
-      });
-    } catch (e) {
-      this.logger.error(`Resend verification error for ${email}: ${e}`);
-    }
-    return { message: "Verification email sent." };
+    return { message: "If an account exists, a verification email has been sent." };
   }
 
   @Throttle({ default: { limit: 3, ttl: 60000 } })

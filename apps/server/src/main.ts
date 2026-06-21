@@ -51,15 +51,18 @@ async function bootstrap() {
     defaultVersion: "1",
   });
 
-  const config = new DocumentBuilder()
-    .setTitle("BexieMart API")
-    .setDescription("Campus marketplace API")
-    .setVersion("1.0")
-    .addBearerAuth()
-    .build();
+  // Swagger exposes the full API surface; only mount it outside production.
+  if (process.env.NODE_ENV !== "production") {
+    const config = new DocumentBuilder()
+      .setTitle("BexieMart API")
+      .setDescription("Campus marketplace API")
+      .setVersion("1.0")
+      .addBearerAuth()
+      .build();
 
-  const document = SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup("api/docs", app, document);
+    const document = SwaggerModule.createDocument(app, config);
+    SwaggerModule.setup("api/docs", app, document);
+  }
 
   app.enableShutdownHooks();
   const port = process.env.PORT ?? 3000;
