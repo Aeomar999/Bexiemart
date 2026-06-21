@@ -10,15 +10,34 @@ import type { PrismaClient } from "@prisma/client";
 import * as nodemailer from "nodemailer";
 import { dash, sentinel } from "@better-auth/infra";
 
+const smtpPort = parseInt(process.env.SMTP_PORT || "465", 10);
 const transporter = nodemailer.createTransport({
   host: process.env.SMTP_HOST || "smtp.gmail.com",
-  port: parseInt(process.env.SMTP_PORT || "465", 10),
-  secure: true, // true for 465, false for other ports
+  port: smtpPort,
+  secure: smtpPort === 465, // true for 465 (implicit TLS), false for 587 (STARTTLS)
   auth: {
     user: process.env.SMTP_USER,
     pass: process.env.SMTP_PASS,
   },
+  // Reuse connections instead of opening a fresh TLS handshake per email.
+  // Gmail throttles new connections, so pooling removes the per-send latency
+  // and the connection timeouts that caused verification emails to silently fail.
+  pool: true,
+  maxConnections: 3,
+  maxMessages: 100,
+  connectionTimeout: 10_000, // fail fast instead of hanging on a stalled connection
+  greetingTimeout: 10_000,
+  socketTimeout: 20_000,
 });
+
+// Surface SMTP misconfiguration at startup instead of discovering it only when
+// a fire-and-forget sendMail rejects into a swallowed .catch().
+transporter.verify().then(
+  () => {
+    if (isDev) console.log("SMTP transporter verified and ready");
+  },
+  (error) => console.error("SMTP transporter verification failed:", error?.message || error)
+);
 
 export function createAuth(prisma: PrismaClient) {
   return betterAuth({

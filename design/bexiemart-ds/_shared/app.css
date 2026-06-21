@@ -1,0 +1,159 @@
+/* =========================================================
+   BEXIEMART — Polished Redesign Design System
+   Grounded in apps/mobile tokens (brand #06406b, Raleway/Nunito)
+   ========================================================= */
+@import url('https://fonts.googleapis.com/css2?family=Raleway:wght@500;600;700;800;900&family=Nunito:wght@400;500;600;700;800&display=swap');
+
+:root {
+  /* Brand */
+  --brand-50:#f0f7fb; --brand-100:#dbeaf5; --brand-200:#b9d5ea; --brand-300:#88b7da;
+  --brand-400:#5193c6; --brand-500:#2c75a9; --brand-600:#1b5b8b; --brand-700:#06406b;
+  --brand-800:#04365b; --brand-900:#022d4d; --brand-950:#011d35;
+  /* Accent (sky) */
+  --accent-400:#38bdf8; --accent-500:#0ea5e9; --accent-600:#0284c7;
+  /* Surface */
+  --s-50:#F8FAFC; --s-100:#F1F5F9; --s-200:#E2E8F0; --s-300:#CBD5E1; --s-400:#94A3B8;
+  --s-500:#64748B; --s-600:#475569; --s-700:#334155; --s-800:#1E293B; --s-900:#0F172A; --s-950:#020617;
+  /* Feedback */
+  --success:#00D084; --success-light:#E6F9F3;
+  --error:#EF4444; --error-light:#FEF2F2;
+  --warning:#F59E0B; --warning-light:#FFFBEB;
+  /* Semantic */
+  --primary:var(--brand-700); --primary-hover:var(--brand-800); --primary-subtle:var(--brand-50);
+  --secondary:var(--accent-500);
+  --bg:var(--s-50); --surface:#ffffff; --border:var(--s-200);
+  --text:var(--s-900); --text-2:var(--s-600); --muted:var(--s-400);
+  /* Radius */
+  --r-sm:6px; --r-md:10px; --r-lg:14px; --r-xl:18px; --r-2xl:24px; --r-3xl:32px; --r-full:9999px;
+  /* Shadow */
+  --shadow-sm:0 1px 2px rgba(2,45,77,.06);
+  --shadow-md:0 6px 18px rgba(2,45,77,.08);
+  --shadow-lg:0 14px 40px rgba(2,45,77,.12);
+}
+
+* { box-sizing:border-box; margin:0; padding:0; -webkit-font-smoothing:antialiased; }
+body {
+  font-family:'Nunito',system-ui,sans-serif; color:var(--text);
+  background:
+    radial-gradient(900px 600px at 80% -10%, #e9f2fb 0%, transparent 60%),
+    radial-gradient(700px 500px at -10% 100%, #eef6fb 0%, transparent 55%),
+    #eaeef3;
+  min-height:100vh; padding:36px; display:flex; flex-wrap:wrap; gap:36px;
+  justify-content:center; align-items:flex-start;
+}
+.font-head { font-family:'Raleway',sans-serif; }
+
+/* ---------- Device frame ---------- */
+.phone {
+  width:390px; height:844px; background:var(--bg); border-radius:46px;
+  box-shadow:0 0 0 11px #0b1220, 0 0 0 13px #1e2a3a, var(--shadow-lg);
+  position:relative; overflow:hidden; display:flex; flex-direction:column;
+}
+.phone .notch {
+  position:absolute; top:0; left:50%; transform:translateX(-50%);
+  width:138px; height:30px; background:#0b1220; border-radius:0 0 18px 18px; z-index:60;
+}
+.statusbar {
+  height:52px; flex:0 0 52px; display:flex; align-items:flex-end; justify-content:space-between;
+  padding:0 26px 6px; font-size:13px; font-weight:800; color:var(--text); z-index:50;
+}
+.statusbar .right { display:flex; gap:6px; align-items:center; }
+.screen { flex:1; overflow:hidden; position:relative; display:flex; flex-direction:column; background:var(--bg); }
+.scroll { flex:1; overflow-y:auto; }
+.scroll::-webkit-scrollbar { width:0; }
+.caption { margin-top:14px; font-family:'Raleway',sans-serif; font-weight:700; font-size:13px;
+  color:var(--s-600); text-align:center; letter-spacing:.2px; }
+.frame { display:flex; flex-direction:column; align-items:center; }
+
+/* ---------- Generic ---------- */
+.px { padding-left:20px; padding-right:20px; }
+.row { display:flex; align-items:center; }
+.between { justify-content:space-between; }
+.gap2{gap:8px}.gap3{gap:12px}.gap4{gap:16px}
+.muted { color:var(--muted); }
+.t2 { color:var(--text-2); }
+.h1 { font-family:'Raleway',sans-serif; font-weight:900; font-size:22px; letter-spacing:-.5px; }
+.h2 { font-family:'Raleway',sans-serif; font-weight:800; font-size:18px; letter-spacing:-.3px; }
+.h3 { font-family:'Raleway',sans-serif; font-weight:800; font-size:15px; }
+.small { font-size:12px; }
+.tiny { font-size:10.5px; }
+.bold { font-weight:800; }
+.price { font-weight:900; font-family:'Raleway',sans-serif; }
+
+/* App header */
+.appbar { display:flex; align-items:center; justify-content:space-between; padding:8px 20px 14px; }
+.iconbtn { width:42px; height:42px; border-radius:var(--r-full); display:grid; place-items:center;
+  background:#fff; box-shadow:var(--shadow-sm); color:var(--s-800); flex:0 0 auto; }
+.iconbtn.ghost { background:transparent; box-shadow:none; }
+.brandname { font-family:'Raleway',sans-serif; font-weight:900; font-size:20px; letter-spacing:-.5px; color:var(--brand-700); }
+
+/* Search */
+.search { display:flex; align-items:center; gap:10px; background:#fff; border:1px solid var(--border);
+  border-radius:var(--r-full); padding:13px 16px; box-shadow:var(--shadow-sm); color:var(--muted); font-weight:600; font-size:14px; }
+.search .grow{flex:1}
+
+/* Buttons */
+.btn { display:inline-flex; align-items:center; justify-content:center; gap:8px;
+  font-family:'Raleway',sans-serif; font-weight:800; font-size:15px; border:none; cursor:pointer;
+  padding:15px 20px; border-radius:var(--r-full); }
+.btn-primary { background:var(--brand-700); color:#fff; box-shadow:0 8px 18px rgba(6,64,107,.28); }
+.btn-block { width:100%; }
+.btn-ghost { background:var(--brand-50); color:var(--brand-700); }
+.btn-dark { background:var(--s-900); color:#fff; }
+.btn-sm { padding:10px 16px; font-size:13px; }
+
+/* Pills / chips */
+.pill { display:inline-flex; align-items:center; gap:7px; padding:9px 14px; border-radius:var(--r-full);
+  font-weight:700; font-size:12.5px; background:#fff; box-shadow:var(--shadow-sm); white-space:nowrap; }
+.chip { padding:8px 14px; border-radius:var(--r-full); font-weight:700; font-size:12.5px;
+  background:#fff; border:1px solid var(--border); white-space:nowrap; }
+.chip.active { background:var(--brand-700); color:#fff; border-color:var(--brand-700); }
+
+/* Cards */
+.card { background:#fff; border:1px solid var(--border); border-radius:var(--r-2xl); box-shadow:var(--shadow-sm); }
+.tile { border-radius:var(--r-xl); overflow:hidden; background:var(--s-100); position:relative; }
+
+/* Badges */
+.badge { background:var(--error); color:#fff; font-size:10px; font-weight:800; border-radius:var(--r-full);
+  min-width:18px; height:18px; padding:0 5px; display:grid; place-items:center; }
+.tag { font-size:10px; font-weight:800; text-transform:uppercase; letter-spacing:.6px;
+  padding:4px 8px; border-radius:6px; }
+
+/* Section heading */
+.section { padding:0 20px; margin-top:26px; }
+.section-h { display:flex; align-items:center; justify-content:space-between; margin-bottom:14px; }
+.see { font-size:12px; font-weight:800; color:var(--muted); }
+
+/* Avatars / circles */
+.avatar { border-radius:var(--r-full); object-fit:cover; background:var(--s-200); flex:0 0 auto; }
+.circle { border-radius:var(--r-full); display:grid; place-items:center; flex:0 0 auto; }
+
+/* Tab bar */
+.tabbar { position:absolute; left:14px; right:14px; bottom:14px; height:66px; background:#fff;
+  border-radius:var(--r-full); box-shadow:var(--shadow-lg); display:flex; align-items:center;
+  justify-content:space-around; padding:0 10px; z-index:40; }
+.tab { display:flex; align-items:center; gap:7px; color:var(--s-400); font-weight:800; font-size:13px;
+  font-family:'Raleway',sans-serif; padding:10px 12px; border-radius:var(--r-full); }
+.tab.active { color:var(--brand-700); background:var(--brand-50); }
+
+/* List rows */
+.lrow { display:flex; align-items:center; gap:14px; padding:14px 0; border-bottom:1px solid var(--s-100); }
+.lrow:last-child { border-bottom:none; }
+
+/* Inputs */
+.input { width:100%; background:#fff; border:1px solid var(--border); border-radius:var(--r-lg);
+  padding:15px 16px; font-size:15px; font-weight:600; font-family:'Nunito',sans-serif; color:var(--text); }
+.input::placeholder{color:var(--muted)}
+.label { font-weight:800; font-size:12.5px; color:var(--s-700); margin-bottom:8px; display:block; }
+
+/* Utility blocks */
+.grad-brand { background:linear-gradient(135deg,var(--brand-700),var(--brand-500)); color:#fff; }
+.grad-dark { background:linear-gradient(150deg,var(--s-900),var(--brand-900)); color:#fff; }
+.glass-top { position:absolute; inset:0; background:linear-gradient(180deg,rgba(0,0,0,0) 40%,rgba(0,0,0,.7)); }
+.divider { height:1px; background:var(--s-100); margin:16px 0; }
+.dot { width:6px; height:6px; border-radius:var(--r-full); background:var(--s-300); }
+.dot.on { width:18px; background:var(--brand-700); }
+
+/* Inline SVG icon sizing */
+.ic { display:inline-block; vertical-align:middle; }
+svg { stroke-width:2.2; }

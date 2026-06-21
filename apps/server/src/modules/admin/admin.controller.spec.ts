@@ -30,9 +30,7 @@ describe("AdminController", () => {
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       controllers: [AdminController],
-      providers: [
-        { provide: AdminService, useValue: mockService },
-      ],
+      providers: [{ provide: AdminService, useValue: mockService }],
     })
       .overrideGuard(AuthGuard)
       .useValue({ canActivate: jest.fn(() => true) })
@@ -58,7 +56,7 @@ describe("AdminController", () => {
       mockService.listUsers.mockResolvedValue(result);
 
       expect(await controller.listUsers()).toEqual(result);
-      expect(mockService.listUsers).toHaveBeenCalledWith(1, 20);
+      expect(mockService.listUsers).toHaveBeenCalledWith(1, 20, undefined);
     });
 
     it("should call service.listUsers with custom pagination", async () => {
@@ -66,7 +64,7 @@ describe("AdminController", () => {
       mockService.listUsers.mockResolvedValue(result);
 
       expect(await controller.listUsers("2", "50")).toEqual(result);
-      expect(mockService.listUsers).toHaveBeenCalledWith(2, 50);
+      expect(mockService.listUsers).toHaveBeenCalledWith(2, 50, undefined);
     });
   });
 
@@ -97,7 +95,7 @@ describe("AdminController", () => {
       mockService.listVendors.mockResolvedValue(result);
 
       expect(await controller.listVendors()).toEqual(result);
-      expect(mockService.listVendors).toHaveBeenCalledWith(1, 20);
+      expect(mockService.listVendors).toHaveBeenCalledWith(1, 20, undefined);
     });
 
     it("should call service.listVendors with custom pagination", async () => {
@@ -105,7 +103,7 @@ describe("AdminController", () => {
       mockService.listVendors.mockResolvedValue(result);
 
       expect(await controller.listVendors("1", "10")).toEqual(result);
-      expect(mockService.listVendors).toHaveBeenCalledWith(1, 10);
+      expect(mockService.listVendors).toHaveBeenCalledWith(1, 10, undefined);
     });
   });
 
@@ -154,7 +152,7 @@ describe("AdminController", () => {
       mockService.listOrders.mockResolvedValue(result);
 
       expect(await controller.listOrders()).toEqual(result);
-      expect(mockService.listOrders).toHaveBeenCalledWith(undefined, 1, 20);
+      expect(mockService.listOrders).toHaveBeenCalledWith(undefined, 1, 20, undefined);
     });
 
     it("should call service.listOrders with status filter and pagination", async () => {
@@ -162,7 +160,7 @@ describe("AdminController", () => {
       mockService.listOrders.mockResolvedValue(result);
 
       expect(await controller.listOrders("PENDING", "1", "10")).toEqual(result);
-      expect(mockService.listOrders).toHaveBeenCalledWith("PENDING", 1, 10);
+      expect(mockService.listOrders).toHaveBeenCalledWith("PENDING", 1, 10, undefined);
     });
   });
 
@@ -193,7 +191,7 @@ describe("AdminController", () => {
       mockService.listDisputes.mockResolvedValue(result);
 
       expect(await controller.listDisputes()).toEqual(result);
-      expect(mockService.listDisputes).toHaveBeenCalledWith(1, 20);
+      expect(mockService.listDisputes).toHaveBeenCalledWith(1, 20, undefined);
     });
   });
 
@@ -204,7 +202,11 @@ describe("AdminController", () => {
       const body = { action: "REFUND" as const, reason: "Buyer is correct" };
 
       expect(await controller.resolveDispute("dispute-1", body)).toEqual(result);
-      expect(mockService.resolveDispute).toHaveBeenCalledWith("dispute-1", "REFUND", "Buyer is correct");
+      expect(mockService.resolveDispute).toHaveBeenCalledWith(
+        "dispute-1",
+        "REFUND",
+        "Buyer is correct"
+      );
     });
   });
 

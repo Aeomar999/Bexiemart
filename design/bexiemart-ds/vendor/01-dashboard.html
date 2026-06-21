@@ -1,0 +1,47 @@
+<!-- @dsCard group="Vendor" name="Dashboard" subtitle="Sales overview + KPIs" -->
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Vendor · Dashboard</title><link rel="stylesheet" href="../_shared/app.css">
+<style>.kpi{flex:1;background:#fff;border:1px solid var(--border);border-radius:var(--r-xl);padding:14px;box-shadow:var(--shadow-sm)}
+.bars{display:flex;align-items:flex-end;gap:10px;height:120px;padding:0 4px}
+.bar{flex:1;border-radius:8px 8px 0 0;background:linear-gradient(180deg,#0e5891,#06406b)}
+.vtab{display:flex;flex-direction:column;align-items:center;gap:4px;color:var(--s-400);font-size:11px;font-weight:800}
+.vtab.active{color:var(--brand-700)}</style></head>
+<body><div class="frame">
+<div class="phone"><div class="notch"></div>
+ <div class="statusbar"><span>9:41</span><span class="right">5G ▮▮▮ 100%</span></div>
+ <div class="screen">
+  <div class="appbar" style="padding-top:6px">
+    <div class="row gap2"><div class="avatar" style="width:40px;height:40px;background:#fde68a"></div><div><div class="tiny muted">Welcome back</div><div class="small bold">Jean Collections</div></div></div>
+    <div class="iconbtn" style="position:relative"><svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M18 8a6 6 0 1 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/></svg><span class="badge" style="position:absolute;top:-2px;right:-2px">5</span></div></div>
+  <div class="scroll" style="padding-bottom:110px">
+   <div class="px"><div class="card grad-brand" style="padding:20px;border:none;position:relative;overflow:hidden">
+     <div class="row between"><span class="small" style="color:rgba(255,255,255,.85);font-weight:700">Today's Revenue</span><span class="tag" style="background:rgba(255,255,255,.18)">▲ 12%</span></div>
+     <div class="font-head" style="color:#fff;font-weight:900;font-size:32px;margin-top:8px">GHS 2,480</div>
+     <div class="row gap4" style="margin-top:14px"><span class="tiny" style="color:rgba(255,255,255,.85)">18 orders</span><span class="tiny" style="color:rgba(255,255,255,.85)">· 6 pending</span></div></div></div>
+
+   <div class="row gap3 px" style="margin-top:16px">
+     <div class="kpi"><svg width="20" height="20" fill="none" stroke="#16a34a" viewBox="0 0 24 24"><path d="M3 3v18h18M7 14l4-4 3 3 5-6"/></svg><div class="price" style="font-size:20px;margin-top:8px">GHS 38k</div><div class="tiny muted">This month</div></div>
+     <div class="kpi"><svg width="20" height="20" fill="none" stroke="#2563eb" viewBox="0 0 24 24"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/></svg><div class="price" style="font-size:20px;margin-top:8px">124</div><div class="tiny muted">Products</div></div>
+     <div class="kpi"><svg width="20" height="20" fill="none" stroke="#f59e0b" viewBox="0 0 24 24"><path d="m12 2 3 7 7 .5-5.5 4.5 2 7-6.5-4-6.5 4 2-7L2 9.5 9 9z"/></svg><div class="price" style="font-size:20px;margin-top:8px">4.8</div><div class="tiny muted">Rating</div></div>
+   </div>
+
+   <div class="section"><div class="section-h"><span class="h2">Sales this week</span><span class="see">GHS ▾</span></div>
+     <div class="card" style="padding:16px"><div class="bars">
+       <div class="bar" style="height:45%"></div><div class="bar" style="height:65%"></div><div class="bar" style="height:40%"></div><div class="bar" style="height:80%"></div><div class="bar" style="height:55%"></div><div class="bar" style="height:95%;background:linear-gradient(180deg,#38bdf8,#0ea5e9)"></div><div class="bar" style="height:70%"></div></div>
+       <div class="row between" style="margin-top:10px;padding:0 4px"><span class="tiny muted">M</span><span class="tiny muted">T</span><span class="tiny muted">W</span><span class="tiny muted">T</span><span class="tiny muted">F</span><span class="tiny bold" style="color:var(--accent-600)">S</span><span class="tiny muted">S</span></div></div></div>
+
+   <div class="section"><div class="section-h"><span class="h2">Recent Orders</span><span class="see">See All</span></div>
+     <div class="card" style="padding:6px 16px">
+       <div class="lrow"><div class="circle" style="width:38px;height:38px;background:var(--brand-50)"><svg width="16" height="16" fill="none" stroke="var(--brand-700)" viewBox="0 0 24 24"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/></svg></div><div style="flex:1"><div class="small bold">#BX-2291 · Ama K.</div><div class="tiny muted">2 items</div></div><div style="text-align:right"><div class="price small">GHS 249</div><span class="tag" style="background:var(--warning-light);color:var(--warning)">New</span></div></div>
+       <div class="lrow"><div class="circle" style="width:38px;height:38px;background:var(--brand-50)"><svg width="16" height="16" fill="none" stroke="var(--brand-700)" viewBox="0 0 24 24"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/></svg></div><div style="flex:1"><div class="small bold">#BX-2288 · Kojo M.</div><div class="tiny muted">1 item</div></div><div style="text-align:right"><div class="price small">GHS 320</div><span class="tag" style="background:var(--brand-50);color:var(--brand-700)">Shipped</span></div></div>
+     </div></div>
+  </div>
+  <div class="tabbar">
+   <span class="vtab active"><svg width="22" height="22" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M3 13h8V3H3zM13 21h8V11h-8zM13 3v6h8V3zM3 17v4h8v-4z"/></svg>Home</span>
+   <span class="vtab"><svg width="22" height="22" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/></svg>Orders</span>
+   <span class="vtab"><svg width="22" height="22" fill="none" stroke="currentColor" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>Products</span>
+   <span class="vtab"><svg width="22" height="22" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M12 1v22M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>Earnings</span>
+   <span class="vtab"><svg width="22" height="22" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19 12a7 7 0 0 0-.1-1.3l2-1.5-2-3.4-2.3 1a7 7 0 0 0-2.3-1.3L13.7 2h-3.4l-.3 2.5a7 7 0 0 0-2.3 1.3l-2.3-1-2 3.4 2 1.5a7 7 0 0 0 0 2.6l-2 1.5 2 3.4 2.3-1a7 7 0 0 0 2.3 1.3l.3 2.5h3.4l.3-2.5a7 7 0 0 0 2.3-1.3l2.3 1 2-3.4-2-1.5z"/></svg>Settings</span>
+  </div>
+ </div>
+</div><div class="caption">Vendor · Dashboard</div></div></body></html>
