@@ -1,0 +1,46 @@
+<!-- @dsCard group="Customer" name="Shop / Catalog" subtitle="Category grid with filters" -->
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Customer · Shop</title><link rel="stylesheet" href="../_shared/app.css">
+<style>.pcard{flex:1;min-width:0}.pimg{aspect-ratio:.86;border-radius:var(--r-xl);position:relative;overflow:hidden}
+.fav{position:absolute;top:8px;right:8px;width:30px;height:30px;border-radius:var(--r-full);background:rgba(255,255,255,.9);display:grid;place-items:center;box-shadow:var(--shadow-sm)}
+.atc{position:absolute;bottom:8px;right:8px;width:32px;height:32px;border-radius:var(--r-full);background:var(--brand-700);display:grid;place-items:center;box-shadow:var(--shadow-md)}</style></head>
+<body><div class="frame">
+<div class="phone"><div class="notch"></div>
+ <div class="statusbar"><span>9:41</span><span class="right">5G ▮▮▮ 100%</span></div>
+ <div class="screen">
+  <div class="appbar" style="padding-top:6px"><div class="iconbtn"><svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg></div>
+    <span class="h2">Shop</span><div class="iconbtn" style="position:relative"><svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4zM3 6h18M16 10a4 4 0 0 1-8 0"/></svg><span class="badge" style="position:absolute;top:-2px;right:-2px">2</span></div></div>
+  <div class="px"><div class="search"><svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m21 21-4-4"/></svg><span class="grow">Search in Shop…</span></div></div>
+  <div class="row gap2" style="padding:14px 20px 4px;overflow:hidden"><span class="chip active">All</span><span class="chip">Fashion</span><span class="chip">Electronics</span><span class="chip">Home</span><span class="chip">Beauty</span></div>
+  <div class="row between px" style="padding-top:8px;padding-bottom:6px"><span class="small muted">324 results</span>
+    <span class="row gap2 small bold"><svg width="15" height="15" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M4 6h16M7 12h10M10 18h4"/></svg>Filters</span></div>
+
+  <div class="scroll" style="padding:6px 20px 130px">
+   <div class="row gap3" style="margin-bottom:16px">
+     <div class="pcard"><div class="pimg" style="background:linear-gradient(135deg,#bfdbfe,#60a5fa)"><span class="tag" style="position:absolute;top:8px;left:8px;background:var(--error);color:#fff">-40%</span><div class="fav"><svg width="14" height="14" fill="none" stroke="#64748b" viewBox="0 0 24 24"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1-1.1a5.5 5.5 0 1 0-7.8 7.8L12 21l8.8-8.6a5.5 5.5 0 0 0 0-7.8z"/></svg></div><div class="atc"><svg width="16" height="16" fill="none" stroke="#fff" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg></div></div>
+       <div class="small bold" style="margin-top:8px">Wireless Earbuds</div><div class="tiny muted">AudioHub GH</div><div class="row between" style="margin-top:3px"><span class="price small">GHS 249</span><span class="tiny" style="color:#f59e0b">★ 4.8</span></div></div>
+     <div class="pcard"><div class="pimg" style="background:linear-gradient(135deg,#fcd34d,#fbbf24)"><div class="fav"><svg width="14" height="14" fill="#ef4444" stroke="#ef4444" viewBox="0 0 24 24"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1-1.1a5.5 5.5 0 1 0-7.8 7.8L12 21l8.8-8.6a5.5 5.5 0 0 0 0-7.8z"/></svg></div><div class="atc"><svg width="16" height="16" fill="none" stroke="#fff" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg></div></div>
+       <div class="small bold" style="margin-top:8px">Leather Tote Bag</div><div class="tiny muted">Jean Collections</div><div class="row between" style="margin-top:3px"><span class="price small">GHS 320</span><span class="tiny" style="color:#f59e0b">★ 4.9</span></div></div>
+   </div>
+   <div class="row gap3" style="margin-bottom:16px">
+     <div class="pcard"><div class="pimg" style="background:linear-gradient(135deg,#a7f3d0,#34d399)"><div class="fav"><svg width="14" height="14" fill="none" stroke="#64748b" viewBox="0 0 24 24"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1-1.1a5.5 5.5 0 1 0-7.8 7.8L12 21l8.8-8.6a5.5 5.5 0 0 0 0-7.8z"/></svg></div><div class="atc"><svg width="16" height="16" fill="none" stroke="#fff" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg></div></div>
+       <div class="small bold" style="margin-top:8px">Smart Watch S2</div><div class="tiny muted">TechBox</div><div class="row between" style="margin-top:3px"><span class="price small">GHS 540</span><span class="tiny" style="color:#f59e0b">★ 4.7</span></div></div>
+     <div class="pcard"><div class="pimg" style="background:linear-gradient(135deg,#ddd6fe,#a78bfa)"><div class="fav"><svg width="14" height="14" fill="none" stroke="#64748b" viewBox="0 0 24 24"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1-1.1a5.5 5.5 0 1 0-7.8 7.8L12 21l8.8-8.6a5.5 5.5 0 0 0 0-7.8z"/></svg></div><div class="atc"><svg width="16" height="16" fill="none" stroke="#fff" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg></div></div>
+       <div class="small bold" style="margin-top:8px">Canvas Sneakers</div><div class="tiny muted">SoleMate</div><div class="row between" style="margin-top:3px"><span class="price small">GHS 180</span><span class="tiny" style="color:#f59e0b">★ 4.6</span></div></div>
+   </div>
+   <div class="row gap3">
+     <div class="pcard"><div class="pimg" style="background:linear-gradient(135deg,#fbcfe8,#f472b6)"><div class="atc"><svg width="16" height="16" fill="none" stroke="#fff" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg></div></div>
+       <div class="small bold" style="margin-top:8px">Matte Lipstick Set</div><div class="tiny muted">GlowGH</div><div class="row between" style="margin-top:3px"><span class="price small">GHS 95</span><span class="tiny" style="color:#f59e0b">★ 4.9</span></div></div>
+     <div class="pcard"><div class="pimg" style="background:linear-gradient(135deg,#cbd5e1,#94a3b8)"><div class="atc"><svg width="16" height="16" fill="none" stroke="#fff" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg></div></div>
+       <div class="small bold" style="margin-top:8px">Ceramic Mug</div><div class="tiny muted">HomeNest</div><div class="row between" style="margin-top:3px"><span class="price small">GHS 60</span><span class="tiny" style="color:#f59e0b">★ 4.5</span></div></div>
+   </div>
+  </div>
+  <div class="tabbar">
+   <span class="tab"><svg width="22" height="22" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="m3 10 9-7 9 7v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg></span>
+   <span class="tab active"><svg width="22" height="22" fill="none" stroke="currentColor" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>Shop</span>
+   <span class="tab"><svg width="22" height="22" fill="none" stroke="currentColor" viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="18" rx="2"/><path d="m10 8 5 4-5 4z"/></svg></span>
+   <span class="tab" style="position:relative"><svg width="22" height="22" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4zM3 6h18M16 10a4 4 0 0 1-8 0"/></svg><span class="badge" style="position:absolute;top:4px;right:4px">2</span></span>
+   <span class="tab"><svg width="22" height="22" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg></span>
+  </div>
+ </div>
+</div><div class="caption">Customer · Shop / Catalog</div></div></body></html>

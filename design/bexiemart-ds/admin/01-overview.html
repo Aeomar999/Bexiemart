@@ -1,0 +1,47 @@
+<!-- @dsCard group="Admin" name="Overview" subtitle="Platform dashboard" -->
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Admin · Overview</title><link rel="stylesheet" href="../_shared/app.css"><link rel="stylesheet" href="../_shared/admin.css">
+<style>body{padding:36px}.bars{display:flex;align-items:flex-end;gap:14px;height:180px}.bar{flex:1;border-radius:8px 8px 0 0;background:linear-gradient(180deg,#0e5891,#06406b)}</style></head>
+<body>
+<div class="win">
+ <div class="chrome"><span class="dot" style="background:#ff5f57"></span><span class="dot" style="background:#febc2e"></span><span class="dot" style="background:#28c840"></span><div class="urlbar">🔒 admin.bexiemart.com/dashboard</div></div>
+ <div class="admin">
+  <div class="side">
+    <div class="row gap2" style="margin-bottom:26px;padding:0 8px"><div class="circle" style="width:34px;height:34px;background:#0ea5e9"><span class="font-head bold" style="color:#fff">B</span></div><span class="font-head bold" style="font-size:18px;color:#fff">Bexiemart</span></div>
+    <div class="nav active"><svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M3 13h8V3H3zM13 21h8V11h-8z"/></svg>Overview</div>
+    <div class="nav"><svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2M9 7a4 4 0 1 0 0 .1"/></svg>Users</div>
+    <div class="nav"><svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/></svg>Orders</div>
+    <div class="nav"><svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M3 3h7v7H3zM14 3h7v7h-7zM14 14h7v7h-7zM3 14h7v7H3z"/></svg>Vendors</div>
+    <div class="nav"><svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M1 3h15v13H1zM16 8h4l3 3v5h-7"/></svg>Dispatch</div>
+    <div class="nav"><svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M3 3v18h18M7 14l4-4 3 3 5-6"/></svg>Analytics</div>
+    <div class="nav"><svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.6 1.6 0 0 0 .3 1.8 2 2 0 1 1-2.8 2.8 1.6 1.6 0 0 0-2.7 1.1 2 2 0 1 1-4 0 1.6 1.6 0 0 0-2.4-1.1"/></svg>Settings</div>
+    <div style="flex:1"></div>
+    <div class="row gap2" style="padding:10px;background:rgba(255,255,255,.06);border-radius:12px"><div class="av" style="background:#fbcfe8"></div><div><div class="small bold" style="color:#fff">Admin</div><div class="tiny" style="color:#9fb8cf">Super admin</div></div></div>
+  </div>
+  <div class="main">
+   <div class="tbar"><div><div class="h2">Overview</div><div class="tiny muted">Platform health · last 30 days</div></div>
+     <div class="row gap3"><div class="search" style="width:260px;padding:9px 14px"><svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m21 21-4-4"/></svg><span class="grow">Search…</span></div>
+       <div class="iconbtn"><svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M18 8a6 6 0 1 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/></svg></div></div></div>
+   <div class="body">
+     <div class="kpi4">
+       <div class="kc"><div class="row between"><span class="tiny muted">Total Users</span><span class="st" style="background:var(--success-light);color:var(--success)">▲ 8%</span></div><div class="price" style="font-size:26px;margin-top:8px">48,210</div></div>
+       <div class="kc"><div class="row between"><span class="tiny muted">GMV (30d)</span><span class="st" style="background:var(--success-light);color:var(--success)">▲ 14%</span></div><div class="price" style="font-size:26px;margin-top:8px">GHS 1.2M</div></div>
+       <div class="kc"><div class="row between"><span class="tiny muted">Active Vendors</span><span class="st" style="background:var(--success-light);color:var(--success)">▲ 5%</span></div><div class="price" style="font-size:26px;margin-top:8px">1,840</div></div>
+       <div class="kc"><div class="row between"><span class="tiny muted">Deliveries</span><span class="st" style="background:var(--error-light);color:var(--error)">▼ 2%</span></div><div class="price" style="font-size:26px;margin-top:8px">22,910</div></div>
+     </div>
+     <div style="display:grid;grid-template-columns:1.6fr 1fr;gap:18px;margin-top:18px">
+       <div class="panel" style="padding:20px"><div class="row between" style="margin-bottom:16px"><span class="h3">Revenue trend</span><span class="chip active">Monthly</span></div>
+         <div class="bars"><div class="bar" style="height:40%"></div><div class="bar" style="height:55%"></div><div class="bar" style="height:48%"></div><div class="bar" style="height:70%"></div><div class="bar" style="height:62%"></div><div class="bar" style="height:85%"></div><div class="bar" style="height:78%"></div><div class="bar" style="height:96%;background:linear-gradient(180deg,#38bdf8,#0284c7)"></div></div></div>
+       <div class="panel" style="padding:20px"><span class="h3">Users by role</span>
+         <div style="display:flex;justify-content:center;margin:16px 0"><div style="width:140px;height:140px;border-radius:50%;background:conic-gradient(#06406b 0 62%,#0ea5e9 62% 82%,#00D084 82% 94%,#F59E0B 94% 100%)"></div></div>
+         <div class="row between small" style="margin-bottom:6px"><span class="row gap2"><span class="dot" style="background:#06406b"></span>Customers</span><b>62%</b></div>
+         <div class="row between small" style="margin-bottom:6px"><span class="row gap2"><span class="dot" style="background:#0ea5e9"></span>Vendors</span><b>20%</b></div>
+         <div class="row between small" style="margin-bottom:6px"><span class="row gap2"><span class="dot" style="background:#00D084"></span>Dispatchers</span><b>12%</b></div>
+         <div class="row between small"><span class="row gap2"><span class="dot" style="background:#F59E0B"></span>Admins</span><b>6%</b></div></div>
+     </div>
+   </div>
+  </div>
+ </div>
+</div>
+<div class="adcap">Admin · Overview</div>
+</body></html>

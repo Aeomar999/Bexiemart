@@ -1,0 +1,45 @@
+<!-- @dsCard group="Customer" name="Reels" subtitle="Shoppable video feed" -->
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Customer · Reels</title><link rel="stylesheet" href="../_shared/app.css">
+<style>.reel{position:absolute;inset:0;background:linear-gradient(200deg,#1e3a5f,#0b1220 70%)}
+.side{position:absolute;right:14px;bottom:150px;display:flex;flex-direction:column;gap:22px;align-items:center;color:#fff}
+.side .a{display:flex;flex-direction:column;align-items:center;gap:5px;font-size:11px;font-weight:800}
+.side .c{width:46px;height:46px;border-radius:var(--r-full);background:rgba(255,255,255,.15);display:grid;place-items:center;backdrop-filter:blur(6px)}
+.prodcard{position:absolute;left:14px;right:80px;bottom:118px;background:rgba(255,255,255,.95);border-radius:var(--r-xl);padding:10px;display:flex;gap:10px;align-items:center;box-shadow:var(--shadow-md)}</style></head>
+<body><div class="frame">
+<div class="phone"><div class="notch"></div>
+ <div class="statusbar"><span style="color:#fff">9:41</span><span class="right" style="color:#fff">5G ▮▮▮ 100%</span></div>
+ <div class="screen" style="background:#0b1220">
+  <div class="reel"></div>
+  <div class="row between" style="position:absolute;top:14px;left:20px;right:20px;color:#fff;z-index:5">
+    <span class="font-head bold" style="font-size:17px">Reels</span>
+    <span class="row gap3 small bold" style="opacity:.7">Following · <b style="opacity:1">For You</b></span>
+    <svg width="22" height="22" fill="none" stroke="#fff" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m21 21-4-4"/></svg></div>
+
+  <div class="side">
+    <div class="a"><div class="avatar" style="width:46px;height:46px;background:#f472b6;border:2px solid #fff"></div><span class="circle" style="width:18px;height:18px;background:var(--error);margin-top:-8px">+</span></div>
+    <div class="a"><div class="c"><svg width="22" height="22" fill="#fff" stroke="#fff" viewBox="0 0 24 24"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1-1.1a5.5 5.5 0 1 0-7.8 7.8L12 21l8.8-8.6a5.5 5.5 0 0 0 0-7.8z"/></svg></div>12.4k</div>
+    <div class="a"><div class="c"><svg width="22" height="22" fill="none" stroke="#fff" viewBox="0 0 24 24"><path d="M21 11.5a8.4 8.4 0 0 1-9 8.4L3 21l1.1-3.3A8.4 8.4 0 1 1 21 11.5z"/></svg></div>843</div>
+    <div class="a"><div class="c"><svg width="22" height="22" fill="none" stroke="#fff" viewBox="0 0 24 24"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8M16 6l-4-4-4 4M12 2v13"/></svg></div>Share</div>
+    <div class="a"><div class="c" style="background:#fff"><svg width="20" height="20" fill="none" stroke="#0f172a" viewBox="0 0 24 24"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><path d="M3 6h18M16 10a4 4 0 0 1-8 0"/></svg></div>Shop</div>
+  </div>
+
+  <div class="prodcard">
+    <div class="tile" style="width:48px;height:48px;background:linear-gradient(135deg,#fcd34d,#fbbf24);flex:0 0 auto"></div>
+    <div style="flex:1"><div class="tiny bold">Summer Linen Dress</div><div class="price small" style="color:var(--brand-700)">GHS 180</div></div>
+    <button class="btn btn-primary btn-sm">Buy</button>
+  </div>
+  <div style="position:absolute;left:14px;right:80px;bottom:88px;color:#fff">
+    <div class="row gap2 small bold"><span>@jean_collections</span><span class="tag" style="background:rgba(255,255,255,.18)">Follow</span></div>
+    <div class="tiny" style="opacity:.85;margin-top:6px">New arrivals just dropped 🔥 Tap to shop the look #bexiefashion</div>
+  </div>
+
+  <div class="tabbar" style="background:rgba(20,28,40,.85);backdrop-filter:blur(12px)">
+   <span class="tab" style="color:rgba(255,255,255,.6)"><svg width="22" height="22" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="m3 10 9-7 9 7v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg></span>
+   <span class="tab" style="color:rgba(255,255,255,.6)"><svg width="22" height="22" fill="none" stroke="currentColor" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg></span>
+   <span class="tab active" style="background:rgba(255,255,255,.12);color:#fff"><svg width="22" height="22" fill="none" stroke="currentColor" viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="18" rx="2"/><path d="m10 8 5 4-5 4z"/></svg></span>
+   <span class="tab" style="color:rgba(255,255,255,.6)"><svg width="22" height="22" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/></svg></span>
+   <span class="tab" style="color:rgba(255,255,255,.6)"><svg width="22" height="22" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg></span>
+  </div>
+ </div>
+</div><div class="caption">Customer · Reels</div></div></body></html>
