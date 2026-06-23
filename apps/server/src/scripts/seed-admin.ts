@@ -1,7 +1,12 @@
+import * as dotenv from "dotenv";
+dotenv.config();
+
 import { PrismaClient, UserRole } from "@prisma/client";
+import { PrismaPg } from "@prisma/adapter-pg";
 import { createAuth } from "../auth/better-auth";
 
-const prisma = new PrismaClient();
+const adapter = new PrismaPg({ connectionString: process.env.DATABASE_URL });
+const prisma = new PrismaClient({ adapter });
 const auth = createAuth(prisma);
 
 async function main() {

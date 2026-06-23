@@ -54,10 +54,11 @@ export default function DeliveriesPage() {
                 <TableHeader>
                   <TableRow>
                     <TableHead>Customer</TableHead>
+                    <TableHead>Type</TableHead>
                     <TableHead>Pickup</TableHead>
                     <TableHead>Dropoff</TableHead>
                     <TableHead>Dispatcher</TableHead>
-                    <TableHead>Price</TableHead>
+                    <TableHead>Fee / Payout</TableHead>
                     <TableHead>Status</TableHead>
                   </TableRow>
                 </TableHeader>
@@ -69,6 +70,9 @@ export default function DeliveriesPage() {
                           <span>{delivery.customer?.name}</span>
                           <span className="text-xs text-[var(--color-text-muted)]">{delivery.customer?.phoneNumber || "N/A"}</span>
                         </div>
+                      </TableCell>
+                      <TableCell>
+                        <Badge variant="default">{delivery.type}</Badge>
                       </TableCell>
                       <TableCell className="max-w-[200px] truncate" title={delivery.pickupAddress}>{delivery.pickupAddress}</TableCell>
                       <TableCell className="max-w-[200px] truncate" title={delivery.dropoffAddress}>{delivery.dropoffAddress}</TableCell>
@@ -82,12 +86,19 @@ export default function DeliveriesPage() {
                           <span className="text-[var(--color-text-muted)] italic">Unassigned</span>
                         )}
                       </TableCell>
-                      <TableCell>GH₵ {delivery.price}</TableCell>
                       <TableCell>
-                        <Badge 
+                        <div className="flex flex-col">
+                          <span>GH₵ {delivery.customerFee}</span>
+                          <span className="text-xs text-[var(--color-text-muted)]">
+                            payout {delivery.driverPayout}
+                          </span>
+                        </div>
+                      </TableCell>
+                      <TableCell>
+                        <Badge
                           variant={
-                            delivery.status === "COMPLETED" ? "success" : 
-                            delivery.status === "PENDING" ? "default" : 
+                            delivery.status === "DELIVERED" ? "success" :
+                            delivery.status === "PENDING" ? "default" :
                             delivery.status === "CANCELLED" ? "error" : "warning"
                           }
                         >

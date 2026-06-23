@@ -95,7 +95,7 @@ export default function DispatchersPage() {
                       <TableCell className="font-medium">{dispatcher.user?.firstName} {dispatcher.user?.lastName}</TableCell>
                       <TableCell className="capitalize">{dispatcher.vehicleType?.toLowerCase()}</TableCell>
                       <TableCell>{dispatcher.licensePlate}</TableCell>
-                      <TableCell>{dispatcher.deliveries?.length || 0}</TableCell>
+                      <TableCell>{dispatcher.totalTrips ?? 0}</TableCell>
                       <TableCell>
                         <Badge 
                           variant={

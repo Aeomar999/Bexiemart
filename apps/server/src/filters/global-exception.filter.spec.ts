@@ -137,7 +137,7 @@ describe("GlobalExceptionFilter", () => {
     });
   });
 
-  it("should handle generic Error as Internal Server Error", () => {
+  it("should handle generic Error as Internal Server Error without leaking the message", () => {
     const exception = new Error("Generic unexpected error");
 
     filter.catch(exception, mockHost);
@@ -146,7 +146,7 @@ describe("GlobalExceptionFilter", () => {
     expect(mockResponse.json).toHaveBeenCalledWith({
       success: false,
       statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
-      message: "Generic unexpected error",
+      message: "Internal server error",
       timestamp: expect.any(String),
       path: "/test-url",
       correlationId: "corr-123",

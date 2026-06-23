@@ -12,6 +12,10 @@ export class ShippingAddressDto {
   @IsOptional() @IsString() zipCode?: string;
   @IsOptional() @IsString() country?: string;
   @IsOptional() @IsString() instructions?: string;
+  // Dropoff coordinates (from the map / GPS). When present, delivery is priced
+  // by real distance; otherwise the address is geocoded server-side.
+  @IsOptional() @IsNumber() latitude?: number;
+  @IsOptional() @IsNumber() longitude?: number;
 }
 
 export class CreateOrderItemDto {
@@ -21,7 +25,8 @@ export class CreateOrderItemDto {
 }
 
 export class CreateOrderDto {
-  @ValidateNested() @Type(() => ShippingAddressDto)
+  @ValidateNested()
+  @Type(() => ShippingAddressDto)
   shippingAddress: ShippingAddressDto;
 
   @IsOptional()

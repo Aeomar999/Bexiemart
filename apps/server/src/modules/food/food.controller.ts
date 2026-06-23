@@ -1,8 +1,20 @@
-import { Controller, Get, Post, Put, Delete, Body, Param, Query, UseGuards, Req } from "@nestjs/common";
+import {
+  Controller,
+  Get,
+  Post,
+  Put,
+  Delete,
+  Body,
+  Param,
+  Query,
+  UseGuards,
+  Req,
+} from "@nestjs/common";
 import { AuthGuard } from "../../guards/auth.guard";
 import { FoodService } from "./food.service";
 import { AddFoodCartItemDto } from "./dto/add-food-cart-item.dto";
 import { UpdateFoodCartItemDto } from "./dto/update-food-cart-item.dto";
+import { CheckoutFoodDto } from "./dto/checkout-food.dto";
 import { ApiTags, ApiOperation, ApiBody, ApiBearerAuth } from "@nestjs/swagger";
 
 @ApiTags("Food")
@@ -14,7 +26,11 @@ export class FoodController {
 
   @Get("restaurants")
   @ApiOperation({ summary: "List restaurants, optionally filtered by category" })
-  getRestaurants(@Query("category") category?: string, @Query("page") page?: string, @Query("limit") limit?: string) {
+  getRestaurants(
+    @Query("category") category?: string,
+    @Query("page") page?: string,
+    @Query("limit") limit?: string
+  ) {
     return this.foodService.getRestaurants(category, Number(page) || 1, Number(limit) || 20);
   }
 
@@ -26,18 +42,25 @@ export class FoodController {
 
   @Get("items")
   @ApiOperation({ summary: "List food items, optionally filtered by category or search" })
-  getFoodItems(@Query("category") category?: string, @Query("search") search?: string, @Query("page") page?: string, @Query("limit") limit?: string) {
+  getFoodItems(
+    @Query("category") category?: string,
+    @Query("search") search?: string,
+    @Query("page") page?: string,
+    @Query("limit") limit?: string
+  ) {
     return this.foodService.getFoodItems(category, search, Number(page) || 1, Number(limit) || 20);
   }
 
   @Post("cart/add")
   @ApiOperation({ summary: "Add an item to the cart" })
   @ApiBody({ type: AddFoodCartItemDto })
-  addToCart(
-    @Req() req: any,
-    @Body() body: AddFoodCartItemDto,
-  ) {
-    return this.foodService.addToCart(req.user.id, body.foodItemId, body.quantity, body.specialInstructions);
+  addToCart(@Req() req: any, @Body() body: AddFoodCartItemDto) {
+    return this.foodService.addToCart(
+      req.user.id,
+      body.foodItemId,
+      body.quantity,
+      body.specialInstructions
+    );
   }
 
   @Get("cart")
@@ -67,8 +90,8 @@ export class FoodController {
 
   @Post("checkout")
   @ApiOperation({ summary: "Checkout and place an order" })
-  checkout(@Req() req: any) {
-    return this.foodService.checkout(req.user.id);
+  checkout(@Req() req: any, @Body() dto: CheckoutFoodDto) {
+    return this.foodService.checkout(req.user.id, dto);
   }
 
   @Get("orders")

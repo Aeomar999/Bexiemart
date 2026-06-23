@@ -1,16 +1,20 @@
 import { Injectable, NotFoundException, BadRequestException } from "@nestjs/common";
 import { PrismaService } from "../../prisma/prisma.service";
 import { UserRole } from "@prisma/client";
+import { DeliveryService } from "../delivery/delivery.service";
 
 @Injectable()
 export class DispatcherService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly delivery: DeliveryService
+  ) {}
 
   async getProfile(userId: string) {
     const profile = await this.prisma.dispatcherProfile.findUnique({
       where: { userId },
     });
-    
+
     if (!profile) {
       throw new NotFoundException("Dispatcher profile not found");
     }
@@ -65,155 +69,41 @@ export class DispatcherService {
     });
   }
 
-  async getAvailableTasks(userId: string, page: number = 1, limit: number = 20) {
-    await this.getProfile(userId);
-    
-    // In a real app, we would filter by distance using PostGIS or Harvesine formula
-    // For now, we return all pending ride requests
-    const skip = (page - 1) * limit;
+  // ─── Task feed & lifecycle (delegated to the unified DeliveryService) ───────
 
-    const [rides, total] = await Promise.all([
-      this.prisma.rideRequest.findMany({
-        where: { status: "PENDING" },
-        skip,
-        take: limit,
-        include: { customer: { select: { id: true, name: true, image: true } } },
-        orderBy: { createdAt: "desc" },
-      }),
-      this.prisma.rideRequest.count({ where: { status: "PENDING" } })
-    ]);
-
-    return { data: {  rides, deliveries: []  }, meta: { total, page, limit, totalPages: Math.ceil(total / limit)
-     } };
-  }
-
-  async acceptTask(userId: string, taskId: string, type: "ride" | "delivery") {
+  async getAvailableTasks(userId: string, page = 1, limit = 20) {
     const profile = await this.getProfile(userId);
-
-    if (profile.status !== "ONLINE") {
-      throw new BadRequestException("You must be ONLINE to accept tasks");
-    }
-
-    if (type === "ride") {
-      // Check if already taken
-      const ride = await this.prisma.rideRequest.findUnique({ where: { id: taskId } });
-      if (!ride || ride.status !== "PENDING") {
-        throw new BadRequestException("Ride is no longer available");
-      }
-
-      // Assign to dispatcher
-      return this.prisma.rideRequest.update({
-        where: { id: taskId },
-        data: {
-          dispatcherId: profile.id,
-          status: "ACCEPTED"
-        }
-      });
-    }
-
-    throw new BadRequestException("Unsupported task type");
+    return this.delivery.getAvailableJobs(profile, page, limit);
   }
 
-  async updateTaskStatus(userId: string, taskId: string, status: string, type: "ride" | "delivery") {
+  async getMyTasks(userId: string, status: "active" | "completed", page = 1, limit = 20) {
     const profile = await this.getProfile(userId);
-
-    if (type === "ride") {
-      const ride = await this.prisma.rideRequest.findUnique({ where: { id: taskId } });
-      if (!ride || ride.dispatcherId !== profile.id) {
-        throw new BadRequestException("Invalid ride or unauthorized");
-      }
-
-      // If completing the ride, add earnings to Profile, Wallet, and log Transaction
-      if (status === "COMPLETED") {
-        let wallet = await this.prisma.wallet.findUnique({ where: { userId } });
-        if (!wallet) {
-          wallet = await this.prisma.wallet.create({
-            data: { userId, balance: 0, currency: "GHS" }
-          });
-        }
-
-        await this.prisma.$transaction([
-          this.prisma.dispatcherProfile.update({
-            where: { id: profile.id },
-            data: {
-              totalEarnings: { increment: ride.price },
-              pendingPayout: { increment: ride.price },
-            }
-          }),
-          this.prisma.wallet.update({
-            where: { id: wallet.id },
-            data: { balance: { increment: ride.price } }
-          }),
-          this.prisma.transaction.create({
-            data: {
-              walletId: wallet.id,
-              type: "EARNINGS",
-              status: "COMPLETED",
-              amount: ride.price,
-              netAmount: ride.price,
-              currency: "GHS",
-              reference: `DSP-ERN-${ride.id}-${Date.now()}`,
-              description: `Delivery Payout for Task ${ride.id.slice(-6)}`,
-            }
-          })
-        ]);
-      }
-
-      return this.prisma.rideRequest.update({
-        where: { id: taskId },
-        data: { status }
-      });
-    }
-
-    throw new BadRequestException("Unsupported task type");
+    return this.delivery.getDispatcherJobs(profile.id, status, page, limit);
   }
 
-  async getMyTasks(userId: string, status: "active" | "completed", page: number = 1, limit: number = 20) {
+  async acceptTask(userId: string, taskId: string) {
     const profile = await this.getProfile(userId);
-    
-    let statuses: string[];
-    if (status === "active") {
-      statuses = ["ACCEPTED", "ARRIVED", "DELIVERING"];
-    } else {
-      statuses = ["COMPLETED", "CANCELLED"];
-    }
-
-    const skip = (page - 1) * limit;
-
-    const [rides, total] = await Promise.all([
-      this.prisma.rideRequest.findMany({
-        where: {
-          dispatcherId: profile.id,
-          status: { in: statuses }
-        },
-        skip,
-        take: limit,
-        include: { customer: { select: { id: true, name: true, image: true } } },
-        orderBy: { createdAt: "desc" },
-      }),
-      this.prisma.rideRequest.count({
-        where: {
-          dispatcherId: profile.id,
-          status: { in: statuses }
-        }
-      })
-    ]);
-
-    return { data: {  rides, deliveries: []  }, meta: { total, page, limit, totalPages: Math.ceil(total / limit)
-     } };
+    return this.delivery.acceptJob(profile, taskId);
   }
 
-  // --- Earnings & Wallet ---
+  async updateTaskStatus(userId: string, taskId: string, status: string) {
+    const profile = await this.getProfile(userId);
+    return this.delivery.updateJobStatus(profile, taskId, status as any);
+  }
+
+  // ─── Earnings & Wallet ─────────────────────────────────────────────────────
 
   async getEarnings(userId: string) {
     const profile = await this.getProfile(userId);
     const wallet = await this.prisma.wallet.findUnique({ where: { userId } });
 
-    const transactions = wallet ? await this.prisma.transaction.findMany({
-      where: { walletId: wallet.id },
-      orderBy: { createdAt: "desc" },
-      take: 50,
-    }) : [];
+    const transactions = wallet
+      ? await this.prisma.transaction.findMany({
+          where: { walletId: wallet.id },
+          orderBy: { createdAt: "desc" },
+          take: 50,
+        })
+      : [];
 
     const today = new Date();
     today.setHours(0, 0, 0, 0);
@@ -224,18 +114,23 @@ export class DispatcherService {
 
     const todayRevenue = transactions
       .filter((t) => t.type === "EARNINGS" && t.createdAt >= today)
-      .reduce((s, t) => s + Number(t.amount), 0);
+      .reduce((s, t) => s + Number(t.netAmount), 0);
 
     const thisWeekRevenue = transactions
       .filter((t) => t.type === "EARNINGS" && t.createdAt >= thisWeek)
-      .reduce((s, t) => s + Number(t.amount), 0);
+      .reduce((s, t) => s + Number(t.netAmount), 0);
 
     const formattedTransactions = transactions.map((t) => ({
       id: t.reference || t.id,
       type: t.type === "WITHDRAWAL" ? "withdrawal" : "order",
       title: t.description || (t.type === "WITHDRAWAL" ? "Bank Transfer" : "Delivery Payout"),
-      date: t.createdAt.toLocaleDateString('en-US', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' }),
-      amount: t.type === "WITHDRAWAL" ? -Number(t.amount) : Number(t.amount),
+      date: t.createdAt.toLocaleDateString("en-US", {
+        month: "short",
+        day: "numeric",
+        hour: "2-digit",
+        minute: "2-digit",
+      }),
+      amount: t.type === "WITHDRAWAL" ? -Number(t.amount) : Number(t.netAmount),
       status: t.status.toLowerCase(),
     }));
 
@@ -262,8 +157,13 @@ export class DispatcherService {
       id: t.reference || t.id,
       type: t.type === "WITHDRAWAL" ? "withdrawal" : "order",
       title: t.description || (t.type === "WITHDRAWAL" ? "Bank Transfer" : "Delivery Payout"),
-      date: t.createdAt.toLocaleDateString('en-US', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' }),
-      amount: t.type === "WITHDRAWAL" ? -Number(t.amount) : Number(t.amount),
+      date: t.createdAt.toLocaleDateString("en-US", {
+        month: "short",
+        day: "numeric",
+        hour: "2-digit",
+        minute: "2-digit",
+      }),
+      amount: t.type === "WITHDRAWAL" ? -Number(t.amount) : Number(t.netAmount),
       status: t.status.toLowerCase(),
     }));
   }
@@ -272,50 +172,58 @@ export class DispatcherService {
     const profile = await this.getProfile(userId);
     const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
 
-    const [rides, wallet] = await Promise.all([
-      this.prisma.rideRequest.findMany({
+    const [jobs, wallet] = await Promise.all([
+      this.prisma.deliveryJob.findMany({
         where: {
           dispatcherId: profile.id,
-          status: "COMPLETED",
+          status: "DELIVERED",
           createdAt: { gte: thirtyDaysAgo },
         },
-        orderBy: { createdAt: "asc" }
+        orderBy: { createdAt: "asc" },
       }),
-      this.prisma.wallet.findUnique({ where: { userId } })
+      this.prisma.wallet.findUnique({ where: { userId } }),
     ]);
 
-    const recentTransactions = wallet ? await this.prisma.transaction.findMany({
-      where: {
-        walletId: wallet.id,
-        type: "EARNINGS",
-        createdAt: { gte: thirtyDaysAgo },
-      },
-      orderBy: { createdAt: "asc" },
-    }) : [];
+    const recentTransactions = wallet
+      ? await this.prisma.transaction.findMany({
+          where: {
+            walletId: wallet.id,
+            type: "EARNINGS",
+            createdAt: { gte: thirtyDaysAgo },
+          },
+          orderBy: { createdAt: "asc" },
+        })
+      : [];
 
-    const revenue30Days = recentTransactions.reduce((s, t) => s + Number(t.amount), 0);
+    const revenue30Days = recentTransactions.reduce((s, t) => s + Number(t.netAmount), 0);
 
     return {
       revenue30Days: Math.round(revenue30Days * 100) / 100,
-      trips30Days: rides.length,
-      revenueTimeline: recentTransactions.reduce((acc: { date: string; amount: number }[], t) => {
-        const date = t.createdAt.toISOString().split("T")[0];
-        const existing = acc.find((a) => a.date === date);
-        if (existing) existing.amount += Number(t.amount);
-        else acc.push({ date, amount: Number(t.amount) });
-        return acc;
-      }, [] as { date: string; amount: number }[]),
+      trips30Days: jobs.length,
+      revenueTimeline: recentTransactions.reduce(
+        (acc: { date: string; amount: number }[], t) => {
+          const date = t.createdAt.toISOString().split("T")[0];
+          const existing = acc.find((a) => a.date === date);
+          if (existing) existing.amount += Number(t.netAmount);
+          else acc.push({ date, amount: Number(t.netAmount) });
+          return acc;
+        },
+        [] as { date: string; amount: number }[]
+      ),
     };
   }
 
   async withdrawEarnings(userId: string, amount: number, destination: string) {
     const profile = await this.getProfile(userId);
-    if (Number(profile.pendingPayout) < amount) {
-      throw new BadRequestException("Insufficient pending payout");
-    }
-
     const wallet = await this.prisma.wallet.findUnique({ where: { userId } });
     if (!wallet) throw new NotFoundException("Wallet not found");
+
+    // Withdrawals draw from cleared, spendable balance only. Held earnings sit
+    // in pendingPayout until the customer confirms delivery (see
+    // DeliveryService.confirmDelivery), so they are intentionally not available.
+    if (Number(wallet.balance) < amount) {
+      throw new BadRequestException("Insufficient available balance");
+    }
 
     await this.prisma.$transaction([
       this.prisma.wallet.update({
@@ -335,10 +243,6 @@ export class DispatcherService {
           description: `Withdrawal to ${destination}`,
           metadata: { destination },
         },
-      }),
-      this.prisma.dispatcherProfile.update({
-        where: { id: profile.id },
-        data: { pendingPayout: { decrement: amount } },
       }),
     ]);
 

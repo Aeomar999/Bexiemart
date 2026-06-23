@@ -29,12 +29,13 @@ export interface DispatcherDetails extends Dispatcher {
     totalRides: number;
     totalDeliveries: number;
   };
-  rides: any[];
-  deliveries: any[];
+  jobs: any[];
 }
 
 export interface Delivery {
   id: string;
+  jobNumber: string;
+  type: "PARCEL" | "ORDER" | "FOOD";
   customerId: string;
   dispatcherId: string | null;
   status: string;
@@ -44,7 +45,9 @@ export interface Delivery {
   pickupLng: number;
   dropoffLat: number;
   dropoffLng: number;
-  price: string;
+  customerFee: string;
+  driverPayout: string;
+  platformCommission: string;
   createdAt: string;
   updatedAt: string;
   customer: {

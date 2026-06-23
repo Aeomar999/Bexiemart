@@ -1,9 +1,14 @@
 import { Injectable, NotFoundException, BadRequestException } from "@nestjs/common";
 import { PrismaService } from "../../prisma/prisma.service";
+import { DeliveryService } from "../delivery/delivery.service";
+import { CheckoutFoodDto } from "./dto/checkout-food.dto";
 
 @Injectable()
 export class FoodService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly delivery: DeliveryService
+  ) {}
 
   async getRestaurants(category?: string, page: number = 1, limit: number = 20) {
     const where: any = {
@@ -32,7 +37,7 @@ export class FoodService {
           },
         },
       }),
-      this.prisma.vendorProfile.count({ where })
+      this.prisma.vendorProfile.count({ where }),
     ]);
 
     const data = vendors.map((v) => ({
@@ -48,7 +53,7 @@ export class FoodService {
       minPrice: v.foodItems[0] ? Number(v.foodItems[0].price) : null,
     }));
 
-    return { data, meta: { total, page, limit, totalPages: Math.ceil(total / limit)  } };
+    return { data, meta: { total, page, limit, totalPages: Math.ceil(total / limit) } };
   }
 
   async getRestaurant(id: string) {
@@ -121,7 +126,7 @@ export class FoodService {
         },
         orderBy: { category: "asc" },
       }),
-      this.prisma.foodItem.count({ where })
+      this.prisma.foodItem.count({ where }),
     ]);
 
     const data = items.map((item) => ({
@@ -135,10 +140,15 @@ export class FoodService {
       vendor: item.vendor,
     }));
 
-    return { data, meta: { total, page, limit, totalPages: Math.ceil(total / limit)  } };
+    return { data, meta: { total, page, limit, totalPages: Math.ceil(total / limit) } };
   }
 
-  async addToCart(userId: string, foodItemId: string, quantity: number, specialInstructions?: string) {
+  async addToCart(
+    userId: string,
+    foodItemId: string,
+    quantity: number,
+    specialInstructions?: string
+  ) {
     const foodItem = await this.prisma.foodItem.findUnique({
       where: { id: foodItemId, isActive: true, isAvailable: true },
       include: { vendor: true },
@@ -171,7 +181,11 @@ export class FoodService {
     if (existing) {
       await this.prisma.foodCartItem.update({
         where: { id: existing.id },
-        data: { quantity: existing.quantity + quantity, price: foodItem.price, specialInstructions },
+        data: {
+          quantity: existing.quantity + quantity,
+          price: foodItem.price,
+          specialInstructions,
+        },
       });
     } else {
       await this.prisma.foodCartItem.create({
@@ -196,7 +210,9 @@ export class FoodService {
         items: {
           include: { foodItem: { select: { imageUrl: true, prepTime: true } } },
         },
-        vendor: { select: { id: true, shopName: true, logo: true } },
+        vendor: {
+          select: { id: true, shopName: true, logo: true, latitude: true, longitude: true },
+        },
       },
     });
 
@@ -271,7 +287,7 @@ export class FoodService {
     return { success: true };
   }
 
-  async checkout(userId: string) {
+  async checkout(userId: string, dto: CheckoutFoodDto = {}) {
     const cart = await this.prisma.foodCart.findUnique({
       where: { userId },
       include: { items: true, vendor: true },
@@ -282,7 +298,25 @@ export class FoodService {
     }
 
     const subtotal = cart.items.reduce((s, i) => s + Number(i.price) * i.quantity, 0);
-    const deliveryFee = 0;
+
+    // Distance-based delivery fee from the unified pricing engine, falling back
+    // to free delivery when there's no destination (e.g. pickup) or no maps key.
+    let deliveryFee = 0;
+    try {
+      const quote = await this.delivery.quoteForOrderDraft({
+        vendorId: cart.vendorId,
+        dropoff: {
+          latitude: dto.deliveryLat,
+          longitude: dto.deliveryLng,
+          addressParts: [dto.deliveryAddress ?? null],
+        },
+        vehicleType: dto.vehicleType,
+      });
+      if (quote) deliveryFee = quote.customerFee;
+    } catch {
+      deliveryFee = 0;
+    }
+
     const total = subtotal + deliveryFee;
     const orderNumber = `FOOD-${Date.now()}-${Math.floor(Math.random() * 900) + 100}`;
 
@@ -295,6 +329,9 @@ export class FoodService {
         subtotal,
         deliveryFee,
         total,
+        deliveryAddress: dto.deliveryAddress,
+        deliveryLat: dto.deliveryLat,
+        deliveryLng: dto.deliveryLng,
         items: {
           create: cart.items.map((item) => ({
             foodItemId: item.foodItemId,
@@ -309,6 +346,15 @@ export class FoodService {
     });
 
     await this.prisma.foodCartItem.deleteMany({ where: { cartId: cart.id } });
+
+    // Dispatch the delivery leg (best-effort; needs a destination to match).
+    if (dto.deliveryLat != null || dto.deliveryAddress) {
+      try {
+        await this.delivery.createJobForFoodOrder(order.id);
+      } catch {
+        // non-fatal: order stands even if dispatch couldn't be created
+      }
+    }
 
     return order;
   }
@@ -327,7 +373,7 @@ export class FoodService {
         },
         orderBy: { createdAt: "desc" },
       }),
-      this.prisma.foodOrder.count({ where: { userId } })
+      this.prisma.foodOrder.count({ where: { userId } }),
     ]);
 
     const data = orders.map((o) => ({
@@ -342,7 +388,7 @@ export class FoodService {
       })),
     }));
 
-    return { data, meta: { total, page, limit, totalPages: Math.ceil(total / limit)  } };
+    return { data, meta: { total, page, limit, totalPages: Math.ceil(total / limit) } };
   }
 
   async getOrder(userId: string, orderId: string) {
@@ -351,7 +397,16 @@ export class FoodService {
       include: {
         items: true,
         vendor: {
-          select: { id: true, shopName: true, slug: true, logo: true, phone: true, address: true, city: true, state: true },
+          select: {
+            id: true,
+            shopName: true,
+            slug: true,
+            logo: true,
+            phone: true,
+            address: true,
+            city: true,
+            state: true,
+          },
         },
       },
     });

@@ -6,10 +6,17 @@ import { BadRequestException, NotFoundException } from "@nestjs/common";
 describe("OrdersService", () => {
   let service: OrdersService;
   let prisma: ReturnType<typeof mockPrisma>;
+  let delivery: { quoteForOrderDraft: jest.Mock; createJobForOrder: jest.Mock };
 
   beforeEach(() => {
     prisma = mockPrisma();
-    service = new OrdersService(prisma as any);
+    // Default: no distance quote available → flat-fee fallback, keeping the
+    // existing shippingFee assertions valid.
+    delivery = {
+      quoteForOrderDraft: jest.fn().mockResolvedValue(null),
+      createJobForOrder: jest.fn(),
+    };
+    service = new OrdersService(prisma as any, delivery as any);
   });
 
   describe("create", () => {
@@ -59,6 +66,8 @@ describe("OrdersService", () => {
       prisma.product.findUnique.mockResolvedValue({
         id: "p1",
         name: "Old Product",
+        slug: "old-product",
+        price: 100,
         isActive: false,
         isDeleted: false,
         stock: 10,
@@ -81,6 +90,8 @@ describe("OrdersService", () => {
       prisma.product.findUnique.mockResolvedValue({
         id: "p1",
         name: "Test",
+        slug: "test",
+        price: 100,
         isActive: true,
         isDeleted: false,
         stock: 5,
@@ -99,27 +110,36 @@ describe("OrdersService", () => {
         city: "Accra",
         state: "GA",
       };
+      // Client sends tampered prices (1 each). The server must ignore these
+      // and price the order from the database rows below (2000 and 1500).
       dto.items = [
-        { productId: "p1", quantity: 2, price: 2000 },
-        { productId: "p2", quantity: 1, price: 1500 },
+        { productId: "p1", quantity: 2, price: 1 },
+        { productId: "p2", quantity: 1, price: 1 },
       ];
 
       prisma.product.findUnique
         .mockResolvedValueOnce({
           id: "p1",
           name: "Product 1",
+          slug: "product-1",
+          price: 2000,
           isActive: true,
           isDeleted: false,
           stock: 10,
+          images: [],
         })
         .mockResolvedValueOnce({
           id: "p2",
           name: "Product 2",
+          slug: "product-2",
+          price: 1500,
           isActive: true,
           isDeleted: false,
           stock: 5,
+          images: [],
         });
 
+      prisma.product.updateMany.mockResolvedValue({ count: 1 });
       prisma.$transaction.mockImplementation(async (cb: any) => cb(prisma));
 
       prisma.shippingAddress.create.mockResolvedValue({ id: "addr1" });
@@ -161,7 +181,16 @@ describe("OrdersService", () => {
       expect(result.total).toBe(5912.5);
       expect(prisma.shippingAddress.create).toHaveBeenCalled();
       expect(prisma.order.create).toHaveBeenCalled();
-      expect(prisma.product.update).toHaveBeenCalledTimes(2);
+      // Stock is decremented via a guarded updateMany (stock >= quantity),
+      // not an unconditional update, to prevent overselling.
+      expect(prisma.product.updateMany).toHaveBeenCalledTimes(2);
+
+      // The order must be priced from the database, not the tampered DTO prices.
+      const orderArgs = prisma.order.create.mock.calls[0][0];
+      expect(orderArgs.data.subtotal).toBe(5500);
+      const createdItems = orderArgs.data.items.create;
+      expect(createdItems[0].price).toBe(2000);
+      expect(createdItems[1].price).toBe(1500);
     });
   });
 

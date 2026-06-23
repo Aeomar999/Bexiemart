@@ -48,7 +48,7 @@ export default function DispatcherTasks() {
   ];
 
   const renderAvailable = () => {
-    const rides = availableData?.rides || [];
+    const rides = availableData?.jobs || [];
 
     if (loadingAvailable) {
       return <ListSkeleton />;
@@ -82,7 +82,7 @@ export default function DispatcherTasks() {
                 <Text className="font-bold text-foreground font-body">Ride Request</Text>
               </View>
               <Text className="font-black text-primary text-[18px] font-heading">
-                GH₵ {Number(ride.price).toFixed(2)}
+                GH₵ {Number(ride.driverPayout).toFixed(2)}
               </Text>
             </View>
 
@@ -125,7 +125,7 @@ export default function DispatcherTasks() {
                 disabled={acceptTask.isPending}
                 onPress={() => {
                   acceptTask.mutate(
-                    { taskId: ride.id, type: "ride" },
+                    { taskId: ride.id },
                     {
                       onSuccess: () => {
                         Toast.show({
@@ -157,7 +157,7 @@ export default function DispatcherTasks() {
   };
 
   const renderActive = () => {
-    const rides = activeData?.rides || [];
+    const rides = activeData?.jobs || [];
 
     if (loadingActive) {
       return <ListSkeleton />;
@@ -194,7 +194,7 @@ export default function DispatcherTasks() {
                 </Text>
               </View>
               <Text className="font-black text-foreground text-[18px] font-heading">
-                GH₵ {Number(ride.price).toFixed(2)}
+                GH₵ {Number(ride.driverPayout).toFixed(2)}
               </Text>
             </View>
 
@@ -236,7 +236,7 @@ export default function DispatcherTasks() {
   };
 
   const renderCompleted = () => {
-    const rides = completedData?.rides || [];
+    const rides = completedData?.jobs || [];
 
     if (loadingCompleted) {
       return <ListSkeleton />;
@@ -268,17 +268,17 @@ export default function DispatcherTasks() {
           >
             <View className="flex-row items-center gap-3 flex-1 mr-4">
               <View
-                className={`w-12 h-12 rounded-full items-center justify-center ${ride.status === "COMPLETED" ? "bg-emerald-100" : "bg-rose-100"}`}
+                className={`w-12 h-12 rounded-full items-center justify-center ${ride.status === "DELIVERED" ? "bg-emerald-100" : "bg-rose-100"}`}
               >
                 <Icon
-                  name={ride.status === "COMPLETED" ? "check" : "x"}
+                  name={ride.status === "DELIVERED" ? "check" : "x"}
                   size={20}
-                  color={ride.status === "COMPLETED" ? "#10b981" : "#e11d48"}
+                  color={ride.status === "DELIVERED" ? "#10b981" : "#e11d48"}
                 />
               </View>
               <View className="flex-1">
                 <Text className="font-bold text-foreground font-heading">
-                  Ride {ride.status === "COMPLETED" ? "Completed" : "Cancelled"}
+                  Ride {ride.status === "DELIVERED" ? "Completed" : "Cancelled"}
                 </Text>
                 <Text className="text-muted-foreground text-[13px] font-body" numberOfLines={1}>
                   {new Date(ride.updatedAt).toLocaleTimeString([], {
@@ -290,9 +290,9 @@ export default function DispatcherTasks() {
               </View>
             </View>
             <Text
-              className={`font-black text-[16px] font-heading ${ride.status === "COMPLETED" ? "text-emerald-600" : "text-muted-foreground"}`}
+              className={`font-black text-[16px] font-heading ${ride.status === "DELIVERED" ? "text-emerald-600" : "text-muted-foreground"}`}
             >
-              {ride.status === "COMPLETED" ? "+" : ""}GH₵ {Number(ride.price).toFixed(2)}
+              {ride.status === "DELIVERED" ? "+" : ""}GH₵ {Number(ride.price).toFixed(2)}
             </Text>
           </View>
         ))}
