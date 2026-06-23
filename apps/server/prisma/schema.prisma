@@ -21,6 +21,8 @@ model User {
   isActive            Boolean  @default(true)
   bannedAt            DateTime?
   banReason           String?
+  pushToken           String?
+  pushTokenUpdatedAt  DateTime?
   createdAt           DateTime @default(now())
   updatedAt           DateTime @updatedAt
 
@@ -51,8 +53,11 @@ model User {
   vendorFollows     VendorFollow[]
 
   dispatcherProfile DispatcherProfile?
-  rideRequests      RideRequest[]      @relation("CustomerRides")
+  deliveryJobs      DeliveryJob[]      @relation("CustomerDeliveryJobs")
   Collection        Collection[]
+
+  supportTickets  SupportTicket[] @relation("TicketOwner")
+  assignedTickets SupportTicket[] @relation("AssignedAgent")
 }
 
 model Session {
@@ -113,6 +118,8 @@ model VendorProfile {
   city        String?
   state       String?
   phone       String?
+  latitude    Float?
+  longitude   Float?
   isActive    Boolean @default(true)
 
   totalEarnings Decimal @default(0)
@@ -316,12 +323,13 @@ model Order {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  dispatcherId String?
-  dispatcher   DispatcherProfile? @relation("OrderDispatcher", fields: [dispatcherId], references: [id])
+  deliveryJob DeliveryJob?
 
   items   OrderItem[]
   payment Payment?
   escrows Escrow[]
+
+  supportTickets SupportTicket[]
 
   @@index([userId])
   @@index([orderNumber])
@@ -359,8 +367,10 @@ model ShippingAddress {
   city         String
   state        String
   zipCode      String?
-  country      String  @default("Nigeria")
+  country      String  @default("Ghana")
   instructions String?
+  latitude     Float?
+  longitude    Float?
 
   order Order?
 }
@@ -469,16 +479,19 @@ model Review {
 // ─── Chat Models ────────────────────────────────────────────────────────
 
 model Conversation {
-  id        String   @id @default(cuid())
+  id        String           @id @default(cuid())
   orderId   String? // Optional link to an order
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  type      ConversationType @default(DIRECT)
+  createdAt DateTime         @default(now())
+  updatedAt DateTime         @updatedAt
 
-  participants ConversationParticipant[]
-  messages     Message[]
+  participants  ConversationParticipant[]
+  messages      Message[]
+  supportTicket SupportTicket?
 
   @@index([updatedAt])
   @@index([orderId])
+  @@index([type])
 }
 
 model ConversationParticipant {
@@ -507,6 +520,48 @@ model Message {
   createdAt      DateTime     @default(now())
 
   @@index([conversationId, createdAt])
+}
+
+// ─── Support Ticket Models ───────────────────────────────────────────────
+
+model SupportTicket {
+  id String @id @default(cuid())
+
+  // Customer who opened the ticket
+  userId String
+  user   User   @relation("TicketOwner", fields: [userId], references: [id], onDelete: Cascade)
+
+  // Optional link to an order
+  orderId String?
+  order   Order?  @relation(fields: [orderId], references: [id], onDelete: SetNull)
+
+  // 1:1 underlying chat conversation
+  conversationId String       @unique
+  conversation   Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+
+  // Metadata
+  category String // ORDER_ISSUE | PAYMENT_REFUND | DELIVERY | PRODUCT | ACCOUNT | OTHER
+  subject  String
+  priority String @default("NORMAL") // LOW | NORMAL | HIGH | URGENT
+  status   String @default("OPEN") // OPEN | ASSIGNED | IN_PROGRESS | RESOLVED | CLOSED
+
+  // Assigned support agent (an ADMIN in v1)
+  agentId String?
+  agent   User?   @relation("AssignedAgent", fields: [agentId], references: [id], onDelete: SetNull)
+
+  // Resolution
+  resolvedAt    DateTime?
+  resolution    String?
+  rating        Int?
+  ratingComment String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([status])
+  @@index([agentId])
+  @@index([userId])
+  @@index([status, createdAt])
 }
 
 // ─── Story Models ────────────────────────────────────────────────────────
@@ -571,6 +626,30 @@ enum NotificationType {
   promotion
   system
   review
+  support
+}
+
+enum ConversationType {
+  DIRECT
+  SUPPORT
+}
+
+enum DeliveryJobType {
+  PARCEL // passenger / parcel book-a-rider trip
+  ORDER // marketplace product order delivery
+  FOOD // restaurant food order delivery
+}
+
+enum DeliveryJobStatus {
+  PENDING // created, awaiting a dispatcher
+  ASSIGNED // a dispatcher accepted
+  EN_ROUTE_PICKUP // heading to pickup
+  ARRIVED_PICKUP // at pickup location
+  PICKED_UP // parcel/order collected
+  EN_ROUTE_DROPOFF // heading to dropoff
+  DELIVERED // completed
+  CANCELLED
+  EXPIRED // no dispatcher accepted in time
 }
 
 // ─── Wallet Models ────────────────────────────────────────────────────────
@@ -750,7 +829,19 @@ model PlatformConfig {
   maxTopup             Decimal  @default(5000.00)
   minWithdrawal        Decimal  @default(10.00)
   dailyWithdrawalLimit Decimal  @default(5000.00)
-  updatedAt            DateTime @updatedAt
+
+  // Delivery pricing knobs (GHS). customerFee = max(minFee, (base + perKm*km + perMin*min) * vehicleMult * surge)
+  deliveryBaseFare         Decimal @default(5.00)
+  deliveryPerKm            Decimal @default(1.50)
+  deliveryPerMin           Decimal @default(0.20)
+  deliveryMinFee           Decimal @default(6.00)
+  deliveryCommissionRate   Decimal @default(0.20) // platform's cut of the delivery fee
+  deliverySurgeMultiplier  Decimal @default(1.00)
+  deliveryBikeMultiplier   Decimal @default(1.00)
+  deliveryCarMultiplier    Decimal @default(1.60)
+  deliveryVanMultiplier    Decimal @default(2.20)
+
+  updatedAt DateTime @updatedAt
 }
 
 // ─── Reel Model ────────────────────────────────────────────────────────────────
@@ -855,36 +946,67 @@ model DispatcherProfile {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  rides      RideRequest[] @relation("DispatcherRides")
-  deliveries Order[]       @relation("OrderDispatcher")
+  jobs DeliveryJob[] @relation("DispatcherJobs")
 
   @@index([status])
   @@index([lastLatitude, lastLongitude])
 }
 
-model RideRequest {
-  id           String             @id @default(cuid())
-  customerId   String
-  customer     User               @relation("CustomerRides", fields: [customerId], references: [id])
-  dispatcherId String?
-  dispatcher   DispatcherProfile? @relation("DispatcherRides", fields: [dispatcherId], references: [id])
+// Unified delivery/dispatch job. Powers passenger/parcel trips (PARCEL),
+// marketplace product orders (ORDER), and restaurant food orders (FOOD).
+model DeliveryJob {
+  id        String @id @default(cuid())
+  jobNumber String @unique
 
-  status         String @default("PENDING") // PENDING, ACCEPTED, IN_TRANSIT, COMPLETED, CANCELLED
+  type   DeliveryJobType
+  status DeliveryJobStatus @default(PENDING)
+
+  customerId   String
+  customer     User               @relation("CustomerDeliveryJobs", fields: [customerId], references: [id])
+  dispatcherId String?
+  dispatcher   DispatcherProfile? @relation("DispatcherJobs", fields: [dispatcherId], references: [id])
+
+  // Polymorphic links to the underlying order (null for PARCEL).
+  orderId     String? @unique
+  order       Order?  @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  foodOrderId String? @unique
+  foodOrder   FoodOrder? @relation(fields: [foodOrderId], references: [id], onDelete: Cascade)
+
+  vehicleType String // bike | car | van
+
   pickupAddress  String
-  dropoffAddress String
   pickupLat      Float
   pickupLng      Float
+  dropoffAddress String
   dropoffLat     Float
   dropoffLng     Float
 
-  price Decimal
+  // Route facts from Google Routes API.
+  distanceMeters  Int     @default(0)
+  durationSeconds Int     @default(0)
+  routePolyline   String?
+
+  // Server-authoritative pricing breakdown (GHS).
+  baseFare           Decimal @default(0)
+  distanceFare       Decimal @default(0)
+  timeFare           Decimal @default(0)
+  surgeMultiplier    Decimal @default(1)
+  customerFee        Decimal @default(0) // what the customer pays for delivery
+  platformCommission Decimal @default(0) // what Bexiemart keeps
+  driverPayout       Decimal @default(0) // customerFee - platformCommission
+
+  acceptedAt  DateTime?
+  pickedUpAt  DateTime?
+  deliveredAt DateTime?
+  cancelledAt DateTime?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  @@index([customerId])
-  @@index([dispatcherId])
   @@index([status])
+  @@index([dispatcherId])
+  @@index([customerId])
+  @@index([status, createdAt])
 }
 
 // ─── Flash Sale Models ─────────────────────────────────────────────────────────
@@ -1015,7 +1137,8 @@ model FoodOrder {
   createdAt           DateTime      @default(now())
   updatedAt           DateTime      @updatedAt
 
-  items FoodOrderItem[]
+  items       FoodOrderItem[]
+  deliveryJob DeliveryJob?
 
   @@index([userId])
   @@index([vendorId])

@@ -1,6 +1,6 @@
 import { View, Text, Switch, Pressable, Platform, Linking } from "react-native";
 import { useState, useRef, useEffect } from "react";
-import MapView, { Marker, Polyline, PROVIDER_DEFAULT } from "react-native-maps";
+import MapView, { Marker, Polyline, PROVIDER_GOOGLE } from "react-native-maps";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import * as Location from "expo-location";
 import { Icon } from "@/components/ui/Icon";
@@ -16,6 +16,7 @@ import {
   useUpdateTaskStatus,
 } from "@/lib/hooks/use-dispatcher";
 import { dispatcherApi } from "@/lib/api/dispatcher";
+import { deliverySocketService } from "@/lib/delivery-socket";
 
 // Default KNUST coordinates
 const defaultRegion = {
@@ -33,9 +34,10 @@ export default function DispatcherMap() {
   const insets = useSafeAreaInsets();
   const mapRef = useRef<MapView>(null);
 
-  // Sync online status with backend
+  // Sync online status with backend + connect the live dispatch socket.
   useEffect(() => {
     dispatcherApi.updateStatus(isOnline ? "ONLINE" : "OFFLINE").catch(() => {});
+    if (isOnline) deliverySocketService.connect();
   }, [isOnline]);
 
   // Request Location permissions and track location
@@ -85,8 +87,8 @@ export default function DispatcherMap() {
   const acceptTask = useAcceptTask();
   const updateStatus = useUpdateTaskStatus();
 
-  const activeRide = activeData?.rides?.[0];
-  const availableRide = availableData?.rides?.[0];
+  const activeRide = activeData?.jobs?.[0];
+  const availableRide = availableData?.jobs?.[0];
 
   let taskStatus: "idle" | "available" | "accepted" | "arrived" | "delivering" | "completed" =
     "idle";
@@ -94,13 +96,27 @@ export default function DispatcherMap() {
 
   if (activeRide) {
     displayRide = activeRide;
-    if (activeRide.status === "ACCEPTED") taskStatus = "accepted";
-    if (activeRide.status === "ARRIVED") taskStatus = "arrived";
-    if (activeRide.status === "DELIVERING") taskStatus = "delivering";
+    if (activeRide.status === "ASSIGNED" || activeRide.status === "EN_ROUTE_PICKUP")
+      taskStatus = "accepted";
+    if (activeRide.status === "ARRIVED_PICKUP") taskStatus = "arrived";
+    if (activeRide.status === "PICKED_UP" || activeRide.status === "EN_ROUTE_DROPOFF")
+      taskStatus = "delivering";
   } else if (availableRide && isOnline) {
     displayRide = availableRide;
     taskStatus = "available";
   }
+
+  // Stream live position to the customer while on a job (and keep the
+  // dispatcher's last-known location fresh for matching when idle).
+  useEffect(() => {
+    if (!isOnline || !userLocation) return;
+    deliverySocketService.sendLocation(
+      userLocation.latitude,
+      userLocation.longitude,
+      activeRide?.id
+    );
+    dispatcherApi.updateLocation(userLocation.latitude, userLocation.longitude).catch(() => {});
+  }, [isOnline, userLocation?.latitude, userLocation?.longitude, activeRide?.id]);
 
   // Frame the route when a task is displayed
   useEffect(() => {
@@ -236,10 +252,16 @@ export default function DispatcherMap() {
                   <View className="bg-primary-subtle p-2 rounded-full">
                     <Icon name="package" size={16} color="var(--color-primary)" />
                   </View>
-                  <Text className="font-bold text-foreground font-body">Ride Request</Text>
+                  <Text className="font-bold text-foreground font-body">
+                    {displayRide.type === "FOOD"
+                      ? "Food Delivery"
+                      : displayRide.type === "ORDER"
+                        ? "Order Delivery"
+                        : "Ride Request"}
+                  </Text>
                 </View>
                 <Text className="font-black text-primary text-[18px] font-heading">
-                  GH₵ {Number(displayRide.price).toFixed(2)}
+                  GH₵ {Number(displayRide.driverPayout).toFixed(2)}
                 </Text>
               </View>
 
@@ -269,7 +291,7 @@ export default function DispatcherMap() {
                 buttonColor="var(--color-primary)"
                 onComplete={() => {
                   acceptTask.mutate(
-                    { taskId: displayRide.id, type: "ride" },
+                    { taskId: displayRide.id },
                     {
                       onSuccess: () =>
                         Toast.show({
@@ -378,7 +400,7 @@ export default function DispatcherMap() {
                 buttonColor="#f59e0b"
                 iconName="map-pin"
                 onComplete={() => {
-                  updateStatus.mutate({ taskId: displayRide.id, status: "ARRIVED", type: "ride" });
+                  updateStatus.mutate({ taskId: displayRide.id, status: "ARRIVED_PICKUP" });
                 }}
               />
             )}
@@ -391,8 +413,7 @@ export default function DispatcherMap() {
                 onComplete={() => {
                   updateStatus.mutate({
                     taskId: displayRide.id,
-                    status: "DELIVERING",
-                    type: "ride",
+                    status: "PICKED_UP",
                   });
                 }}
               />
@@ -405,13 +426,13 @@ export default function DispatcherMap() {
                 iconName="check-circle"
                 onComplete={() => {
                   updateStatus.mutate(
-                    { taskId: displayRide.id, status: "COMPLETED", type: "ride" },
+                    { taskId: displayRide.id, status: "DELIVERED" },
                     {
                       onSuccess: () =>
                         Toast.show({
                           type: "success",
                           text1: "Delivery Complete!",
-                          text2: `GH₵ ${Number(displayRide.price).toFixed(2)} added to your wallet.`,
+                          text2: `GH₵ ${Number(displayRide.driverPayout).toFixed(2)} added to your earnings.`,
                         }),
                     }
                   );
@@ -429,7 +450,7 @@ export default function DispatcherMap() {
       <MapView
         ref={mapRef}
         style={{ width: "100%", height: "100%", position: "absolute" }}
-        provider={PROVIDER_DEFAULT}
+        provider={PROVIDER_GOOGLE}
         customMapStyle={darkMapStyle}
         initialRegion={defaultRegion}
         showsUserLocation={false} // We are rendering our own custom marker below

@@ -7,35 +7,31 @@ export interface CreateDispatcherProfileDto {
 }
 
 export const dispatcherApi = {
-  createProfile: (data: CreateDispatcherProfileDto) => 
+  createProfile: (data: CreateDispatcherProfileDto) =>
     apiClient.post("/dispatcher/profile", {
       vehicleType: data.vehicleType,
       plateNumber: data.licensePlate,
-      drivingLicense: data.licenseNumber
+      drivingLicense: data.licenseNumber,
     }),
-  getAvailableTasks: () => 
-    apiClient.get("/dispatcher/tasks/available"),
+  getAvailableTasks: () => apiClient.get("/dispatcher/tasks/available"),
 
-  getMyTasks: (status: "active" | "completed") => 
+  getMyTasks: (status: "active" | "completed") =>
     apiClient.get(`/dispatcher/tasks?status=${status}`),
-    
-  acceptTask: (taskId: string, type: "ride" | "delivery") =>
-    apiClient.post(`/dispatcher/tasks/${taskId}/accept`, { type }),
-    
-  updateTaskStatus: (taskId: string, status: string, type: "ride" | "delivery") =>
-    apiClient.put(`/dispatcher/tasks/${taskId}/status`, { status, type }),
-    
-  updateStatus: (status: "ONLINE" | "OFFLINE") =>
-    apiClient.put("/dispatcher/status", { status }),
 
-  getEarnings: () =>
-    apiClient.get("/dispatcher/earnings"),
+  acceptTask: (taskId: string) => apiClient.post(`/dispatcher/tasks/${taskId}/accept`, {}),
 
-  getTransactions: () =>
-    apiClient.get("/dispatcher/earnings/transactions"),
+  updateTaskStatus: (taskId: string, status: string) =>
+    apiClient.put(`/dispatcher/tasks/${taskId}/status`, { status }),
 
-  getAnalytics: () =>
-    apiClient.get("/dispatcher/earnings/analytics"),
+  updateLocation: (lat: number, lng: number) => apiClient.put("/dispatcher/location", { lat, lng }),
+
+  updateStatus: (status: "ONLINE" | "OFFLINE") => apiClient.put("/dispatcher/status", { status }),
+
+  getEarnings: () => apiClient.get("/dispatcher/earnings"),
+
+  getTransactions: () => apiClient.get("/dispatcher/earnings/transactions"),
+
+  getAnalytics: () => apiClient.get("/dispatcher/earnings/analytics"),
 
   withdrawEarnings: (amount: number, destination: string) =>
     apiClient.post("/dispatcher/earnings/withdraw", { amount, destination }),

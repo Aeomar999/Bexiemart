@@ -107,7 +107,13 @@ export function createAuth(prisma: PrismaClient) {
     emailVerification: {
       sendOnSignUp: true,
       sendVerificationEmail: async ({ user, url, token }, request) => {
-        const webUrl = url.replace("localhost", "172.20.10.2");
+        // In production BETTER_AUTH_URL is the public domain, so the link is used
+        // as-is. In local dev "localhost" is unreachable from a physical device on
+        // the LAN; set DEV_EMAIL_HOST (e.g. your machine's LAN IP) to rewrite it.
+        const webUrl =
+          isDev && process.env.DEV_EMAIL_HOST
+            ? url.replace("localhost", process.env.DEV_EMAIL_HOST)
+            : url;
         const appUrl = `bexiemart://verify-email?token=${token}`;
         if (isDev) {
           console.log(

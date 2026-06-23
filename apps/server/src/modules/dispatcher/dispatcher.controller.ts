@@ -4,7 +4,13 @@ import { AuthGuard } from "../../guards/auth.guard";
 import { DispatcherGuard } from "../../guards/dispatcher.guard";
 import { DispatcherService } from "./dispatcher.service";
 
-import { CreateDispatcherDto, ToggleStatusDto, UpdateLocationDto, AcceptTaskDto, UpdateTaskStatusDto, WithdrawEarningsDto } from "./dto/dispatcher.dto";
+import {
+  CreateDispatcherDto,
+  ToggleStatusDto,
+  UpdateLocationDto,
+  UpdateTaskStatusDto,
+  WithdrawEarningsDto,
+} from "./dto/dispatcher.dto";
 
 @ApiBearerAuth()
 @Controller("dispatcher")
@@ -44,28 +50,46 @@ export class DispatcherController {
   @Get("tasks/available")
   @UseGuards(DispatcherGuard)
   getAvailableTasks(@Req() req: any, @Query("page") page?: string, @Query("limit") limit?: string) {
-    return this.dispatcherService.getAvailableTasks(req.user.id, Number(page) || 1, Number(limit) || 20);
+    return this.dispatcherService.getAvailableTasks(
+      req.user.id,
+      Number(page) || 1,
+      Number(limit) || 20
+    );
   }
 
   @ApiOperation({ summary: "Get my active or completed tasks" })
   @Get("tasks")
   @UseGuards(DispatcherGuard)
-  getMyTasks(@Req() req: any, @Query("status") status: "active" | "completed", @Query("page") page?: string, @Query("limit") limit?: string) {
-    return this.dispatcherService.getMyTasks(req.user.id, status || "active", Number(page) || 1, Number(limit) || 20);
+  getMyTasks(
+    @Req() req: any,
+    @Query("status") status: "active" | "completed",
+    @Query("page") page?: string,
+    @Query("limit") limit?: string
+  ) {
+    return this.dispatcherService.getMyTasks(
+      req.user.id,
+      status || "active",
+      Number(page) || 1,
+      Number(limit) || 20
+    );
   }
 
   @ApiOperation({ summary: "Accept a task" })
   @Post("tasks/:id/accept")
   @UseGuards(DispatcherGuard)
-  acceptTask(@Req() req: any, @Param("id") taskId: string, @Body() data: AcceptTaskDto) {
-    return this.dispatcherService.acceptTask(req.user.id, taskId, data.type);
+  acceptTask(@Req() req: any, @Param("id") taskId: string) {
+    return this.dispatcherService.acceptTask(req.user.id, taskId);
   }
 
   @ApiOperation({ summary: "Update task status" })
   @Put("tasks/:id/status")
   @UseGuards(DispatcherGuard)
-  updateTaskStatus(@Req() req: any, @Param("id") taskId: string, @Body() data: UpdateTaskStatusDto) {
-    return this.dispatcherService.updateTaskStatus(req.user.id, taskId, data.status, data.type);
+  updateTaskStatus(
+    @Req() req: any,
+    @Param("id") taskId: string,
+    @Body() data: UpdateTaskStatusDto
+  ) {
+    return this.dispatcherService.updateTaskStatus(req.user.id, taskId, data.status);
   }
 
   // --- Earnings & Wallet ---

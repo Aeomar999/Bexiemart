@@ -486,7 +486,7 @@ export class AdminService {
         orderBy: { createdAt: "desc" },
         include: {
           user: { select: { id: true, name: true, email: true, image: true, phoneNumber: true } },
-          _count: { select: { rides: true, deliveries: true } },
+          _count: { select: { jobs: true } },
         },
       }),
       this.prisma.dispatcherProfile.count({ where }),
@@ -495,7 +495,7 @@ export class AdminService {
     const formattedData = data.map((d) => ({
       ...d,
       _count: undefined,
-      totalTrips: d._count.rides + d._count.deliveries,
+      totalTrips: d._count.jobs,
     }));
 
     return {
@@ -509,22 +509,21 @@ export class AdminService {
       where: { id },
       include: {
         user: { select: { id: true, name: true, email: true, image: true, phoneNumber: true } },
-        rides: {
+        jobs: {
           take: 10,
           orderBy: { createdAt: "desc" },
-        },
-        deliveries: {
-          take: 10,
-          orderBy: { createdAt: "desc" },
-          select: { id: true, orderNumber: true, status: true, total: true, createdAt: true },
         },
       },
     });
     if (!dispatcher) throw new NotFoundException("Dispatcher not found");
 
     const stats = {
-      totalRides: await this.prisma.rideRequest.count({ where: { dispatcherId: id } }),
-      totalDeliveries: await this.prisma.order.count({ where: { dispatcherId: id } }),
+      totalRides: await this.prisma.deliveryJob.count({
+        where: { dispatcherId: id, type: "PARCEL" },
+      }),
+      totalDeliveries: await this.prisma.deliveryJob.count({
+        where: { dispatcherId: id, type: { in: ["ORDER", "FOOD"] } },
+      }),
     };
 
     return { ...dispatcher, stats };
@@ -545,7 +544,7 @@ export class AdminService {
 
     const skip = (page - 1) * limit;
     const [data, total] = await Promise.all([
-      this.prisma.rideRequest.findMany({
+      this.prisma.deliveryJob.findMany({
         where,
         skip,
         take: limit,
@@ -562,7 +561,7 @@ export class AdminService {
           },
         },
       }),
-      this.prisma.rideRequest.count({ where }),
+      this.prisma.deliveryJob.count({ where }),
     ]);
 
     return { data, meta: { total, page, limit, totalPages: Math.ceil(total / limit) } };
