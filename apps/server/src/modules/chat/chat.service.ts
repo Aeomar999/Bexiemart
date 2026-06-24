@@ -1,4 +1,5 @@
 import { Injectable, NotFoundException, ForbiddenException } from "@nestjs/common";
+import { Prisma, ConversationType } from "@prisma/client";
 import { PrismaService } from "../../prisma/prisma.service";
 
 @Injectable()
@@ -21,44 +22,45 @@ export class ChatService {
                   where: {
                     senderId: { not: userId },
                     createdAt: {
-                      gt: undefined // We will handle this in code since we can't join `lastReadAt` cleanly inside nested count without tricky relations. Actually, let's just fetch all unread for each conv manually below or use a separate query.
-                    }
-                  }
-                }
-              }
-            }
+                      gt: undefined, // We will handle this in code since we can't join `lastReadAt` cleanly inside nested count without tricky relations. Actually, let's just fetch all unread for each conv manually below or use a separate query.
+                    },
+                  },
+                },
+              },
+            },
           },
         },
       },
       orderBy: { conversation: { updatedAt: "desc" } },
     });
 
-    // To get accurate unread counts, we can query them separately for each participant, or just use a raw query. 
+    // To get accurate unread counts, we can query them separately for each participant, or just use a raw query.
     // Given the scale, querying messages per conversation might be okay for now.
-    const conversationIds = participants.map(p => p.conversationId);
-    
-    const orConditions = participants.map(p => ({
+    const conversationIds = participants.map((p) => p.conversationId);
+
+    const orConditions = participants.map((p) => ({
       conversationId: p.conversationId,
-      createdAt: { gt: p.lastReadAt || new Date(0) }
+      createdAt: { gt: p.lastReadAt || new Date(0) },
     }));
 
-    const unreadMessages = orConditions.length > 0 
-      ? await this.prisma.message.groupBy({
-          by: ["conversationId"],
-          where: {
-            senderId: { not: userId },
-            OR: orConditions,
-          },
-          _count: { id: true }
-        })
-      : [];
+    const unreadMessages =
+      orConditions.length > 0
+        ? await this.prisma.message.groupBy({
+            by: ["conversationId"],
+            where: {
+              senderId: { not: userId },
+              OR: orConditions,
+            },
+            _count: { id: true },
+          })
+        : [];
 
-    const unreadCounts = unreadMessages.map(u => ({
+    const unreadCounts = unreadMessages.map((u) => ({
       conversationId: u.conversationId,
-      count: u._count.id
+      count: u._count.id,
     }));
 
-    const unreadMap = new Map(unreadCounts.map(u => [u.conversationId, u.count]));
+    const unreadMap = new Map(unreadCounts.map((u) => [u.conversationId, u.count]));
 
     return participants.map((p) => {
       const conv = p.conversation;
@@ -103,7 +105,10 @@ export class ChatService {
       }),
       this.prisma.message.count({ where: { conversationId } }),
     ]);
-    return { data: messages.reverse(), meta: { total, page, limit: pageSize, totalPages: Math.ceil(total / pageSize) } };
+    return {
+      data: messages.reverse(),
+      meta: { total, page, limit: pageSize, totalPages: Math.ceil(total / pageSize) },
+    };
   }
 
   async createConversation(userId: string, participantId: string, orderId?: string) {
@@ -139,6 +144,22 @@ export class ChatService {
     });
   }
 
+  /**
+   * Creates a SUPPORT-type conversation with a single participant (the customer).
+   * Unlike `createConversation`, there is no second participant at creation — the
+   * assigned agent is added later on claim. Runs inside the caller's transaction
+   * so ticket + conversation + seed message commit atomically.
+   */
+  async createSupportConversation(userId: string, tx: Prisma.TransactionClient, orderId?: string) {
+    return tx.conversation.create({
+      data: {
+        type: ConversationType.SUPPORT,
+        orderId: orderId ?? null,
+        participants: { create: [{ userId }] },
+      },
+    });
+  }
+
   async markAsRead(conversationId: string, userId: string) {
     await this.getConversation(conversationId, userId);
     await this.prisma.conversationParticipant.updateMany({
@@ -148,7 +169,13 @@ export class ChatService {
     return { success: true };
   }
 
-  async createMessage(conversationId: string, senderId: string, content?: string, type: 'TEXT' | 'IMAGE' = 'TEXT', mediaUrl?: string) {
+  async createMessage(
+    conversationId: string,
+    senderId: string,
+    content?: string,
+    type: "TEXT" | "IMAGE" = "TEXT",
+    mediaUrl?: string
+  ) {
     const conv = await this.getConversation(conversationId, senderId);
     const message = await this.prisma.message.create({
       data: { conversationId, senderId, content, type, mediaUrl },

@@ -36,6 +36,7 @@ import { CustomerServicesModule } from "./modules/customer-services/customer-ser
 import { FoodModule } from "./modules/food/food.module";
 import { EscrowModule } from "./modules/escrow/escrow.module";
 import { ChatModule } from "./modules/chat/chat.module";
+import { SupportModule } from "./modules/support/support.module";
 import { AdminModule } from "./modules/admin/admin.module";
 import { HealthModule } from "./modules/health/health.module";
 import { PrismaModule } from "./prisma/prisma.module";
@@ -94,6 +95,7 @@ import * as winston from "winston";
     FoodModule,
     EscrowModule,
     ChatModule,
+    SupportModule,
     AdminModule,
     HealthModule,
     DispatcherModule,
