@@ -16,7 +16,8 @@
     "prisma:migrate": "prisma migrate dev",
     "prisma:deploy": "prisma migrate deploy",
     "prisma:push": "prisma db push",
-    "prisma:studio": "prisma studio"
+    "prisma:studio": "prisma studio",
+    "seed:system": "ts-node src/scripts/seed-system-user.ts"
   },
   "dependencies": {
     "@better-auth/infra": "^0.2.11",
