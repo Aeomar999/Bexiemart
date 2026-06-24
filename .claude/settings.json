@@ -1,0 +1,10 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(taskkill //PID 31296 //F)",
+      "Bash(break)",
+      "Bash(git add *)",
+      "Bash(git commit *)"
+    ]
+  }
+}

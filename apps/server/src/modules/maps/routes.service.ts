@@ -67,7 +67,14 @@ export class RoutesService {
       result = this.haversineEstimate(origin, destination);
     }
 
-    this.cache.set(key, result);
+    // Cache fallback estimates briefly so we re-try the real API soon after it
+    // recovers, but cache real routes for the full TTL. Guard set() so a full
+    // cache (maxKeys) can never throw and break the quote it's meant to speed up.
+    try {
+      this.cache.set(key, result, result.estimated ? 60 : 600);
+    } catch {
+      /* cache full — serve uncached */
+    }
     return result;
   }
 

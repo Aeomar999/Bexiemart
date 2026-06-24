@@ -78,12 +78,18 @@ export class OrdersService {
       lineTotal: number;
       imageUrl: string | null;
     }[] = [];
+    // Fetch every requested product in a single query (no N+1), then build the
+    // line items in the requested order from these authoritative rows.
+    const productIds = [...new Set(requested.map((r) => r.productId))];
+    const products = await this.prisma.product.findMany({
+      where: { id: { in: productIds } },
+      include: { images: { take: 1, orderBy: { order: "asc" } } },
+    });
+    const productById = new Map(products.map((p) => [p.id, p]));
+
     let primaryVendorId: string | null = null;
     for (const { productId, quantity } of requested) {
-      const product = await this.prisma.product.findUnique({
-        where: { id: productId },
-        include: { images: { take: 1, orderBy: { order: "asc" } } },
-      });
+      const product = productById.get(productId);
       if (!product) throw new NotFoundException(`Product ${productId} not found`);
       if (!product.isActive || product.isDeleted) {
         throw new BadRequestException(`Product "${product.name}" is no longer available`);

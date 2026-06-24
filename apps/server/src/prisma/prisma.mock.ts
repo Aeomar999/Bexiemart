@@ -7,6 +7,8 @@ export const mockPrisma = (): any => ({
     findFirst: jest.fn(),
     create: jest.fn(),
     update: jest.fn(),
+    updateMany: jest.fn(),
+    upsert: jest.fn(),
     count: jest.fn(),
   },
   transaction: {
@@ -15,6 +17,7 @@ export const mockPrisma = (): any => ({
     findFirst: jest.fn(),
     create: jest.fn(),
     update: jest.fn(),
+    updateMany: jest.fn(),
     count: jest.fn(),
   },
   product: {
@@ -80,6 +83,7 @@ export const mockPrisma = (): any => ({
     findFirst: jest.fn(),
     create: jest.fn(),
     update: jest.fn(),
+    upsert: jest.fn(),
     count: jest.fn(),
   },
   user: {
