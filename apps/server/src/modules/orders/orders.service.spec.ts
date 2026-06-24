@@ -47,7 +47,7 @@ describe("OrdersService", () => {
         state: "GA",
       };
       dto.items = [{ productId: "p1", quantity: 1, price: 100 }];
-      prisma.product.findUnique.mockResolvedValue(null);
+      prisma.product.findMany.mockResolvedValue([]);
       await expect(service.create("u1", dto)).rejects.toThrow(NotFoundException);
     });
 
@@ -63,15 +63,17 @@ describe("OrdersService", () => {
         state: "GA",
       };
       dto.items = [{ productId: "p1", quantity: 1, price: 100 }];
-      prisma.product.findUnique.mockResolvedValue({
-        id: "p1",
-        name: "Old Product",
-        slug: "old-product",
-        price: 100,
-        isActive: false,
-        isDeleted: false,
-        stock: 10,
-      });
+      prisma.product.findMany.mockResolvedValue([
+        {
+          id: "p1",
+          name: "Old Product",
+          slug: "old-product",
+          price: 100,
+          isActive: false,
+          isDeleted: false,
+          stock: 10,
+        },
+      ]);
       await expect(service.create("u1", dto)).rejects.toThrow(BadRequestException);
     });
 
@@ -87,15 +89,17 @@ describe("OrdersService", () => {
         state: "GA",
       };
       dto.items = [{ productId: "p1", quantity: 10, price: 100 }];
-      prisma.product.findUnique.mockResolvedValue({
-        id: "p1",
-        name: "Test",
-        slug: "test",
-        price: 100,
-        isActive: true,
-        isDeleted: false,
-        stock: 5,
-      });
+      prisma.product.findMany.mockResolvedValue([
+        {
+          id: "p1",
+          name: "Test",
+          slug: "test",
+          price: 100,
+          isActive: true,
+          isDeleted: false,
+          stock: 5,
+        },
+      ]);
       await expect(service.create("u1", dto)).rejects.toThrow(BadRequestException);
     });
 
@@ -117,8 +121,10 @@ describe("OrdersService", () => {
         { productId: "p2", quantity: 1, price: 1 },
       ];
 
-      prisma.product.findUnique
-        .mockResolvedValueOnce({
+      // Single findMany now returns all requested rows; line items are built in
+      // the requested order regardless of the array order returned here.
+      prisma.product.findMany.mockResolvedValue([
+        {
           id: "p1",
           name: "Product 1",
           slug: "product-1",
@@ -127,8 +133,8 @@ describe("OrdersService", () => {
           isDeleted: false,
           stock: 10,
           images: [],
-        })
-        .mockResolvedValueOnce({
+        },
+        {
           id: "p2",
           name: "Product 2",
           slug: "product-2",
@@ -137,7 +143,8 @@ describe("OrdersService", () => {
           isDeleted: false,
           stock: 5,
           images: [],
-        });
+        },
+      ]);
 
       prisma.product.updateMany.mockResolvedValue({ count: 1 });
       prisma.$transaction.mockImplementation(async (cb: any) => cb(prisma));

@@ -90,19 +90,30 @@ export class DeliveryGateway implements OnGatewayConnection, OnGatewayDisconnect
 
     await this.deliveryService.recordDriverLocation(client.userId, lat, lng);
 
-    if (jobId) {
+    // Only relay to a job's watchers if this socket is actually that job's
+    // assigned driver — otherwise any authenticated user could spoof a rider's
+    // position into someone else's tracking screen.
+    if (jobId && (await this.deliveryService.isAssignedDriver(client.userId, jobId))) {
       this.server.to(`job:${jobId}`).emit("driver_location", { jobId, lat, lng });
     }
   }
 
   /** Customer (or dispatcher) subscribes to a job's live updates. */
   @SubscribeMessage("subscribe_job")
-  handleSubscribeJob(
+  async handleSubscribeJob(
     @ConnectedSocket() client: AuthenticatedSocket,
     @MessageBody() data: { jobId?: string }
   ) {
     if (!client.userId || !data?.jobId) return;
-    client.join(`job:${data.jobId}`);
+    // Authorize before joining: getJob throws unless the caller is the job's
+    // customer or assigned driver. Prevents IDOR access to a stranger's live
+    // GPS feed by guessing/enumerating job IDs.
+    try {
+      await this.deliveryService.getJob(data.jobId, client.userId);
+      client.join(`job:${data.jobId}`);
+    } catch {
+      client.emit("error", "Not authorized for this job");
+    }
   }
 
   @SubscribeMessage("unsubscribe_job")

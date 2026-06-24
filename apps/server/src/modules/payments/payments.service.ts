@@ -36,7 +36,11 @@ export class PaymentsService {
     }
   }
 
-  private async paystackPost(path: string, data: any, retries = 2) {
+  // NOTE: callers generate a stable `reference` before invoking these, so a
+  // retried POST (e.g. charge_authorization) is deduped by Paystack and can't
+  // double-charge. Only retry transient failures — 4xx responses are terminal
+  // and retrying them just burns the backoff window.
+  private async paystackPost(path: string, data: any, retries = 2): Promise<any> {
     for (let i = 0; i <= retries; i++) {
       try {
         const res = await fetch(`${this.paystackApi}${path}`, {
@@ -47,28 +51,30 @@ export class PaymentsService {
           },
           body: JSON.stringify(data),
         });
-        if (!res.ok && i < retries) throw new Error("Paystack request failed");
-        return res.json();
+        if (res.status >= 500 && i < retries) throw new Error(`Paystack ${res.status}`);
+        return await res.json();
       } catch (err) {
         if (i === retries) throw err;
         await new Promise((resolve) => setTimeout(resolve, 1000 * Math.pow(2, i))); // exponential backoff
       }
     }
+    throw new Error("Paystack request failed after retries");
   }
 
-  private async paystackGet(path: string, retries = 2) {
+  private async paystackGet(path: string, retries = 2): Promise<any> {
     for (let i = 0; i <= retries; i++) {
       try {
         const res = await fetch(`${this.paystackApi}${path}`, {
           headers: { Authorization: `Bearer ${this.paystackSecret}` },
         });
-        if (!res.ok && i < retries) throw new Error("Paystack request failed");
-        return res.json();
+        if (res.status >= 500 && i < retries) throw new Error(`Paystack ${res.status}`);
+        return await res.json();
       } catch (err) {
         if (i === retries) throw err;
         await new Promise((resolve) => setTimeout(resolve, 1000 * Math.pow(2, i)));
       }
     }
+    throw new Error("Paystack request failed after retries");
   }
 
   /**
@@ -106,8 +112,14 @@ export class PaymentsService {
     for (const [vendorId, amount] of vendorTotals) {
       const commission = Math.round(amount * commissionRate * 100) / 100;
       const netAmount = Math.round((amount - commission) * 100) / 100;
-      await tx.escrow.create({
-        data: {
+      // upsert against the (orderId, vendorId) unique constraint so a webhook
+      // and a verify() firing concurrently can never create a second HELD escrow
+      // for the same vendor — the count-based guard above is not atomic and a
+      // double-hold would double-pay the vendor on release.
+      await tx.escrow.upsert({
+        where: { orderId_vendorId: { orderId: order.id, vendorId } },
+        update: {},
+        create: {
           orderId: order.id,
           vendorId,
           buyerWalletId: buyerWallet.id,
@@ -169,9 +181,17 @@ export class PaymentsService {
 
     const order = await this.prisma.order.findFirst({
       where: { paystackRef: reference, userId },
+      include: { payment: true },
     });
 
     if (!order) throw new NotFoundException("Order not found");
+
+    // Idempotency: if the webhook already marked this paid, don't re-run the
+    // upsert/escrow path. Mirrors the guard in handleWebhook so the two callers
+    // racing on the same reference don't both process the success.
+    if (order.paymentStatus === "success" || order.payment?.status === "success") {
+      return { status: "success", reference, orderId: order.id };
+    }
 
     const paymentStatus = data.status === "success" ? "success" : "failed";
 

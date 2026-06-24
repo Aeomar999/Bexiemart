@@ -320,32 +320,37 @@ export class FoodService {
     const total = subtotal + deliveryFee;
     const orderNumber = `FOOD-${Date.now()}-${Math.floor(Math.random() * 900) + 100}`;
 
-    const order = await this.prisma.foodOrder.create({
-      data: {
-        orderNumber,
-        userId,
-        vendorId: cart.vendorId,
-        status: "PENDING",
-        subtotal,
-        deliveryFee,
-        total,
-        deliveryAddress: dto.deliveryAddress,
-        deliveryLat: dto.deliveryLat,
-        deliveryLng: dto.deliveryLng,
-        items: {
-          create: cart.items.map((item) => ({
-            foodItemId: item.foodItemId,
-            name: item.name,
-            price: item.price,
-            quantity: item.quantity,
-            total: Number(item.price) * item.quantity,
-          })),
+    // Create the order and clear the cart atomically. If either fails the whole
+    // thing rolls back, so we can't end up with a placed order whose cart was
+    // never emptied (which would let the user re-checkout the same items).
+    const order = await this.prisma.$transaction(async (tx) => {
+      const created = await tx.foodOrder.create({
+        data: {
+          orderNumber,
+          userId,
+          vendorId: cart.vendorId,
+          status: "PENDING",
+          subtotal,
+          deliveryFee,
+          total,
+          deliveryAddress: dto.deliveryAddress,
+          deliveryLat: dto.deliveryLat,
+          deliveryLng: dto.deliveryLng,
+          items: {
+            create: cart.items.map((item) => ({
+              foodItemId: item.foodItemId,
+              name: item.name,
+              price: item.price,
+              quantity: item.quantity,
+              total: Number(item.price) * item.quantity,
+            })),
+          },
         },
-      },
-      include: { items: true, vendor: { select: { id: true, shopName: true, logo: true } } },
+        include: { items: true, vendor: { select: { id: true, shopName: true, logo: true } } },
+      });
+      await tx.foodCartItem.deleteMany({ where: { cartId: cart.id } });
+      return created;
     });
-
-    await this.prisma.foodCartItem.deleteMany({ where: { cartId: cart.id } });
 
     // Dispatch the delivery leg (best-effort; needs a destination to match).
     if (dto.deliveryLat != null || dto.deliveryAddress) {

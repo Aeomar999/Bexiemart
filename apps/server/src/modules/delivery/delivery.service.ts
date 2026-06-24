@@ -397,22 +397,38 @@ export class DeliveryService {
     const wallet = await this.ensureWallet(dispatcher.userId);
     const payout = Number(job.driverPayout);
 
-    await this.prisma.$transaction([
-      this.prisma.dispatcherProfile.update({
+    // Gate the credit on atomically claiming the PENDING earnings transaction.
+    // confirmDelivery does not advance the job out of DELIVERED, so without this
+    // guard a customer could replay it to credit the driver's balance repeatedly.
+    // Only the call that flips PENDING→COMPLETED (count === 1) moves the money.
+    await this.prisma.$transaction(async (tx) => {
+      const claimed = await tx.transaction.updateMany({
+        where: { reference: this.payoutReference(job.id), status: "PENDING" },
+        data: { status: "COMPLETED" },
+      });
+      if (claimed.count === 0) return; // already confirmed — do not credit again
+
+      await tx.dispatcherProfile.update({
         where: { id: dispatcher.id },
         data: { pendingPayout: { decrement: payout } },
-      }),
-      this.prisma.wallet.update({
+      });
+      await tx.wallet.update({
         where: { id: wallet.id },
         data: { balance: { increment: payout } },
-      }),
-      this.prisma.transaction.updateMany({
-        where: { reference: this.payoutReference(job.id) },
-        data: { status: "COMPLETED" },
-      }),
-    ]);
+      });
+    });
 
     return job;
+  }
+
+  /** True when `userId` is the dispatcher currently assigned to an active job. */
+  async isAssignedDriver(userId: string, jobId: string): Promise<boolean> {
+    const job = await this.prisma.deliveryJob.findUnique({
+      where: { id: jobId },
+      select: { status: true, dispatcher: { select: { userId: true } } },
+    });
+    if (!job || !job.dispatcher) return false;
+    return job.dispatcher.userId === userId && ACTIVE_STATUSES.includes(job.status);
   }
 
   // ─── Tracking ──────────────────────────────────────────────────────────────
@@ -560,10 +576,14 @@ export class DeliveryService {
     }
   }
 
-  private async ensureWallet(userId: string) {
-    const existing = await this.prisma.wallet.findUnique({ where: { userId } });
-    if (existing) return existing;
-    return this.prisma.wallet.create({ data: { userId, balance: 0, currency: "GHS" } });
+  private ensureWallet(userId: string) {
+    // upsert avoids the find-then-create race where two concurrent payouts for a
+    // brand-new driver both miss and both try to create → unique-constraint crash.
+    return this.prisma.wallet.upsert({
+      where: { userId },
+      update: {},
+      create: { userId, balance: 0, currency: "GHS" },
+    });
   }
 
   private loadJobWithParties(jobId: string) {

@@ -10,9 +10,15 @@ const prisma = new PrismaClient({ adapter });
 const auth = createAuth(prisma);
 
 async function main() {
-  const email = process.env.ADMIN_EMAIL || "jerry.amoah@kredibble.co";
-  const password = process.env.ADMIN_PASSWORD || "@$#%Jerry12";
+  const email = process.env.ADMIN_EMAIL;
+  const password = process.env.ADMIN_PASSWORD;
   const name = process.env.ADMIN_NAME || "Super Admin";
+
+  // Never ship a default credential. Bootstrapping an ADMIN requires explicit,
+  // out-of-band secrets so a stray `db seed` can't mint a known-password admin.
+  if (!email || !password) {
+    throw new Error("ADMIN_EMAIL and ADMIN_PASSWORD must be set to seed an admin");
+  }
 
   console.log(`Starting admin bootstrap for ${email}...`);
 

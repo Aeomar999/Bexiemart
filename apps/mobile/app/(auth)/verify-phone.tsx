@@ -41,7 +41,7 @@ export default function VerifyPhoneScreen() {
 
   // Handle countdown timer
   useEffect(() => {
-    let timer: NodeJS.Timeout;
+    let timer: ReturnType<typeof setTimeout>;
     if (countdown > 0) {
       timer = setTimeout(() => setCountdown(countdown - 1), 1000);
     }
@@ -70,6 +70,7 @@ export default function VerifyPhoneScreen() {
     setErrorMessage("");
     try {
       const normalizedPhone = getNormalizedPhone();
+      // @ts-expect-error - Better Auth plugin types might not infer correctly
       const res = await authClient.phoneNumber.sendOtp({ phoneNumber: normalizedPhone });
       if (res.error) {
         setErrorMessage(res.error.message || "Failed to send verification code.");
@@ -89,6 +90,7 @@ export default function VerifyPhoneScreen() {
     setErrorMessage("");
     try {
       const normalizedPhone = getNormalizedPhone();
+      // @ts-expect-error - Better Auth plugin types might not infer correctly
       const res = await authClient.phoneNumber.verify({
         phoneNumber: normalizedPhone,
         code,
@@ -173,8 +175,7 @@ export default function VerifyPhoneScreen() {
                 maxLength={6}
                 autoFocus
                 editable={status === "idle" || status === "error"}
-                className="absolute w-full h-full"
-                style={{ color: "transparent", backgroundColor: "transparent" }}
+                className="absolute w-full h-full opacity-0"
                 caretHidden={true}
               />
             </View>

@@ -1,4 +1,11 @@
-import { Injectable, BadRequestException, NotFoundException, ForbiddenException, InternalServerErrorException, Logger } from "@nestjs/common";
+import {
+  Injectable,
+  BadRequestException,
+  NotFoundException,
+  ForbiddenException,
+  InternalServerErrorException,
+  Logger,
+} from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { PrismaService } from "../../prisma/prisma.service";
 import * as bcrypt from "bcryptjs";
@@ -11,7 +18,7 @@ export class WalletService {
 
   constructor(
     private readonly prisma: PrismaService,
-    private readonly config: ConfigService,
+    private readonly config: ConfigService
   ) {}
 
   /* ─── Paystack Helpers ─── */
@@ -96,7 +103,7 @@ export class WalletService {
       reference,
       callback_url: `${this.config.get("BETTER_AUTH_URL")}/payment/callback`,
       channels: channel ? [channel] : undefined,
-      metadata: { userId, type: 'TOPUP' },
+      metadata: { userId, type: "TOPUP" },
     });
 
     await this.prisma.transaction.create({
@@ -122,35 +129,39 @@ export class WalletService {
     });
 
     if (!transaction) throw new NotFoundException("Transaction not found");
-    if (transaction.walletId !== wallet.id) throw new BadRequestException("Unauthorized access to transaction");
+    if (transaction.walletId !== wallet.id)
+      throw new BadRequestException("Unauthorized access to transaction");
 
     if (transaction.status === "COMPLETED") {
       return { balance: wallet.balance };
     }
 
     const paystackRes = await this.paystackGet(`/transaction/verify/${reference}`);
-    
+
     if (paystackRes.status !== "success") {
       if (paystackRes.status === "failed") {
-         await this.prisma.transaction.update({
-           where: { id: transaction.id },
-           data: { status: "FAILED" },
-         });
-         throw new BadRequestException("Payment failed");
+        await this.prisma.transaction.update({
+          where: { id: transaction.id },
+          data: { status: "FAILED" },
+        });
+        throw new BadRequestException("Payment failed");
       }
       throw new BadRequestException("Payment not successful yet");
     }
 
-    await this.prisma.$transaction(async (tx) => {
-      await tx.transaction.update({
-        where: { id: transaction.id },
-        data: { status: "COMPLETED" },
-      });
-      await tx.wallet.update({
-        where: { id: wallet.id },
-        data: { balance: { increment: transaction.amount } },
-      });
-    }, { isolationLevel: 'Serializable' });
+    await this.prisma.$transaction(
+      async (tx) => {
+        await tx.transaction.update({
+          where: { id: transaction.id },
+          data: { status: "COMPLETED" },
+        });
+        await tx.wallet.update({
+          where: { id: wallet.id },
+          data: { balance: { increment: transaction.amount } },
+        });
+      },
+      { isolationLevel: "Serializable" }
+    );
 
     const updatedWallet = await this.prisma.wallet.findUnique({ where: { id: wallet.id } });
     return { balance: updatedWallet?.balance };
@@ -173,42 +184,47 @@ export class WalletService {
     const recipientWallet = await this.getWallet(recipientUser.id);
     const reference = "tf_" + Date.now();
 
-    await this.prisma.$transaction(async (tx) => {
-      await tx.wallet.update({
-        where: { id: senderWallet.id },
-        data: { balance: { decrement: amount } },
-      });
-      await tx.transaction.create({
-        data: {
-          walletId: senderWallet.id,
-          counterpartyWalletId: recipientWallet.id,
-          type: "TRANSFER_SENT",
-          status: "COMPLETED",
-          amount,
-          netAmount: amount,
-          reference: reference + "_out",
-          description: `Transfer to ${recipientUser.name}`,
-        },
-      });
-      await tx.wallet.update({
-        where: { id: recipientWallet.id },
-        data: { balance: { increment: amount } },
-      });
-      await tx.transaction.create({
-        data: {
-          walletId: recipientWallet.id,
-          counterpartyWalletId: senderWallet.id,
-          type: "TRANSFER_RECEIVED",
-          status: "COMPLETED",
-          amount,
-          netAmount: amount,
-          reference: reference + "_in",
-          description: `Transfer from ${senderWallet.user?.name || "User"}`,
-        },
-      });
-    }, { isolationLevel: 'Serializable' });
+    await this.prisma.$transaction(
+      async (tx) => {
+        await tx.wallet.update({
+          where: { id: senderWallet.id },
+          data: { balance: { decrement: amount } },
+        });
+        await tx.transaction.create({
+          data: {
+            walletId: senderWallet.id,
+            counterpartyWalletId: recipientWallet.id,
+            type: "TRANSFER_SENT",
+            status: "COMPLETED",
+            amount,
+            netAmount: amount,
+            reference: reference + "_out",
+            description: `Transfer to ${recipientUser.name}`,
+          },
+        });
+        await tx.wallet.update({
+          where: { id: recipientWallet.id },
+          data: { balance: { increment: amount } },
+        });
+        await tx.transaction.create({
+          data: {
+            walletId: recipientWallet.id,
+            counterpartyWalletId: senderWallet.id,
+            type: "TRANSFER_RECEIVED",
+            status: "COMPLETED",
+            amount,
+            netAmount: amount,
+            reference: reference + "_in",
+            description: `Transfer from ${senderWallet.user?.name || "User"}`,
+          },
+        });
+      },
+      { isolationLevel: "Serializable" }
+    );
 
-    const updatedSenderWallet = await this.prisma.wallet.findUnique({ where: { id: senderWallet.id } });
+    const updatedSenderWallet = await this.prisma.wallet.findUnique({
+      where: { id: senderWallet.id },
+    });
     return { reference, newBalance: updatedSenderWallet?.balance };
   }
 
@@ -273,18 +289,23 @@ export class WalletService {
     };
   }
 
-  async verifyAndSaveCard(userId: string, reference: string, cardholderName: string, isDefault: boolean = false) {
+  async verifyAndSaveCard(
+    userId: string,
+    reference: string,
+    cardholderName: string,
+    isDefault: boolean = false
+  ) {
     const wallet = await this.getWallet(userId);
     const secretKey = process.env.PAYSTACK_SECRET_KEY;
     if (!secretKey) throw new Error("PAYSTACK_SECRET_KEY not configured");
 
     const response = await fetch(`https://api.paystack.co/transaction/verify/${reference}`, {
-      method: 'GET',
+      method: "GET",
       headers: { Authorization: `Bearer ${secretKey}` },
     });
     const data = await response.json();
 
-    if (!data.status || data.data.status !== 'success') {
+    if (!data.status || data.data.status !== "success") {
       throw new BadRequestException("Card verification failed");
     }
 
@@ -346,7 +367,7 @@ export class WalletService {
 
   async addCard(userId: string, data: CreateCardDto) {
     const wallet = await this.getWallet(userId);
-    
+
     const existingCount = await this.prisma.card.count({ where: { walletId: wallet.id } });
     const isDefault = existingCount === 0 ? true : !!data.isDefault;
 
@@ -372,7 +393,7 @@ export class WalletService {
 
   async updateCard(userId: string, cardId: string, data: UpdateCardDto) {
     const wallet = await this.getWallet(userId);
-    
+
     const card = await this.prisma.card.findUnique({ where: { id: cardId } });
     if (!card || card.walletId !== wallet.id) {
       throw new NotFoundException("Card not found");
@@ -393,7 +414,7 @@ export class WalletService {
 
   async deleteCard(userId: string, cardId: string) {
     const wallet = await this.getWallet(userId);
-    
+
     const card = await this.prisma.card.findUnique({ where: { id: cardId } });
     if (!card || card.walletId !== wallet.id) {
       throw new NotFoundException("Card not found");
@@ -405,7 +426,7 @@ export class WalletService {
 
   async setDefaultCard(userId: string, cardId: string) {
     const wallet = await this.getWallet(userId);
-    
+
     const card = await this.prisma.card.findUnique({ where: { id: cardId } });
     if (!card || card.walletId !== wallet.id) {
       throw new NotFoundException("Card not found");
@@ -419,7 +440,7 @@ export class WalletService {
       this.prisma.card.update({
         where: { id: cardId },
         data: { isDefault: true },
-      })
+      }),
     ]);
 
     return { success: true };
@@ -437,7 +458,7 @@ export class WalletService {
 
   async resolveBankAccount(bankCode: string, accountNumber: string) {
     const result = await this.paystackGet(
-      `/bank/resolve?account_number=${accountNumber}&bank_code=${bankCode}`,
+      `/bank/resolve?account_number=${accountNumber}&bank_code=${bankCode}`
     );
     return {
       accountNumber: result.account_number,
@@ -446,7 +467,10 @@ export class WalletService {
     };
   }
 
-  async linkBankAccount(userId: string, data: { bankCode: string; accountNumber: string; accountName: string; bankName?: string }) {
+  async linkBankAccount(
+    userId: string,
+    data: { bankCode: string; accountNumber: string; accountName: string; bankName?: string }
+  ) {
     const wallet = await this.getWallet(userId);
 
     // Check for duplicates
@@ -483,7 +507,8 @@ export class WalletService {
   async deleteBankAccount(userId: string, accountId: string) {
     const wallet = await this.getWallet(userId);
     const account = await this.prisma.bankAccount.findUnique({ where: { id: accountId } });
-    if (!account || account.walletId !== wallet.id) throw new NotFoundException("Bank account not found");
+    if (!account || account.walletId !== wallet.id)
+      throw new NotFoundException("Bank account not found");
 
     await this.prisma.bankAccount.delete({ where: { id: accountId } });
     return { success: true };
@@ -499,7 +524,10 @@ export class WalletService {
     });
   }
 
-  async linkMomoAccount(userId: string, data: { provider: string; phoneNumber: string; accountName: string; isDefault?: boolean }) {
+  async linkMomoAccount(
+    userId: string,
+    data: { provider: string; phoneNumber: string; accountName: string; isDefault?: boolean }
+  ) {
     const wallet = await this.getWallet(userId);
 
     // Check for duplicates
@@ -525,7 +553,7 @@ export class WalletService {
         provider: data.provider as any,
         phoneNumber: data.phoneNumber,
         accountName: data.accountName,
-        isDefault: data.isDefault ?? (existingCount === 0),
+        isDefault: data.isDefault ?? existingCount === 0,
         isVerified: true,
         paystackRecipientCode: recipient.recipient_code,
       },
@@ -535,13 +563,20 @@ export class WalletService {
   async deleteMomoAccount(userId: string, accountId: string) {
     const wallet = await this.getWallet(userId);
     const account = await this.prisma.momoAccount.findUnique({ where: { id: accountId } });
-    if (!account || account.walletId !== wallet.id) throw new NotFoundException("Mobile money account not found");
+    if (!account || account.walletId !== wallet.id)
+      throw new NotFoundException("Mobile money account not found");
 
     await this.prisma.momoAccount.delete({ where: { id: accountId } });
     return { success: true };
   }
 
-  async withdraw(userId: string, amount: number, accountId: string, accountType: 'bank' | 'momo', pin: string) {
+  async withdraw(
+    userId: string,
+    amount: number,
+    accountId: string,
+    accountType: "bank" | "momo",
+    pin: string
+  ) {
     const wallet = await this.getWallet(userId);
     await this.verifyPin(userId, pin);
 
@@ -551,58 +586,100 @@ export class WalletService {
     const totalDeduction = amount + fee;
 
     if (Number(wallet.balance) < totalDeduction) {
-      throw new BadRequestException(`Insufficient balance. You need ${totalDeduction} to cover the withdrawal and fee.`);
+      throw new BadRequestException(
+        `Insufficient balance. You need ${totalDeduction} to cover the withdrawal and fee.`
+      );
     }
 
     let recipientCode: string | null = null;
     let bankOrMomoName = "";
 
-    if (accountType === 'bank') {
+    if (accountType === "bank") {
       const account = await this.prisma.bankAccount.findUnique({ where: { id: accountId } });
-      if (!account || account.walletId !== wallet.id) throw new NotFoundException("Bank account not found");
+      if (!account || account.walletId !== wallet.id)
+        throw new NotFoundException("Bank account not found");
       recipientCode = account.paystackRecipientCode;
       bankOrMomoName = account.bankName;
     } else {
       const account = await this.prisma.momoAccount.findUnique({ where: { id: accountId } });
-      if (!account || account.walletId !== wallet.id) throw new NotFoundException("Mobile money account not found");
+      if (!account || account.walletId !== wallet.id)
+        throw new NotFoundException("Mobile money account not found");
       recipientCode = account.paystackRecipientCode;
       bankOrMomoName = account.provider;
     }
 
     if (!recipientCode) {
-      throw new BadRequestException("Recipient code not found for this account. Please re-link it.");
+      throw new BadRequestException(
+        "Recipient code not found for this account. Please re-link it."
+      );
     }
 
     const reference = `wd_${wallet.id.substring(0, 8)}_${Date.now()}`;
 
-    // Initiate transfer via Paystack
-    const transferRes = await this.paystackPost("/transfer", {
-      source: "balance",
-      reason: "Bexiemart Withdrawal",
-      amount: Math.round(amount * 100), // amount in pesewas
-      recipient: recipientCode,
-      reference,
-    });
+    // 1. Reserve the funds BEFORE calling Paystack. The guarded updateMany
+    // (balance >= totalDeduction) is atomic, so two concurrent withdrawals can
+    // never both pass and overdraw the wallet — only one claim can succeed. We
+    // also record the PENDING transaction here so money never leaves Paystack
+    // without a corresponding deduction on our books.
+    const reserved = await this.prisma.$transaction(
+      async (tx) => {
+        const claim = await tx.wallet.updateMany({
+          where: { id: wallet.id, balance: { gte: totalDeduction } },
+          data: { balance: { decrement: totalDeduction } },
+        });
+        if (claim.count === 0) return null;
+        return tx.transaction.create({
+          data: {
+            walletId: wallet.id,
+            type: "WITHDRAWAL",
+            status: "PENDING",
+            amount: totalDeduction,
+            fee,
+            netAmount: amount,
+            reference,
+            description: `Withdrawal to ${bankOrMomoName}`,
+          },
+        });
+      },
+      { isolationLevel: "Serializable" }
+    );
 
-    await this.prisma.$transaction(async (tx) => {
-      await tx.wallet.update({
-        where: { id: wallet.id },
-        data: { balance: { decrement: totalDeduction } },
+    if (!reserved) {
+      throw new BadRequestException(
+        `Insufficient balance. You need ${totalDeduction} to cover the withdrawal and fee.`
+      );
+    }
+
+    // 2. Initiate transfer. If Paystack rejects it, the funds never left, so
+    // refund the reservation and mark the transaction FAILED before surfacing.
+    let transferRes: any;
+    try {
+      transferRes = await this.paystackPost("/transfer", {
+        source: "balance",
+        reason: "Bexiemart Withdrawal",
+        amount: Math.round(amount * 100), // amount in pesewas
+        recipient: recipientCode,
+        reference,
       });
-      await tx.transaction.create({
-        data: {
-          walletId: wallet.id,
-          type: "WITHDRAWAL",
-          status: "PENDING",
-          amount: totalDeduction,
-          fee,
-          netAmount: amount,
-          reference,
-          description: `Withdrawal to ${bankOrMomoName}`,
-          providerRef: transferRes.transfer_code,
-        },
-      });
-    }, { isolationLevel: 'Serializable' });
+    } catch (err) {
+      await this.prisma.$transaction([
+        this.prisma.wallet.update({
+          where: { id: wallet.id },
+          data: { balance: { increment: totalDeduction } },
+        }),
+        this.prisma.transaction.update({
+          where: { id: reserved.id },
+          data: { status: "FAILED" },
+        }),
+      ]);
+      throw err;
+    }
+
+    // 3. Transfer accepted — attach the provider reference for webhook reconciliation.
+    await this.prisma.transaction.update({
+      where: { id: reserved.id },
+      data: { providerRef: transferRes.transfer_code },
+    });
 
     const updatedWallet = await this.prisma.wallet.findUnique({ where: { id: wallet.id } });
     return { success: true, reference, newBalance: updatedWallet?.balance };

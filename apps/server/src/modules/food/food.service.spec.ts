@@ -76,6 +76,9 @@ describe("FoodService", () => {
       vendor: {},
     } as any);
     prisma.foodOrder.create.mockResolvedValue({ id: "fo-1" } as any);
+    // checkout now creates the order + clears the cart inside a transaction;
+    // route the interactive transaction back to this configured mock.
+    prisma.$transaction.mockImplementation((cb: any) => cb(prisma));
     const result = await service.checkout("user-1");
     expect(result).toBeDefined();
   });
