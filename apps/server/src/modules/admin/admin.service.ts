@@ -1,11 +1,23 @@
-import { Injectable, NotFoundException, ForbiddenException } from "@nestjs/common";
+import {
+  Injectable,
+  NotFoundException,
+  ForbiddenException,
+  ConflictException,
+  BadRequestException,
+  Inject,
+} from "@nestjs/common";
 import { UserRole } from "@prisma/client";
 import { PrismaService } from "../../prisma/prisma.service";
+import { AUTH } from "../../auth/auth.constants";
 import { UpdateConfigDto } from "./dto/update-config.dto";
+import { CreateAdminDto } from "./dto/create-admin.dto";
 
 @Injectable()
 export class AdminService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    @Inject(AUTH) private readonly auth: any
+  ) {}
 
   // ─── Users ─────────────────────────────────────────────────────────────────────
 
@@ -48,7 +60,67 @@ export class AdminService {
   async updateUserRole(id: string, role: UserRole) {
     const user = await this.prisma.user.findUnique({ where: { id } });
     if (!user) throw new NotFoundException("User not found");
+    // Admin accounts are managed solely through the super-admin-gated admin-team
+    // flow (createAdmin), never the generic role endpoint. This closes the
+    // privilege-escalation hole where any admin could mint or dismantle admins
+    // by reassigning roles. Blocks both granting ADMIN and touching an existing
+    // admin's role here.
+    if (role === UserRole.ADMIN || user.role === UserRole.ADMIN) {
+      throw new ForbiddenException("Admin roles are managed via the admin-team endpoints");
+    }
     return this.prisma.user.update({ where: { id }, data: { role } });
+  }
+
+  // ─── Admin Team (super-admin only) ──────────────────────────────────────────────
+
+  /** List all admin accounts (both regular admins and super admins). */
+  async listAdmins() {
+    return this.prisma.user.findMany({
+      where: { role: UserRole.ADMIN },
+      select: {
+        id: true,
+        name: true,
+        email: true,
+        isSuperAdmin: true,
+        isActive: true,
+        createdAt: true,
+      },
+      orderBy: { createdAt: "desc" },
+    });
+  }
+
+  /**
+   * Create a brand-new admin account. The password is set by the super admin
+   * and stored hashed via better-auth (same path as the bootstrap seed), then
+   * the fresh user is escalated to ADMIN. New admins are never super admins.
+   */
+  async createAdmin(dto: CreateAdminDto) {
+    const email = dto.email.toLowerCase().trim();
+
+    const existing = await this.prisma.user.findUnique({ where: { email } });
+    if (existing) throw new ConflictException("A user with this email already exists");
+
+    const res = await this.auth.api.signUpEmail({
+      body: { email, password: dto.password, name: dto.name },
+      asResponse: true,
+    });
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      throw new BadRequestException(err?.message || "Failed to create admin account");
+    }
+
+    return this.prisma.user.update({
+      where: { email },
+      data: { role: UserRole.ADMIN, emailVerified: true, isActive: true },
+      select: {
+        id: true,
+        name: true,
+        email: true,
+        role: true,
+        isSuperAdmin: true,
+        createdAt: true,
+      },
+    });
   }
 
   async banUser(id: string, reason?: string) {

@@ -30,7 +30,7 @@ async function main() {
       console.log("User already exists. Updating role to ADMIN...");
       user = await prisma.user.update({
         where: { email },
-        data: { role: UserRole.ADMIN, emailVerified: true },
+        data: { role: UserRole.ADMIN, emailVerified: true, isSuperAdmin: true },
       });
       console.log(`Successfully upgraded ${email} to ADMIN.`);
     } else {
@@ -51,7 +51,7 @@ async function main() {
       console.log("User created. Escalating privileges to ADMIN...");
       user = await prisma.user.update({
         where: { email },
-        data: { role: UserRole.ADMIN, emailVerified: true },
+        data: { role: UserRole.ADMIN, emailVerified: true, isSuperAdmin: true },
       });
 
       console.log(`Successfully bootstrapped super-admin: ${email}`);
