@@ -71,7 +71,11 @@ describe("VendorService", () => {
   beforeEach(() => {
     prisma = mockPrisma();
     const routes = { geocode: jest.fn().mockResolvedValue(null) };
-    service = new VendorService(prisma as any, routes as any);
+    service = new VendorService(
+      prisma as any,
+      routes as any,
+      { emitVendorRegistered: jest.fn() } as any
+    );
   });
 
   describe("getProfile", () => {

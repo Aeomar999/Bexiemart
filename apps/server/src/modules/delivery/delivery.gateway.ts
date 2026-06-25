@@ -10,6 +10,7 @@ import {
 import { Server, Socket } from "socket.io";
 import { Logger, Inject, forwardRef } from "@nestjs/common";
 import { AUTH } from "../../auth/auth.constants";
+import { wsCorsOptions } from "../../common/ws-cors";
 import { DeliveryService } from "./delivery.service";
 
 interface AuthenticatedSocket extends Socket {
@@ -23,7 +24,7 @@ interface AuthenticatedSocket extends Socket {
  * `user:{id}` room). Customers join `job:{id}` to watch their delivery; drivers
  * stream `driver_location` which is persisted and fanned out to that room.
  */
-@WebSocketGateway({ namespace: "/delivery" })
+@WebSocketGateway({ namespace: "/delivery", cors: wsCorsOptions() })
 export class DeliveryGateway implements OnGatewayConnection, OnGatewayDisconnect {
   @WebSocketServer()
   server: Server;

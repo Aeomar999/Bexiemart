@@ -16,7 +16,11 @@ describe("OrdersService", () => {
       quoteForOrderDraft: jest.fn().mockResolvedValue(null),
       createJobForOrder: jest.fn(),
     };
-    service = new OrdersService(prisma as any, delivery as any);
+    service = new OrdersService(
+      prisma as any,
+      delivery as any,
+      { emitOrderCreated: jest.fn() } as any
+    );
   });
 
   describe("create", () => {
