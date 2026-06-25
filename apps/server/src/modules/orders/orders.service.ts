@@ -2,12 +2,14 @@ import { Injectable, NotFoundException, BadRequestException } from "@nestjs/comm
 import { PrismaService } from "../../prisma/prisma.service";
 import { CreateOrderDto } from "./dto/create-order.dto";
 import { DeliveryService } from "../delivery/delivery.service";
+import { AdminGateway } from "../admin/admin.gateway";
 
 @Injectable()
 export class OrdersService {
   constructor(
     private readonly prisma: PrismaService,
-    private readonly delivery: DeliveryService
+    private readonly delivery: DeliveryService,
+    private readonly adminGateway: AdminGateway
   ) {}
 
   private generateOrderNumber(): string {
@@ -170,6 +172,13 @@ export class OrdersService {
       }
 
       return order;
+    });
+
+    // Notify the admin portal's live ops feed (best-effort side-effect).
+    this.adminGateway.emitOrderCreated({
+      orderId: order.id,
+      orderNumber: order.orderNumber,
+      total: Number(order.total),
     });
 
     return order;

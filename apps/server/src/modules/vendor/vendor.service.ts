@@ -5,6 +5,7 @@ import { CreateProductDto } from "./dto/create-product.dto";
 import { UpdateProductDto } from "./dto/update-product.dto";
 import { UpdateShopDto } from "./dto/update-shop.dto";
 import { RoutesService } from "../maps/routes.service";
+import { AdminGateway } from "../admin/admin.gateway";
 
 @Injectable()
 export class VendorService {
@@ -12,7 +13,8 @@ export class VendorService {
 
   constructor(
     private readonly prisma: PrismaService,
-    private readonly routes: RoutesService
+    private readonly routes: RoutesService,
+    private readonly adminGateway: AdminGateway
   ) {}
 
   /**
@@ -82,6 +84,13 @@ export class VendorService {
     });
 
     await this.geocodeShop(updated.id, updated.address, updated.city, updated.state);
+
+    // Surface the newly-live shop on the admin portal's live ops feed.
+    this.adminGateway.emitVendorRegistered({
+      vendorId: updated.id,
+      businessName: updated.shopName,
+    });
+
     return updated;
   }
 

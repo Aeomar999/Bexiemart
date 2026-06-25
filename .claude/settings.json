@@ -4,7 +4,10 @@
       "Bash(taskkill //PID 31296 //F)",
       "Bash(break)",
       "Bash(git add *)",
-      "Bash(git commit *)"
+      "Bash(git commit *)",
+      "Bash(ls -la .env)",
+      "Bash(grep -n -i \"SMTP\\\\|EMAIL_FROM\" .env)",
+      "PowerShell(npx jest --silent 2>&1)"
     ]
   }
 }
