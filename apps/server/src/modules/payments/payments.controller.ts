@@ -10,6 +10,7 @@ import {
   ForbiddenException,
 } from "@nestjs/common";
 import { Throttle } from "@nestjs/throttler";
+import * as crypto from "crypto";
 import { ApiTags, ApiOperation, ApiBody, ApiBearerAuth } from "@nestjs/swagger";
 import { AuthGuard } from "../../guards/auth.guard";
 import { PaymentsService } from "./payments.service";
@@ -45,15 +46,27 @@ export class PaymentsController {
     @Headers("x-paystack-signature") signature: string,
     @Body() body: any
   ) {
-    const crypto = require("crypto");
-    const secret = process.env.PAYSTACK_SECRET_KEY || "";
-    // If rawBody is available (configured in Nest app), use it. Otherwise fallback to stringify.
-    const payload = req.rawBody ? req.rawBody.toString("utf8") : JSON.stringify(body);
-    const hash = crypto.createHmac("sha512", secret).update(payload).digest("hex");
+    const secret = process.env.PAYSTACK_SECRET_KEY;
+    if (!secret) {
+      // Fail closed: without the secret we cannot trust any webhook.
+      throw new ForbiddenException("Webhook verification not configured");
+    }
 
-    if (hash !== signature) {
+    // The signature must be verified against the exact bytes Paystack signed.
+    // rawBody is provided by Nest (rawBody: true in main.ts); re-serializing
+    // the parsed body would change the bytes and is therefore not a safe fallback.
+    if (!req.rawBody || !signature) {
       throw new ForbiddenException("Invalid signature");
     }
+
+    const hash = crypto.createHmac("sha512", secret).update(req.rawBody).digest("hex");
+
+    const expected = Buffer.from(hash);
+    const received = Buffer.from(signature);
+    if (expected.length !== received.length || !crypto.timingSafeEqual(expected, received)) {
+      throw new ForbiddenException("Invalid signature");
+    }
+
     return this.paymentsService.handleWebhook(body);
   }
 

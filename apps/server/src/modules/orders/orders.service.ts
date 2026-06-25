@@ -1,10 +1,16 @@
 import { Injectable, NotFoundException, BadRequestException } from "@nestjs/common";
 import { PrismaService } from "../../prisma/prisma.service";
 import { CreateOrderDto } from "./dto/create-order.dto";
+import { DeliveryService } from "../delivery/delivery.service";
+import { AdminGateway } from "../admin/admin.gateway";
 
 @Injectable()
 export class OrdersService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly delivery: DeliveryService,
+    private readonly adminGateway: AdminGateway
+  ) {}
 
   private generateOrderNumber(): string {
     const ts = Date.now().toString(36).toUpperCase();
@@ -12,12 +18,44 @@ export class OrdersService {
     return `BEX-${ts}-${rand}`;
   }
 
+  /**
+   * Distance-based delivery fee from the unified pricing engine. Falls back to
+   * a flat fee when coordinates can't be resolved (e.g. no maps key in dev, or
+   * a platform-fulfilled order with no vendor pickup) so checkout never breaks.
+   */
+  private async resolveShippingFee(
+    vendorId: string | null,
+    shippingAddress: CreateOrderDto["shippingAddress"],
+    subtotal: number
+  ): Promise<number> {
+    const FLAT_FALLBACK = 5;
+    try {
+      const quote = await this.delivery.quoteForOrderDraft({
+        vendorId,
+        dropoff: {
+          latitude: shippingAddress.latitude,
+          longitude: shippingAddress.longitude,
+          addressParts: [shippingAddress.address, shippingAddress.city, shippingAddress.state],
+        },
+      });
+      return quote ? quote.customerFee : subtotal >= 500 ? 0 : FLAT_FALLBACK;
+    } catch {
+      return subtotal >= 500 ? 0 : FLAT_FALLBACK;
+    }
+  }
+
   async create(userId: string, dto: CreateOrderDto) {
-    let cartItems: any[] = [];
+    // Resolve the request down to { productId, quantity } only. Prices and
+    // product snapshots are ALWAYS taken from the database below, never from
+    // client input, so the client cannot tamper with the amount charged.
+    let requested: { productId: string; quantity: number }[] = [];
     let cart: any = null;
 
     if (dto.items && dto.items.length > 0) {
-      cartItems = dto.items;
+      requested = dto.items.map((item) => ({
+        productId: item.productId,
+        quantity: item.quantity,
+      }));
     } else {
       cart = await this.prisma.cart.findUnique({
         where: { userId },
@@ -26,25 +64,59 @@ export class OrdersService {
       if (!cart || cart.items.length === 0) {
         throw new BadRequestException("Cart is empty");
       }
-      cartItems = cart.items;
+      requested = cart.items.map((item: any) => ({
+        productId: item.productId,
+        quantity: item.quantity,
+      }));
     }
 
-    for (const item of cartItems) {
-      const product = await this.prisma.product.findUnique({ where: { id: item.productId } });
-      if (!product) throw new NotFoundException(`Product ${item.productId} not found`);
+    // Load the authoritative product rows and build trusted line items.
+    const lineItems: {
+      productId: string;
+      productName: string;
+      productSlug: string;
+      price: number;
+      quantity: number;
+      lineTotal: number;
+      imageUrl: string | null;
+    }[] = [];
+    // Fetch every requested product in a single query (no N+1), then build the
+    // line items in the requested order from these authoritative rows.
+    const productIds = [...new Set(requested.map((r) => r.productId))];
+    const products = await this.prisma.product.findMany({
+      where: { id: { in: productIds } },
+      include: { images: { take: 1, orderBy: { order: "asc" } } },
+    });
+    const productById = new Map(products.map((p) => [p.id, p]));
+
+    let primaryVendorId: string | null = null;
+    for (const { productId, quantity } of requested) {
+      const product = productById.get(productId);
+      if (!product) throw new NotFoundException(`Product ${productId} not found`);
       if (!product.isActive || product.isDeleted) {
         throw new BadRequestException(`Product "${product.name}" is no longer available`);
       }
-      if (product.stock < item.quantity) {
+      if (product.stock < quantity) {
         throw new BadRequestException(`Insufficient stock for "${product.name}"`);
       }
+      if (!primaryVendorId && product.vendorId) primaryVendorId = product.vendorId;
+      lineItems.push({
+        productId: product.id,
+        productName: product.name,
+        productSlug: product.slug,
+        price: Number(product.price),
+        quantity,
+        lineTotal: Number(product.price) * quantity,
+        imageUrl: product.images?.[0]?.url ?? null,
+      });
     }
 
-    const subtotal = cartItems.reduce(
-      (sum: number, item: any) => sum + Number(item.price) * item.quantity,
-      0,
+    const subtotal = lineItems.reduce((sum, item) => sum + item.lineTotal, 0);
+    const shippingFee = await this.resolveShippingFee(
+      primaryVendorId,
+      dto.shippingAddress,
+      subtotal
     );
-    const shippingFee = subtotal >= 5000 ? 0 : 500;
     const tax = Math.round(subtotal * 0.075 * 100) / 100;
     const total = subtotal + shippingFee + tax;
     const orderNumber = this.generateOrderNumber();
@@ -67,13 +139,13 @@ export class OrdersService {
           total,
           shippingAddressId: shippingAddr.id,
           items: {
-            create: cartItems.map((item: any) => ({
+            create: lineItems.map((item) => ({
               productId: item.productId,
-              productName: item.productName ?? "",
-              productSlug: item.productSlug ?? "",
+              productName: item.productName,
+              productSlug: item.productSlug,
               price: item.price,
               quantity: item.quantity,
-              total: Number(item.price) * item.quantity,
+              total: item.lineTotal,
               imageUrl: item.imageUrl,
             })),
           },
@@ -81,11 +153,18 @@ export class OrdersService {
         include: { items: true, shippingAddress: true },
       });
 
-      for (const item of cartItems) {
-        await tx.product.update({
-          where: { id: item.productId },
+      // Atomically decrement stock with a stock >= quantity guard so two
+      // concurrent orders cannot drive inventory negative (oversell). A
+      // count of 0 means the inventory was consumed between the check above
+      // and here, so we abort and roll back the whole transaction.
+      for (const item of lineItems) {
+        const result = await tx.product.updateMany({
+          where: { id: item.productId, stock: { gte: item.quantity } },
           data: { stock: { decrement: item.quantity } },
         });
+        if (result.count === 0) {
+          throw new BadRequestException(`Insufficient stock for "${item.productName}"`);
+        }
       }
 
       if (!dto.items && cart) {
@@ -93,6 +172,13 @@ export class OrdersService {
       }
 
       return order;
+    });
+
+    // Notify the admin portal's live ops feed (best-effort side-effect).
+    this.adminGateway.emitOrderCreated({
+      orderId: order.id,
+      orderNumber: order.orderNumber,
+      total: Number(order.total),
     });
 
     return order;
@@ -111,17 +197,19 @@ export class OrdersService {
         },
         orderBy: { createdAt: "desc" },
       }),
-      this.prisma.order.count({ where: { userId } })
+      this.prisma.order.count({ where: { userId } }),
     ]);
 
-    return { data, meta: { total, page, limit, totalPages: Math.ceil(total / limit)  } };
+    return { data, meta: { total, page, limit, totalPages: Math.ceil(total / limit) } };
   }
 
   async findOne(userId: string, id: string) {
     const order = await this.prisma.order.findFirst({
       where: { id, userId },
       include: {
-        items: { include: { product: { include: { images: { take: 1, orderBy: { order: "asc" } } } } } },
+        items: {
+          include: { product: { include: { images: { take: 1, orderBy: { order: "asc" } } } } },
+        },
         shippingAddress: true,
         payment: true,
       },
@@ -138,7 +226,7 @@ export class OrdersService {
     });
 
     if (!order) throw new NotFoundException("Order not found");
-    
+
     if (order.status !== "pending" && order.status !== "confirmed") {
       throw new BadRequestException(`Cannot cancel order in ${order.status} status`);
     }
@@ -167,7 +255,7 @@ export class OrdersService {
     });
 
     if (!order) throw new NotFoundException("Order not found");
-    
+
     // An order can only be refunded if it has been paid, delivered, etc.
     // Assuming 'delivered' or 'processing' are valid states for refund requests.
     if (order.status === "cancelled" || order.status === "refunded") {

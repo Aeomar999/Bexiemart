@@ -1,0 +1,36 @@
+<!-- @dsCard group="Customer" name="Checkout" subtitle="Address, delivery, payment method" -->
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Customer · Checkout</title><link rel="stylesheet" href="../_shared/app.css">
+<style>.opt{display:flex;align-items:center;gap:14px;padding:14px;border:1.5px solid var(--border);border-radius:var(--r-lg);margin-bottom:10px}
+.opt.sel{border-color:var(--brand-700);background:var(--brand-50)}
+.radio{width:20px;height:20px;border-radius:var(--r-full);border:2px solid var(--s-300);flex:0 0 auto}
+.radio.on{border-color:var(--brand-700);background:var(--brand-700);box-shadow:inset 0 0 0 3px #fff}
+.summary{position:absolute;left:0;right:0;bottom:0;background:#fff;border-top:1px solid var(--s-100);padding:16px 20px 26px}</style></head>
+<body><div class="frame">
+<div class="phone"><div class="notch"></div>
+ <div class="statusbar"><span>9:41</span><span class="right">5G ▮▮▮ 100%</span></div>
+ <div class="screen">
+  <div class="appbar" style="padding-top:6px"><div class="iconbtn"><svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg></div><span class="h2">Checkout</span><div class="iconbtn ghost"></div></div>
+  <div class="scroll" style="padding:6px 20px 130px">
+   <div class="label" style="margin-top:6px">Delivery Address</div>
+   <div class="card" style="padding:14px;display:flex;gap:12px;align-items:flex-start;margin-bottom:20px">
+     <div class="circle" style="width:38px;height:38px;background:var(--brand-50)"><svg width="18" height="18" fill="none" stroke="var(--brand-700)" viewBox="0 0 24 24"><path d="M21 10c0 7-9 12-9 12s-9-5-9-12a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg></div>
+     <div style="flex:1"><div class="row between"><span class="small bold">Home</span><span class="tiny bold" style="color:var(--brand-700)">Change</span></div>
+       <div class="tiny t2" style="margin-top:3px">East Legon, Accra · House 24, Lakeside Estate</div></div>
+   </div>
+
+   <div class="label">Delivery Method</div>
+   <div class="opt sel"><span class="radio on"></span><div style="flex:1"><div class="small bold">Instant Delivery</div><div class="tiny muted">30–60 min</div></div><span class="price small">Free</span></div>
+   <div class="opt"><span class="radio"></span><div style="flex:1"><div class="small bold">Scheduled</div><div class="tiny muted">Pick a time slot</div></div><span class="price small">GHS 8</span></div>
+
+   <div class="label" style="margin-top:10px">Payment Method</div>
+   <div class="opt sel"><span class="circle" style="width:38px;height:38px;background:#fff3eb"><svg width="18" height="18" fill="none" stroke="#FF6B35" viewBox="0 0 24 24"><rect x="5" y="2" width="14" height="20" rx="2"/><path d="M11 18h2"/></svg></span><div style="flex:1"><div class="small bold">MTN MoMo</div><div class="tiny muted">**** 7842</div></div><span class="radio on"></span></div>
+   <div class="opt"><span class="circle" style="width:38px;height:38px;background:var(--brand-50)"><svg width="18" height="18" fill="none" stroke="var(--brand-700)" viewBox="0 0 24 24"><rect x="2" y="5" width="20" height="14" rx="3"/><path d="M2 10h20"/></svg></span><div style="flex:1"><div class="small bold">Bexie Wallet</div><div class="tiny muted">Balance GHS 1,250</div></div><span class="radio"></span></div>
+   <div class="opt"><span class="circle" style="width:38px;height:38px;background:var(--s-100)"><svg width="18" height="18" fill="none" stroke="#0f172a" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v10M9 9.5h4.5a2 2 0 0 1 0 4H9"/></svg></span><div style="flex:1"><div class="small bold">Cash on Delivery</div></div><span class="radio"></span></div>
+  </div>
+  <div class="summary">
+   <div class="row between" style="margin-bottom:14px"><div><div class="tiny muted">Total (3 items)</div><div class="price" style="font-size:20px;color:var(--brand-700)">GHS 934.00</div></div>
+     <button class="btn btn-primary" style="flex:1;margin-left:16px">Place Order</button></div>
+  </div>
+ </div>
+</div><div class="caption">Customer · Checkout</div></div></body></html>

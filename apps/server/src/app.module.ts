@@ -36,10 +36,12 @@ import { CustomerServicesModule } from "./modules/customer-services/customer-ser
 import { FoodModule } from "./modules/food/food.module";
 import { EscrowModule } from "./modules/escrow/escrow.module";
 import { ChatModule } from "./modules/chat/chat.module";
+import { SupportModule } from "./modules/support/support.module";
 import { AdminModule } from "./modules/admin/admin.module";
 import { HealthModule } from "./modules/health/health.module";
 import { PrismaModule } from "./prisma/prisma.module";
 import { DispatcherModule } from "./modules/dispatcher/dispatcher.module";
+import { DeliveryModule } from "./modules/delivery/delivery.module";
 import { StoryModule } from "./modules/story/story.module";
 import { MetricsModule } from "./modules/metrics/metrics.module";
 import { CollectionsModule } from "./modules/collections/collections.module";
@@ -93,9 +95,11 @@ import * as winston from "winston";
     FoodModule,
     EscrowModule,
     ChatModule,
+    SupportModule,
     AdminModule,
     HealthModule,
     DispatcherModule,
+    DeliveryModule,
     StoryModule,
     MetricsModule,
     CollectionsModule,

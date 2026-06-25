@@ -4,6 +4,7 @@ import { createRoleGuard } from "../create-role-guard";
 import { AdminGuard } from "../admin.guard";
 import { DispatcherGuard } from "../dispatcher.guard";
 import { VendorGuard } from "../vendor.guard";
+import { SuperAdminGuard } from "../super-admin.guard";
 import { PrismaService } from "../../prisma/prisma.service";
 import { UserRole } from "@prisma/client";
 
@@ -166,6 +167,31 @@ describe("Guards", () => {
         });
         const result = await dispatcherGuard.canActivate(context);
         expect(result).toBe(true);
+      });
+    });
+
+    describe("SuperAdminGuard", () => {
+      const superAdminGuard = new SuperAdminGuard();
+
+      it("throws UnauthorizedException if no user on request", () => {
+        const context = mockExecutionContext({}, undefined);
+        expect(() => superAdminGuard.canActivate(context)).toThrow(UnauthorizedException);
+      });
+
+      it("throws ForbiddenException for a regular admin (no super flag)", () => {
+        const context = mockExecutionContext(
+          {},
+          { id: "a1", role: UserRole.ADMIN, isSuperAdmin: false }
+        );
+        expect(() => superAdminGuard.canActivate(context)).toThrow(ForbiddenException);
+      });
+
+      it("returns true for a super admin", () => {
+        const context = mockExecutionContext(
+          {},
+          { id: "a1", role: UserRole.ADMIN, isSuperAdmin: true }
+        );
+        expect(superAdminGuard.canActivate(context)).toBe(true);
       });
     });
   });

@@ -1,9 +1,18 @@
-import { Injectable, NotFoundException, BadRequestException, ForbiddenException } from "@nestjs/common";
+import {
+  Injectable,
+  NotFoundException,
+  BadRequestException,
+  ForbiddenException,
+} from "@nestjs/common";
 import { PrismaService } from "../../prisma/prisma.service";
+import { AdminGateway } from "../admin/admin.gateway";
 
 @Injectable()
 export class EscrowService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly adminGateway: AdminGateway
+  ) {}
 
   async list(userId: string) {
     const wallet = await this.prisma.wallet.findUnique({ where: { userId } });
@@ -55,10 +64,15 @@ export class EscrowService {
 
     await this.assertOwner(userId, escrow);
 
-    return this.prisma.escrow.update({
+    const disputed = await this.prisma.escrow.update({
       where: { id },
       data: { status: "DISPUTED", reason },
     });
+
+    // Raise the dispute on the admin portal's live ops feed for triage.
+    this.adminGateway.emitDisputeCreated({ disputeId: disputed.id, reason });
+
+    return disputed;
   }
 
   async release(userId: string, id: string) {
@@ -89,36 +103,39 @@ export class EscrowService {
 
     const reference = `esc_rel_${id}_${Date.now()}`;
 
-    const updatedEscrow = await this.prisma.$transaction(async (tx) => {
-      const txn = await tx.transaction.create({
-        data: {
-          walletId: vendorWallet.id,
-          type: "EARNINGS",
-          status: "COMPLETED",
-          amount: escrow.amount,
-          fee: Number(escrow.commission),
-          netAmount: Number(escrow.netAmount),
-          reference,
-          description: `Escrow release for order ${escrow.orderId}`,
-          counterpartyWalletId: escrow.buyerWalletId,
-        },
-      });
+    const updatedEscrow = await this.prisma.$transaction(
+      async (tx) => {
+        const txn = await tx.transaction.create({
+          data: {
+            walletId: vendorWallet.id,
+            type: "EARNINGS",
+            status: "COMPLETED",
+            amount: escrow.amount,
+            fee: Number(escrow.commission),
+            netAmount: Number(escrow.netAmount),
+            reference,
+            description: `Escrow release for order ${escrow.orderId}`,
+            counterpartyWalletId: escrow.buyerWalletId,
+          },
+        });
 
-      await tx.wallet.update({
-        where: { id: vendorWallet.id },
-        data: { balance: { increment: Number(escrow.netAmount) } },
-      });
+        await tx.wallet.update({
+          where: { id: vendorWallet.id },
+          data: { balance: { increment: Number(escrow.netAmount) } },
+        });
 
-      return tx.escrow.update({
-        where: { id },
-        data: {
-          status: "RELEASED",
-          releasedAt: new Date(),
-          releasedTxnId: txn.id,
-          vendorWalletId: vendorWallet.id,
-        },
-      });
-    }, { isolationLevel: 'Serializable' });
+        return tx.escrow.update({
+          where: { id },
+          data: {
+            status: "RELEASED",
+            releasedAt: new Date(),
+            releasedTxnId: txn.id,
+            vendorWalletId: vendorWallet.id,
+          },
+        });
+      },
+      { isolationLevel: "Serializable" }
+    );
 
     return updatedEscrow;
   }
@@ -141,35 +158,38 @@ export class EscrowService {
 
     const reference = `esc_ref_${id}_${Date.now()}`;
 
-    const updatedEscrow = await this.prisma.$transaction(async (tx) => {
-      const txn = await tx.transaction.create({
-        data: {
-          walletId: buyerWallet.id,
-          type: "REVERSAL",
-          status: "COMPLETED",
-          amount: escrow.amount,
-          fee: 0,
-          netAmount: Number(escrow.amount),
-          reference,
-          description: `Escrow refund for order ${escrow.orderId}`,
-          counterpartyWalletId: escrow.vendorWalletId,
-        },
-      });
+    const updatedEscrow = await this.prisma.$transaction(
+      async (tx) => {
+        const txn = await tx.transaction.create({
+          data: {
+            walletId: buyerWallet.id,
+            type: "REVERSAL",
+            status: "COMPLETED",
+            amount: escrow.amount,
+            fee: 0,
+            netAmount: Number(escrow.amount),
+            reference,
+            description: `Escrow refund for order ${escrow.orderId}`,
+            counterpartyWalletId: escrow.vendorWalletId,
+          },
+        });
 
-      await tx.wallet.update({
-        where: { id: buyerWallet.id },
-        data: { balance: { increment: Number(escrow.amount) } },
-      });
+        await tx.wallet.update({
+          where: { id: buyerWallet.id },
+          data: { balance: { increment: Number(escrow.amount) } },
+        });
 
-      return tx.escrow.update({
-        where: { id },
-        data: {
-          status: "REFUNDED",
-          refundedAt: new Date(),
-          refundedTxnId: txn.id,
-        },
-      });
-    }, { isolationLevel: 'Serializable' });
+        return tx.escrow.update({
+          where: { id },
+          data: {
+            status: "REFUNDED",
+            refundedAt: new Date(),
+            refundedTxnId: txn.id,
+          },
+        });
+      },
+      { isolationLevel: "Serializable" }
+    );
 
     return updatedEscrow;
   }

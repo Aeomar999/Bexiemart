@@ -1,13 +1,47 @@
-import { Injectable, NotFoundException } from "@nestjs/common";
+import { Injectable, NotFoundException, Logger } from "@nestjs/common";
 import { PrismaService } from "../../prisma/prisma.service";
 import { OnboardVendorDto } from "./dto/onboard-vendor.dto";
 import { CreateProductDto } from "./dto/create-product.dto";
 import { UpdateProductDto } from "./dto/update-product.dto";
 import { UpdateShopDto } from "./dto/update-shop.dto";
+import { RoutesService } from "../maps/routes.service";
+import { AdminGateway } from "../admin/admin.gateway";
 
 @Injectable()
 export class VendorService {
-  constructor(private readonly prisma: PrismaService) {}
+  private readonly logger = new Logger("VendorService");
+
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly routes: RoutesService,
+    private readonly adminGateway: AdminGateway
+  ) {}
+
+  /**
+   * Geocode the shop address to coordinates so delivery pricing has a pickup
+   * origin from day one (rather than lazily on the first order). Best-effort —
+   * a geocoding failure must never block a shop save.
+   */
+  private async geocodeShop(
+    profileId: string,
+    address?: string | null,
+    city?: string | null,
+    state?: string | null
+  ) {
+    const composed = [address, city, state].filter(Boolean).join(", ");
+    if (!composed) return;
+    try {
+      const coords = await this.routes.geocode(composed);
+      if (coords) {
+        await this.prisma.vendorProfile.update({
+          where: { id: profileId },
+          data: { latitude: coords.lat, longitude: coords.lng },
+        });
+      }
+    } catch (err) {
+      this.logger.warn(`Shop geocode failed for ${profileId}: ${(err as Error).message}`);
+    }
+  }
 
   private async getVendorProfile(userId: string) {
     const profile = await this.prisma.vendorProfile.findUnique({ where: { userId } });
@@ -28,15 +62,36 @@ export class VendorService {
 
   async onboard(userId: string, data: OnboardVendorDto) {
     const existing = await this.prisma.vendorProfile.findUnique({ where: { userId } });
-    if (!existing) throw new NotFoundException("Vendor profile not found. Please register as a vendor first.");
+    if (!existing)
+      throw new NotFoundException("Vendor profile not found. Please register as a vendor first.");
 
     const slugExists = await this.prisma.vendorProfile.findUnique({ where: { slug: data.slug } });
     if (slugExists && slugExists.userId !== userId) throw new Error("Shop URL is already taken");
 
-    return this.prisma.vendorProfile.update({
+    const updated = await this.prisma.vendorProfile.update({
       where: { userId },
-      data: { shopName: data.shopName, slug: data.slug, description: data.description, logo: data.logo, banner: data.banner, address: data.address, city: data.city, state: data.state, phone: data.phone },
+      data: {
+        shopName: data.shopName,
+        slug: data.slug,
+        description: data.description,
+        logo: data.logo,
+        banner: data.banner,
+        address: data.address,
+        city: data.city,
+        state: data.state,
+        phone: data.phone,
+      },
     });
+
+    await this.geocodeShop(updated.id, updated.address, updated.city, updated.state);
+
+    // Surface the newly-live shop on the admin portal's live ops feed.
+    this.adminGateway.emitVendorRegistered({
+      vendorId: updated.id,
+      businessName: updated.shopName,
+    });
+
+    return updated;
   }
 
   async getStats(userId: string) {
@@ -78,10 +133,10 @@ export class VendorService {
         },
         orderBy: { createdAt: "desc" },
       }),
-      this.prisma.product.count({ where: { vendorId: profile.id, isDeleted: false } })
+      this.prisma.product.count({ where: { vendorId: profile.id, isDeleted: false } }),
     ]);
 
-    return { data, meta: { total, page, limit, totalPages: Math.ceil(total / limit)  } };
+    return { data, meta: { total, page, limit, totalPages: Math.ceil(total / limit) } };
   }
 
   async createProduct(userId: string, data: CreateProductDto) {
@@ -107,7 +162,8 @@ export class VendorService {
       throw new Error("Category is required");
     }
 
-    const slug = data.slug || data.name.toLowerCase().replace(/[^a-z0-9]+/g, "-") + "-" + Date.now();
+    const slug =
+      data.slug || data.name.toLowerCase().replace(/[^a-z0-9]+/g, "-") + "-" + Date.now();
 
     return this.prisma.product.create({
       data: {
@@ -177,25 +233,25 @@ export class VendorService {
 
     // To paginate correctly by orders, we need to find distinct orders first
     const skip = (page - 1) * limit;
-    
+
     // Get unique order IDs for this vendor
     const distinctOrderItems = await this.prisma.orderItem.findMany({
       where: { product: { vendorId: profile.id } },
       select: { orderId: true },
-      distinct: ['orderId'],
+      distinct: ["orderId"],
       orderBy: { order: { createdAt: "desc" } },
       skip,
       take: limit,
     });
-    
+
     const totalOrderItems = await this.prisma.orderItem.findMany({
       where: { product: { vendorId: profile.id } },
       select: { orderId: true },
-      distinct: ['orderId'],
+      distinct: ["orderId"],
     });
     const total = totalOrderItems.length;
 
-    const orderIds = distinctOrderItems.map(oi => oi.orderId);
+    const orderIds = distinctOrderItems.map((oi) => oi.orderId);
 
     const orderItems = await this.prisma.orderItem.findMany({
       where: { orderId: { in: orderIds }, product: { vendorId: profile.id } },
@@ -208,7 +264,9 @@ export class VendorService {
             },
           },
         },
-        product: { select: { id: true, name: true, images: { take: 1, orderBy: { order: "asc" } } } },
+        product: {
+          select: { id: true, name: true, images: { take: 1, orderBy: { order: "asc" } } },
+        },
       },
       orderBy: { order: { createdAt: "desc" } },
     });
@@ -239,9 +297,11 @@ export class VendorService {
 
     const data = Array.from(orderMap.values());
     // Since orderItems has an implicit sort, maintain order based on distinctOrderItems
-    const sortedData = distinctOrderItems.map(doi => data.find(d => d.id === doi.orderId)).filter(Boolean);
+    const sortedData = distinctOrderItems
+      .map((doi) => data.find((d) => d.id === doi.orderId))
+      .filter(Boolean);
 
-    return { data: sortedData, meta: { total, page, limit, totalPages: Math.ceil(total / limit)  } };
+    return { data: sortedData, meta: { total, page, limit, totalPages: Math.ceil(total / limit) } };
   }
 
   async getOrder(userId: string, id: string) {
@@ -307,7 +367,12 @@ export class VendorService {
       id: t.reference || t.id,
       type: t.type === "WITHDRAWAL" ? "withdrawal" : "order",
       title: t.description || (t.type === "WITHDRAWAL" ? "Bank Transfer" : "Order Payment"),
-      date: t.createdAt.toLocaleDateString('en-US', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' }),
+      date: t.createdAt.toLocaleDateString("en-US", {
+        month: "short",
+        day: "numeric",
+        hour: "2-digit",
+        minute: "2-digit",
+      }),
       amount: t.type === "WITHDRAWAL" ? -Number(t.amount) : Number(t.amount),
       status: t.status.toLowerCase(),
     }));
@@ -336,7 +401,12 @@ export class VendorService {
       id: t.reference || t.id,
       type: t.type === "WITHDRAWAL" ? "withdrawal" : "order",
       title: t.description || (t.type === "WITHDRAWAL" ? "Bank Transfer" : "Order Payment"),
-      date: t.createdAt.toLocaleDateString('en-US', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' }),
+      date: t.createdAt.toLocaleDateString("en-US", {
+        month: "short",
+        day: "numeric",
+        hour: "2-digit",
+        minute: "2-digit",
+      }),
       amount: t.type === "WITHDRAWAL" ? -Number(t.amount) : Number(t.amount),
       status: t.status.toLowerCase(),
     }));
@@ -358,7 +428,16 @@ export class VendorService {
       }),
       this.prisma.orderItem.findMany({
         where: { product: { vendorId: profile.id }, order: { createdAt: { gte: thirtyDaysAgo } } },
-        include: { product: { select: { id: true, name: true, price: true, images: { take: 1, orderBy: { order: "asc" } } } } },
+        include: {
+          product: {
+            select: {
+              id: true,
+              name: true,
+              price: true,
+              images: { take: 1, orderBy: { order: "asc" } },
+            },
+          },
+        },
       }),
       this.prisma.orderItem.findMany({
         where: { product: { vendorId: profile.id }, order: { createdAt: { gte: thirtyDaysAgo } } },
@@ -370,10 +449,19 @@ export class VendorService {
 
     const revenue30Days = recentTransactions.reduce((s, t) => s + Number(t.amount), 0);
 
-    const productSales = new Map<string, { id: string; name: string; imageUrl: string | null; sales: number; revenue: number }>();
+    const productSales = new Map<
+      string,
+      { id: string; name: string; imageUrl: string | null; sales: number; revenue: number }
+    >();
     for (const oi of topProducts) {
       if (!productSales.has(oi.productId)) {
-        productSales.set(oi.productId, { id: oi.productId, name: oi.productName, imageUrl: oi.product?.images?.[0]?.url ?? null, sales: 0, revenue: 0 });
+        productSales.set(oi.productId, {
+          id: oi.productId,
+          name: oi.productName,
+          imageUrl: oi.product?.images?.[0]?.url ?? null,
+          sales: 0,
+          revenue: 0,
+        });
       }
       const p = productSales.get(oi.productId)!;
       p.sales += oi.quantity;
@@ -383,14 +471,19 @@ export class VendorService {
     return {
       revenue30Days: Math.round(revenue30Days * 100) / 100,
       orders30Days: totalOrdersRecent,
-      topProducts: Array.from(productSales.values()).sort((a, b) => b.revenue - a.revenue).slice(0, 10),
-      revenueTimeline: recentTransactions.reduce((acc: { date: string; amount: number }[], t) => {
-        const date = t.createdAt.toISOString().split("T")[0];
-        const existing = acc.find((a) => a.date === date);
-        if (existing) existing.amount += Number(t.amount);
-        else acc.push({ date, amount: Number(t.amount) });
-        return acc;
-      }, [] as { date: string; amount: number }[]),
+      topProducts: Array.from(productSales.values())
+        .sort((a, b) => b.revenue - a.revenue)
+        .slice(0, 10),
+      revenueTimeline: recentTransactions.reduce(
+        (acc: { date: string; amount: number }[], t) => {
+          const date = t.createdAt.toISOString().split("T")[0];
+          const existing = acc.find((a) => a.date === date);
+          if (existing) existing.amount += Number(t.amount);
+          else acc.push({ date, amount: Number(t.amount) });
+          return acc;
+        },
+        [] as { date: string; amount: number }[]
+      ),
     };
   }
 
@@ -434,10 +527,16 @@ export class VendorService {
   async updateShop(userId: string, data: UpdateShopDto) {
     const profile = await this.getVendorProfile(userId);
 
-    return this.prisma.vendorProfile.update({
+    const updated = await this.prisma.vendorProfile.update({
       where: { id: profile.id },
       data,
     });
+
+    // Re-geocode only when an address component actually changed.
+    if (data.address !== undefined || data.city !== undefined || data.state !== undefined) {
+      await this.geocodeShop(updated.id, updated.address, updated.city, updated.state);
+    }
+    return updated;
   }
 
   async getDisputes(userId: string, page: number = 1, limit: number = 20) {
@@ -458,6 +557,6 @@ export class VendorService {
       this.prisma.escrow.count({ where: { vendorId: profile.id, status: "DISPUTED" } }),
     ]);
 
-    return { data, meta: { total, page, limit, totalPages: Math.ceil(total / limit)  } };
+    return { data, meta: { total, page, limit, totalPages: Math.ceil(total / limit) } };
   }
 }

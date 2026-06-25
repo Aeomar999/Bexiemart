@@ -1,0 +1,39 @@
+<!-- @dsCard group="Customer" name="Track Order" subtitle="Live delivery map + status" -->
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Customer · Track Order</title><link rel="stylesheet" href="../_shared/app.css">
+<style>.map{position:absolute;inset:0;background:
+  linear-gradient(0deg,rgba(2,45,77,.05),rgba(2,45,77,.05)),
+  repeating-linear-gradient(0deg,#e8edf2 0 1px,transparent 1px 40px),
+  repeating-linear-gradient(90deg,#e8edf2 0 1px,transparent 1px 40px),#eef3f7}
+.route{position:absolute;left:60px;top:120px;width:200px;height:240px;border-left:3px dashed var(--brand-500);border-bottom:3px dashed var(--brand-500);border-radius:0 0 0 40px}
+.pin{position:absolute;width:38px;height:38px;border-radius:var(--r-full) var(--r-full) var(--r-full) 0;transform:rotate(-45deg);display:grid;place-items:center;box-shadow:var(--shadow-md)}
+.sheet{position:absolute;left:0;right:0;bottom:0;background:#fff;border-radius:var(--r-3xl) var(--r-3xl) 0 0;box-shadow:0 -12px 30px rgba(2,45,77,.12);padding:20px 20px 28px}
+.step{display:flex;gap:12px;align-items:flex-start}
+.step .d{width:12px;height:12px;border-radius:var(--r-full);margin-top:3px;flex:0 0 auto}
+.step .line{width:2px;height:26px;margin-left:5px;background:var(--s-200)}</style></head>
+<body><div class="frame">
+<div class="phone"><div class="notch"></div>
+ <div class="statusbar"><span>9:41</span><span class="right">5G ▮▮▮ 100%</span></div>
+ <div class="screen">
+   <div class="map"></div><div class="route"></div>
+   <div class="pin" style="left:48px;top:104px;background:var(--brand-700)"><svg style="transform:rotate(45deg)" width="18" height="18" fill="none" stroke="#fff" viewBox="0 0 24 24"><path d="M1 3h15v13H1zM16 8h4l3 3v5h-7"/></svg></div>
+   <div class="pin" style="left:240px;top:330px;background:var(--success)"><svg style="transform:rotate(45deg)" width="16" height="16" fill="none" stroke="#fff" viewBox="0 0 24 24"><path d="M21 10c0 7-9 12-9 12s-9-5-9-12a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg></div>
+   <div class="iconbtn" style="position:absolute;top:14px;left:16px"><svg width="20" height="20" fill="none" stroke="#0f172a" viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg></div>
+
+   <div class="sheet">
+     <div class="row" style="justify-content:center;margin-bottom:14px"><div style="width:42px;height:5px;border-radius:9999px;background:var(--s-200)"></div></div>
+     <div class="card" style="padding:14px;display:flex;gap:12px;align-items:center;margin-bottom:18px">
+       <div class="avatar" style="width:48px;height:48px;background:#bfdbfe"></div>
+       <div style="flex:1"><div class="small bold">Kwame Mensah</div><div class="tiny muted">Bexie Rider · ★ 4.9 · GR-2241</div></div>
+       <div class="circle" style="width:42px;height:42px;background:var(--brand-50)"><svg width="20" height="20" fill="none" stroke="var(--brand-700)" viewBox="0 0 24 24"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3 19.5 19.5 0 0 1-6-6 19.8 19.8 0 0 1-3-8.6A2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.4 1.8.7 2.7a2 2 0 0 1-.5 2.1L8.1 9.9a16 16 0 0 0 6 6l1.4-1.2a2 2 0 0 1 2.1-.5c.9.3 1.8.6 2.7.7a2 2 0 0 1 1.7 2z"/></svg></div>
+       <div class="circle" style="width:42px;height:42px;background:var(--brand-700)"><svg width="20" height="20" fill="none" stroke="#fff" viewBox="0 0 24 24"><path d="M21 11.5a8.4 8.4 0 0 1-9 8.4L3 21l1.1-3.3A8.4 8.4 0 1 1 21 11.5z"/></svg></div>
+     </div>
+     <div class="row between" style="margin-bottom:14px"><span class="h3">Arriving in 8 min</span><span class="tag" style="background:var(--brand-50);color:var(--brand-700)">On the way</span></div>
+     <div class="step"><div class="d" style="background:var(--success)"></div><div><div class="small bold">Order confirmed</div><div class="tiny muted">10:24 AM</div></div></div>
+     <div class="step"><div class="line" style="background:var(--success)"></div></div>
+     <div class="step"><div class="d" style="background:var(--success)"></div><div><div class="small bold">Picked up by rider</div><div class="tiny muted">10:38 AM</div></div></div>
+     <div class="step"><div class="line"></div></div>
+     <div class="step"><div class="d" style="background:var(--brand-700);box-shadow:0 0 0 4px var(--brand-50)"></div><div><div class="small bold">Out for delivery</div><div class="tiny" style="color:var(--brand-700)">In progress…</div></div></div>
+   </div>
+ </div>
+</div><div class="caption">Customer · Track Order</div></div></body></html>

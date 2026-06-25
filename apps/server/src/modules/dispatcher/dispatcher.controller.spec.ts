@@ -126,8 +126,8 @@ describe("DispatcherController", () => {
       mockService.acceptTask.mockResolvedValue(result);
       const req = { user: { id: "user-1" } };
 
-      expect(await controller.acceptTask(req, "task-1", { type: "delivery" })).toEqual(result);
-      expect(mockService.acceptTask).toHaveBeenCalledWith("user-1", "task-1", "delivery");
+      expect(await controller.acceptTask(req, "task-1")).toEqual(result);
+      expect(mockService.acceptTask).toHaveBeenCalledWith("user-1", "task-1");
     });
   });
 
@@ -137,8 +137,10 @@ describe("DispatcherController", () => {
       mockService.updateTaskStatus.mockResolvedValue(result);
       const req = { user: { id: "user-1" } };
 
-      expect(await controller.updateTaskStatus(req, "task-1", { status: "completed", type: "delivery" })).toEqual(result);
-      expect(mockService.updateTaskStatus).toHaveBeenCalledWith("user-1", "task-1", "completed", "delivery");
+      expect(await controller.updateTaskStatus(req, "task-1", { status: "DELIVERED" })).toEqual(
+        result
+      );
+      expect(mockService.updateTaskStatus).toHaveBeenCalledWith("user-1", "task-1", "DELIVERED");
     });
   });
 
@@ -181,7 +183,9 @@ describe("DispatcherController", () => {
       mockService.withdrawEarnings.mockResolvedValue(result);
       const req = { user: { id: "user-1" } };
 
-      expect(await controller.withdrawEarnings(req, { amount: 100, destination: "bank" })).toEqual(result);
+      expect(await controller.withdrawEarnings(req, { amount: 100, destination: "bank" })).toEqual(
+        result
+      );
       expect(mockService.withdrawEarnings).toHaveBeenCalledWith("user-1", 100, "bank");
     });
   });

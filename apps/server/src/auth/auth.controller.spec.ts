@@ -120,7 +120,12 @@ describe("AuthController", () => {
         shopName: "Test's Shop",
       });
 
-      const body = { email: "vendor@test.com", password: "Pass123!", name: "Test", role: "vendor" } as any;
+      const body = {
+        email: "vendor@test.com",
+        password: "Pass123!",
+        name: "Test",
+        role: "vendor",
+      } as any;
       const result = await controller.register(body);
 
       expect((result as any).user.role).toBe("VENDOR");
@@ -183,20 +188,21 @@ describe("AuthController", () => {
   });
 
   describe("resendVerification", () => {
-    it("should resend verification email", async () => {
+    it("should resend verification email and return a non-revealing message", async () => {
       mockPrisma.user.findUnique.mockResolvedValue({ id: "user-1", email: "test@test.com" });
       mockAuth.api.sendVerificationEmail.mockResolvedValue(undefined);
 
       const result = await controller.resendVerification({ email: "test@test.com" });
-      expect(result.message).toBe("Verification email sent.");
+      expect(result.message).toBe("If an account exists, a verification email has been sent.");
+      expect(mockAuth.api.sendVerificationEmail).toHaveBeenCalled();
     });
 
-    it("should throw if no account found", async () => {
+    it("should not reveal when no account exists (prevents user enumeration)", async () => {
       mockPrisma.user.findUnique.mockResolvedValue(null);
 
-      await expect(controller.resendVerification({ email: "missing@test.com" })).rejects.toThrow(
-        "No account found with this email.",
-      );
+      const result = await controller.resendVerification({ email: "missing@test.com" });
+      expect(result.message).toBe("If an account exists, a verification email has been sent.");
+      expect(mockAuth.api.sendVerificationEmail).not.toHaveBeenCalled();
     });
   });
 

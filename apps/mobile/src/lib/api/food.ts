@@ -1,4 +1,12 @@
 import { apiClient } from "./client";
+
+export interface FoodCheckoutDto {
+  deliveryAddress?: string;
+  deliveryLat?: number;
+  deliveryLng?: number;
+  vehicleType?: "bike" | "car" | "van";
+}
+
 export const foodApi = {
   getRestaurants: (params?: { category?: string }) =>
     apiClient.get("/food/restaurants", { params }),
@@ -12,7 +20,7 @@ export const foodApi = {
     apiClient.put(`/food/cart/item/${id}`, { quantity }),
   removeCartItem: (id: string) => apiClient.delete(`/food/cart/item/${id}`),
   clearCart: () => apiClient.delete("/food/cart"),
-  checkout: () => apiClient.post("/food/checkout"),
+  checkout: (dto?: FoodCheckoutDto) => apiClient.post("/food/checkout", dto ?? {}),
   getOrders: () => apiClient.get("/food/orders"),
   getOrder: (id: string) => apiClient.get(`/food/orders/${id}`),
 };

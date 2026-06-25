@@ -12,6 +12,7 @@ export class UsersService {
     email: true,
     image: true,
     role: true,
+    isSuperAdmin: true,
     onboardingCompleted: true,
     createdAt: true,
     updatedAt: true,

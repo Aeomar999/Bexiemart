@@ -1,0 +1,118 @@
+<!-- @dsCard group="Customer" name="Home" subtitle="Super-app discovery feed" -->
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Customer · Home</title>
+<link rel="stylesheet" href="../_shared/app.css">
+<style>
+  .hero { margin:16px 20px 0; height:172px; border-radius:var(--r-2xl); overflow:hidden; position:relative;
+    background:linear-gradient(120deg,#0b3a63,#0e5891); display:flex; flex-direction:column; justify-content:center; padding:22px; }
+  .hero .glow{position:absolute;right:-40px;top:-40px;width:200px;height:200px;border-radius:50%;
+    background:radial-gradient(circle,rgba(56,189,248,.45),transparent 70%);}
+  .highlight { width:30%; display:flex; flex-direction:column; align-items:center; gap:8px; }
+  .highlight .ico { width:100%; aspect-ratio:1; border-radius:var(--r-2xl); display:grid; place-items:center; }
+  .qa { position:absolute; left:16px; right:16px; bottom:88px; background:#fff; border:1px solid var(--s-100);
+    border-radius:var(--r-3xl); box-shadow:var(--shadow-lg); display:flex; justify-content:space-between; padding:18px 16px; }
+  .qa .item{display:flex;flex-direction:column;align-items:center;gap:7px;width:18%;}
+  .qa .sq{width:46px;height:46px;border-radius:14px;display:grid;place-items:center;background:var(--s-50);}
+  .qa .lbl{font-size:9.5px;font-weight:800;text-align:center;line-height:11px;color:var(--s-900);}
+</style></head>
+<body><div class="frame">
+<div class="phone"><div class="notch"></div>
+  <div class="statusbar"><span>9:41</span><span class="right">5G ▮▮▮ 100%</span></div>
+  <div class="screen">
+
+    <!-- header -->
+    <div class="appbar" style="padding-top:6px">
+      <div class="iconbtn"><svg class="ic" width="22" height="22" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M3 6h18M3 12h18M3 18h18"/></svg></div>
+      <div class="brandname">Bexiemart</div>
+      <div class="iconbtn" style="position:relative"><svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M18 8a6 6 0 1 0-12 0c0 7-3 9-3 9h18s-3-2-3-9M13.7 21a2 2 0 0 1-3.4 0"/></svg><span class="badge" style="position:absolute;top:-2px;right:-2px">3</span></div>
+    </div>
+    <div class="px"><div class="search"><svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m21 21-4-4"/></svg><span class="grow">Search products, stores…</span><svg width="18" height="18" fill="none" stroke="var(--brand-700)" viewBox="0 0 24 24"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg></div></div>
+
+    <div class="scroll" style="padding-bottom:170px">
+      <!-- hero -->
+      <div class="hero"><div class="glow"></div>
+        <span class="tag" style="background:var(--success);color:#fff;align-self:flex-start;margin-bottom:10px">Limited offer</span>
+        <div class="font-head" style="color:#fff;font-weight:900;font-size:25px;line-height:1.1;max-width:80%">Holiday Deals Are Live!</div>
+        <div style="color:rgba(255,255,255,.85);font-size:13px;margin-top:6px">Up to 50% off across all shops</div>
+        <div style="margin-top:14px"><span class="pill" style="font-weight:800">Order now <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span></div>
+      </div>
+      <div class="row" style="justify-content:center;gap:6px;margin-top:12px"><span class="dot on"></span><span class="dot"></span><span class="dot"></span></div>
+
+      <!-- filter pills -->
+      <div class="row gap3" style="padding:0 20px;margin-top:20px;overflow:hidden">
+        <span class="pill"><svg width="13" height="13" fill="none" stroke="#10b981" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>Instant Delivery</span>
+        <span class="pill"><svg width="13" height="13" fill="none" stroke="#ef4444" viewBox="0 0 24 24"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>Featured Meals</span>
+        <span class="pill"><svg width="13" height="13" fill="none" stroke="#3b82f6" viewBox="0 0 24 24"><path d="m12 2 3 7 7 .5-5.5 4.5 2 7-6.5-4-6.5 4 2-7L2 9.5 9 9z"/></svg>New</span>
+      </div>
+
+      <!-- featured highlights -->
+      <div class="section"><div class="section-h"><span class="h2">Featured Highlights</span></div>
+        <div class="row" style="flex-wrap:wrap;gap:16px 0;justify-content:space-between">
+          <div class="highlight"><div class="ico" style="background:#fce7f3"><svg width="30" height="30" fill="none" stroke="#ec4899" viewBox="0 0 24 24"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><path d="M3 6h18M16 10a4 4 0 0 1-8 0"/></svg></div><span class="tiny bold">Shopping</span></div>
+          <div class="highlight"><div class="ico" style="background:#dcfce7"><svg width="30" height="30" fill="none" stroke="#22c55e" viewBox="0 0 24 24"><path d="M18 8h1a4 4 0 0 1 0 8h-1M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4zM6 1v3M10 1v3M14 1v3"/></svg></div><span class="tiny bold">Food</span></div>
+          <div class="highlight"><div class="ico" style="background:#ffedd5"><svg width="30" height="30" fill="none" stroke="#f97316" viewBox="0 0 24 24"><path d="M1 3h15v13H1zM16 8h4l3 3v5h-7"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg></div><span class="tiny bold">Delivery</span></div>
+          <div class="highlight"><div class="ico" style="background:#dbeafe"><svg width="30" height="30" fill="none" stroke="#2563eb" viewBox="0 0 24 24"><path d="M12 1v22M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></div><span class="tiny bold">Finance</span></div>
+          <div class="highlight"><div class="ico" style="background:#fee2e2"><svg width="30" height="30" fill="none" stroke="#ef4444" viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="m10 8 5 3-5 3z"/></svg></div><span class="tiny bold">Reels</span></div>
+          <div class="highlight"><div class="ico" style="background:#f3e8ff"><svg width="30" height="30" fill="none" stroke="#8b5cf6" viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg></div><span class="tiny bold">Services</span></div>
+        </div>
+      </div>
+
+      <!-- categories -->
+      <div class="section"><div class="section-h"><span class="h2">Categories</span><span class="see">See All</span></div>
+        <div class="row gap3" style="overflow:hidden">
+          <div style="flex:0 0 auto"><div class="tile" style="width:104px;height:104px;display:grid;grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr">
+            <div style="background:var(--s-100)"></div><div style="background:var(--accent-100,#e0f2fe)"></div><div style="background:var(--accent-100,#e0f2fe)"></div><div style="background:var(--s-100)"></div></div>
+            <div class="row between" style="margin-top:8px;width:104px"><span class="small bold">Fashion</span><span class="tag" style="background:var(--brand-50);color:var(--brand-700)">86</span></div></div>
+          <div style="flex:0 0 auto"><div class="tile" style="width:104px;height:104px;background:linear-gradient(135deg,#fde68a,#fca5a5)"></div>
+            <div class="row between" style="margin-top:8px;width:104px"><span class="small bold">Groceries</span><span class="tag" style="background:var(--brand-50);color:var(--brand-700)">42</span></div></div>
+          <div style="flex:0 0 auto"><div class="tile" style="width:104px;height:104px;background:linear-gradient(135deg,#a7f3d0,#6ee7b7)"></div>
+            <div class="row between" style="margin-top:8px;width:104px"><span class="small bold">Electronics</span><span class="tag" style="background:var(--brand-50);color:var(--brand-700)">28</span></div></div>
+        </div>
+      </div>
+
+      <!-- flash sale -->
+      <div class="section"><div class="section-h"><span class="h2">Flash Sale</span>
+        <span class="row gap2"><svg width="14" height="14" fill="none" stroke="#0f172a" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
+          <span class="tag" style="background:var(--s-100);color:var(--error)">02</span><span class="tag" style="background:var(--s-100);color:var(--error)">48</span><span class="tag" style="background:var(--s-100);color:var(--error)">10</span></span></div>
+        <div class="row gap3" style="overflow:hidden">
+          <div class="tile" style="width:108px;height:108px;background:linear-gradient(135deg,#bae6fd,#7dd3fc);position:relative"><span class="tag" style="position:absolute;top:6px;right:6px;background:var(--error);color:#fff">-40%</span></div>
+          <div class="tile" style="width:108px;height:108px;background:linear-gradient(135deg,#fecaca,#fda4af);position:relative"><span class="tag" style="position:absolute;top:6px;right:6px;background:var(--error);color:#fff">-25%</span></div>
+          <div class="tile" style="width:108px;height:108px;background:linear-gradient(135deg,#ddd6fe,#c4b5fd);position:relative"><span class="tag" style="position:absolute;top:6px;right:6px;background:var(--error);color:#fff">-55%</span></div>
+        </div>
+      </div>
+
+      <!-- just for you -->
+      <div class="section"><div class="section-h"><span class="row gap2"><span class="h2">Just For You</span>
+        <span class="tag" style="background:var(--brand-50);color:var(--brand-700)">★ Personalized</span></span></div>
+        <div class="row" style="gap:14px">
+          <div style="flex:1"><div class="tile" style="aspect-ratio:.82;position:relative"><div style="position:absolute;inset:0;background:linear-gradient(135deg,#bfdbfe,#93c5fd)"></div>
+            <div class="circle" style="position:absolute;top:8px;right:8px;width:32px;height:32px;background:rgba(255,255,255,.9);box-shadow:var(--shadow-sm)"><svg width="15" height="15" fill="#ef4444" stroke="#ef4444" viewBox="0 0 24 24"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1-1.1a5.5 5.5 0 0 0-7.8 7.8l1 1.1L12 21l7.8-7.5 1-1.1a5.5 5.5 0 0 0 0-7.8z"/></svg></div></div>
+            <div class="small bold" style="margin-top:8px">Wireless Earbuds</div><div class="tiny muted">AudioHub GH</div><div class="price small" style="margin-top:2px">GHS 249.00</div></div>
+          <div style="flex:1"><div class="tile" style="aspect-ratio:.82;background:linear-gradient(135deg,#fcd34d,#fbbf24)"></div>
+            <div class="small bold" style="margin-top:8px">Leather Tote Bag</div><div class="tiny muted">Jean Collections</div><div class="price small" style="margin-top:2px">GHS 320.00</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- floating quick actions -->
+    <div class="qa">
+      <div class="item"><div class="sq"><svg width="22" height="22" fill="none" stroke="#ea580c" viewBox="0 0 24 24"><path d="M18 8h1a4 4 0 0 1 0 8h-1M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4z"/></svg></div><span class="lbl">Order Food</span></div>
+      <div class="item"><div class="sq"><svg width="22" height="22" fill="none" stroke="#3b82f6" viewBox="0 0 24 24"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4zM3 6h18M16 10a4 4 0 0 1-8 0"/></svg></div><span class="lbl">Shop</span></div>
+      <div class="item"><div class="sq"><svg width="22" height="22" fill="none" stroke="#16a34a" viewBox="0 0 24 24"><path d="M3 11 22 2l-9 19-2-8z"/></svg></div><span class="lbl">Book Rider</span></div>
+      <div class="item"><div class="sq"><svg width="22" height="22" fill="none" stroke="#9333ea" viewBox="0 0 24 24"><path d="M21 10c0 7-9 12-9 12s-9-5-9-12a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg></div><span class="lbl">Track</span></div>
+      <div class="item"><div class="sq"><svg width="22" height="22" fill="none" stroke="#ca8a04" viewBox="0 0 24 24"><rect x="2" y="5" width="20" height="14" rx="3"/><path d="M2 10h20"/></svg></div><span class="lbl">Wallet</span></div>
+    </div>
+
+    <!-- tab bar -->
+    <div class="tabbar">
+      <span class="tab active"><svg width="22" height="22" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="m3 10 9-7 9 7v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>Home</span>
+      <span class="tab"><svg width="22" height="22" fill="none" stroke="currentColor" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg></span>
+      <span class="tab"><svg width="22" height="22" fill="none" stroke="currentColor" viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="18" rx="2"/><path d="m10 8 5 4-5 4z"/></svg></span>
+      <span class="tab" style="position:relative"><svg width="22" height="22" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4zM3 6h18M16 10a4 4 0 0 1-8 0"/></svg><span class="badge" style="position:absolute;top:4px;right:4px">2</span></span>
+      <span class="tab"><svg width="22" height="22" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg></span>
+    </div>
+  </div>
+</div>
+<div class="caption">Customer · Home</div>
+</div></body></html>

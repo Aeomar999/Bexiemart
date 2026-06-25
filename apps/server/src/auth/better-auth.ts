@@ -10,15 +10,34 @@ import type { PrismaClient } from "@prisma/client";
 import * as nodemailer from "nodemailer";
 import { dash, sentinel } from "@better-auth/infra";
 
+const smtpPort = parseInt(process.env.SMTP_PORT || "465", 10);
 const transporter = nodemailer.createTransport({
   host: process.env.SMTP_HOST || "smtp.gmail.com",
-  port: parseInt(process.env.SMTP_PORT || "465", 10),
-  secure: true, // true for 465, false for other ports
+  port: smtpPort,
+  secure: smtpPort === 465, // true for 465 (implicit TLS), false for 587 (STARTTLS)
   auth: {
     user: process.env.SMTP_USER,
     pass: process.env.SMTP_PASS,
   },
+  // Reuse connections instead of opening a fresh TLS handshake per email.
+  // Gmail throttles new connections, so pooling removes the per-send latency
+  // and the connection timeouts that caused verification emails to silently fail.
+  pool: true,
+  maxConnections: 3,
+  maxMessages: 100,
+  connectionTimeout: 10_000, // fail fast instead of hanging on a stalled connection
+  greetingTimeout: 10_000,
+  socketTimeout: 20_000,
 });
+
+// Surface SMTP misconfiguration at startup instead of discovering it only when
+// a fire-and-forget sendMail rejects into a swallowed .catch().
+transporter.verify().then(
+  () => {
+    if (isDev) console.log("SMTP transporter verified and ready");
+  },
+  (error) => console.error("SMTP transporter verification failed:", error?.message || error)
+);
 
 export function createAuth(prisma: PrismaClient) {
   return betterAuth({
@@ -88,7 +107,13 @@ export function createAuth(prisma: PrismaClient) {
     emailVerification: {
       sendOnSignUp: true,
       sendVerificationEmail: async ({ user, url, token }, request) => {
-        const webUrl = url.replace("localhost", "172.20.10.2");
+        // In production BETTER_AUTH_URL is the public domain, so the link is used
+        // as-is. In local dev "localhost" is unreachable from a physical device on
+        // the LAN; set DEV_EMAIL_HOST (e.g. your machine's LAN IP) to rewrite it.
+        const webUrl =
+          isDev && process.env.DEV_EMAIL_HOST
+            ? url.replace("localhost", process.env.DEV_EMAIL_HOST)
+            : url;
         const appUrl = `bexiemart://verify-email?token=${token}`;
         if (isDev) {
           console.log(

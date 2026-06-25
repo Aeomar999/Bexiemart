@@ -69,7 +69,7 @@ describe("EscrowService", () => {
     prisma.$transaction.mockImplementation((cb: any, opts?: any) => cb(prisma));
     prisma.wallet.findUnique.mockResolvedValue(null);
     prisma.vendorProfile.findUnique.mockResolvedValue(null);
-    service = new EscrowService(prisma as any);
+    service = new EscrowService(prisma as any, { emitDisputeCreated: jest.fn() } as any);
   });
 
   describe("list", () => {

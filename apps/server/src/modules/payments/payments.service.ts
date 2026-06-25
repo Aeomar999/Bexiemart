@@ -2,6 +2,7 @@ import { Injectable, NotFoundException, BadRequestException, Inject } from "@nes
 import { ConfigService } from "@nestjs/config";
 import { PrismaService } from "../../prisma/prisma.service";
 import { InitializePaymentDto } from "./dto/initialize-payment.dto";
+import { DeliveryService } from "../delivery/delivery.service";
 import { WINSTON_MODULE_PROVIDER } from "nest-winston";
 import { Logger } from "winston";
 
@@ -13,12 +14,33 @@ export class PaymentsService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly config: ConfigService,
+    private readonly delivery: DeliveryService,
     @Inject(WINSTON_MODULE_PROVIDER) private readonly logger: Logger
   ) {
     this.paystackSecret = this.config.get<string>("PAYSTACK_SECRET_KEY") ?? "";
   }
 
-  private async paystackPost(path: string, data: any, retries = 2) {
+  /**
+   * Create the delivery leg for a paid order, outside the payment transaction
+   * (it makes a maps API call). Best-effort: a failure here must never roll
+   * back a successful payment, so errors are logged and swallowed.
+   */
+  private async dispatchDelivery(orderId: string) {
+    try {
+      await this.delivery.createJobForOrder(orderId);
+    } catch (err) {
+      this.logger.error("Failed to create delivery job for paid order", {
+        orderId,
+        error: (err as Error).message,
+      });
+    }
+  }
+
+  // NOTE: callers generate a stable `reference` before invoking these, so a
+  // retried POST (e.g. charge_authorization) is deduped by Paystack and can't
+  // double-charge. Only retry transient failures — 4xx responses are terminal
+  // and retrying them just burns the backoff window.
+  private async paystackPost(path: string, data: any, retries = 2): Promise<any> {
     for (let i = 0; i <= retries; i++) {
       try {
         const res = await fetch(`${this.paystackApi}${path}`, {
@@ -29,27 +51,84 @@ export class PaymentsService {
           },
           body: JSON.stringify(data),
         });
-        if (!res.ok && i < retries) throw new Error("Paystack request failed");
-        return res.json();
+        if (res.status >= 500 && i < retries) throw new Error(`Paystack ${res.status}`);
+        return await res.json();
       } catch (err) {
         if (i === retries) throw err;
         await new Promise((resolve) => setTimeout(resolve, 1000 * Math.pow(2, i))); // exponential backoff
       }
     }
+    throw new Error("Paystack request failed after retries");
   }
 
-  private async paystackGet(path: string, retries = 2) {
+  private async paystackGet(path: string, retries = 2): Promise<any> {
     for (let i = 0; i <= retries; i++) {
       try {
         const res = await fetch(`${this.paystackApi}${path}`, {
           headers: { Authorization: `Bearer ${this.paystackSecret}` },
         });
-        if (!res.ok && i < retries) throw new Error("Paystack request failed");
-        return res.json();
+        if (res.status >= 500 && i < retries) throw new Error(`Paystack ${res.status}`);
+        return await res.json();
       } catch (err) {
         if (i === retries) throw err;
         await new Promise((resolve) => setTimeout(resolve, 1000 * Math.pow(2, i)));
       }
+    }
+    throw new Error("Paystack request failed after retries");
+  }
+
+  /**
+   * Creates one HELD escrow per vendor for a paid order, splitting the
+   * merchandise total by vendor and deducting the platform commission.
+   *
+   * Must be called inside a transaction. It is idempotent: if escrows already
+   * exist for the order (e.g. webhook and verify both fired) it does nothing,
+   * so funds are never double-held. Platform-owned items (no vendorId) are not
+   * escrowed — the platform keeps that money directly.
+   */
+  private async createEscrowsForOrder(tx: any, order: { id: string; userId: string }) {
+    const existing = await tx.escrow.count({ where: { orderId: order.id } });
+    if (existing > 0) return;
+
+    const buyerWallet = await tx.wallet.findUnique({ where: { userId: order.userId } });
+    if (!buyerWallet) return;
+
+    const items = await tx.orderItem.findMany({
+      where: { orderId: order.id },
+      include: { product: { select: { vendorId: true } } },
+    });
+
+    const config = await tx.platformConfig.findFirst();
+    const commissionRate = config ? Number(config.commissionRate) : 0.05;
+
+    // Sum each vendor's merchandise total (skip platform-owned items).
+    const vendorTotals = new Map<string, number>();
+    for (const item of items) {
+      const vendorId = item.product?.vendorId;
+      if (!vendorId) continue;
+      vendorTotals.set(vendorId, (vendorTotals.get(vendorId) ?? 0) + Number(item.total));
+    }
+
+    for (const [vendorId, amount] of vendorTotals) {
+      const commission = Math.round(amount * commissionRate * 100) / 100;
+      const netAmount = Math.round((amount - commission) * 100) / 100;
+      // upsert against the (orderId, vendorId) unique constraint so a webhook
+      // and a verify() firing concurrently can never create a second HELD escrow
+      // for the same vendor — the count-based guard above is not atomic and a
+      // double-hold would double-pay the vendor on release.
+      await tx.escrow.upsert({
+        where: { orderId_vendorId: { orderId: order.id, vendorId } },
+        update: {},
+        create: {
+          orderId: order.id,
+          vendorId,
+          buyerWalletId: buyerWallet.id,
+          amount,
+          commission,
+          netAmount,
+          status: "HELD",
+        },
+      });
     }
   }
 
@@ -102,9 +181,17 @@ export class PaymentsService {
 
     const order = await this.prisma.order.findFirst({
       where: { paystackRef: reference, userId },
+      include: { payment: true },
     });
 
     if (!order) throw new NotFoundException("Order not found");
+
+    // Idempotency: if the webhook already marked this paid, don't re-run the
+    // upsert/escrow path. Mirrors the guard in handleWebhook so the two callers
+    // racing on the same reference don't both process the success.
+    if (order.paymentStatus === "success" || order.payment?.status === "success") {
+      return { status: "success", reference, orderId: order.id };
+    }
 
     const paymentStatus = data.status === "success" ? "success" : "failed";
 
@@ -138,7 +225,15 @@ export class PaymentsService {
           paidAt: data.paidAt ? new Date(data.paidAt) : null,
         },
       });
+
+      if (paymentStatus === "success") {
+        // Hold funds in per-vendor escrow with platform commission deducted.
+        // Idempotent, so this is safe even if the webhook already ran.
+        await this.createEscrowsForOrder(tx, order);
+      }
     });
+
+    if (paymentStatus === "success") await this.dispatchDelivery(order.id);
 
     return {
       status: paymentStatus,
@@ -262,22 +357,11 @@ export class PaymentsService {
         },
       });
 
-      // Create Escrow since order is paid
-      const adminWallet = await tx.wallet.findFirst(); // In real app, identify the central admin or just buyer wallet
-      // But according to existing Escrow setup, it just needs buyerWalletId
-      const buyerWallet = await tx.wallet.findUnique({ where: { userId: order.userId } });
-      if (buyerWallet) {
-        await tx.escrow.create({
-          data: {
-            orderId: order.id,
-            buyerWalletId: buyerWallet.id,
-            amount: order.total,
-            netAmount: order.total, // Before commission is calculated
-            status: "HELD",
-          },
-        });
-      }
+      // Hold funds in per-vendor escrow with platform commission deducted.
+      await this.createEscrowsForOrder(tx, order);
     });
+
+    await this.dispatchDelivery(order.id);
 
     return { received: true };
   }
@@ -348,19 +432,11 @@ export class PaymentsService {
           },
         });
 
-        const buyerWallet = await tx.wallet.findUnique({ where: { userId } });
-        if (buyerWallet) {
-          await tx.escrow.create({
-            data: {
-              orderId: order.id,
-              buyerWalletId: buyerWallet.id,
-              amount: order.total,
-              netAmount: order.total,
-              status: "HELD",
-            },
-          });
-        }
+        // Hold funds in per-vendor escrow with platform commission deducted.
+        await this.createEscrowsForOrder(tx, order);
       });
+
+      await this.dispatchDelivery(order.id);
 
       return { status: "success", reference, orderId: order.id };
     }

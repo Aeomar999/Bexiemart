@@ -1,216 +1,210 @@
-import { View, Text, Pressable, Linking } from "react-native";
-import { useRouter } from "expo-router";
+import { View, Text, Pressable, Linking, ActivityIndicator } from "react-native";
+import { useRouter, useLocalSearchParams } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { BackButton } from "@/components/ui/BackButton";
 import { Icon } from "@/components/ui/Icon";
-import { useRiderStore } from "@/lib/stores/rider-store";
 import { usePopupStore } from "@/lib/stores/popup-store";
-import { useEffect, useState, useRef } from "react";
-import MapView, { Marker, Polyline, PROVIDER_DEFAULT } from "react-native-maps";
+import { useEffect, useState, useRef, useMemo } from "react";
+import { useQuery } from "@tanstack/react-query";
+import MapView, { Marker, Polyline, PROVIDER_GOOGLE } from "react-native-maps";
 import { darkMapStyle } from "@/lib/constants/map-style";
+import { deliveryApi, DeliveryJob } from "@/lib/api/delivery";
+import { deliverySocketService } from "@/lib/delivery-socket";
+import { decodePolyline } from "@/lib/maps";
+
+type Coords = { latitude: number; longitude: number };
+
+// Map server lifecycle status → customer-facing summary.
+const STATUS_LABEL: Record<string, string> = {
+  PENDING: "Searching...",
+  ASSIGNED: "Rider assigned",
+  EN_ROUTE_PICKUP: "Heading to pickup",
+  ARRIVED_PICKUP: "At pickup",
+  PICKED_UP: "Picked up",
+  EN_ROUTE_DROPOFF: "On the way",
+  DELIVERED: "Delivered",
+  CANCELLED: "Cancelled",
+};
+
+const isActive = (status: string) => !["DELIVERED", "CANCELLED", "EXPIRED"].includes(status);
 
 export default function TrackOrderScreen() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
-
-  const { activeRide, updateStatus, cancelRide } = useRiderStore();
+  const { id } = useLocalSearchParams<{ id: string }>();
   const showPopup = usePopupStore((s) => s.showPopup);
-
-  const [timeRemaining, setTimeRemaining] = useState(14);
   const mapRef = useRef<MapView>(null);
 
-  // Starting Coordinates
-  const dropoffCoords = { latitude: 5.6037, longitude: -0.187 };
-  const [riderCoords, setRiderCoords] = useState({ latitude: 5.6145, longitude: -0.2057 });
+  const [driverCoords, setDriverCoords] = useState<Coords | null>(null);
+  const [liveStatus, setLiveStatus] = useState<string | null>(null);
+  const [actioning, setActioning] = useState(false);
 
-  // Simulation effect for a live tracking feel
+  const {
+    data: job,
+    isLoading,
+    refetch,
+  } = useQuery({
+    queryKey: ["delivery", "job", id],
+    queryFn: async () => {
+      const { data } = await deliveryApi.getJob(id);
+      return data as DeliveryJob;
+    },
+    enabled: !!id,
+    refetchInterval: (q) =>
+      q.state.data && isActive((q.state.data as DeliveryJob).status) ? 8000 : false,
+  });
+
+  const status = liveStatus ?? job?.status ?? "PENDING";
+
+  // Live socket subscription for driver position + status changes.
   useEffect(() => {
-    if (!activeRide) return;
+    if (!id) return;
+    deliverySocketService.connect();
+    deliverySocketService.subscribeJob(id);
+    const socket = deliverySocketService.get();
 
-    let timer: number;
-
-    if (activeRide.status === "searching") {
-      timer = setTimeout(() => {
-        updateStatus("on_the_way", {
-          driverName: "Kwame Osei",
-          driverVehicle: `Honda ${activeRide.riderType} • GW-4521`,
-          driverRating: 4.9,
-        });
-        showPopup({
-          type: "success",
-          title: "Rider Found",
-          message: `${activeRide.riderType} driver Kwame Osei is on the way!`,
-        });
-      }, 5000);
-    } else if (activeRide.status === "on_the_way") {
-      timer = setInterval(() => {
-        setTimeRemaining((prev) => {
-          if (prev <= 1) {
-            clearInterval(timer);
-            return 0;
-          }
-          return prev - 1;
-        });
-
-        // Move rider slightly closer to dropoff
-        setRiderCoords((prevCoords) => {
-          const newCoords = {
-            latitude: prevCoords.latitude + (dropoffCoords.latitude - prevCoords.latitude) * 0.1,
-            longitude:
-              prevCoords.longitude + (dropoffCoords.longitude - prevCoords.longitude) * 0.1,
-          };
-          // Animate map camera to keep both in view
-          mapRef.current?.animateToRegion(
-            {
-              latitude: (newCoords.latitude + dropoffCoords.latitude) / 2,
-              longitude: (newCoords.longitude + dropoffCoords.longitude) / 2,
-              latitudeDelta: Math.abs(newCoords.latitude - dropoffCoords.latitude) * 2 + 0.01,
-              longitudeDelta: Math.abs(newCoords.longitude - dropoffCoords.longitude) * 2 + 0.01,
-            },
-            1000
-          );
-          return newCoords;
-        });
-      }, 5000); // decrement every 5 seconds for fast demo
-    }
+    const onLocation = (data: { jobId: string; lat: number; lng: number }) => {
+      if (data.jobId === id) setDriverCoords({ latitude: data.lat, longitude: data.lng });
+    };
+    const onUpdate = (data: { id: string; status: string }) => {
+      if (data.id === id) {
+        setLiveStatus(data.status);
+        refetch();
+      }
+    };
+    socket?.on("driver_location", onLocation);
+    socket?.on("job_update", onUpdate);
 
     return () => {
-      if (timer) clearInterval(timer);
+      socket?.off("driver_location", onLocation);
+      socket?.off("job_update", onUpdate);
+      deliverySocketService.unsubscribeJob(id);
     };
-  }, [activeRide?.status]);
+  }, [id, refetch]);
 
-  // Watch for time remaining to arrive
+  const pickup = useMemo<Coords | null>(
+    () => (job ? { latitude: job.pickupLat, longitude: job.pickupLng } : null),
+    [job]
+  );
+  const dropoff = useMemo<Coords | null>(
+    () => (job ? { latitude: job.dropoffLat, longitude: job.dropoffLng } : null),
+    [job]
+  );
+  const routeCoords = useMemo(() => decodePolyline(job?.routePolyline), [job?.routePolyline]);
+
+  // Driver marker: prefer live socket, fall back to last known dispatcher fix.
+  const driver =
+    driverCoords ??
+    (job?.dispatcher?.lastLatitude != null && job?.dispatcher?.lastLongitude != null
+      ? { latitude: job.dispatcher.lastLatitude, longitude: job.dispatcher.lastLongitude }
+      : null);
+
+  // Keep both endpoints framed.
   useEffect(() => {
-    if (activeRide?.status === "on_the_way" && timeRemaining <= 0) {
-      updateStatus("arrived");
-      showPopup({ type: "success", title: "Rider Arrived", message: "Your rider is outside!" });
+    const pts = [pickup, dropoff, driver].filter(Boolean) as Coords[];
+    if (pts.length >= 2) {
+      setTimeout(() => {
+        mapRef.current?.fitToCoordinates(pts, {
+          edgePadding: { top: 120, right: 60, bottom: 400, left: 60 },
+          animated: true,
+        });
+      }, 500);
     }
-  }, [timeRemaining, activeRide?.status]);
+  }, [pickup?.latitude, dropoff?.latitude, driver?.latitude]);
 
-  if (!activeRide) {
+  const handleCancel = async () => {
+    if (!id) return;
+    setActioning(true);
+    try {
+      await deliveryApi.cancel(id);
+      showPopup({ type: "error", title: "Ride Cancelled", message: "Your request was cancelled." });
+      router.replace("/(customer)/(tabs)/(home)");
+    } catch {
+      showPopup({
+        type: "error",
+        title: "Could not cancel",
+        message: "The ride may be in progress.",
+      });
+    } finally {
+      setActioning(false);
+    }
+  };
+
+  const handleConfirm = async () => {
+    if (!id) return;
+    setActioning(true);
+    try {
+      await deliveryApi.confirm(id);
+      showPopup({
+        type: "success",
+        title: "Delivery confirmed",
+        message: "Thanks! Your rider has been paid.",
+      });
+      router.replace("/(customer)/(tabs)/(home)");
+    } catch {
+      showPopup({ type: "error", title: "Could not confirm", message: "Please try again." });
+    } finally {
+      setActioning(false);
+    }
+  };
+
+  if (isLoading || !job) {
     return (
-      <View className="flex-1 bg-background">
-        <View
-          className="px-5 pt-4 pb-4 bg-card border-b border-border"
-          style={{ paddingTop: insets.top + 12 }}
-        >
-          <View className="flex-row items-center gap-3">
-            <BackButton />
-            <Text className="text-[20px] font-heading font-black text-foreground">Track Order</Text>
-          </View>
-        </View>
-        <View className="flex-1 items-center justify-center p-5">
-          <View className="w-20 h-20 bg-secondary rounded-full items-center justify-center mb-6">
-            <Icon name="truck" size={32} color="#94a3b8" />
-          </View>
-          <Text className="text-[20px] font-heading font-black text-foreground mb-2">
-            No Active Ride
-          </Text>
-          <Text className="text-[15px] font-body text-muted-foreground text-center mb-8">
-            You don't have any active deliveries or rides currently in progress.
-          </Text>
-
-          <Pressable
-            className="bg-primary px-6 py-3 rounded-full"
-            onPress={() => router.replace("/(customer)/book-rider")}
-          >
-            <Text className="text-white font-bold text-[16px]">Book a Rider</Text>
-          </Pressable>
-        </View>
+      <View className="flex-1 bg-background items-center justify-center">
+        <ActivityIndicator color="var(--color-primary)" />
       </View>
     );
   }
 
-  const handleCancel = () => {
-    cancelRide();
-    showPopup({
-      type: "error",
-      title: "Ride Cancelled",
-      message: "Your request was cancelled successfully.",
-    });
-    router.replace("/(customer)/(tabs)/(home)");
-  };
-
-  const getStatusColor = () => {
-    switch (activeRide.status) {
-      case "searching":
-        return "bg-orange-500";
-      case "on_the_way":
-        return "bg-emerald-500";
-      case "arrived":
-        return "bg-primary";
-      default:
-        return "bg-background0";
-    }
-  };
-
-  const getStatusText = () => {
-    switch (activeRide.status) {
-      case "searching":
-        return "Searching...";
-      case "on_the_way":
-        return "On The Way";
-      case "arrived":
-        return "Arrived";
-      default:
-        return "Unknown";
-    }
-  };
+  const canCancel = ["PENDING", "ASSIGNED", "EN_ROUTE_PICKUP", "ARRIVED_PICKUP"].includes(status);
+  const delivered = status === "DELIVERED";
 
   return (
     <View className="flex-1 bg-background">
-      {/* Real Map Background */}
       <MapView
         ref={mapRef}
         style={{ width: "100%", height: "100%", position: "absolute" }}
-        provider={PROVIDER_DEFAULT}
+        provider={PROVIDER_GOOGLE}
         customMapStyle={darkMapStyle}
         initialRegion={{
-          latitude: (riderCoords.latitude + dropoffCoords.latitude) / 2,
-          longitude: (riderCoords.longitude + dropoffCoords.longitude) / 2,
+          latitude: job.pickupLat,
+          longitude: job.pickupLng,
           latitudeDelta: 0.05,
           longitudeDelta: 0.05,
         }}
       >
-        {/* Route Line */}
-        {activeRide.status !== "searching" && (
-          <Polyline
-            coordinates={[riderCoords, dropoffCoords]}
-            strokeColor="var(--color-primary)" // brand-600
-            strokeWidth={4}
-            lineDashPattern={[10, 10]}
-          />
+        {routeCoords.length > 1 ? (
+          <Polyline coordinates={routeCoords} strokeColor="var(--color-primary)" strokeWidth={4} />
+        ) : (
+          pickup &&
+          dropoff && (
+            <Polyline
+              coordinates={[pickup, dropoff]}
+              strokeColor="var(--color-primary)"
+              strokeWidth={4}
+              lineDashPattern={[10, 10]}
+            />
+          )
         )}
 
-        {/* Drop-off Marker */}
-        <Marker coordinate={dropoffCoords} anchor={{ x: 0.5, y: 0.5 }}>
-          <View className="items-center">
-            <View className="w-6 h-6 bg-error rounded-full items-center justify-center border-2 border-white shadow-sm">
+        {pickup && (
+          <Marker coordinate={pickup} anchor={{ x: 0.5, y: 0.5 }}>
+            <View className="w-6 h-6 bg-error rounded-full items-center justify-center border-2 border-white">
               <View className="w-2 h-2 bg-white rounded-full" />
             </View>
-            <View className="bg-white px-2 py-0.5 rounded mt-1 shadow-sm">
-              <Text className="text-[10px] font-bold text-gray-900">Drop-off</Text>
+          </Marker>
+        )}
+        {dropoff && (
+          <Marker coordinate={dropoff} anchor={{ x: 0.5, y: 0.5 }}>
+            <View className="w-6 h-6 bg-emerald-500 rounded-full items-center justify-center border-2 border-white">
+              <View className="w-2 h-2 bg-white rounded-full" />
             </View>
-          </View>
-        </Marker>
-
-        {/* Rider Marker */}
-        {activeRide.status !== "searching" && (
-          <Marker coordinate={riderCoords} anchor={{ x: 0.5, y: 0.5 }}>
-            <View className="items-center">
-              <View className="w-10 h-10 bg-primary rounded-full items-center justify-center border-4 border-white shadow-sm">
-                <Icon
-                  name={
-                    activeRide.riderType === "Motorbike"
-                      ? "truck"
-                      : activeRide.riderType === "Car"
-                        ? "car"
-                        : "package"
-                  }
-                  size={16}
-                  color="#fff"
-                />
-              </View>
+          </Marker>
+        )}
+        {driver && (
+          <Marker coordinate={driver} anchor={{ x: 0.5, y: 0.5 }}>
+            <View className="w-10 h-10 bg-primary rounded-full items-center justify-center border-4 border-white">
+              <Icon name="truck" size={16} color="#fff" />
             </View>
           </Marker>
         )}
@@ -226,60 +220,52 @@ export default function TrackOrderScreen() {
             <BackButton onPress={() => router.replace("/(customer)/(tabs)/(home)")} />
             <Text className="text-[20px] font-heading font-black text-foreground">Track Order</Text>
           </View>
-
-          <Pressable
-            style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
-            className="h-10 px-4 rounded-full bg-rose-50 flex-row items-center justify-center border border-rose-200 gap-1.5"
-            onPress={handleCancel}
-          >
-            <Icon name="x" size={14} color="#ef4444" />
-            <Text className="text-[13px] font-bold text-error font-heading">Cancel</Text>
-          </Pressable>
+          {canCancel && (
+            <Pressable
+              className="h-10 px-4 rounded-full bg-rose-50 flex-row items-center justify-center border border-rose-200 gap-1.5"
+              onPress={handleCancel}
+              disabled={actioning}
+            >
+              <Icon name="x" size={14} color="#ef4444" />
+              <Text className="text-[13px] font-bold text-error font-heading">Cancel</Text>
+            </Pressable>
+          )}
         </View>
       </View>
 
-      {/* Bottom Tracking Sheet */}
+      {/* Bottom Sheet */}
       <View className="absolute bottom-0 left-0 right-0">
         <View
-          className="bg-card rounded-t-[32px] p-6 border-t border-border shadow-sm"
+          className="bg-card rounded-t-[32px] p-6 border-t border-border"
           style={{ paddingBottom: Math.max(insets.bottom, 24) }}
         >
           <View className="w-12 h-1.5 bg-secondary rounded-full mx-auto mb-6" />
 
-          {/* Status Header */}
           <View className="flex-row justify-between items-end mb-6">
             <View>
-              {activeRide.status === "searching" ? (
-                <Text className="text-[24px] font-heading font-black text-foreground">
-                  Locating...
-                </Text>
-              ) : activeRide.status === "arrived" ? (
-                <Text className="text-[24px] font-heading font-black text-foreground">Arrived</Text>
-              ) : (
-                <Text className="text-[28px] font-heading font-black text-foreground">
-                  {timeRemaining} mins
-                </Text>
-              )}
+              <Text className="text-[24px] font-heading font-black text-foreground">
+                {STATUS_LABEL[status] ?? status}
+              </Text>
               <Text className="text-[15px] font-body text-muted-foreground mt-1">
-                {activeRide.status === "searching"
-                  ? "Finding nearest rider"
-                  : "Estimated arrival time"}
+                {status === "PENDING"
+                  ? "Finding the nearest rider"
+                  : delivered
+                    ? "Confirm to release payment"
+                    : `${job.vehicleType} • GHS ${Number(job.customerFee).toFixed(2)}`}
               </Text>
             </View>
-            <View
-              className={`px-3 py-1.5 rounded-md flex-row items-center gap-1.5 ${activeRide.status === "searching" ? "bg-orange-50 border border-orange-100" : "bg-emerald-50 border border-emerald-100"}`}
-            >
-              <View className={`w-2 h-2 rounded-full ${getStatusColor()}`} />
-              <Text
-                className={`text-[12px] font-bold uppercase tracking-wider ${activeRide.status === "searching" ? "text-orange-600" : "text-emerald-600"}`}
-              >
-                {getStatusText()}
+            <View className="px-3 py-1.5 rounded-md flex-row items-center gap-1.5 bg-primary-subtle border border-border">
+              <View
+                className={`w-2 h-2 rounded-full ${isActive(status) ? "bg-emerald-500" : "bg-slate-400"}`}
+              />
+              <Text className="text-[12px] font-bold uppercase tracking-wider text-primary">
+                {job.jobNumber}
               </Text>
             </View>
           </View>
 
-          {/* Rider Info Card */}
-          {activeRide.status !== "searching" ? (
+          {/* Rider Info */}
+          {job.dispatcher ? (
             <View className="flex-row items-center justify-between bg-background p-4 rounded-[24px] border border-border mb-6">
               <View className="flex-row items-center gap-4">
                 <View className="w-12 h-12 rounded-full bg-secondary items-center justify-center border border-border">
@@ -287,48 +273,19 @@ export default function TrackOrderScreen() {
                 </View>
                 <View>
                   <Text className="text-[16px] font-bold text-foreground font-heading">
-                    {activeRide.driverName}
+                    {job.dispatcher.user.name}
                   </Text>
                   <Text className="text-[13px] text-muted-foreground font-body">
-                    {activeRide.driverVehicle}
+                    {job.dispatcher.vehicleType} • {job.dispatcher.plateNumber}
                   </Text>
-                  <View className="flex-row items-center gap-1 mt-1">
-                    <Icon name="star" size={12} color="#f59e0b" />
-                    <Text className="text-[12px] font-bold text-muted-foreground">
-                      {activeRide.driverRating}
-                    </Text>
-                  </View>
                 </View>
               </View>
-              <View className="flex-row gap-2">
-                <Pressable
-                  style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
-                  className="w-10 h-10 rounded-full bg-primary-subtle items-center justify-center border border-border"
-                  onPress={() => {
-                    router.push({
-                      pathname: "/(customer)/chats",
-                      params: { contact: activeRide.driverName, role: "Rider" },
-                    });
-                  }}
-                >
-                  <Icon name="message-circle" size={18} color="var(--color-primary)" />
-                </Pressable>
-                <Pressable
-                  style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
-                  className="w-10 h-10 rounded-full bg-emerald-50 items-center justify-center border border-emerald-100"
-                  onPress={() => {
-                    Linking.openURL("tel:0541234567").catch(() =>
-                      showPopup({
-                        type: "error",
-                        title: "Call failed",
-                        message: "Phone app not available",
-                      })
-                    );
-                  }}
-                >
-                  <Icon name="phone" size={18} color="#059669" />
-                </Pressable>
-              </View>
+              <Pressable
+                className="w-10 h-10 rounded-full bg-emerald-50 items-center justify-center border border-emerald-100"
+                onPress={() => Linking.openURL("tel:0541234567").catch(() => {})}
+              >
+                <Icon name="phone" size={18} color="#059669" />
+              </Pressable>
             </View>
           ) : (
             <View className="flex-row items-center justify-center bg-background p-6 rounded-[24px] border border-border mb-6 border-dashed">
@@ -338,20 +295,19 @@ export default function TrackOrderScreen() {
             </View>
           )}
 
-          {/* Order Details Snippet */}
-          <View className="flex-row items-start gap-4">
-            <View className="w-12 h-12 rounded-[16px] bg-primary-subtle items-center justify-center border border-border">
-              <Icon name="package" size={20} color="var(--color-primary)" />
-            </View>
-            <View className="flex-1">
-              <Text className="text-[14px] font-bold text-foreground font-heading">
-                Ride {activeRide.id}
-              </Text>
-              <Text className="text-[13px] text-muted-foreground font-body mt-0.5">
-                {activeRide.pickup} to {activeRide.dropoff}
-              </Text>
-            </View>
-          </View>
+          {delivered && (
+            <Pressable
+              className="bg-primary w-full h-14 rounded-full items-center justify-center"
+              onPress={handleConfirm}
+              disabled={actioning}
+            >
+              {actioning ? (
+                <ActivityIndicator color="#fff" />
+              ) : (
+                <Text className="text-white font-bold text-[16px]">Confirm Delivery</Text>
+              )}
+            </Pressable>
+          )}
         </View>
       </View>
     </View>

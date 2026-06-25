@@ -24,9 +24,7 @@ describe("FoodController", () => {
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       controllers: [FoodController],
-      providers: [
-        { provide: FoodService, useValue: mockService },
-      ],
+      providers: [{ provide: FoodService, useValue: mockService }],
     })
       .overrideGuard(AuthGuard)
       .useValue({ canActivate: jest.fn(() => true) })
@@ -136,8 +134,9 @@ describe("FoodController", () => {
       mockService.checkout.mockResolvedValue(result);
       const req = { user: { id: "user-1" } };
 
-      expect(await controller.checkout(req)).toEqual(result);
-      expect(mockService.checkout).toHaveBeenCalledWith("user-1");
+      const dto = { deliveryLat: 5.6, deliveryLng: -0.2 } as any;
+      expect(await controller.checkout(req, dto)).toEqual(result);
+      expect(mockService.checkout).toHaveBeenCalledWith("user-1", dto);
     });
   });
 
