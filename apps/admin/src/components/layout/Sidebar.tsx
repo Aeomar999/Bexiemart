@@ -18,6 +18,7 @@ import {
   Wrench,
   Megaphone,
   ShieldAlert,
+  ShieldCheck,
   Ticket,
   ChevronDown,
   ChevronRight
@@ -25,12 +26,14 @@ import {
 import { cn } from "../../lib/utils";
 import { useUiStore } from "../../lib/stores/ui-store";
 import { useAuthStore } from "../../lib/stores/auth-store";
+import { useUser } from "../../lib/hooks/use-auth";
 
 type NavItem = {
   name: string;
   href?: string;
   icon: any;
   badge?: number | string;
+  superAdminOnly?: boolean;
   subItems?: { name: string; href: string }[];
 };
 
@@ -109,6 +112,7 @@ const navigationConfig: NavGroup[] = [
   {
     group: "System",
     items: [
+      { name: "Admins", href: "/admins", icon: ShieldCheck, superAdminOnly: true },
       { name: "Settings", href: "/settings", icon: Settings },
     ]
   }
@@ -118,6 +122,8 @@ export function Sidebar() {
   const pathname = usePathname();
   const { isSidebarOpen, toggleSidebar } = useUiStore();
   const logout = useAuthStore((state) => state.logout);
+  const { data: me } = useUser();
+  const isSuperAdmin = !!me?.isSuperAdmin;
 
   const [expandedItems, setExpandedItems] = useState<Record<string, boolean>>({});
 
@@ -176,7 +182,9 @@ export function Sidebar() {
             )}
 
             <div className="space-y-1">
-              {group.items.map((item) => {
+              {group.items
+                .filter((item) => !item.superAdminOnly || isSuperAdmin)
+                .map((item) => {
                 const isActive = item.href ? (pathname === item.href || (item.href !== "/" && pathname.startsWith(`${item.href}/`))) : false;
                 const isChildActive = item.subItems?.some(sub => pathname === sub.href || pathname.startsWith(`${sub.href}/`));
                 const isExpanded = expandedItems[item.name];

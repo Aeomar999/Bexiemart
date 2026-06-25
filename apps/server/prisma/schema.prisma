@@ -15,6 +15,9 @@ model User {
   emailVerified       Boolean  @default(false)
   image               String?
   role                UserRole @default(CUSTOMER)
+  // Super admins are ADMINs with the extra privilege of managing the admin team
+  // (creating new admin accounts). Gated by SuperAdminGuard, not the role enum.
+  isSuperAdmin        Boolean  @default(false)
   onboardingCompleted Boolean  @default(false)
   phoneNumber         String?  @unique
   phoneNumberVerified Boolean  @default(false)

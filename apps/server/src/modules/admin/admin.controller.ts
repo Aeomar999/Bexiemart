@@ -3,8 +3,10 @@ import { Throttle } from "@nestjs/throttler";
 import { ApiTags, ApiOperation, ApiBody, ApiBearerAuth } from "@nestjs/swagger";
 import { AuthGuard } from "../../guards/auth.guard";
 import { AdminGuard } from "../../guards/admin.guard";
+import { SuperAdminGuard } from "../../guards/super-admin.guard";
 import { AdminService } from "./admin.service";
 import { UpdateRoleDto } from "./dto/update-role.dto";
+import { CreateAdminDto } from "./dto/create-admin.dto";
 import { BanUserDto } from "./dto/ban-user.dto";
 import { UpdateConfigDto } from "./dto/update-config.dto";
 import { UpdateOrderStatusDto } from "./dto/update-order-status.dto";
@@ -57,6 +59,23 @@ export class AdminController {
   @Patch("users/:id/unban")
   unbanUser(@Param("id") id: string) {
     return this.adminService.unbanUser(id);
+  }
+
+  // ─── Admin Team (super-admin only) ───────────────────────────────────────────────
+
+  @ApiOperation({ summary: "List admin accounts (super admin only)" })
+  @UseGuards(SuperAdminGuard)
+  @Get("admins")
+  listAdmins() {
+    return this.adminService.listAdmins();
+  }
+
+  @ApiOperation({ summary: "Create a new admin account (super admin only)" })
+  @ApiBody({ type: CreateAdminDto })
+  @UseGuards(SuperAdminGuard)
+  @Post("admins")
+  createAdmin(@Body() body: CreateAdminDto) {
+    return this.adminService.createAdmin(body);
   }
 
   // ─── Vendors ───────────────────────────────────────────────────────────────────

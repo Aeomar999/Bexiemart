@@ -3,6 +3,7 @@ import { AdminController } from "./admin.controller";
 import { AdminService } from "./admin.service";
 import { AuthGuard } from "../../guards/auth.guard";
 import { AdminGuard } from "../../guards/admin.guard";
+import { SuperAdminGuard } from "../../guards/super-admin.guard";
 
 describe("AdminController", () => {
   let controller: AdminController;
@@ -12,6 +13,8 @@ describe("AdminController", () => {
     listUsers: jest.fn(),
     getUser: jest.fn(),
     updateUserRole: jest.fn(),
+    listAdmins: jest.fn(),
+    createAdmin: jest.fn(),
     listVendors: jest.fn(),
     approveVendor: jest.fn(),
     suspendVendor: jest.fn(),
@@ -35,6 +38,8 @@ describe("AdminController", () => {
       .overrideGuard(AuthGuard)
       .useValue({ canActivate: jest.fn(() => true) })
       .overrideGuard(AdminGuard)
+      .useValue({ canActivate: jest.fn(() => true) })
+      .overrideGuard(SuperAdminGuard)
       .useValue({ canActivate: jest.fn(() => true) })
       .compile();
 
@@ -86,6 +91,27 @@ describe("AdminController", () => {
 
       expect(await controller.updateUserRole("user-1", body)).toEqual(result);
       expect(mockService.updateUserRole).toHaveBeenCalledWith("user-1", "ADMIN");
+    });
+  });
+
+  describe("createAdmin", () => {
+    it("should call service.createAdmin with the body", async () => {
+      const body = { email: "a@b.com", name: "Admin", password: "supersecret" };
+      const result = { id: "u1", role: "ADMIN" };
+      mockService.createAdmin.mockResolvedValue(result);
+
+      expect(await controller.createAdmin(body)).toEqual(result);
+      expect(mockService.createAdmin).toHaveBeenCalledWith(body);
+    });
+  });
+
+  describe("listAdmins", () => {
+    it("should call service.listAdmins", async () => {
+      const result = [{ id: "u1" }];
+      mockService.listAdmins.mockResolvedValue(result);
+
+      expect(await controller.listAdmins()).toEqual(result);
+      expect(mockService.listAdmins).toHaveBeenCalledWith();
     });
   });
 
