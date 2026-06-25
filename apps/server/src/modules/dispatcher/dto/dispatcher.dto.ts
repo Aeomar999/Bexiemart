@@ -44,21 +44,12 @@ export class UpdateLocationDto {
   lng: number;
 }
 
-export class AcceptTaskDto {
-  @ApiProperty({ enum: ["ride", "delivery"] })
-  @IsIn(["ride", "delivery"])
-  type: "ride" | "delivery";
-}
-
 export class UpdateTaskStatusDto {
-  @ApiProperty()
-  @IsString()
-  @IsNotEmpty()
+  @ApiProperty({
+    enum: ["EN_ROUTE_PICKUP", "ARRIVED_PICKUP", "PICKED_UP", "EN_ROUTE_DROPOFF", "DELIVERED"],
+  })
+  @IsIn(["EN_ROUTE_PICKUP", "ARRIVED_PICKUP", "PICKED_UP", "EN_ROUTE_DROPOFF", "DELIVERED"])
   status: string;
-
-  @ApiProperty({ enum: ["ride", "delivery"] })
-  @IsIn(["ride", "delivery"])
-  type: "ride" | "delivery";
 }
 
 export class WithdrawEarningsDto {

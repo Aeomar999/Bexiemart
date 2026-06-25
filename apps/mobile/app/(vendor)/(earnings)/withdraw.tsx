@@ -431,9 +431,9 @@ export default function WithdrawFundsScreen() {
                 <Pressable
                   key={num}
                   className="w-[28%] items-center justify-center rounded-full bg-background border border-border shadow-sm shadow-sm/50"
-                  style={{ aspectRatio: 1 }}
                   style={({ pressed }) => [
                     {
+                      aspectRatio: 1,
                       transform: [{ scale: pressed ? 0.95 : 1 }],
                       backgroundColor: pressed ? "#e2e8f0" : "#f8fafc",
                     },
@@ -446,9 +446,9 @@ export default function WithdrawFundsScreen() {
               <View className="w-[28%]" style={{ aspectRatio: 1 }} />
               <Pressable
                 className="w-[28%] items-center justify-center rounded-full bg-background border border-border shadow-sm shadow-sm/50"
-                style={{ aspectRatio: 1 }}
                 style={({ pressed }) => [
                   {
+                    aspectRatio: 1,
                     transform: [{ scale: pressed ? 0.95 : 1 }],
                     backgroundColor: pressed ? "#e2e8f0" : "#f8fafc",
                   },
@@ -459,8 +459,7 @@ export default function WithdrawFundsScreen() {
               </Pressable>
               <Pressable
                 className="w-[28%] items-center justify-center rounded-full"
-                style={{ aspectRatio: 1 }}
-                style={({ pressed }) => [{ opacity: pressed ? 0.5 : 1 }]}
+                style={({ pressed }) => [{ aspectRatio: 1, opacity: pressed ? 0.5 : 1 }]}
                 onPress={handlePinDelete}
               >
                 <Icon name="delete" size={32} color="#64748b" />

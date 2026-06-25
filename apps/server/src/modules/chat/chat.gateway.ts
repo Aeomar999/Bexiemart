@@ -13,6 +13,7 @@ import { Logger, Inject } from "@nestjs/common";
 import { validate } from "class-validator";
 import { plainToInstance } from "class-transformer";
 import { AUTH } from "../../auth/auth.constants";
+import { wsCorsOptions } from "../../common/ws-cors";
 import { ChatService } from "./chat.service";
 import {
   WsPresenceSubscriptionDto,
@@ -26,7 +27,7 @@ interface AuthenticatedSocket extends Socket {
   userId?: string;
 }
 
-@WebSocketGateway({ namespace: "/chat" })
+@WebSocketGateway({ namespace: "/chat", cors: wsCorsOptions() })
 export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
   @WebSocketServer()
   server: Server;

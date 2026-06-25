@@ -10,6 +10,7 @@ import {
 } from "@nestjs/common";
 import { Request, Response } from "express";
 import { Prisma } from "@prisma/client";
+import * as Sentry from "@sentry/nestjs";
 
 @Catch()
 export class GlobalExceptionFilter implements ExceptionFilter {
@@ -71,9 +72,10 @@ export class GlobalExceptionFilter implements ExceptionFilter {
     } else if (exception instanceof Prisma.PrismaClientValidationError) {
       status = HttpStatus.BAD_REQUEST;
       message = "Invalid data provided";
-    } else if (exception instanceof Error) {
-      message = exception.message;
     }
+    // Any other error (including a generic Error) stays a 500 with the opaque
+    // "Internal server error" message. The real error/stack is logged below;
+    // it must never be returned to the client to avoid leaking internals.
 
     const correlationId = (request as any).correlationId;
 
@@ -87,6 +89,12 @@ export class GlobalExceptionFilter implements ExceptionFilter {
         exception instanceof Error ? exception.stack : "",
         { correlationId }
       );
+
+      // Report genuinely unexpected server errors (5xx) to Sentry. Client
+      // errors (4xx) are expected and are not worth alerting on.
+      if (status >= HttpStatus.INTERNAL_SERVER_ERROR) {
+        Sentry.captureException(exception, { tags: { correlationId } });
+      }
     }
 
     const body: Record<string, any> = {

@@ -1,5 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { foodApi } from "../api/food";
+import { foodApi, FoodCheckoutDto } from "../api/food";
 
 export function useFoodRestaurants(params?: { category?: string }) {
   return useQuery({
@@ -67,7 +67,7 @@ export function useClearFoodCart() {
 export function useFoodCheckout() {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: () => foodApi.checkout(),
+    mutationFn: (dto?: FoodCheckoutDto) => foodApi.checkout(dto),
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ["food", "cart"] });
       qc.invalidateQueries({ queryKey: ["food", "orders"] });

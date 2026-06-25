@@ -3,6 +3,7 @@ import { AdminController } from "./admin.controller";
 import { AdminService } from "./admin.service";
 import { AuthGuard } from "../../guards/auth.guard";
 import { AdminGuard } from "../../guards/admin.guard";
+import { SuperAdminGuard } from "../../guards/super-admin.guard";
 
 describe("AdminController", () => {
   let controller: AdminController;
@@ -12,6 +13,8 @@ describe("AdminController", () => {
     listUsers: jest.fn(),
     getUser: jest.fn(),
     updateUserRole: jest.fn(),
+    listAdmins: jest.fn(),
+    createAdmin: jest.fn(),
     listVendors: jest.fn(),
     approveVendor: jest.fn(),
     suspendVendor: jest.fn(),
@@ -30,13 +33,13 @@ describe("AdminController", () => {
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       controllers: [AdminController],
-      providers: [
-        { provide: AdminService, useValue: mockService },
-      ],
+      providers: [{ provide: AdminService, useValue: mockService }],
     })
       .overrideGuard(AuthGuard)
       .useValue({ canActivate: jest.fn(() => true) })
       .overrideGuard(AdminGuard)
+      .useValue({ canActivate: jest.fn(() => true) })
+      .overrideGuard(SuperAdminGuard)
       .useValue({ canActivate: jest.fn(() => true) })
       .compile();
 
@@ -58,7 +61,7 @@ describe("AdminController", () => {
       mockService.listUsers.mockResolvedValue(result);
 
       expect(await controller.listUsers()).toEqual(result);
-      expect(mockService.listUsers).toHaveBeenCalledWith(1, 20);
+      expect(mockService.listUsers).toHaveBeenCalledWith(1, 20, undefined);
     });
 
     it("should call service.listUsers with custom pagination", async () => {
@@ -66,7 +69,7 @@ describe("AdminController", () => {
       mockService.listUsers.mockResolvedValue(result);
 
       expect(await controller.listUsers("2", "50")).toEqual(result);
-      expect(mockService.listUsers).toHaveBeenCalledWith(2, 50);
+      expect(mockService.listUsers).toHaveBeenCalledWith(2, 50, undefined);
     });
   });
 
@@ -91,13 +94,34 @@ describe("AdminController", () => {
     });
   });
 
+  describe("createAdmin", () => {
+    it("should call service.createAdmin with the body", async () => {
+      const body = { email: "a@b.com", name: "Admin", password: "supersecret" };
+      const result = { id: "u1", role: "ADMIN" };
+      mockService.createAdmin.mockResolvedValue(result);
+
+      expect(await controller.createAdmin(body)).toEqual(result);
+      expect(mockService.createAdmin).toHaveBeenCalledWith(body);
+    });
+  });
+
+  describe("listAdmins", () => {
+    it("should call service.listAdmins", async () => {
+      const result = [{ id: "u1" }];
+      mockService.listAdmins.mockResolvedValue(result);
+
+      expect(await controller.listAdmins()).toEqual(result);
+      expect(mockService.listAdmins).toHaveBeenCalledWith();
+    });
+  });
+
   describe("listVendors", () => {
     it("should call service.listVendors with default pagination", async () => {
       const result = { data: [], total: 0 };
       mockService.listVendors.mockResolvedValue(result);
 
       expect(await controller.listVendors()).toEqual(result);
-      expect(mockService.listVendors).toHaveBeenCalledWith(1, 20);
+      expect(mockService.listVendors).toHaveBeenCalledWith(1, 20, undefined);
     });
 
     it("should call service.listVendors with custom pagination", async () => {
@@ -105,7 +129,7 @@ describe("AdminController", () => {
       mockService.listVendors.mockResolvedValue(result);
 
       expect(await controller.listVendors("1", "10")).toEqual(result);
-      expect(mockService.listVendors).toHaveBeenCalledWith(1, 10);
+      expect(mockService.listVendors).toHaveBeenCalledWith(1, 10, undefined);
     });
   });
 
@@ -154,7 +178,7 @@ describe("AdminController", () => {
       mockService.listOrders.mockResolvedValue(result);
 
       expect(await controller.listOrders()).toEqual(result);
-      expect(mockService.listOrders).toHaveBeenCalledWith(undefined, 1, 20);
+      expect(mockService.listOrders).toHaveBeenCalledWith(undefined, 1, 20, undefined);
     });
 
     it("should call service.listOrders with status filter and pagination", async () => {
@@ -162,7 +186,7 @@ describe("AdminController", () => {
       mockService.listOrders.mockResolvedValue(result);
 
       expect(await controller.listOrders("PENDING", "1", "10")).toEqual(result);
-      expect(mockService.listOrders).toHaveBeenCalledWith("PENDING", 1, 10);
+      expect(mockService.listOrders).toHaveBeenCalledWith("PENDING", 1, 10, undefined);
     });
   });
 
@@ -193,7 +217,7 @@ describe("AdminController", () => {
       mockService.listDisputes.mockResolvedValue(result);
 
       expect(await controller.listDisputes()).toEqual(result);
-      expect(mockService.listDisputes).toHaveBeenCalledWith(1, 20);
+      expect(mockService.listDisputes).toHaveBeenCalledWith(1, 20, undefined);
     });
   });
 
@@ -204,7 +228,11 @@ describe("AdminController", () => {
       const body = { action: "REFUND" as const, reason: "Buyer is correct" };
 
       expect(await controller.resolveDispute("dispute-1", body)).toEqual(result);
-      expect(mockService.resolveDispute).toHaveBeenCalledWith("dispute-1", "REFUND", "Buyer is correct");
+      expect(mockService.resolveDispute).toHaveBeenCalledWith(
+        "dispute-1",
+        "REFUND",
+        "Buyer is correct"
+      );
     });
   });
 

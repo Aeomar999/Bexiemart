@@ -31,6 +31,17 @@ export const updateUserRole = async (id: string, role: string) => {
   return data;
 };
 
+// Admin Team (super-admin only)
+export const getAdmins = async () => {
+  const { data } = await apiClient.get("/admin/admins");
+  return data;
+};
+
+export const createAdmin = async (payload: { email: string; name: string; password: string }) => {
+  const { data } = await apiClient.post("/admin/admins", payload);
+  return data;
+};
+
 // Vendors
 export const getAdminVendors = async (params?: Record<string, any>) => {
   const { data } = await apiClient.get("/admin/vendors", { params });

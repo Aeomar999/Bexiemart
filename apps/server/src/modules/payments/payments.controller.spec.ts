@@ -17,9 +17,7 @@ describe("PaymentsController", () => {
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       controllers: [PaymentsController],
-      providers: [
-        { provide: PaymentsService, useValue: mockService },
-      ],
+      providers: [{ provide: PaymentsService, useValue: mockService }],
     })
       .overrideGuard(AuthGuard)
       .useValue({ canActivate: jest.fn(() => true) })
@@ -61,20 +59,51 @@ describe("PaymentsController", () => {
   });
 
   describe("handleWebhook", () => {
-    it("should verify signature and call service.handleWebhook", async () => {
+    it("should verify signature against the raw body and call service.handleWebhook", async () => {
       const origSecret = process.env.PAYSTACK_SECRET_KEY;
       process.env.PAYSTACK_SECRET_KEY = "test-secret";
 
       const body = { event: "charge.success" };
-      const payload = JSON.stringify(body);
+      const rawBody = Buffer.from(JSON.stringify(body));
       const crypto = require("crypto");
-      const signature = crypto.createHmac("sha512", "test-secret").update(payload).digest("hex");
+      const signature = crypto.createHmac("sha512", "test-secret").update(rawBody).digest("hex");
 
       const result = { received: true };
       mockService.handleWebhook.mockResolvedValue(result);
 
-      expect(await controller.handleWebhook({}, signature, body)).toEqual(result);
+      expect(await controller.handleWebhook({ rawBody }, signature, body)).toEqual(result);
       expect(mockService.handleWebhook).toHaveBeenCalledWith(body);
+
+      process.env.PAYSTACK_SECRET_KEY = origSecret;
+    });
+
+    it("should reject an invalid signature", async () => {
+      const origSecret = process.env.PAYSTACK_SECRET_KEY;
+      process.env.PAYSTACK_SECRET_KEY = "test-secret";
+
+      const body = { event: "charge.success" };
+      const rawBody = Buffer.from(JSON.stringify(body));
+
+      expect(() => controller.handleWebhook({ rawBody }, "deadbeef", body)).toThrow(
+        "Invalid signature"
+      );
+      expect(mockService.handleWebhook).not.toHaveBeenCalled();
+
+      process.env.PAYSTACK_SECRET_KEY = origSecret;
+    });
+
+    it("should reject when the raw body is missing", async () => {
+      const origSecret = process.env.PAYSTACK_SECRET_KEY;
+      process.env.PAYSTACK_SECRET_KEY = "test-secret";
+
+      const body = { event: "charge.success" };
+      const crypto = require("crypto");
+      const signature = crypto
+        .createHmac("sha512", "test-secret")
+        .update(JSON.stringify(body))
+        .digest("hex");
+
+      expect(() => controller.handleWebhook({}, signature, body)).toThrow("Invalid signature");
 
       process.env.PAYSTACK_SECRET_KEY = origSecret;
     });

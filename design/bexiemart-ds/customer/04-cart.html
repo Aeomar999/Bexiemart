@@ -1,0 +1,42 @@
+<!-- @dsCard group="Customer" name="Cart" subtitle="Line items, promo, summary" -->
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Customer · Cart</title><link rel="stylesheet" href="../_shared/app.css">
+<style>.qty{display:flex;align-items:center;gap:12px;border:1px solid var(--border);border-radius:var(--r-full);padding:4px 6px}
+.qty span.c{width:26px;height:26px;border-radius:var(--r-full);display:grid;place-items:center;font-weight:800;font-size:14px}
+.summary{position:absolute;left:0;right:0;bottom:0;background:#fff;border-radius:var(--r-3xl) var(--r-3xl) 0 0;box-shadow:0 -10px 30px rgba(2,45,77,.1);padding:20px 20px 28px}</style></head>
+<body><div class="frame">
+<div class="phone"><div class="notch"></div>
+ <div class="statusbar"><span>9:41</span><span class="right">5G ▮▮▮ 100%</span></div>
+ <div class="screen">
+  <div class="appbar" style="padding-top:6px"><div class="iconbtn ghost"></div><span class="h2">My Cart (3)</span><span class="small bold" style="color:var(--error)">Clear</span></div>
+  <div class="scroll" style="padding:6px 20px 250px">
+   <div class="card" style="padding:14px;display:flex;gap:14px;align-items:center;margin-bottom:14px">
+     <div class="tile" style="width:74px;height:74px;background:linear-gradient(135deg,#bfdbfe,#60a5fa);flex:0 0 auto"></div>
+     <div style="flex:1"><div class="small bold">Pro Wireless Earbuds</div><div class="tiny muted">Color: Blue</div>
+       <div class="row between" style="margin-top:10px"><span class="price">GHS 249</span>
+         <span class="qty"><span class="c" style="background:var(--s-100)">−</span><span class="bold small">1</span><span class="c" style="background:var(--brand-50);color:var(--brand-700)">+</span></span></div></div>
+   </div>
+   <div class="card" style="padding:14px;display:flex;gap:14px;align-items:center;margin-bottom:14px">
+     <div class="tile" style="width:74px;height:74px;background:linear-gradient(135deg,#fcd34d,#fbbf24);flex:0 0 auto"></div>
+     <div style="flex:1"><div class="small bold">Leather Tote Bag</div><div class="tiny muted">Color: Tan</div>
+       <div class="row between" style="margin-top:10px"><span class="price">GHS 320</span>
+         <span class="qty"><span class="c" style="background:var(--s-100)">−</span><span class="bold small">1</span><span class="c" style="background:var(--brand-50);color:var(--brand-700)">+</span></span></div></div>
+   </div>
+   <div class="card" style="padding:14px;display:flex;gap:14px;align-items:center">
+     <div class="tile" style="width:74px;height:74px;background:linear-gradient(135deg,#a7f3d0,#34d399);flex:0 0 auto"></div>
+     <div style="flex:1"><div class="small bold">Canvas Sneakers</div><div class="tiny muted">Size: 42</div>
+       <div class="row between" style="margin-top:10px"><span class="price">GHS 180</span>
+         <span class="qty"><span class="c" style="background:var(--s-100)">−</span><span class="bold small">2</span><span class="c" style="background:var(--brand-50);color:var(--brand-700)">+</span></span></div></div>
+   </div>
+   <div class="row gap2" style="margin-top:18px"><div class="input" style="flex:1;color:var(--muted)">Promo code</div><button class="btn btn-ghost btn-sm">Apply</button></div>
+  </div>
+  <div class="summary">
+   <div class="row between" style="margin-bottom:8px"><span class="t2 small">Subtotal</span><span class="bold small">GHS 929.00</span></div>
+   <div class="row between" style="margin-bottom:8px"><span class="t2 small">Delivery</span><span class="bold small" style="color:var(--success)">Free</span></div>
+   <div class="row between" style="margin-bottom:14px"><span class="t2 small">Service fee</span><span class="bold small">GHS 5.00</span></div>
+   <div class="divider" style="margin:0 0 14px"></div>
+   <div class="row between" style="margin-bottom:16px"><span class="h3">Total</span><span class="price" style="font-size:20px;color:var(--brand-700)">GHS 934.00</span></div>
+   <button class="btn btn-primary btn-block">Proceed to Checkout</button>
+  </div>
+ </div>
+</div><div class="caption">Customer · Cart</div></div></body></html>

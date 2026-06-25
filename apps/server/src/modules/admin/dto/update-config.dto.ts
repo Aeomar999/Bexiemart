@@ -35,4 +35,15 @@ export class UpdateConfigDto {
   @IsNumber()
   @Min(0)
   dailyWithdrawalLimit?: number;
+
+  // ─── Delivery pricing knobs ──────────────────────────────────────────────
+  @IsOptional() @IsNumber() @Min(0) deliveryBaseFare?: number;
+  @IsOptional() @IsNumber() @Min(0) deliveryPerKm?: number;
+  @IsOptional() @IsNumber() @Min(0) deliveryPerMin?: number;
+  @IsOptional() @IsNumber() @Min(0) deliveryMinFee?: number;
+  @IsOptional() @IsNumber() @Min(0) deliveryCommissionRate?: number;
+  @IsOptional() @IsNumber() @Min(0) deliverySurgeMultiplier?: number;
+  @IsOptional() @IsNumber() @Min(0) deliveryBikeMultiplier?: number;
+  @IsOptional() @IsNumber() @Min(0) deliveryCarMultiplier?: number;
+  @IsOptional() @IsNumber() @Min(0) deliveryVanMultiplier?: number;
 }
