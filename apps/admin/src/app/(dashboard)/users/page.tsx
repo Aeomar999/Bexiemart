@@ -85,7 +85,7 @@ export default function UsersPage() {
                 <TableBody>
                   {users.map((user: Record<string, unknown> | any) => (
                     <TableRow key={user.id} className="cursor-pointer hover:bg-[var(--color-bg)]" onClick={() => router.push(`/users/${user.id}`)}>
-                      <TableCell className="font-medium">{user.firstName} {user.lastName}</TableCell>
+                      <TableCell className="font-medium">{user.name}</TableCell>
                       <TableCell>{user.email}</TableCell>
                       <TableCell>
                         <Badge variant={user.role === "VENDOR" ? "info" : "default"}>{user.role}</Badge>
