@@ -3,11 +3,12 @@
 import React from "react";
 import { Menu, Bell } from "lucide-react";
 import { useUiStore } from "../../lib/stores/ui-store";
-import { useAuthStore } from "../../lib/stores/auth-store";
+import { useUser } from "../../lib/hooks/use-auth";
 
 export function Header() {
   const toggleSidebar = useUiStore((state) => state.toggleSidebar);
-  const user = useAuthStore((state) => state.user);
+  const { data: user } = useUser();
+  const displayName = user?.name || "Admin";
 
   return (
     <header className="sticky top-0 z-10 flex h-16 shrink-0 items-center gap-x-4 border-b border-[var(--color-border)] bg-[var(--color-card)]/80 backdrop-blur-md px-4 shadow-sm transition-all sm:gap-x-6 sm:px-6 lg:px-8">
@@ -44,11 +45,11 @@ export function Header() {
             >
               <span className="sr-only">Open user menu</span>
               <div className="h-8 w-8 rounded-full bg-[var(--color-primary)] text-white flex items-center justify-center font-bold">
-                {user?.firstName?.charAt(0) || "A"}
+                {displayName.charAt(0).toUpperCase()}
               </div>
               <span className="hidden lg:flex lg:items-center">
                 <span className="ml-4 text-sm font-semibold leading-6 text-[var(--color-text)]" aria-hidden="true">
-                  {user ? `${user.firstName} ${user.lastName}` : "Admin"}
+                  {displayName}
                 </span>
               </span>
             </button>

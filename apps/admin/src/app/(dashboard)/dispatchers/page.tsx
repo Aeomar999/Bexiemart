@@ -92,7 +92,7 @@ export default function DispatchersPage() {
                 <TableBody>
                   {dispatchers.map((dispatcher: any) => (
                     <TableRow key={dispatcher.id}>
-                      <TableCell className="font-medium">{dispatcher.user?.firstName} {dispatcher.user?.lastName}</TableCell>
+                      <TableCell className="font-medium">{dispatcher.user?.name}</TableCell>
                       <TableCell className="capitalize">{dispatcher.vehicleType?.toLowerCase()}</TableCell>
                       <TableCell>{dispatcher.licensePlate}</TableCell>
                       <TableCell>{dispatcher.totalTrips ?? 0}</TableCell>

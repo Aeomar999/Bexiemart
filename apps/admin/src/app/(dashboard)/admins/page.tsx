@@ -83,7 +83,7 @@ export default function AdminsPage() {
 
         {isModalOpen && (
           <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-            <div className="w-full max-w-md bg-[var(--color-background)] p-6 rounded-lg shadow-xl">
+            <div className="w-full max-w-md bg-[var(--color-card)] text-[var(--color-text)] p-6 rounded-lg shadow-xl border border-[var(--color-border)]">
               <h2 className="text-xl font-bold mb-4">Create Admin Account</h2>
               <form onSubmit={handleCreate} className="space-y-4">
                 <div>
