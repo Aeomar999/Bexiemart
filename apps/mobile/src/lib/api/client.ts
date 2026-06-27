@@ -65,7 +65,10 @@ apiClient.interceptors.response.use(
       error.message = "Unable to connect to the server. Please check your internet connection.";
     }
 
-    if (error.response?.status === 401) {
+    // Only tear down the session on a 401 if we actually had one. A guest (auth
+    // wall flagged off) hitting a protected endpoint is expected — don't thrash
+    // the auth store logging out a user who was never signed in.
+    if (error.response?.status === 401 && useAuthStore.getState().isAuthenticated) {
       await useAuthStore.getState().logout();
     }
     return Promise.reject(error);

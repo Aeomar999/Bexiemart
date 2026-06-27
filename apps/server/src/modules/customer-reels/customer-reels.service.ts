@@ -5,7 +5,7 @@ import { PrismaService } from "../../prisma/prisma.service";
 export class CustomerReelsService {
   constructor(private readonly prisma: PrismaService) {}
 
-  async findAll(userId: string, cursor?: string) {
+  async findAll(userId: string | undefined, cursor?: string) {
     const reels = await this.prisma.reel.findMany({
       where: { isActive: true },
       include: {
@@ -25,17 +25,21 @@ export class CustomerReelsService {
             images: { take: 1, orderBy: { order: "asc" } },
           },
         },
-        likes: {
-          where: { userId },
-          select: { id: true },
-        },
+        // Only resolve per-user like state when we know who's asking. For a
+        // guest (no userId) we skip the join entirely — a `where: { userId:
+        // undefined }` filter would match *every* like and wrongly report
+        // `liked: true`.
+        likes: userId ? { where: { userId }, select: { id: true } } : false,
       },
       orderBy: { createdAt: "desc" },
       take: 20,
       ...(cursor ? { skip: 1, cursor: { id: cursor } } : {}),
     });
 
-    const data = reels.map(({ likes, ...rest }) => ({ ...rest, liked: likes.length > 0 }));
+    const data = reels.map(({ likes, ...rest }) => ({
+      ...rest,
+      liked: Array.isArray(likes) && likes.length > 0,
+    }));
     const nextCursor = data.length === 20 ? data[19].id : null;
     return { data, meta: { nextCursor } };
   }

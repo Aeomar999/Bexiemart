@@ -20,6 +20,24 @@ describe("CustomerReelsService", () => {
     expect(result.data).toEqual([]);
   });
 
+  it("resolves per-user like state for an authenticated user", async () => {
+    prisma.reel.findMany.mockResolvedValue([{ id: "r1", likes: [{ id: "l1" }] }] as any);
+    const result = await service.findAll("user-1");
+    const callArgs = prisma.reel.findMany.mock.calls[0][0];
+    expect(callArgs.include.likes).toEqual({ where: { userId: "user-1" }, select: { id: true } });
+    expect(result.data[0].liked).toBe(true);
+  });
+
+  it("skips the per-user like join for a guest (no userId) and reports liked:false", async () => {
+    // Guests must not get a `where: { userId: undefined }` join, which would
+    // match every like and wrongly report liked: true.
+    prisma.reel.findMany.mockResolvedValue([{ id: "r1", likes: false }] as any);
+    const result = await service.findAll(undefined);
+    const callArgs = prisma.reel.findMany.mock.calls[0][0];
+    expect(callArgs.include.likes).toBe(false);
+    expect(result.data[0].liked).toBe(false);
+  });
+
   it("should toggle like on a reel (add)", async () => {
     prisma.reel.findUnique.mockResolvedValue({ id: "r1" } as any);
     prisma.reelLike.findUnique.mockResolvedValue(null);

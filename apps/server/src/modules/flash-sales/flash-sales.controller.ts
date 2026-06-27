@@ -1,15 +1,13 @@
-import { Controller, Get, UseGuards } from "@nestjs/common";
-import { AuthGuard } from "../../guards/auth.guard";
+import { Controller, Get } from "@nestjs/common";
 import { FlashSalesService } from "./flash-sales.service";
-import { ApiTags, ApiOperation, ApiBearerAuth } from "@nestjs/swagger";
+import { ApiTags, ApiOperation } from "@nestjs/swagger";
 
 @ApiTags("Flash Sale")
-@ApiBearerAuth()
 @Controller("flash-sales")
-@UseGuards(AuthGuard)
 export class FlashSalesController {
   constructor(private readonly flashSalesService: FlashSalesService) {}
 
+  // Public browse endpoint: active flash sales are shown to guests too.
   @Get("active")
   @ApiOperation({ summary: "Get active flash sales" })
   findActive() {

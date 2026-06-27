@@ -2,6 +2,7 @@ import { Test, TestingModule } from "@nestjs/testing";
 import { CustomerReelsController } from "./customer-reels.controller";
 import { CustomerReelsService } from "./customer-reels.service";
 import { AuthGuard } from "../../guards/auth.guard";
+import { OptionalAuthGuard } from "../../guards/optional-auth.guard";
 
 describe("CustomerReelsController", () => {
   let controller: CustomerReelsController;
@@ -20,6 +21,8 @@ describe("CustomerReelsController", () => {
       providers: [{ provide: CustomerReelsService, useValue: mockService }],
     })
       .overrideGuard(AuthGuard)
+      .useValue({ canActivate: jest.fn(() => true) })
+      .overrideGuard(OptionalAuthGuard)
       .useValue({ canActivate: jest.fn(() => true) })
       .compile();
 
