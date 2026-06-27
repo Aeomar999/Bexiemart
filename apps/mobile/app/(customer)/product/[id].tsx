@@ -17,6 +17,7 @@ import { Image } from "expo-image";
 import { Button } from "@/components/ui/Button";
 import { useProduct } from "@/lib/hooks/use-products";
 import { useAddToCart } from "@/lib/hooks/use-cart";
+import { useRequireAuth } from "@/lib/hooks/use-require-auth";
 import { Icon } from "@/components/ui/Icon";
 import { LoadingState } from "@/components/ui/LoadingState";
 import { ErrorState } from "@/components/ui/ErrorState";
@@ -33,6 +34,7 @@ export default function ProductDetailsScreen() {
   const insets = useSafeAreaInsets();
   const { data: product, isPending, isError, refetch } = useProduct(id);
   const addToCartMutation = useAddToCart();
+  const requireAuth = useRequireAuth();
 
   const [quantity, setQuantity] = useState(1);
   const [isFavorited, setIsFavorited] = useState(false);
@@ -76,6 +78,8 @@ export default function ProductDetailsScreen() {
 
   const handleAddToCart = () => {
     if (!product) return;
+    // Guests (auth wall off) are prompted to sign in instead of adding.
+    if (!requireAuth()) return;
     addToCartMutation.mutate({ productId: product.id, quantity });
 
     if (posthog) {
@@ -92,6 +96,7 @@ export default function ProductDetailsScreen() {
   };
 
   const handleBuyNow = () => {
+    if (!requireAuth()) return;
     handleAddToCart();
     router.push("/(customer)/cart");
   };
@@ -104,7 +109,7 @@ export default function ProductDetailsScreen() {
       >
         <View className="flex-row items-center gap-3">
           <BackButton />
-          <Text className="text-[20px] font-heading font-black text-foreground">
+          <Text className="text-display-sm font-heading font-black text-foreground">
             {product?.name || "Product"}
           </Text>
         </View>
@@ -272,7 +277,7 @@ export default function ProductDetailsScreen() {
         {/* ===== SELLER INFO ===== */}
         <Pressable
           style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
-          className="mx-5 mt-6 bg-card rounded-[24px] p-5 border border-border"
+          className="mx-5 mt-6 bg-card rounded-2xl p-5 border border-border"
           onPress={() => router.push(`/(customer)/store/${product.seller.id}`)}
         >
           <Text className="text-caption text-muted-foreground font-body uppercase tracking-wider mb-3 font-bold">
@@ -319,7 +324,7 @@ export default function ProductDetailsScreen() {
             {product.deliveryOptions.map((option: any, index: number) => (
               <View
                 key={index}
-                className="flex-row items-center gap-4 bg-card rounded-[24px] p-5 border border-border mb-3"
+                className="flex-row items-center gap-4 bg-card rounded-2xl p-5 border border-border mb-3"
               >
                 <View className="w-10 h-10 rounded-full bg-background items-center justify-center">
                   <Icon name={option.icon} size={18} color="#475569" />
@@ -362,10 +367,7 @@ export default function ProductDetailsScreen() {
 
           <View className="gap-0">
             {product.reviews.slice(0, 3).map((review: any) => (
-              <View
-                key={review.id}
-                className="bg-card rounded-[24px] p-5 border border-border mb-3"
-              >
+              <View key={review.id} className="bg-card rounded-2xl p-5 border border-border mb-3">
                 <View className="flex-row justify-between items-start mb-2">
                   <View className="flex-row items-center gap-3">
                     <View className="w-10 h-10 rounded-full bg-primary-subtle items-center justify-center">

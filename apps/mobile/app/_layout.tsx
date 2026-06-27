@@ -113,11 +113,10 @@ export default function RootLayout() {
         if (!hasLaunchedBefore && !inOnboardingGroup) {
           router.replace("/(onboarding)/welcome");
         } else if (!authEnabled) {
-          // Auth pages are feature-flagged off: skip the login wall and let
-          // unauthenticated users browse as guests. Only redirect when they're
-          // at the root index or have landed in the (auth) group — otherwise
-          // leave them wherever they've already navigated.
-          if (inAuthGroup || !segments[0]) {
+          // Auth wall flagged off: guests browse freely. Only rescue them from
+          // the blank root index — allow visiting (auth) on demand (e.g. tapping
+          // "Sign in" to check out) instead of bouncing them straight back.
+          if (!segments[0]) {
             router.replace("/(customer)/(tabs)/(home)");
           }
         } else if (hasLaunchedBefore && !inAuthGroup && !inOnboardingGroup) {
