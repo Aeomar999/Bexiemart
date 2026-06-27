@@ -4,6 +4,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Icon } from "@/components/ui/Icon";
 import { useState } from "react";
 import { useAuthStore } from "@/lib/stores/auth-store";
+import { useAuthEnabled } from "@/lib/feature-flags";
 import { Avatar } from "@/components/ui/Avatar";
 
 const SETTINGS_SECTIONS = [
@@ -117,10 +118,11 @@ export default function VendorSettingsScreen() {
   const insets = useSafeAreaInsets();
   const [isDarkMode, setIsDarkMode] = useState(false);
   const { user, logout } = useAuthStore();
+  const { authEnabled } = useAuthEnabled();
 
   const handleLogout = async () => {
     await logout();
-    router.replace("/(auth)/login");
+    router.replace(authEnabled ? "/(auth)/login" : "/(customer)/(tabs)/(home)");
   };
 
   return (

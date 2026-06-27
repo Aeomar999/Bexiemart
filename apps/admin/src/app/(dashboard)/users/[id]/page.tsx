@@ -46,7 +46,7 @@ export default function UserDetailPage() {
               &larr; Back
             </Button>
             <h1 className="text-2xl font-bold tracking-tight text-[var(--color-text)]">
-              {user.firstName} {user.lastName}
+              {user.name}
             </h1>
             <Badge variant={user.role === "VENDOR" ? "info" : "default"}>{user.role}</Badge>
           </div>

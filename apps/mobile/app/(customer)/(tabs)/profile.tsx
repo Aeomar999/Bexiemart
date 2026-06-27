@@ -5,6 +5,7 @@ import { Icon } from "@/components/ui/Icon";
 import { useState } from "react";
 import { useCurrentUser } from "@/lib/hooks/use-auth";
 import { useAuthStore } from "@/lib/stores/auth-store";
+import { useAuthEnabled } from "@/lib/feature-flags";
 import Toast from "@/lib/toast-polyfill";
 import { Avatar } from "@/components/ui/Avatar";
 
@@ -116,10 +117,11 @@ export default function ProfileScreen() {
   const [isDarkMode, setIsDarkMode] = useState(false);
   const { data: user } = useCurrentUser();
   const { logout } = useAuthStore();
+  const { authEnabled } = useAuthEnabled();
 
   const handleLogout = async () => {
     await logout();
-    router.replace("/(auth)/login");
+    router.replace(authEnabled ? "/(auth)/login" : "/(customer)/(tabs)/(home)");
   };
 
   return (

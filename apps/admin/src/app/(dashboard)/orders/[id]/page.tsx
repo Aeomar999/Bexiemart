@@ -125,7 +125,7 @@ export default function OrderDetailPage() {
                 <>
                   <div>
                     <p className="text-sm text-[var(--color-text-muted)]">Name</p>
-                    <p className="font-medium">{order.user.firstName} {order.user.lastName}</p>
+                    <p className="font-medium">{order.user.name}</p>
                   </div>
                   <div>
                     <p className="text-sm text-[var(--color-text-muted)]">Email</p>

@@ -88,7 +88,7 @@ export default function OrdersPage() {
                   {orders.map((order: any) => (
                     <TableRow key={order.id} className="cursor-pointer hover:bg-[var(--color-bg)]" onClick={() => router.push(`/orders/${order.id}`)}>
                       <TableCell className="font-medium text-[var(--color-primary)]">{order.id.slice(0, 8)}</TableCell>
-                      <TableCell>{order.user?.firstName} {order.user?.lastName}</TableCell>
+                      <TableCell>{order.user?.name}</TableCell>
                       <TableCell>{order.vendor?.businessName || "N/A"}</TableCell>
                       <TableCell>{new Date(order.createdAt).toLocaleString()}</TableCell>
                       <TableCell>{formatCurrency(order.totalAmount)}</TableCell>
