@@ -10,6 +10,7 @@ import { View } from "react-native";
 import { useFonts } from "expo-font";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { useAuthStore } from "../src/lib/stores/auth-store";
+import { useAuthEnabled } from "../src/lib/feature-flags";
 import { LoadingSpinner } from "../src/components/ui/LoadingSpinner";
 import { GlobalPopup } from "../src/components/ui/GlobalPopup";
 import { ErrorBoundary } from "../src/components/ui/ErrorBoundary";
@@ -66,6 +67,7 @@ export default function RootLayout() {
   });
 
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
+  const { authEnabled, ready: authFlagReady } = useAuthEnabled();
   const router = useRouter();
   const rootNavigationState = useRootNavigationState();
   const segments = useSegments();
@@ -89,8 +91,11 @@ export default function RootLayout() {
   }, [fontsLoaded, isLoading]);
 
   useEffect(() => {
-    // Wait until the root layout has mounted completely, fonts loaded, auth hydrated, and splash finished
-    if (!rootNavigationState?.key || !fontsLoaded || isLoading || !splashDone) return;
+    // Wait until the root layout has mounted completely, fonts loaded, auth
+    // hydrated, splash finished, and the auth feature flag resolved (so we never
+    // flash the login screen before discovering auth is disabled).
+    if (!rootNavigationState?.key || !fontsLoaded || isLoading || !splashDone || !authFlagReady)
+      return;
 
     const inAuthGroup = segments[0] === "(auth)";
     const inOnboardingGroup = segments[0] === "(onboarding)";
@@ -107,6 +112,14 @@ export default function RootLayout() {
       } else if (!isAuthenticated) {
         if (!hasLaunchedBefore && !inOnboardingGroup) {
           router.replace("/(onboarding)/welcome");
+        } else if (!authEnabled) {
+          // Auth pages are feature-flagged off: skip the login wall and let
+          // unauthenticated users browse as guests. Only redirect when they're
+          // at the root index or have landed in the (auth) group — otherwise
+          // leave them wherever they've already navigated.
+          if (inAuthGroup || !segments[0]) {
+            router.replace("/(customer)/(tabs)/(home)");
+          }
         } else if (hasLaunchedBefore && !inAuthGroup && !inOnboardingGroup) {
           router.replace("/(auth)/login");
         }
@@ -124,6 +137,8 @@ export default function RootLayout() {
     rootNavigationState?.key,
     segments,
     fontsLoaded,
+    authEnabled,
+    authFlagReady,
   ]);
 
   return (
