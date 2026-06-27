@@ -71,7 +71,7 @@ export default function ReelsModerationPage() {
                       </div>
                     </div>
                     
-                    <div className="p-3 bg-[var(--color-background)]">
+                    <div className="p-3 bg-[var(--color-card)]">
                       <Button 
                         variant={reel.isActive ? "outline" : "primary"}
                         className="w-full flex items-center justify-center gap-2"

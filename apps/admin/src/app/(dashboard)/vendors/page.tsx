@@ -93,7 +93,7 @@ export default function VendorsPage() {
                   {vendors.map((vendor: any) => (
                     <TableRow key={vendor.id}>
                       <TableCell className="font-medium">{vendor.businessName}</TableCell>
-                      <TableCell>{vendor.user?.firstName} {vendor.user?.lastName}</TableCell>
+                      <TableCell>{vendor.user?.name}</TableCell>
                       <TableCell>{vendor.orders?.length || 0}</TableCell>
                       <TableCell>
                         <Badge 
