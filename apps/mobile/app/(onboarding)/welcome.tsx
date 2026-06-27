@@ -2,6 +2,7 @@ import React from "react";
 import { View, Text, TouchableOpacity } from "react-native";
 import { useRouter } from "expo-router";
 import { useAuthStore } from "../../src/lib/stores/auth-store";
+import { useAuthEnabled } from "../../src/lib/feature-flags";
 import { Button } from "../../src/components/ui/Button";
 // @ts-expect-error
 import { FontAwesome5 } from "@expo/vector-icons";
@@ -9,6 +10,7 @@ import { FontAwesome5 } from "@expo/vector-icons";
 export default function WelcomeScreen() {
   const router = useRouter();
   const completeLaunch = useAuthStore((s) => s.completeLaunch);
+  const { authEnabled } = useAuthEnabled();
 
   const handleGetStarted = async () => {
     await completeLaunch();
@@ -19,7 +21,9 @@ export default function WelcomeScreen() {
 
   const handleLogin = async () => {
     await completeLaunch();
-    router.replace("/(auth)/login");
+    // With the auth wall flagged off there's no login to send them to, so drop
+    // them straight into the app as a guest.
+    router.replace(authEnabled ? "/(auth)/login" : "/(customer)/(tabs)/(home)");
   };
 
   return (

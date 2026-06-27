@@ -10,6 +10,7 @@ import Animated, {
 } from "react-native-reanimated";
 import { Image } from "expo-image";
 import { useAuthStore } from "../../src/lib/stores/auth-store";
+import { useAuthEnabled } from "../../src/lib/feature-flags";
 import { Button } from "../../src/components/ui/Button";
 import { ArrowLeft } from "lucide-react-native";
 
@@ -45,6 +46,7 @@ const SLIDES = [
 export default function OnboardingScreen() {
   const router = useRouter();
   const completeOnboarding = useAuthStore((s) => s.completeOnboarding);
+  const { authEnabled } = useAuthEnabled();
   const scrollX = useSharedValue(0);
   const scrollViewRef = useRef<Animated.ScrollView>(null);
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -71,7 +73,9 @@ export default function OnboardingScreen() {
 
   const handleComplete = async () => {
     await completeOnboarding();
-    router.replace("/(auth)/register");
+    // When the auth wall is flagged off, finish onboarding into the app as a
+    // guest instead of the (now bypassed) registration screen.
+    router.replace(authEnabled ? "/(auth)/register" : "/(customer)/(tabs)/(home)");
   };
 
   const onMomentumScrollEnd = (e: any) => {
