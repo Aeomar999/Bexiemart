@@ -10,6 +10,7 @@ import { ErrorState } from "@/components/ui/ErrorState";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { useProducts, useCategories } from "@/lib/hooks/use-products";
 import { useAddToCart } from "@/lib/hooks/use-cart";
+import { useRequireAuth } from "@/lib/hooks/use-require-auth";
 import { useFavoritesStore } from "@/lib/stores/favorites-store";
 import Toast from "@/lib/toast-polyfill";
 import { ProductCardSkeleton } from "@/components/ui/Skeleton";
@@ -36,6 +37,7 @@ export default function ShopScreen() {
     refetch: refetchCategories,
   } = useCategories();
   const addToCartMutation = useAddToCart();
+  const requireAuth = useRequireAuth();
   const { isFavorite, toggleFavorite } = useFavoritesStore();
 
   const products = productsData?.pages.flatMap((page: any) => page.data) ?? [];
@@ -83,6 +85,8 @@ export default function ShopScreen() {
   };
 
   const handleAddToCart = (product: any) => {
+    // Guests (auth wall off) are prompted to sign in instead of adding.
+    if (!requireAuth()) return;
     addToCartMutation.mutate({ productId: product.id, quantity: 1 });
     Toast.show({
       type: "success",
@@ -250,7 +254,7 @@ export default function ShopScreen() {
           return (
             <Pressable
               style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
-              className="flex-1 bg-card rounded-[24px] overflow-hidden border border-border pb-3"
+              className="flex-1 bg-card rounded-2xl overflow-hidden border border-border pb-3"
               onPress={() => router.push(`/(customer)/product/${item.id}`)}
             >
               <View
@@ -268,7 +272,9 @@ export default function ShopScreen() {
                 )}
                 {discount > 0 && (
                   <View className="absolute top-2 left-2 bg-error px-2 py-0.5 rounded-lg">
-                    <Text className="text-[10px] font-bold text-white font-body">-{discount}%</Text>
+                    <Text className="text-caption font-bold text-white font-body">
+                      -{discount}%
+                    </Text>
                   </View>
                 )}
                 <Pressable
@@ -313,7 +319,9 @@ export default function ShopScreen() {
                 </View>
                 <View className="flex-row items-center gap-1 mt-2">
                   <Icon name="star" size={10} color="#f59e0b" />
-                  <Text className="text-[10px] text-muted-foreground font-body">{item.rating}</Text>
+                  <Text className="text-caption text-muted-foreground font-body">
+                    {item.rating}
+                  </Text>
                 </View>
               </View>
             </Pressable>
@@ -332,7 +340,7 @@ export default function ShopScreen() {
           onPress={() => setShowSortModal(false)}
         >
           <View
-            className="bg-card rounded-t-[32px] pt-6 pb-10 px-5"
+            className="bg-card rounded-t-3xl pt-6 pb-10 px-5"
             onStartShouldSetResponder={() => true}
           >
             <View className="w-10 h-1 bg-secondary rounded-full self-center mb-6" />
