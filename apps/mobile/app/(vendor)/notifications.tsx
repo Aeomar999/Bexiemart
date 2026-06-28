@@ -30,10 +30,12 @@ export default function VendorNotificationsScreen() {
       >
         <View className="flex-row items-center">
           <BackButton className="mr-3" />
-          <Text className="text-[20px] font-heading font-black text-foreground">Notifications</Text>
+          <Text className="text-display-sm font-heading font-black text-foreground">
+            Notifications
+          </Text>
         </View>
         <Pressable onPress={() => markAllRead.mutate()}>
-          <Text className="text-[13px] font-bold text-primary">Mark all as read</Text>
+          <Text className="text-sm font-bold text-primary">Mark all as read</Text>
         </Pressable>
       </View>
 
@@ -62,7 +64,7 @@ export default function VendorNotificationsScreen() {
                 onPress={() => {
                   if (notif.unread) markRead.mutate(notif.id);
                 }}
-                className={`flex-row items-start p-4 bg-card border border-border rounded-[16px] mb-3 ${notif.unread ? "bg-primary-subtle/30" : ""}`}
+                className={`flex-row items-start p-4 bg-card border border-border rounded-xl mb-3 ${notif.unread ? "bg-primary-subtle/30" : ""}`}
               >
                 <View
                   className="w-12 h-12 rounded-full items-center justify-center mr-4"
@@ -73,17 +75,17 @@ export default function VendorNotificationsScreen() {
                 <View className="flex-1 pr-2">
                   <View className="flex-row justify-between items-start mb-1">
                     <Text
-                      className={`text-[15px] ${notif.unread ? "font-bold text-foreground" : "font-semibold text-muted-foreground"}`}
+                      className={`text-body-lg ${notif.unread ? "font-bold text-foreground" : "font-semibold text-muted-foreground"}`}
                     >
                       {notif.title}
                     </Text>
                   </View>
                   <Text
-                    className={`text-[13px] leading-relaxed mb-1 ${notif.unread ? "text-foreground" : "text-muted-foreground"}`}
+                    className={`text-sm leading-relaxed mb-1 ${notif.unread ? "text-foreground" : "text-muted-foreground"}`}
                   >
                     {notif.desc}
                   </Text>
-                  <Text className="text-[12px] text-muted-foreground">{notif.time}</Text>
+                  <Text className="text-body-sm text-muted-foreground">{notif.time}</Text>
                 </View>
                 {notif.unread && <View className="w-2.5 h-2.5 rounded-full bg-primary mt-1.5" />}
               </Pressable>

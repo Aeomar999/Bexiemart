@@ -90,7 +90,7 @@ export default function DashboardScreen() {
         style={{ paddingTop: (insets.top || 12) + 12 }}
       >
         <View className="flex-row items-center justify-between">
-          <Text className="text-[20px] font-heading font-black text-foreground">Dashboard</Text>
+          <Text className="text-display-sm font-heading font-black text-foreground">Dashboard</Text>
           <View className="flex-row items-center gap-2">
             <Pressable
               style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
@@ -129,17 +129,17 @@ export default function DashboardScreen() {
           <Text className="text-body-md text-muted-foreground font-body mb-1">
             Good morning, {user?.name?.split(" ")[0] || "Partner"}
           </Text>
-          <Text className="text-[24px] font-heading font-black text-foreground mb-4 tracking-tight">
+          <Text className="text-display-md font-heading font-black text-foreground mb-4 tracking-tight">
             Overview
           </Text>
 
-          <View className="bg-foreground rounded-[24px] p-6 border border-border">
+          <View className="bg-foreground rounded-2xl p-6 border border-border">
             <View className="flex-row justify-between items-start mb-6">
               <View>
-                <Text className="text-muted-foreground font-body text-[13px] mb-1">
+                <Text className="text-muted-foreground font-body text-sm mb-1">
                   Available Balance
                 </Text>
-                <Text className="text-[32px] font-heading font-black text-white">
+                <Text className="text-display-lg font-heading font-black text-white">
                   GHS {earningsData?.availableBalance?.toFixed(2) ?? "0.00"}
                 </Text>
               </View>
@@ -150,7 +150,7 @@ export default function DashboardScreen() {
               className="bg-primary rounded-xl py-3 items-center justify-center flex-row gap-2"
               onPress={() => router.push("/(vendor)/(earnings)")}
             >
-              <Text className="text-white font-bold font-body text-[15px]">Withdraw Funds</Text>
+              <Text className="text-white font-bold font-body text-body-lg">Withdraw Funds</Text>
               <Icon name="arrow-right" size={16} color="#ffffff" />
             </Pressable>
           </View>
@@ -207,7 +207,7 @@ export default function DashboardScreen() {
 
         {/* ===== STAT CARDS ===== */}
         <View className="px-5 mb-8">
-          <Text className="text-[18px] font-heading font-bold text-foreground mb-4">
+          <Text className="text-heading-md font-heading font-bold text-foreground mb-4">
             Store Performance
           </Text>
           <View className="flex-row flex-wrap justify-between gap-y-4">
@@ -238,7 +238,7 @@ export default function DashboardScreen() {
                   >
                     <Card variant="outlined" padding="md" className="bg-card">
                       <View
-                        className="w-10 h-10 rounded-[12px] items-center justify-center mb-3"
+                        className="w-10 h-10 rounded-lg items-center justify-center mb-3"
                         style={{ backgroundColor: stat.bg }}
                       >
                         <Icon name={stat.icon} size={20} color={stat.color} />
@@ -260,14 +260,14 @@ export default function DashboardScreen() {
         {/* ===== RECENT ORDERS ===== */}
         <View className="px-5">
           <View className="flex-row justify-between items-center mb-4">
-            <Text className="text-[18px] font-heading font-bold text-foreground">
+            <Text className="text-heading-md font-heading font-bold text-foreground">
               Recent Orders
             </Text>
             <Pressable
               style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
               onPress={() => router.push("/(vendor)/(orders)")}
             >
-              <Text className="text-[12px] font-bold text-muted-foreground">See All</Text>
+              <Text className="text-body-sm font-bold text-muted-foreground">See All</Text>
             </Pressable>
           </View>
 

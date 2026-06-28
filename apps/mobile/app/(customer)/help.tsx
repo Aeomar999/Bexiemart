@@ -34,7 +34,9 @@ export default function HelpCenterScreen() {
       >
         <View className="flex-row items-center gap-3">
           <BackButton />
-          <Text className="text-[20px] font-heading font-black text-foreground">Help Center</Text>
+          <Text className="text-display-sm font-heading font-black text-foreground">
+            Help Center
+          </Text>
         </View>
       </View>
       <ScrollView className="flex-1">
@@ -44,7 +46,7 @@ export default function HelpCenterScreen() {
             return (
               <Pressable
                 key={i}
-                className={`bg-card p-5 rounded-[24px] border ${isExpanded ? "border-border shadow-sm" : "border-border"}`}
+                className={`bg-card p-5 rounded-2xl border ${isExpanded ? "border-border shadow-sm" : "border-border"}`}
                 onPress={() => setExpandedIndex(isExpanded ? null : i)}
               >
                 <View className="flex-row justify-between items-center">

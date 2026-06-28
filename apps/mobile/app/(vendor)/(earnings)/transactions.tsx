@@ -63,7 +63,7 @@ export default function TransactionsScreen() {
         >
           <Icon name="arrow-left" size={20} color="#0f172a" />
         </Pressable>
-        <Text className="text-[20px] font-heading font-black text-foreground">
+        <Text className="text-display-sm font-heading font-black text-foreground">
           Transaction History
         </Text>
       </View>
@@ -84,7 +84,7 @@ export default function TransactionsScreen() {
                 className={`px-4 py-2 rounded-full border ${isActive ? "bg-foreground border-border" : "bg-card border-border"}`}
               >
                 <Text
-                  className={`text-[13px] font-bold ${isActive ? "text-white" : "text-muted-foreground"}`}
+                  className={`text-sm font-bold ${isActive ? "text-white" : "text-muted-foreground"}`}
                 >
                   {filter}
                 </Text>
@@ -105,22 +105,22 @@ export default function TransactionsScreen() {
           />
         }
       >
-        <View className="bg-card rounded-[20px] border border-border overflow-hidden mb-12">
+        <View className="bg-card rounded-2xl border border-border overflow-hidden mb-12">
           {isLoading ? (
             <View className="p-10 items-center justify-center">
               <ActivityIndicator size="small" color="var(--color-primary)" />
             </View>
           ) : isError ? (
             <View className="p-10 items-center justify-center">
-              <Text className="text-[15px] font-bold text-red-500">
+              <Text className="text-body-lg font-bold text-red-500">
                 Failed to load transactions
               </Text>
             </View>
           ) : filteredTransactions.length === 0 ? (
             <View className="p-10 items-center justify-center">
               <Icon name="file-text" size={32} color="#cbd5e1" style={{ marginBottom: 12 }} />
-              <Text className="text-[15px] font-bold text-foreground">No Transactions</Text>
-              <Text className="text-[13px] text-muted-foreground text-center mt-1">
+              <Text className="text-body-lg font-bold text-foreground">No Transactions</Text>
+              <Text className="text-sm text-muted-foreground text-center mt-1">
                 You have no {activeFilter.toLowerCase()} history.
               </Text>
             </View>
@@ -146,21 +146,21 @@ export default function TransactionsScreen() {
                     </View>
                     <View className="flex-1 pr-4">
                       <Text
-                        className="text-[15px] font-bold text-foreground mb-0.5"
+                        className="text-body-lg font-bold text-foreground mb-0.5"
                         numberOfLines={1}
                       >
                         {trx.title}
                       </Text>
-                      <Text className="text-[13px] text-muted-foreground">{trx.date}</Text>
+                      <Text className="text-sm text-muted-foreground">{trx.date}</Text>
                     </View>
                   </View>
                   <View className="items-end">
                     <Text
-                      className={`text-[15px] font-bold ${isWithdrawal ? "text-foreground" : "text-green-600"}`}
+                      className={`text-body-lg font-bold ${isWithdrawal ? "text-foreground" : "text-green-600"}`}
                     >
                       {isWithdrawal ? "" : "+"}GHS {Math.abs(trx.amount).toFixed(2)}
                     </Text>
-                    <Text className="text-[12px] text-muted-foreground capitalize mt-0.5">
+                    <Text className="text-body-sm text-muted-foreground capitalize mt-0.5">
                       {trx.status}
                     </Text>
                   </View>

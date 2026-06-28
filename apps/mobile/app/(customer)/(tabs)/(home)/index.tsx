@@ -224,7 +224,7 @@ export default function HomeScreen() {
             <Icon name="menu" size={24} color="#0f172a" />
           </Pressable>
 
-          <Text className="text-[20px] font-heading font-black text-foreground tracking-tight">
+          <Text className="text-display-sm font-heading font-black text-foreground tracking-tight">
             Bexiemart
           </Text>
 
@@ -269,7 +269,7 @@ export default function HomeScreen() {
               <View style={{ width: Dimensions.get("window").width, paddingHorizontal: 20 }}>
                 <Pressable
                   onPress={() => router.push("/(customer)/flash-sales")}
-                  className="w-full h-[180px] rounded-[24px] overflow-hidden relative bg-surface-900 active:opacity-70"
+                  className="w-full h-[180px] rounded-2xl overflow-hidden relative bg-surface-900 active:opacity-70"
                 >
                   <Image
                     source={{ uri: item.bgImage }}
@@ -279,13 +279,13 @@ export default function HomeScreen() {
                   <View className="absolute inset-0 bg-black/50" />
 
                   <View className="flex-1 p-5 justify-center">
-                    <View className="bg-[#10b981] self-start px-2 py-1 rounded-[6px] mb-2">
-                      <Text className="text-[10px] font-bold text-white uppercase tracking-wider">
+                    <View className="bg-success self-start px-2 py-1 rounded-md mb-2">
+                      <Text className="text-caption font-bold text-white uppercase tracking-wider">
                         Limited Offer
                       </Text>
                     </View>
 
-                    <Text className="text-white text-[24px] leading-[28px] font-heading font-black w-3/4 mb-1">
+                    <Text className="text-white text-display-md leading-[28px] font-heading font-black w-3/4 mb-1">
                       {item.title}
                     </Text>
 
@@ -316,7 +316,7 @@ export default function HomeScreen() {
         {activeRide && (
           <View className="px-5 mt-6">
             <Pressable
-              className="bg-primary rounded-[20px] p-4 flex-row items-center justify-between shadow-sm border border-primary-hover"
+              className="bg-primary rounded-2xl p-4 flex-row items-center justify-between shadow-sm border border-primary-hover"
               onPress={() => router.push("/(customer)/track-order")}
             >
               <View className="flex-row items-center gap-3">
@@ -324,10 +324,10 @@ export default function HomeScreen() {
                   <Icon name="map" size={20} color="#fff" />
                 </View>
                 <View>
-                  <Text className="text-white font-bold font-heading text-[15px]">
+                  <Text className="text-white font-bold font-heading text-body-lg">
                     Delivery in progress
                   </Text>
-                  <Text className="text-white/80 font-body text-[12px] mt-0.5">
+                  <Text className="text-white/80 font-body text-body-sm mt-0.5">
                     {activeRide.status === "searching"
                       ? "Locating your rider..."
                       : activeRide.status === "on_the_way"
@@ -337,7 +337,7 @@ export default function HomeScreen() {
                 </View>
               </View>
               <View className="bg-card/20 px-3 py-1.5 rounded-full">
-                <Text className="text-white font-bold text-[12px]">Track</Text>
+                <Text className="text-white font-bold text-body-sm">Track</Text>
               </View>
             </Pressable>
           </View>
@@ -359,10 +359,10 @@ export default function HomeScreen() {
                 backgroundColor: item.bgColor,
               })}
               onPress={() => router.push("/(customer)/(shop)")}
-              className="flex-row items-center px-4 py-2.5 rounded-[16px]"
+              className="flex-row items-center px-4 py-2.5 rounded-xl"
             >
               <Icon name={item.icon} size={14} color={item.iconColor} />
-              <Text className="ml-2 font-semibold text-foreground text-[13px] font-body">
+              <Text className="ml-2 font-semibold text-foreground text-sm font-body">
                 {item.label}
               </Text>
             </Pressable>
@@ -371,7 +371,7 @@ export default function HomeScreen() {
 
         {/* ===== FEATURED HIGHLIGHTS ===== */}
         <View className="px-5 mt-8">
-          <Text className="text-[18px] font-heading font-bold text-foreground mb-5">
+          <Text className="text-heading-md font-heading font-bold text-foreground mb-5">
             Featured Highlights
           </Text>
           <View className="flex-row flex-wrap justify-between gap-y-5">
@@ -383,15 +383,12 @@ export default function HomeScreen() {
                 onPress={() => item.route !== "#" && router.push(item.route as any)}
               >
                 <View
-                  className="w-full rounded-[24px] items-center justify-center mb-2"
-                  style={{ aspectRatio: 1 }}
-                  style={{ backgroundColor: item.bgColor }}
+                  className="w-full rounded-2xl items-center justify-center mb-2"
+                  style={[{ aspectRatio: 1 }, { backgroundColor: item.bgColor }]}
                 >
                   <Icon name={item.icon} size={32} color={item.iconColor} />
                 </View>
-                <Text className="text-[13px] font-bold text-foreground font-heading">
-                  {item.name}
-                </Text>
+                <Text className="text-sm font-bold text-foreground font-heading">{item.name}</Text>
               </Pressable>
             ))}
           </View>
@@ -400,12 +397,14 @@ export default function HomeScreen() {
         {/* ===== CATEGORIES ===== */}
         <View className="px-5 mt-10">
           <View className="flex-row justify-between items-center mb-4">
-            <Text className="text-[18px] font-heading font-bold text-foreground">Categories</Text>
+            <Text className="text-heading-md font-heading font-bold text-foreground">
+              Categories
+            </Text>
             <Pressable
               style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
               onPress={() => router.push("/(customer)/(shop)")}
             >
-              <Text className="text-[12px] font-bold text-muted-foreground">See All</Text>
+              <Text className="text-body-sm font-bold text-muted-foreground">See All</Text>
             </Pressable>
           </View>
           <View className="flex-row flex-wrap justify-between gap-y-4">
@@ -416,7 +415,7 @@ export default function HomeScreen() {
                 onPress={() => goToShopWithCategory(cat.name)}
               >
                 <View
-                  className="w-full rounded-[16px] bg-background mb-2 overflow-hidden flex-row flex-wrap"
+                  className="w-full rounded-xl bg-background mb-2 overflow-hidden flex-row flex-wrap"
                   style={{ aspectRatio: 1 }}
                 >
                   {[0, 1, 2, 3].map((idx) => (
@@ -437,11 +436,11 @@ export default function HomeScreen() {
                   ))}
                 </View>
                 <View className="flex-row justify-between items-center">
-                  <Text className="text-[12px] font-bold text-foreground w-2/3" numberOfLines={1}>
+                  <Text className="text-body-sm font-bold text-foreground w-2/3" numberOfLines={1}>
                     {cat.name}
                   </Text>
                   <View className="bg-primary-subtle px-2 py-0.5 rounded-full">
-                    <Text className="text-[10px] font-bold text-primary">{cat.count}</Text>
+                    <Text className="text-caption font-bold text-primary">{cat.count}</Text>
                   </View>
                 </View>
               </Pressable>
@@ -452,12 +451,14 @@ export default function HomeScreen() {
         {/* ===== TOP PRODUCTS ===== */}
         <View className="pl-5 mt-10">
           <View className="flex-row justify-between items-center mb-4 pr-5">
-            <Text className="text-[18px] font-heading font-bold text-foreground">Top Products</Text>
+            <Text className="text-heading-md font-heading font-bold text-foreground">
+              Top Products
+            </Text>
             <Pressable
               style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
               onPress={() => router.push("/(customer)/(shop)")}
             >
-              <Text className="text-[12px] font-bold text-muted-foreground">See All</Text>
+              <Text className="text-body-sm font-bold text-muted-foreground">See All</Text>
             </Pressable>
           </View>
           <FlashList
@@ -475,7 +476,7 @@ export default function HomeScreen() {
                 className="items-center active:opacity-70"
                 onPress={() => router.push(`/(customer)/product/${item.id}`)}
               >
-                <View className="w-[72px] h-[72px] rounded-full bg-muted mb-2 items-center justify-center border-2 border-card shadow-sm overflow-hidden">
+                <View className="w-18 h-18 rounded-full bg-muted mb-2 items-center justify-center border-2 border-card shadow-sm overflow-hidden">
                   {item.image ? (
                     <Image
                       source={{ uri: item.image }}
@@ -486,7 +487,7 @@ export default function HomeScreen() {
                     <Icon name="image" size={24} color="#cbd5e1" />
                   )}
                 </View>
-                <Text className="text-[10px] font-bold text-foreground" numberOfLines={1}>
+                <Text className="text-caption font-bold text-foreground" numberOfLines={1}>
                   {item.name.substring(0, 10)}
                 </Text>
               </Pressable>
@@ -498,13 +499,15 @@ export default function HomeScreen() {
         {newItems.length > 0 && (
           <View className="pl-5 mt-10">
             <View className="flex-row justify-between items-center mb-4 pr-5">
-              <Text className="text-[18px] font-heading font-bold text-foreground">New Items</Text>
+              <Text className="text-heading-md font-heading font-bold text-foreground">
+                New Items
+              </Text>
               <Pressable
                 style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
                 className="flex-row items-center gap-1 active:opacity-70"
                 onPress={() => router.push("/(customer)/(shop)")}
               >
-                <Text className="text-[12px] font-bold text-muted-foreground">See All</Text>
+                <Text className="text-body-sm font-bold text-muted-foreground">See All</Text>
                 <View className="w-5 h-5 rounded-full bg-foreground items-center justify-center">
                   <Icon name="arrow-right" size={12} color="#fff" />
                 </View>
@@ -526,7 +529,7 @@ export default function HomeScreen() {
                   onPress={() => router.push(`/(customer)/product/${item.id}`)}
                 >
                   <View
-                    className="w-full rounded-[16px] bg-muted mb-2 items-center justify-center overflow-hidden"
+                    className="w-full rounded-xl bg-muted mb-2 items-center justify-center overflow-hidden"
                     style={{ aspectRatio: 1 }}
                   >
                     {item.image ? (
@@ -539,16 +542,16 @@ export default function HomeScreen() {
                       <Icon name="image" size={32} color="#cbd5e1" />
                     )}
                   </View>
-                  <Text className="text-[14px] font-bold text-foreground" numberOfLines={1}>
+                  <Text className="text-body-md font-bold text-foreground" numberOfLines={1}>
                     {item.name}
                   </Text>
                   <Text
-                    className="text-[11px] text-muted-foreground font-body mb-1"
+                    className="text-caption text-muted-foreground font-body mb-1"
                     numberOfLines={1}
                   >
                     {item.subtitle || item.category}
                   </Text>
-                  <Text className="text-[14px] font-bold text-foreground">
+                  <Text className="text-body-md font-bold text-foreground">
                     GHS {item.price.toFixed(2)}
                   </Text>
                 </Pressable>
@@ -561,7 +564,9 @@ export default function HomeScreen() {
         {flashSale.length > 0 && (
           <View className="px-5 mt-10">
             <View className="flex-row justify-between items-center mb-4">
-              <Text className="text-[18px] font-heading font-bold text-foreground">Flash Sale</Text>
+              <Text className="text-heading-md font-heading font-bold text-foreground">
+                Flash Sale
+              </Text>
               <Pressable
                 style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
                 className="flex-row items-center gap-1.5 active:opacity-70"
@@ -569,13 +574,13 @@ export default function HomeScreen() {
               >
                 <Icon name="clock" size={14} color="#0f172a" />
                 <View className="bg-muted px-1.5 py-0.5 rounded">
-                  <Text className="text-[11px] font-bold text-error">{hours}</Text>
+                  <Text className="text-caption font-bold text-error">{hours}</Text>
                 </View>
                 <View className="bg-muted px-1.5 py-0.5 rounded">
-                  <Text className="text-[11px] font-bold text-error">{minutes}</Text>
+                  <Text className="text-caption font-bold text-error">{minutes}</Text>
                 </View>
                 <View className="bg-muted px-1.5 py-0.5 rounded">
-                  <Text className="text-[11px] font-bold text-error">{seconds}</Text>
+                  <Text className="text-caption font-bold text-error">{seconds}</Text>
                 </View>
                 <Icon name="chevron-right" size={16} color="#0f172a" />
               </Pressable>
@@ -586,7 +591,7 @@ export default function HomeScreen() {
                 return (
                   <Pressable
                     key={item.id}
-                    className="w-[31%] rounded-[12px] bg-muted relative items-center justify-center active:opacity-70 overflow-hidden"
+                    className="w-[31%] rounded-lg bg-muted relative items-center justify-center active:opacity-70 overflow-hidden"
                     style={{ aspectRatio: 1 }}
                     onPress={() => router.push(`/(customer)/product/${item.id}`)}
                   >
@@ -600,7 +605,7 @@ export default function HomeScreen() {
                       <Icon name="image" size={24} color="#cbd5e1" />
                     )}
                     <View className="absolute top-1 right-1 bg-error px-1.5 py-0.5 rounded-sm">
-                      <Text className="text-[9px] font-bold text-white">-{discount}%</Text>
+                      <Text className="text-caption font-bold text-white">-{discount}%</Text>
                     </View>
                   </Pressable>
                 );
@@ -612,12 +617,14 @@ export default function HomeScreen() {
         {/* ===== MOST POPULAR ===== */}
         <View className="pl-5 mt-10">
           <View className="flex-row justify-between items-center mb-4 pr-5">
-            <Text className="text-[18px] font-heading font-bold text-foreground">Most Popular</Text>
+            <Text className="text-heading-md font-heading font-bold text-foreground">
+              Most Popular
+            </Text>
             <Pressable
               style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
               onPress={() => router.push("/(customer)/(shop)")}
             >
-              <Text className="text-[12px] font-bold text-muted-foreground">See All</Text>
+              <Text className="text-body-sm font-bold text-muted-foreground">See All</Text>
             </Pressable>
           </View>
           <FlashList
@@ -635,7 +642,7 @@ export default function HomeScreen() {
                 className="w-[110px] active:opacity-70"
                 onPress={() => router.push(`/(customer)/product/${item.id}`)}
               >
-                <View className="w-full h-[150px] rounded-[16px] bg-muted mb-2 items-center justify-center overflow-hidden">
+                <View className="w-full h-[150px] rounded-xl bg-muted mb-2 items-center justify-center overflow-hidden">
                   {item.image ? (
                     <Image
                       source={{ uri: item.image }}
@@ -648,12 +655,12 @@ export default function HomeScreen() {
                 </View>
                 <View className="flex-row justify-between items-center px-1">
                   <View className="flex-row items-center">
-                    <Text className="text-[12px] font-bold text-foreground">
+                    <Text className="text-body-sm font-bold text-foreground">
                       GHS {item.price.toFixed(0)}
                     </Text>
                     <Icon name="star" size={10} color="#f59e0b" style={{ marginLeft: 4 }} />
                   </View>
-                  <Text className="text-[10px] text-muted-foreground">{item.rating}</Text>
+                  <Text className="text-caption text-muted-foreground">{item.rating}</Text>
                 </View>
               </Pressable>
             )}
@@ -663,10 +670,12 @@ export default function HomeScreen() {
         {/* ===== JUST FOR YOU ===== */}
         <View className="px-5 mt-10">
           <View className="flex-row items-center mb-4 gap-2">
-            <Text className="text-[18px] font-heading font-bold text-foreground">Just For You</Text>
+            <Text className="text-heading-md font-heading font-bold text-foreground">
+              Just For You
+            </Text>
             <View className="bg-primary-subtle px-2 py-0.5 rounded-md border border-border flex-row items-center gap-1">
               <Icon name="zap" size={10} color="var(--color-primary)" />
-              <Text className="text-[10px] font-bold text-primary uppercase tracking-wider">
+              <Text className="text-caption font-bold text-primary uppercase tracking-wider">
                 Personalized
               </Text>
             </View>
@@ -679,7 +688,7 @@ export default function HomeScreen() {
                 onPress={() => router.push(`/(customer)/product/${item.id}`)}
               >
                 <View
-                  className="w-full rounded-[16px] bg-muted mb-2 items-center justify-center relative overflow-hidden"
+                  className="w-full rounded-xl bg-muted mb-2 items-center justify-center relative overflow-hidden"
                   style={{ aspectRatio: 0.8 }}
                 >
                   {item.image ? (
@@ -705,16 +714,16 @@ export default function HomeScreen() {
                     />
                   </Pressable>
                 </View>
-                <Text className="text-[14px] font-bold text-foreground" numberOfLines={1}>
+                <Text className="text-body-md font-bold text-foreground" numberOfLines={1}>
                   {item.name}
                 </Text>
                 <Text
-                  className="text-[11px] text-muted-foreground font-body mb-1"
+                  className="text-caption text-muted-foreground font-body mb-1"
                   numberOfLines={1}
                 >
                   {item.vendor}
                 </Text>
-                <Text className="text-[14px] font-bold text-foreground">
+                <Text className="text-body-md font-bold text-foreground">
                   GHS {item.price.toFixed(2)}
                 </Text>
               </Pressable>

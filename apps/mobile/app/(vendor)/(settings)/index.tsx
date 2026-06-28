@@ -132,7 +132,7 @@ export default function VendorSettingsScreen() {
         className="px-5 pb-4 bg-card border-b border-border"
         style={{ paddingTop: (insets.top || 12) + 12 }}
       >
-        <Text className="text-[28px] font-heading font-black text-foreground">Settings</Text>
+        <Text className="text-display-md font-heading font-black text-foreground">Settings</Text>
       </View>
 
       <ScrollView
@@ -141,12 +141,12 @@ export default function VendorSettingsScreen() {
         showsVerticalScrollIndicator={false}
       >
         {/* Vendor Profile Card */}
-        <View className="bg-card rounded-[24px] p-5 flex-row items-center shadow-[0_10px_20px_rgba(0,0,0,0.03)] border border-border mb-8">
+        <View className="bg-card rounded-2xl p-5 flex-row items-center shadow-lg border border-border mb-8">
           <View className="mr-4">
             <Avatar uri={user?.image} name={user?.name || "V"} size={64} fallback="initials" />
           </View>
           <View className="flex-1">
-            <Text className="text-[20px] font-heading font-bold text-foreground">
+            <Text className="text-display-sm font-heading font-bold text-foreground">
               {user?.name || "My Store"}
             </Text>
             <Text className="text-body-sm font-body text-muted-foreground">
@@ -165,10 +165,10 @@ export default function VendorSettingsScreen() {
         {/* Sections */}
         {SETTINGS_SECTIONS.map((section, idx) => (
           <View key={idx} className="mb-8">
-            <Text className="text-[16px] font-heading font-bold text-foreground mb-3 px-1">
+            <Text className="text-body-lg font-heading font-bold text-foreground mb-3 px-1">
               {section.title}
             </Text>
-            <View className="bg-card rounded-[24px] border border-border overflow-hidden shadow-[0_10px_20px_rgba(0,0,0,0.02)]">
+            <View className="bg-card rounded-2xl border border-border overflow-hidden shadow-lg">
               {section.items.map((item, itemIdx) => {
                 const isLast = itemIdx === section.items.length - 1;
                 return (
@@ -190,7 +190,7 @@ export default function VendorSettingsScreen() {
                       >
                         <Icon name={item.icon} size={18} color={item.color} />
                       </View>
-                      <Text className="text-[15px] font-body font-semibold text-foreground">
+                      <Text className="text-body-lg font-body font-semibold text-foreground">
                         {item.label}
                       </Text>
                     </View>
@@ -217,11 +217,11 @@ export default function VendorSettingsScreen() {
         {/* Logout Button */}
         <Pressable
           style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
-          className="flex-row items-center justify-center gap-2 p-4 bg-rose-50 rounded-[16px] mt-2 border border-rose-100 active:opacity-70"
+          className="flex-row items-center justify-center gap-2 p-4 bg-rose-50 rounded-xl mt-2 border border-rose-100 active:opacity-70"
           onPress={handleLogout}
         >
           <Icon name="log-out" size={18} color="#ef4444" />
-          <Text className="text-[15px] font-body font-bold text-rose-500">Log Out</Text>
+          <Text className="text-body-lg font-body font-bold text-rose-500">Log Out</Text>
         </Pressable>
       </ScrollView>
     </View>

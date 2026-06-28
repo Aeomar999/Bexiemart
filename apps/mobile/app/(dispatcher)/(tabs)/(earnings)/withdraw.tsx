@@ -150,7 +150,7 @@ export default function WithdrawFundsScreen() {
         style={{ paddingTop: (insets.top || 12) + 12 }}
       >
         <BackButton className="bg-muted" />
-        <Text className="text-[18px] font-heading font-black text-foreground tracking-tight">
+        <Text className="text-heading-md font-heading font-black text-foreground tracking-tight">
           Withdraw Funds
         </Text>
         <View className="w-10 h-10" />
@@ -164,22 +164,24 @@ export default function WithdrawFundsScreen() {
         showsVerticalScrollIndicator={false}
       >
         {/* Amount Input Card */}
-        <View className="bg-white rounded-[32px] p-6 mb-8 border border-border shadow-sm shadow-sm/50 mt-4">
+        <View className="bg-white rounded-3xl p-6 mb-8 border border-border shadow-sm shadow-sm/50 mt-4">
           <View className="flex-row justify-between items-center mb-6">
             <View className="flex-row items-center bg-primary-subtle px-3 py-1.5 rounded-full border border-border">
               <Icon name="info" size={14} color="var(--color-primary)" style={{ marginRight: 6 }} />
-              <Text className="text-[12px] font-bold text-primary-hover">
+              <Text className="text-body-sm font-bold text-primary-hover">
                 Available: GHS {availableBalance.toFixed(2)}
               </Text>
             </View>
             <Pressable onPress={handleMaxAmount} className="bg-muted px-3 py-1.5 rounded-full">
-              <Text className="text-[12px] font-bold text-muted-foreground">Withdraw Max</Text>
+              <Text className="text-body-sm font-bold text-muted-foreground">Withdraw Max</Text>
             </Pressable>
           </View>
 
           <View className="items-center justify-center py-4">
             <View className="flex-row items-center justify-center">
-              <Text className="text-[28px] font-black text-muted-foreground mr-2 mt-1">GHS</Text>
+              <Text className="text-display-md font-black text-muted-foreground mr-2 mt-1">
+                GHS
+              </Text>
               <TextInput
                 placeholder="0.00"
                 keyboardType="decimal-pad"
@@ -195,10 +197,10 @@ export default function WithdrawFundsScreen() {
 
         {/* Payment Method */}
         <View className="mb-8">
-          <Text className="text-[14px] font-bold text-muted-foreground mb-4 ml-2 uppercase tracking-wider">
+          <Text className="text-body-md font-bold text-muted-foreground mb-4 ml-2 uppercase tracking-wider">
             Transfer To
           </Text>
-          <View className="bg-white rounded-[24px] border border-border p-2 shadow-sm shadow-sm/30">
+          <View className="bg-white rounded-2xl border border-border p-2 shadow-sm shadow-sm/30">
             {methods.map((method, index) => {
               const isSelected = selectedMethod === method.id;
 
@@ -206,7 +208,7 @@ export default function WithdrawFundsScreen() {
                 <Pressable
                   key={method.id}
                   onPress={() => setSelectedMethod(method.id)}
-                  className={`p-4 rounded-[20px] flex-row items-center ${isSelected ? "bg-primary-subtle border border-border" : "bg-transparent border border-transparent"}`}
+                  className={`p-4 rounded-2xl flex-row items-center ${isSelected ? "bg-primary-subtle border border-border" : "bg-transparent border border-transparent"}`}
                   style={
                     !isSelected && index < methods.length - 1
                       ? { borderBottomColor: "#f1f5f9", borderBottomWidth: 1, borderRadius: 0 }
@@ -214,18 +216,18 @@ export default function WithdrawFundsScreen() {
                   }
                 >
                   <View
-                    className={`w-12 h-12 rounded-[16px] items-center justify-center mr-4 ${isSelected ? "bg-primary" : "bg-muted"}`}
+                    className={`w-12 h-12 rounded-xl items-center justify-center mr-4 ${isSelected ? "bg-primary" : "bg-muted"}`}
                   >
                     <Icon name={method.icon} size={24} color={isSelected ? "#fff" : "#64748b"} />
                   </View>
                   <View className="flex-1">
                     <Text
-                      className={`text-[16px] font-bold mb-0.5 tracking-tight ${isSelected ? "text-foreground" : "text-foreground"}`}
+                      className={`text-body-lg font-bold mb-0.5 tracking-tight ${isSelected ? "text-foreground" : "text-foreground"}`}
                     >
                       {method.title}
                     </Text>
                     <Text
-                      className={`text-[13px] font-body ${isSelected ? "text-primary" : "text-muted-foreground"}`}
+                      className={`text-sm font-body ${isSelected ? "text-primary" : "text-muted-foreground"}`}
                     >
                       {method.account}
                     </Text>
@@ -245,33 +247,33 @@ export default function WithdrawFundsScreen() {
               onPress={() => setShowAddMethod(true)}
             >
               <Icon name="plus" size={18} color="var(--color-primary)" style={{ marginRight: 8 }} />
-              <Text className="text-[15px] font-bold text-primary">Add Payment Method</Text>
+              <Text className="text-body-lg font-bold text-primary">Add Payment Method</Text>
             </Pressable>
           </View>
         </View>
 
         {/* Receipt Summary */}
         <View className="mb-8">
-          <Text className="text-[14px] font-bold text-muted-foreground mb-4 ml-2 uppercase tracking-wider">
+          <Text className="text-body-md font-bold text-muted-foreground mb-4 ml-2 uppercase tracking-wider">
             Summary
           </Text>
-          <View className="bg-white rounded-[24px] border border-border p-6 shadow-sm shadow-sm/30">
+          <View className="bg-white rounded-2xl border border-border p-6 shadow-sm shadow-sm/30">
             <View className="flex-row justify-between items-center mb-4">
-              <Text className="text-[15px] font-body text-muted-foreground">Amount</Text>
-              <Text className="text-[15px] font-bold text-foreground">
+              <Text className="text-body-lg font-body text-muted-foreground">Amount</Text>
+              <Text className="text-body-lg font-bold text-foreground">
                 GHS {numAmount.toFixed(2)}
               </Text>
             </View>
             <View className="flex-row justify-between items-center mb-5">
-              <Text className="text-[15px] font-body text-muted-foreground">Processing Fee</Text>
-              <Text className="text-[15px] font-bold text-foreground">GHS {fee.toFixed(2)}</Text>
+              <Text className="text-body-lg font-body text-muted-foreground">Processing Fee</Text>
+              <Text className="text-body-lg font-bold text-foreground">GHS {fee.toFixed(2)}</Text>
             </View>
 
             <View className="h-[2px] bg-muted w-full mb-5" style={{ borderStyle: "dashed" }} />
 
             <View className="flex-row justify-between items-center">
-              <Text className="text-[16px] font-bold text-foreground">Total Deduction</Text>
-              <Text className="text-[20px] font-heading font-black text-primary tracking-tight">
+              <Text className="text-body-lg font-bold text-foreground">Total Deduction</Text>
+              <Text className="text-display-sm font-heading font-black text-primary tracking-tight">
                 GHS {totalDeduction.toFixed(2)}
               </Text>
             </View>
@@ -304,13 +306,13 @@ export default function WithdrawFundsScreen() {
         <View className="flex-1 justify-end" style={{ backgroundColor: "rgba(0,0,0,0.6)" }}>
           <Pressable className="absolute inset-0" onPress={() => setShowAddMethod(false)} />
           <View
-            className="bg-white rounded-t-[32px] p-6 shadow-2xl"
+            className="bg-white rounded-t-3xl p-6 shadow-2xl"
             style={{ paddingBottom: Math.max(insets.bottom, 20) }}
           >
             <View className="w-12 h-1.5 bg-muted rounded-full self-center mb-6" />
 
             <View className="flex-row justify-between items-center mb-6">
-              <Text className="text-[22px] font-heading font-black text-foreground tracking-tight">
+              <Text className="text-display-sm font-heading font-black text-foreground tracking-tight">
                 Add Method
               </Text>
               <Pressable
@@ -324,7 +326,7 @@ export default function WithdrawFundsScreen() {
             <View className="flex-row gap-4 mb-8">
               <Pressable
                 onPress={() => setNewMethodType("momo")}
-                className={`flex-1 p-5 rounded-[20px] border items-center justify-center ${newMethodType === "momo" ? "bg-primary-subtle border-border shadow-sm shadow-none" : "bg-background border-border"}`}
+                className={`flex-1 p-5 rounded-2xl border items-center justify-center ${newMethodType === "momo" ? "bg-primary-subtle border-border shadow-sm shadow-none" : "bg-background border-border"}`}
               >
                 <View
                   className={`w-12 h-12 rounded-full items-center justify-center mb-3 ${newMethodType === "momo" ? "bg-primary" : "bg-white"}`}
@@ -336,7 +338,7 @@ export default function WithdrawFundsScreen() {
                   />
                 </View>
                 <Text
-                  className={`text-[14px] font-bold ${newMethodType === "momo" ? "text-foreground" : "text-muted-foreground"}`}
+                  className={`text-body-md font-bold ${newMethodType === "momo" ? "text-foreground" : "text-muted-foreground"}`}
                 >
                   Mobile Money
                 </Text>
@@ -344,7 +346,7 @@ export default function WithdrawFundsScreen() {
 
               <Pressable
                 onPress={() => setNewMethodType("bank")}
-                className={`flex-1 p-5 rounded-[20px] border items-center justify-center ${newMethodType === "bank" ? "bg-primary-subtle border-border shadow-sm shadow-none" : "bg-background border-border"}`}
+                className={`flex-1 p-5 rounded-2xl border items-center justify-center ${newMethodType === "bank" ? "bg-primary-subtle border-border shadow-sm shadow-none" : "bg-background border-border"}`}
               >
                 <View
                   className={`w-12 h-12 rounded-full items-center justify-center mb-3 ${newMethodType === "bank" ? "bg-primary" : "bg-white"}`}
@@ -356,7 +358,7 @@ export default function WithdrawFundsScreen() {
                   />
                 </View>
                 <Text
-                  className={`text-[14px] font-bold ${newMethodType === "bank" ? "text-foreground" : "text-muted-foreground"}`}
+                  className={`text-body-md font-bold ${newMethodType === "bank" ? "text-foreground" : "text-muted-foreground"}`}
                 >
                   Bank Transfer
                 </Text>
@@ -364,7 +366,7 @@ export default function WithdrawFundsScreen() {
             </View>
 
             <View className="mb-8">
-              <Text className="text-[14px] font-bold text-foreground mb-2 ml-1">
+              <Text className="text-body-md font-bold text-foreground mb-2 ml-1">
                 {newMethodType === "momo" ? "Mobile Number" : "Account Number"}
               </Text>
               <TextInput
@@ -374,7 +376,7 @@ export default function WithdrawFundsScreen() {
                 keyboardType="number-pad"
                 value={newMethodAccount}
                 onChangeText={setNewMethodAccount}
-                className="bg-background border border-border rounded-[16px] px-5 h-14 font-body text-[16px] text-foreground"
+                className="bg-background border border-border rounded-xl px-5 h-14 font-body text-body-lg text-foreground"
                 placeholderTextColor="#94a3b8"
               />
             </View>
@@ -400,7 +402,7 @@ export default function WithdrawFundsScreen() {
         >
           <View className="bg-white rounded-t-[40px] p-8 pb-12 h-[85%] shadow-2xl">
             <View className="flex-row justify-between items-center mb-8">
-              <Text className="text-[24px] font-heading font-black text-foreground tracking-tight">
+              <Text className="text-display-md font-heading font-black text-foreground tracking-tight">
                 Enter PIN
               </Text>
               <Pressable
@@ -414,7 +416,7 @@ export default function WithdrawFundsScreen() {
               </Pressable>
             </View>
 
-            <Text className="text-[15px] font-body text-muted-foreground text-center mb-10 px-4">
+            <Text className="text-body-lg font-body text-muted-foreground text-center mb-10 px-4">
               Enter your 4-digit security PIN to confirm the withdrawal of{" "}
               <Text className="font-bold text-foreground">GHS {numAmount.toFixed(2)}</Text>.
             </Text>
@@ -444,7 +446,9 @@ export default function WithdrawFundsScreen() {
                   ]}
                   onPress={() => handlePinEntry(num.toString())}
                 >
-                  <Text className="text-[32px] font-heading font-black text-foreground">{num}</Text>
+                  <Text className="text-display-lg font-heading font-black text-foreground">
+                    {num}
+                  </Text>
                 </Pressable>
               ))}
               <View className="w-[28%]" style={{ aspectRatio: 1 }} />
@@ -459,7 +463,7 @@ export default function WithdrawFundsScreen() {
                 ]}
                 onPress={() => handlePinEntry("0")}
               >
-                <Text className="text-[32px] font-heading font-black text-foreground">0</Text>
+                <Text className="text-display-lg font-heading font-black text-foreground">0</Text>
               </Pressable>
               <Pressable
                 className="w-[28%] items-center justify-center rounded-full"

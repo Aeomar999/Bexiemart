@@ -24,7 +24,7 @@ export function LoadingState({ message = "Loading...", type = "spinner" }: Loadi
     <View className="flex-1 bg-background items-center justify-center p-6">
       <ActivityIndicator size="large" color="var(--color-primary)" />
       {message && (
-        <Text className="mt-4 text-[15px] font-bold text-muted-foreground text-center">
+        <Text className="mt-4 text-body-lg font-bold text-muted-foreground text-center">
           {message}
         </Text>
       )}

@@ -132,17 +132,17 @@ export default function LoginScreen() {
                     />
                   </View>
                   <View className="flex-1">
-                    <Text className="text-[18px] font-heading font-black text-foreground mb-1">
+                    <Text className="text-heading-md font-heading font-black text-foreground mb-1">
                       Check your inbox
                     </Text>
-                    <Text className="text-[13px] text-primary-hover font-body leading-relaxed">
+                    <Text className="text-sm text-primary-hover font-body leading-relaxed">
                       We sent a link to <Text className="font-bold text-foreground">{email}</Text>
                     </Text>
                   </View>
                 </View>
 
                 <View className="bg-white/60 p-4 rounded-2xl mb-5 border border-white">
-                  <Text className="text-[13px] text-foreground font-body leading-relaxed">
+                  <Text className="text-sm text-foreground font-body leading-relaxed">
                     Tap the verification link in your email before signing in.
                   </Text>
                   <View className="mt-2 flex-row items-start gap-2 bg-primary-subtle p-3 rounded-xl border border-border">
@@ -152,7 +152,7 @@ export default function LoginScreen() {
                       color="var(--color-primary)"
                       style={{ marginTop: 2 }}
                     />
-                    <Text className="flex-1 text-[12px] text-primary-hover leading-tight">
+                    <Text className="flex-1 text-body-sm text-primary-hover leading-tight">
                       <Text className="font-bold">Testing locally?</Text> Phone browsers can't open
                       "localhost" links. Copy the link to your PC browser, or update your .env to
                       use your local IP address (e.g., 192.168.x.x) instead of localhost.
@@ -161,13 +161,13 @@ export default function LoginScreen() {
                 </View>
 
                 {resendError ? (
-                  <Text className="text-[13px] text-error font-body mb-3 px-1 text-center">
+                  <Text className="text-sm text-error font-body mb-3 px-1 text-center">
                     {resendError}
                   </Text>
                 ) : resendVerification.isSuccess && countdown > 0 ? (
                   <View className="flex-row items-center justify-center gap-2 mb-4">
                     <FontAwesome5 name="check-circle" size={14} color="#16A34A" />
-                    <Text className="text-[13px] font-bold text-success">
+                    <Text className="text-sm font-bold text-success">
                       Link sent! Check your email.
                     </Text>
                   </View>
@@ -176,7 +176,7 @@ export default function LoginScreen() {
                 {countdown > 0 ? (
                   <View className="bg-white/80 border border-border py-3.5 px-4 rounded-full flex-row items-center justify-center gap-2">
                     <FontAwesome5 name="clock" size={14} color="var(--color-primary)" />
-                    <Text className="text-[14px] font-bold text-foreground">
+                    <Text className="text-body-md font-bold text-foreground">
                       Resend available in {Math.floor(countdown / 60)}:
                       {(countdown % 60).toString().padStart(2, "0")}
                     </Text>

@@ -2,20 +2,20 @@ import { Text, TouchableOpacity, View, TouchableOpacityProps } from "react-nativ
 import { Icon } from "@/components/ui/Icon";
 import { useRouter } from "expo-router";
 
-interface SearchBarProps extends Omit<TouchableOpacityProps, 'onPress'> {
+interface SearchBarProps extends Omit<TouchableOpacityProps, "onPress"> {
   placeholder?: string;
   onPress?: () => void;
   showCamera?: boolean;
 }
 
-export function SearchBar({ 
-  placeholder = "Search Bexiemart...", 
+export function SearchBar({
+  placeholder = "Search Bexiemart...",
   onPress,
   showCamera = true,
   ...props
 }: SearchBarProps) {
   const router = useRouter();
-  
+
   const handlePress = () => {
     if (onPress) {
       onPress();
@@ -25,15 +25,15 @@ export function SearchBar({
   };
 
   return (
-    <TouchableOpacity 
+    <TouchableOpacity
       accessibilityRole="button"
-      className="flex-row items-center bg-background h-[48px] rounded-[16px] px-4 border border-border"
+      className="flex-row items-center bg-background h-12 rounded-xl px-4 border border-border"
       onPress={handlePress}
       activeOpacity={0.9}
       {...props}
     >
       <Icon name="search" size={18} color="#64748b" />
-      <Text className="flex-1 ml-2 text-[15px] font-body text-muted-foreground">
+      <Text className="flex-1 ml-2 text-body-lg font-body text-muted-foreground">
         {placeholder}
       </Text>
       {showCamera && (

@@ -101,14 +101,14 @@ export default function VendorChatScreen() {
       >
         <BackButton className="mr-3" />
         <View className="flex-1">
-          <Text className="text-[18px] font-heading font-black text-foreground">
+          <Text className="text-heading-md font-heading font-black text-foreground">
             {otherParticipant?.user?.name || `Customer`}
           </Text>
           <View className="flex-row items-center gap-1.5 mt-0.5">
             <View
               className={`w-2 h-2 rounded-full ${connected ? "bg-emerald-500" : "bg-gray-400"}`}
             />
-            <Text className="text-[12px] font-body text-muted-foreground">
+            <Text className="text-body-sm font-body text-muted-foreground">
               {connected ? "Online" : "Offline"}
             </Text>
           </View>
@@ -126,7 +126,7 @@ export default function VendorChatScreen() {
           onContentSizeChange={() => scrollRef.current?.scrollToEnd()}
         >
           <View className="items-center mb-6">
-            <Text className="text-[12px] font-bold text-muted-foreground bg-secondary px-3 py-1 rounded-full">
+            <Text className="text-body-sm font-bold text-muted-foreground bg-secondary px-3 py-1 rounded-full">
               Today
             </Text>
           </View>
@@ -139,13 +139,13 @@ export default function VendorChatScreen() {
                 className={`max-w-[80%] mb-4 ${isVendor ? "self-end" : "self-start"}`}
               >
                 <View
-                  className={`p-3 rounded-[16px] ${isVendor ? "bg-primary rounded-br-none" : "bg-card border border-border rounded-bl-none"}`}
+                  className={`p-3 rounded-xl ${isVendor ? "bg-primary rounded-br-none" : "bg-card border border-border rounded-bl-none"}`}
                 >
-                  <Text className={`text-[14px] ${isVendor ? "text-white" : "text-foreground"}`}>
+                  <Text className={`text-body-md ${isVendor ? "text-white" : "text-foreground"}`}>
                     {msg.content || msg.text}
                   </Text>
                   <Text
-                    className={`text-[10px] ${isVendor ? "text-white/70 text-right" : "text-muted-foreground"} mt-1`}
+                    className={`text-caption ${isVendor ? "text-white/70 text-right" : "text-muted-foreground"} mt-1`}
                   >
                     {msg.createdAt
                       ? new Date(msg.createdAt).toLocaleTimeString([], {
@@ -166,9 +166,9 @@ export default function VendorChatScreen() {
         <Pressable className="w-10 h-10 rounded-full bg-muted items-center justify-center">
           <Icon name="paperclip" size={20} color="#64748b" />
         </Pressable>
-        <View className="flex-1 bg-muted rounded-[20px] px-4 py-3 flex-row items-center">
+        <View className="flex-1 bg-muted rounded-2xl px-4 py-3 flex-row items-center">
           <TextInput
-            className="flex-1 text-[15px] text-foreground p-0 m-0"
+            className="flex-1 text-body-lg text-foreground p-0 m-0"
             placeholder="Type a message..."
             value={message}
             onChangeText={setMessage}

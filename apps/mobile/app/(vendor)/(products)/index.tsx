@@ -75,7 +75,7 @@ export default function ListingsScreen() {
         className="bg-card px-5 pt-4 pb-2 border-b border-border"
         style={{ paddingTop: (insets.top || 12) + 12 }}
       >
-        <Text className="text-[28px] font-heading font-black text-foreground mb-6">
+        <Text className="text-display-md font-heading font-black text-foreground mb-6">
           My Listings
         </Text>
 
@@ -86,7 +86,7 @@ export default function ListingsScreen() {
             className={`flex-1 py-2 items-center justify-center rounded-lg ${activeTab === "products" ? "bg-card border border-border" : ""}`}
           >
             <Text
-              className={`text-[13px] font-bold ${activeTab === "products" ? "text-foreground" : "text-muted-foreground"}`}
+              className={`text-sm font-bold ${activeTab === "products" ? "text-foreground" : "text-muted-foreground"}`}
             >
               Products
             </Text>
@@ -96,7 +96,7 @@ export default function ListingsScreen() {
             className={`flex-1 py-2 items-center justify-center rounded-lg ${activeTab === "food" ? "bg-card border border-border" : ""}`}
           >
             <Text
-              className={`text-[13px] font-bold ${activeTab === "food" ? "text-foreground" : "text-muted-foreground"}`}
+              className={`text-sm font-bold ${activeTab === "food" ? "text-foreground" : "text-muted-foreground"}`}
             >
               Food
             </Text>
@@ -106,7 +106,7 @@ export default function ListingsScreen() {
             className={`flex-1 py-2 items-center justify-center rounded-lg ${activeTab === "services" ? "bg-card border border-border" : ""}`}
           >
             <Text
-              className={`text-[13px] font-bold ${activeTab === "services" ? "text-foreground" : "text-muted-foreground"}`}
+              className={`text-sm font-bold ${activeTab === "services" ? "text-foreground" : "text-muted-foreground"}`}
             >
               Services
             </Text>
@@ -132,7 +132,7 @@ export default function ListingsScreen() {
                 }`}
               >
                 <Text
-                  className={`text-[13px] font-bold ${
+                  className={`text-sm font-bold ${
                     filter === item.id ? "text-white" : "text-muted-foreground"
                   }`}
                 >
@@ -214,16 +214,16 @@ export default function ListingsScreen() {
       >
         <View className="flex-1 justify-end bg-black/40">
           <Pressable className="absolute inset-0" onPress={() => setAddModalVisible(false)} />
-          <View className="bg-card rounded-t-[32px] p-6 pb-12">
+          <View className="bg-card rounded-t-3xl p-6 pb-12">
             <View className="w-12 h-1.5 bg-secondary rounded-full self-center mb-6" />
-            <Text className="text-[20px] font-heading font-bold text-foreground mb-6">
+            <Text className="text-display-sm font-heading font-bold text-foreground mb-6">
               Create New Listing
             </Text>
 
             <View className="gap-3">
               <Pressable
                 style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
-                className="flex-row items-center p-4 bg-background border border-border rounded-[20px]"
+                className="flex-row items-center p-4 bg-background border border-border rounded-2xl"
                 onPress={() => {
                   setAddModalVisible(false);
                   router.push("/(vendor)/(products)/add-product");
@@ -233,10 +233,10 @@ export default function ListingsScreen() {
                   <Icon name="package" size={24} color="#0f172a" />
                 </View>
                 <View className="ml-4 flex-1">
-                  <Text className="text-[16px] font-bold text-foreground mb-0.5">
+                  <Text className="text-body-lg font-bold text-foreground mb-0.5">
                     Physical Product
                   </Text>
-                  <Text className="text-[13px] font-body text-muted-foreground">
+                  <Text className="text-sm font-body text-muted-foreground">
                     Items that require shipping or delivery
                   </Text>
                 </View>
@@ -245,7 +245,7 @@ export default function ListingsScreen() {
 
               <Pressable
                 style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
-                className="flex-row items-center p-4 bg-background border border-border rounded-[20px]"
+                className="flex-row items-center p-4 bg-background border border-border rounded-2xl"
                 onPress={() => {
                   setAddModalVisible(false);
                   router.push("/(vendor)/(products)/add-food");
@@ -255,8 +255,8 @@ export default function ListingsScreen() {
                   <Icon name="coffee" size={24} color="#0f172a" />
                 </View>
                 <View className="ml-4 flex-1">
-                  <Text className="text-[16px] font-bold text-foreground mb-0.5">Food Item</Text>
-                  <Text className="text-[13px] font-body text-muted-foreground">
+                  <Text className="text-body-lg font-bold text-foreground mb-0.5">Food Item</Text>
+                  <Text className="text-sm font-body text-muted-foreground">
                     Restaurant meals, snacks, or beverages
                   </Text>
                 </View>
@@ -265,7 +265,7 @@ export default function ListingsScreen() {
 
               <Pressable
                 style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
-                className="flex-row items-center p-4 bg-background border border-border rounded-[20px]"
+                className="flex-row items-center p-4 bg-background border border-border rounded-2xl"
                 onPress={() => {
                   setAddModalVisible(false);
                   router.push("/(vendor)/(products)/add-service");
@@ -275,8 +275,8 @@ export default function ListingsScreen() {
                   <Icon name="briefcase" size={24} color="#0f172a" />
                 </View>
                 <View className="ml-4 flex-1">
-                  <Text className="text-[16px] font-bold text-foreground mb-0.5">Service</Text>
-                  <Text className="text-[13px] font-body text-muted-foreground">
+                  <Text className="text-body-lg font-bold text-foreground mb-0.5">Service</Text>
+                  <Text className="text-sm font-body text-muted-foreground">
                     Bookable appointments or freelance work
                   </Text>
                 </View>

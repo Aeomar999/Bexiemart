@@ -99,7 +99,7 @@ export default function ChatDetailScreen() {
           </View>
         )}
         <View
-          className={`max-w-[75%] rounded-[16px] px-4 py-2.5 ${isMine ? "bg-primary rounded-tr-sm" : "bg-secondary rounded-tl-sm"}`}
+          className={`max-w-[75%] rounded-xl px-4 py-2.5 ${isMine ? "bg-primary rounded-tr-sm" : "bg-secondary rounded-tl-sm"}`}
         >
           {item.type === "IMAGE" && item.mediaUrl ? (
             <Image
@@ -108,12 +108,12 @@ export default function ChatDetailScreen() {
               contentFit="cover"
             />
           ) : (
-            <Text className={`text-[15px] font-body ${isMine ? "text-white" : "text-foreground"}`}>
+            <Text className={`text-body-lg font-body ${isMine ? "text-white" : "text-foreground"}`}>
               {item.content}
             </Text>
           )}
           <Text
-            className={`text-[10px] mt-1 ${isMine ? "text-white/70 text-right" : "text-muted-foreground text-left"}`}
+            className={`text-caption mt-1 ${isMine ? "text-white/70 text-right" : "text-muted-foreground text-left"}`}
           >
             {format(new Date(item.createdAt), "h:mm a")}
           </Text>
@@ -133,7 +133,7 @@ export default function ChatDetailScreen() {
       >
         <View className="flex-row items-center gap-3">
           <BackButton />
-          <Text className="text-[20px] font-heading font-black text-foreground">
+          <Text className="text-display-sm font-heading font-black text-foreground">
             {otherParticipant?.name || "Chat"}
           </Text>
         </View>
@@ -171,9 +171,9 @@ export default function ChatDetailScreen() {
           )}
         </Pressable>
 
-        <View className="flex-1 bg-secondary rounded-[20px] px-4 pt-3 pb-3 ml-2 mr-2 max-h-[100px] min-h-[44px]">
+        <View className="flex-1 bg-secondary rounded-2xl px-4 pt-3 pb-3 ml-2 mr-2 max-h-[100px] min-h-[44px]">
           <TextInput
-            className="flex-1 text-[15px] font-body text-foreground p-0 m-0 leading-tight"
+            className="flex-1 text-body-lg font-body text-foreground p-0 m-0 leading-tight"
             placeholder="Message..."
             placeholderTextColor="#94a3b8"
             multiline

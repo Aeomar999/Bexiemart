@@ -50,14 +50,14 @@ export default function TransactionReceiptScreen() {
       >
         <View className="flex-row items-center gap-3">
           <BackButton />
-          <Text className="text-[20px] font-heading font-black text-foreground">
+          <Text className="text-display-sm font-heading font-black text-foreground">
             Transaction Details
           </Text>
         </View>
       </View>
 
       <ScrollView className="flex-1 px-5 pt-6 pb-20">
-        <View className="bg-card rounded-[24px] p-6 items-center shadow-[0_10px_20px_rgba(0,0,0,0.03)] border border-border mb-6">
+        <View className="bg-card rounded-2xl p-6 items-center shadow-lg border border-border mb-6">
           <View
             className="w-16 h-16 rounded-full items-center justify-center mb-4"
             style={{ backgroundColor: colors.bg }}
@@ -65,7 +65,9 @@ export default function TransactionReceiptScreen() {
             <Icon name={getTransactionIcon(tx.type)} size={30} color={colors.icon} />
           </View>
 
-          <Text className="text-[16px] text-muted-foreground font-body mb-2">{tx.description}</Text>
+          <Text className="text-body-lg text-muted-foreground font-body mb-2">
+            {tx.description}
+          </Text>
           <Text
             className={`text-[40px] font-black font-heading mb-2 ${isPositive ? "text-emerald-600" : "text-foreground"}`}
           >
@@ -75,33 +77,33 @@ export default function TransactionReceiptScreen() {
             className={`px-4 py-1.5 rounded-full ${tx.status === "COMPLETED" ? "bg-emerald-50" : "bg-amber-50"}`}
           >
             <Text
-              className={`text-[13px] font-bold ${tx.status === "COMPLETED" ? "text-emerald-600" : "text-amber-600"}`}
+              className={`text-sm font-bold ${tx.status === "COMPLETED" ? "text-emerald-600" : "text-amber-600"}`}
             >
               {tx.status}
             </Text>
           </View>
         </View>
 
-        <View className="bg-card rounded-[24px] p-6 shadow-[0_10px_20px_rgba(0,0,0,0.03)] border border-border">
+        <View className="bg-card rounded-2xl p-6 shadow-lg border border-border">
           <View className="flex-row justify-between py-4 border-b border-border">
-            <Text className="text-[15px] text-muted-foreground font-body">Transaction ID</Text>
-            <Text className="text-[15px] text-foreground font-bold">{tx.reference || tx.id}</Text>
+            <Text className="text-body-lg text-muted-foreground font-body">Transaction ID</Text>
+            <Text className="text-body-lg text-foreground font-bold">{tx.reference || tx.id}</Text>
           </View>
 
           <View className="flex-row justify-between py-4 border-b border-border">
-            <Text className="text-[15px] text-muted-foreground font-body">Date</Text>
-            <Text className="text-[15px] text-foreground font-bold">{formatDate(tx.date)}</Text>
+            <Text className="text-body-lg text-muted-foreground font-body">Date</Text>
+            <Text className="text-body-lg text-foreground font-bold">{formatDate(tx.date)}</Text>
           </View>
 
           <View className="flex-row justify-between py-4 border-b border-border">
-            <Text className="text-[15px] text-muted-foreground font-body">Time</Text>
-            <Text className="text-[15px] text-foreground font-bold">{formatTime(tx.date)}</Text>
+            <Text className="text-body-lg text-muted-foreground font-body">Time</Text>
+            <Text className="text-body-lg text-foreground font-bold">{formatTime(tx.date)}</Text>
           </View>
 
           {tx.recipient && (
             <View className="flex-row justify-between py-4 border-b border-border">
-              <Text className="text-[15px] text-muted-foreground font-body">Recipient</Text>
-              <Text className="text-[15px] text-foreground font-bold">{tx.recipient}</Text>
+              <Text className="text-body-lg text-muted-foreground font-body">Recipient</Text>
+              <Text className="text-body-lg text-foreground font-bold">{tx.recipient}</Text>
             </View>
           )}
         </View>

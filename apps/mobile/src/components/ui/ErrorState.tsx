@@ -24,11 +24,11 @@ export function ErrorState({
         <Icon name="alert-triangle" size={32} color="#ef4444" />
       </View>
 
-      <Text className="text-[24px] font-heading font-black text-foreground mb-3 text-center">
+      <Text className="text-display-md font-heading font-black text-foreground mb-3 text-center">
         {title}
       </Text>
 
-      <Text className="text-[16px] font-body text-muted-foreground text-center mb-8 max-w-[85%] leading-relaxed">
+      <Text className="text-body-lg font-body text-muted-foreground text-center mb-8 max-w-[85%] leading-relaxed">
         {message}
       </Text>
 
@@ -36,12 +36,12 @@ export function ErrorState({
         <Pressable
           onPress={onRetry}
           style={({ pressed }) => [{ opacity: pressed ? 0.8 : 1 }]}
-          className="bg-error px-8 py-4 rounded-full flex-row items-center justify-center shadow-[0_4px_12px_rgba(239,68,68,0.15)]"
+          className="bg-error px-8 py-4 rounded-full flex-row items-center justify-center shadow-md"
         >
           <View className="mr-2">
             <Icon name="refresh-cw" size={18} color="white" />
           </View>
-          <Text className="text-white font-heading font-bold text-[16px]">Try Again</Text>
+          <Text className="text-white font-heading font-bold text-body-lg">Try Again</Text>
         </Pressable>
       )}
     </View>

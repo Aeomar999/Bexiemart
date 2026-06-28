@@ -200,7 +200,7 @@ export default function OnboardingScreen() {
             return (
               <Animated.View
                 key={slide.id}
-                className="absolute w-[280px] h-[340px] rounded-[32px] overflow-hidden shadow-2xl shadow-none bg-primary-subtle"
+                className="absolute w-[280px] h-[340px] rounded-3xl overflow-hidden shadow-2xl shadow-none bg-primary-subtle"
                 style={cardStyle}
               >
                 <Image
@@ -214,7 +214,7 @@ export default function OnboardingScreen() {
         </View>
 
         {/* Reimagined Pagination: Liquid Worm */}
-        <View className="flex-row justify-center items-center mb-6 h-[24px]">
+        <View className="flex-row justify-center items-center mb-6 h-6">
           <View className="flex-row gap-2 relative">
             {/* Background Dots */}
             {SLIDES.map((_, i) => (
@@ -285,7 +285,7 @@ export default function OnboardingScreen() {
                   {slide.titleEnd}
                 </Text>
 
-                <Text className="text-[18px] text-muted-foreground font-body text-center leading-[28px] px-4">
+                <Text className="text-heading-md text-muted-foreground font-body text-center leading-[28px] px-4">
                   {slide.description}
                 </Text>
               </Animated.View>

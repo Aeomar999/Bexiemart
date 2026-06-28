@@ -29,7 +29,7 @@ export default function EarningsDashboardScreen() {
     <View className="flex-1 bg-background" style={{ paddingTop: insets.top }}>
       {/* Header */}
       <View className="px-5 py-4 bg-card border-b border-border flex-row items-center justify-between">
-        <Text className="text-[28px] font-heading font-black text-foreground">Earnings</Text>
+        <Text className="text-display-md font-heading font-black text-foreground">Earnings</Text>
         <Pressable
           className="w-10 h-10 rounded-full bg-background items-center justify-center"
           style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
@@ -50,16 +50,16 @@ export default function EarningsDashboardScreen() {
           </View>
         ) : isError ? (
           <View className="items-center justify-center py-20">
-            <Text className="text-[14px] text-red-500 font-body">Failed to load earnings</Text>
+            <Text className="text-body-md text-red-500 font-body">Failed to load earnings</Text>
           </View>
         ) : (
           <>
             {/* Balance Card */}
-            <View className="bg-primary rounded-[24px] p-6 overflow-hidden relative">
+            <View className="bg-primary rounded-2xl p-6 overflow-hidden relative">
               <View className="absolute top-0 right-0 w-32 h-32 bg-card/10 rounded-full -mr-10 -mt-10" />
               <View className="absolute bottom-0 left-0 w-24 h-24 bg-card/10 rounded-full -ml-8 -mb-8" />
 
-              <Text className="text-[14px] text-white/80 font-body font-medium mb-1">
+              <Text className="text-body-md text-white/80 font-body font-medium mb-1">
                 Available for Withdrawal
               </Text>
               <Text className="text-[36px] font-black font-heading text-white leading-tight mb-4">
@@ -68,8 +68,8 @@ export default function EarningsDashboardScreen() {
 
               <View className="flex-row items-center justify-between mt-2">
                 <View>
-                  <Text className="text-[12px] font-body text-white/70">Pending Clearance</Text>
-                  <Text className="text-[16px] font-bold font-heading text-white">
+                  <Text className="text-body-sm font-body text-white/70">Pending Clearance</Text>
+                  <Text className="text-body-lg font-bold font-heading text-white">
                     GH₵ {earnings?.pendingClearance?.toFixed(2) ?? "0.00"}
                   </Text>
                 </View>
@@ -77,44 +77,44 @@ export default function EarningsDashboardScreen() {
                   onPress={() => router.push("/(dispatcher)/(tabs)/(earnings)/withdraw")}
                   className="bg-card px-5 py-2.5 rounded-full"
                 >
-                  <Text className="text-[14px] font-bold font-body text-primary">Withdraw</Text>
+                  <Text className="text-body-md font-bold font-body text-primary">Withdraw</Text>
                 </Pressable>
               </View>
             </View>
 
             {/* Analytics Overview */}
             <View>
-              <Text className="text-[18px] font-bold font-heading text-foreground mb-3">
+              <Text className="text-heading-md font-bold font-heading text-foreground mb-3">
                 Overview
               </Text>
               <View className="flex-row gap-3">
                 <Pressable
-                  className="flex-1 bg-card p-4 rounded-[16px] border border-border"
+                  className="flex-1 bg-card p-4 rounded-xl border border-border"
                   style={({ pressed }) => [{ opacity: pressed ? 0.8 : 1 }]}
                   onPress={() => router.push("/(dispatcher)/(tabs)/(earnings)/analytics")}
                 >
                   <View className="w-8 h-8 rounded-full bg-blue-50 items-center justify-center mb-2">
                     <Icon name="trending-up" size={16} color="#3b82f6" />
                   </View>
-                  <Text className="text-[12px] text-muted-foreground font-body mb-1">
+                  <Text className="text-body-sm text-muted-foreground font-body mb-1">
                     Today's Revenue
                   </Text>
-                  <Text className="text-[16px] font-bold font-heading text-foreground">
+                  <Text className="text-body-lg font-bold font-heading text-foreground">
                     GH₵ {earnings?.todayRevenue?.toFixed(2) ?? "0.00"}
                   </Text>
                 </Pressable>
                 <Pressable
-                  className="flex-1 bg-card p-4 rounded-[16px] border border-border"
+                  className="flex-1 bg-card p-4 rounded-xl border border-border"
                   style={({ pressed }) => [{ opacity: pressed ? 0.8 : 1 }]}
                   onPress={() => router.push("/(dispatcher)/(tabs)/(earnings)/analytics")}
                 >
                   <View className="w-8 h-8 rounded-full bg-green-50 items-center justify-center mb-2">
                     <Icon name="calendar" size={16} color="#22c55e" />
                   </View>
-                  <Text className="text-[12px] text-muted-foreground font-body mb-1">
+                  <Text className="text-body-sm text-muted-foreground font-body mb-1">
                     This Week
                   </Text>
-                  <Text className="text-[16px] font-bold font-heading text-foreground">
+                  <Text className="text-body-lg font-bold font-heading text-foreground">
                     GH₵ {earnings?.thisWeekRevenue?.toFixed(2) ?? "0.00"}
                   </Text>
                 </Pressable>
@@ -124,17 +124,17 @@ export default function EarningsDashboardScreen() {
             {/* Recent Transactions */}
             <View>
               <View className="flex-row items-center justify-between mb-4">
-                <Text className="text-[18px] font-bold font-heading text-foreground">
+                <Text className="text-heading-md font-bold font-heading text-foreground">
                   Recent Transactions
                 </Text>
                 <Pressable
                   onPress={() => router.push("/(dispatcher)/(tabs)/(earnings)/transactions")}
                 >
-                  <Text className="text-[14px] font-bold font-body text-primary">See All</Text>
+                  <Text className="text-body-md font-bold font-body text-primary">See All</Text>
                 </Pressable>
               </View>
 
-              <View className="bg-card rounded-[20px] border border-border overflow-hidden">
+              <View className="bg-card rounded-2xl border border-border overflow-hidden">
                 {!earnings?.recentTransactions || earnings.recentTransactions.length === 0 ? (
                   <View className="p-8 items-center justify-center">
                     <Icon name="file-text" size={32} color="#cbd5e1" />
@@ -167,23 +167,23 @@ export default function EarningsDashboardScreen() {
                           </View>
                           <View className="flex-1 pr-4">
                             <Text
-                              className="text-[15px] font-bold font-heading text-foreground mb-0.5"
+                              className="text-body-lg font-bold font-heading text-foreground mb-0.5"
                               numberOfLines={1}
                             >
                               {trx.title}
                             </Text>
-                            <Text className="text-[13px] font-body text-muted-foreground">
+                            <Text className="text-sm font-body text-muted-foreground">
                               {trx.date}
                             </Text>
                           </View>
                         </View>
                         <View className="items-end">
                           <Text
-                            className={`text-[15px] font-bold font-heading ${isWithdrawal ? "text-foreground" : "text-green-600"}`}
+                            className={`text-body-lg font-bold font-heading ${isWithdrawal ? "text-foreground" : "text-green-600"}`}
                           >
                             {isWithdrawal ? "" : "+"}GH₵ {Math.abs(trx.amount).toFixed(2)}
                           </Text>
-                          <Text className="text-[12px] font-body text-muted-foreground capitalize mt-0.5">
+                          <Text className="text-body-sm font-body text-muted-foreground capitalize mt-0.5">
                             {trx.status}
                           </Text>
                         </View>

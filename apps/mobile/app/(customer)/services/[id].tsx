@@ -49,7 +49,7 @@ export default function ProviderDetailsScreen() {
   if (!service) {
     return (
       <View className="flex-1 bg-background items-center justify-center">
-        <Text className="font-heading text-[16px] text-foreground">Service not found.</Text>
+        <Text className="font-heading text-body-lg text-foreground">Service not found.</Text>
         <Pressable onPress={() => router.back()} className="mt-4 px-6 py-3 bg-primary rounded-full">
           <Text className="text-white font-bold">Go Back</Text>
         </Pressable>
@@ -102,14 +102,14 @@ export default function ProviderDetailsScreen() {
       >
         <View className="flex-row items-center gap-3">
           <BackButton />
-          <Text className="text-[20px] font-heading font-black text-foreground">
+          <Text className="text-display-sm font-heading font-black text-foreground">
             {service?.vendor?.shopName || service?.name || "Service"}
           </Text>
         </View>
       </View>
       <ScrollView className="flex-1" showsVerticalScrollIndicator={false}>
         {/* Header / Cover */}
-        <View className="bg-card pb-6 rounded-b-[32px] shadow-sm">
+        <View className="bg-card pb-6 rounded-b-3xl shadow-sm">
           <View
             className="px-5 flex-row items-center justify-between z-10 mb-6"
             style={{ paddingTop: 12 }}
@@ -124,32 +124,32 @@ export default function ProviderDetailsScreen() {
           </View>
 
           <View className="px-5 items-center">
-            <View className="w-24 h-24 bg-muted rounded-[24px] items-center justify-center mb-4">
+            <View className="w-24 h-24 bg-muted rounded-2xl items-center justify-center mb-4">
               <Icon name="user" size={40} color="#94a3b8" />
             </View>
-            <Text className="text-[24px] font-heading font-black text-foreground text-center mb-1">
+            <Text className="text-display-md font-heading font-black text-foreground text-center mb-1">
               {service.vendor?.shopName ?? service.name}
             </Text>
-            <Text className="text-[14px] text-primary font-bold mb-4">{service.name}</Text>
+            <Text className="text-body-md text-primary font-bold mb-4">{service.name}</Text>
 
             <View className="flex-row items-center justify-center gap-6">
               <View className="items-center">
                 <View className="flex-row items-center mb-1">
                   <Icon name="star" size={16} color="#f59e0b" />
-                  <Text className="text-[16px] font-bold text-foreground ml-1">
+                  <Text className="text-body-lg font-bold text-foreground ml-1">
                     {Number(service.rating).toFixed(1)}
                   </Text>
                 </View>
-                <Text className="text-[12px] text-muted-foreground font-body">
+                <Text className="text-body-sm text-muted-foreground font-body">
                   {service.ratingCount} reviews
                 </Text>
               </View>
               <View className="w-[1px] h-8 bg-secondary" />
               <View className="items-center">
-                <Text className="text-[16px] font-bold text-foreground mb-1">
+                <Text className="text-body-lg font-bold text-foreground mb-1">
                   {service.priceDisplay ?? `GHS ${Number(service.price).toFixed(2)}`}
                 </Text>
-                <Text className="text-[12px] text-muted-foreground font-body">Pricing</Text>
+                <Text className="text-body-sm text-muted-foreground font-body">Pricing</Text>
               </View>
             </View>
           </View>
@@ -157,8 +157,8 @@ export default function ProviderDetailsScreen() {
 
         {/* About Section */}
         <View className="px-5 mt-8">
-          <Text className="text-[18px] font-heading font-bold text-foreground mb-3">About</Text>
-          <Text className="text-[14px] font-body text-muted-foreground leading-relaxed">
+          <Text className="text-heading-md font-heading font-bold text-foreground mb-3">About</Text>
+          <Text className="text-body-md font-body text-muted-foreground leading-relaxed">
             {service.description}
           </Text>
         </View>
@@ -176,24 +176,24 @@ export default function ProviderDetailsScreen() {
             }
           >
             <Icon name="message-circle" size={18} color="#0284c7" />
-            <Text className="text-primary-hover font-bold text-[14px]">Chat</Text>
+            <Text className="text-primary-hover font-bold text-body-md">Chat</Text>
           </Pressable>
           <Pressable
             className="flex-1 bg-primary-subtle border border-border py-3 rounded-xl flex-row items-center justify-center gap-2"
             onPress={() => Linking.openURL("tel:+233555555555")}
           >
             <Icon name="phone" size={18} color="#0284c7" />
-            <Text className="text-primary-hover font-bold text-[14px]">Call</Text>
+            <Text className="text-primary-hover font-bold text-body-md">Call</Text>
           </Pressable>
         </View>
 
         {/* Scheduling */}
         <View className="px-5 mt-8 mb-4">
-          <Text className="text-[18px] font-heading font-bold text-foreground mb-4">
+          <Text className="text-heading-md font-heading font-bold text-foreground mb-4">
             Schedule Service
           </Text>
 
-          <Text className="text-[14px] font-bold text-muted-foreground mb-3">Select Date</Text>
+          <Text className="text-body-md font-bold text-muted-foreground mb-3">Select Date</Text>
           <ScrollView horizontal showsHorizontalScrollIndicator={false} className="mb-6">
             {DATES.map((date) => (
               <Pressable
@@ -213,22 +213,22 @@ export default function ProviderDetailsScreen() {
           {selectedDate === "Custom" ? (
             <View className="mb-6 gap-4">
               <View>
-                <Text className="text-[14px] font-bold text-muted-foreground mb-2">
+                <Text className="text-body-md font-bold text-muted-foreground mb-2">
                   Enter Custom Date
                 </Text>
                 <TextInput
-                  className="bg-card border border-border rounded-[16px] h-12 px-4 font-body text-[14px] text-foreground"
+                  className="bg-card border border-border rounded-xl h-12 px-4 font-body text-body-md text-foreground"
                   placeholder="e.g. 24th October"
                   value={customDate}
                   onChangeText={setCustomDate}
                 />
               </View>
               <View>
-                <Text className="text-[14px] font-bold text-muted-foreground mb-2">
+                <Text className="text-body-md font-bold text-muted-foreground mb-2">
                   Enter Custom Time
                 </Text>
                 <TextInput
-                  className="bg-card border border-border rounded-[16px] h-12 px-4 font-body text-[14px] text-foreground"
+                  className="bg-card border border-border rounded-xl h-12 px-4 font-body text-body-md text-foreground"
                   placeholder="e.g. 10:00 AM"
                   value={customTime}
                   onChangeText={setCustomTime}
@@ -237,18 +237,18 @@ export default function ProviderDetailsScreen() {
             </View>
           ) : (
             <>
-              <Text className="text-[14px] font-bold text-muted-foreground mb-3">
+              <Text className="text-body-md font-bold text-muted-foreground mb-3">
                 Available Times
               </Text>
               <View className="flex-row flex-wrap gap-3 mb-6">
                 {["10:00 AM", "12:30 PM", "3:00 PM", "5:00 PM"].map((time) => (
                   <Pressable
                     key={time}
-                    className={`w-[30%] py-3 rounded-[16px] border items-center justify-center ${selectedTime === time ? "border-primary bg-primary-subtle" : "border-border bg-card"}`}
+                    className={`w-[30%] py-3 rounded-xl border items-center justify-center ${selectedTime === time ? "border-primary bg-primary-subtle" : "border-border bg-card"}`}
                     onPress={() => setSelectedTime(time)}
                   >
                     <Text
-                      className={`font-bold text-[13px] ${selectedTime === time ? "text-primary-hover" : "text-muted-foreground"}`}
+                      className={`font-bold text-sm ${selectedTime === time ? "text-primary-hover" : "text-muted-foreground"}`}
                     >
                       {time}
                     </Text>
@@ -265,19 +265,19 @@ export default function ProviderDetailsScreen() {
 
       {/* Bottom Booking Footer */}
       <View
-        className="absolute bottom-0 left-0 right-0 bg-card border-t border-border p-5 rounded-t-[32px] shadow-lg"
+        className="absolute bottom-0 left-0 right-0 bg-card border-t border-border p-5 rounded-t-3xl shadow-lg"
         style={{ paddingBottom: Math.max(insets.bottom, 20) }}
       >
         <View className="flex-row items-center justify-between mb-4">
           <View>
-            <Text className="text-[12px] text-muted-foreground font-bold mb-1">
+            <Text className="text-body-sm text-muted-foreground font-bold mb-1">
               Service Address
             </Text>
             <Pressable
               className="flex-row items-center"
               onPress={() => setAddressModalVisible(true)}
             >
-              <Text className="text-[14px] font-bold text-foreground mr-2" numberOfLines={1}>
+              <Text className="text-body-md font-bold text-foreground mr-2" numberOfLines={1}>
                 {selectedAddress ? selectedAddress.name : "Select Address"}
               </Text>
               <Icon name="chevron-down" size={16} color="#64748b" />
@@ -291,7 +291,7 @@ export default function ProviderDetailsScreen() {
           onPress={handleBook}
         >
           <Text
-            className={`font-heading font-bold text-[16px] ${isFormValid ? "text-white" : "text-muted-foreground"}`}
+            className={`font-heading font-bold text-body-lg ${isFormValid ? "text-white" : "text-muted-foreground"}`}
           >
             Confirm Booking
           </Text>
@@ -310,11 +310,11 @@ export default function ProviderDetailsScreen() {
           className="flex-1 justify-end bg-black/50"
         >
           <View
-            className="bg-card rounded-t-[32px] max-h-[70%]"
+            className="bg-card rounded-t-3xl max-h-[70%]"
             style={{ paddingBottom: Math.max(insets.bottom, 20) }}
           >
             <View className="flex-row justify-between items-center p-5 border-b border-border">
-              <Text className="text-[18px] font-bold font-heading text-foreground">
+              <Text className="text-heading-md font-bold font-heading text-foreground">
                 Select Address
               </Text>
               <Pressable
@@ -329,7 +329,7 @@ export default function ProviderDetailsScreen() {
               {addresses.map((addr) => (
                 <Pressable
                   key={addr.id}
-                  className={`p-4 rounded-[20px] border mb-4 ${selectedAddress?.id === addr.id ? "border-primary bg-primary-subtle" : "border-border bg-card"}`}
+                  className={`p-4 rounded-2xl border mb-4 ${selectedAddress?.id === addr.id ? "border-primary bg-primary-subtle" : "border-border bg-card"}`}
                   onPress={() => {
                     setSelectedAddress(addr);
                     setAddressModalVisible(false);
@@ -353,7 +353,7 @@ export default function ProviderDetailsScreen() {
                       {addr.name}
                     </Text>
                   </View>
-                  <Text className="text-muted-foreground text-[13px]">{addr.address}</Text>
+                  <Text className="text-muted-foreground text-sm">{addr.address}</Text>
                 </Pressable>
               ))}
             </ScrollView>

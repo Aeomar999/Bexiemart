@@ -18,7 +18,9 @@ export default function AnalyticsScreen() {
       <View className="px-5 py-4 bg-card border-b border-border flex-row items-center justify-between">
         <View className="flex-row items-center">
           <BackButton className="-ml-2 active:bg-slate-100" />
-          <Text className="text-[20px] font-heading font-bold text-foreground ml-2">Analytics</Text>
+          <Text className="text-display-sm font-heading font-bold text-foreground ml-2">
+            Analytics
+          </Text>
         </View>
       </View>
 
@@ -29,18 +31,18 @@ export default function AnalyticsScreen() {
           </View>
         ) : (
           <>
-            <View className="bg-primary rounded-[24px] p-6 mb-2">
-              <Text className="text-white/80 font-body text-[14px] mb-1">30-Day Revenue</Text>
+            <View className="bg-primary rounded-2xl p-6 mb-2">
+              <Text className="text-white/80 font-body text-body-md mb-1">30-Day Revenue</Text>
               <Text className="text-white font-heading font-black text-[36px] mb-4">
                 GH₵ {analytics?.revenue30Days?.toFixed(2) ?? "0.00"}
               </Text>
 
               <View className="flex-row items-center justify-between border-t border-white/20 pt-4">
                 <View>
-                  <Text className="text-white/70 font-body text-[12px] mb-1">
+                  <Text className="text-white/70 font-body text-body-sm mb-1">
                     Total Trips (30 Days)
                   </Text>
-                  <Text className="text-white font-heading font-bold text-[18px]">
+                  <Text className="text-white font-heading font-bold text-heading-md">
                     {analytics?.trips30Days ?? 0}
                   </Text>
                 </View>
@@ -48,10 +50,10 @@ export default function AnalyticsScreen() {
             </View>
 
             <View>
-              <Text className="text-[18px] font-bold font-heading text-foreground mb-4">
+              <Text className="text-heading-md font-bold font-heading text-foreground mb-4">
                 Revenue Trends
               </Text>
-              <View className="bg-card border border-border rounded-[20px] p-5 h-[200px] items-center justify-center">
+              <View className="bg-card border border-border rounded-2xl p-5 h-[200px] items-center justify-center">
                 {!analytics?.revenueTimeline || analytics.revenueTimeline.length === 0 ? (
                   <Text className="text-muted-foreground font-body">
                     No data available for the last 30 days
@@ -67,7 +69,7 @@ export default function AnalyticsScreen() {
                       return (
                         <View key={i} className="items-center w-[12%]">
                           <Text
-                            className="text-[10px] font-body text-muted-foreground mb-2 absolute -top-5"
+                            className="text-caption font-body text-muted-foreground mb-2 absolute -top-5"
                             numberOfLines={1}
                           >
                             GH₵{day.amount}
@@ -81,7 +83,7 @@ export default function AnalyticsScreen() {
                               style={{ height: `${height}%`, minHeight: height > 0 ? 4 : 0 }}
                             />
                           </View>
-                          <Text className="text-[10px] font-body text-muted-foreground mt-2">
+                          <Text className="text-caption font-body text-muted-foreground mt-2">
                             {new Date(day.date).getDate()}/{new Date(day.date).getMonth() + 1}
                           </Text>
                         </View>

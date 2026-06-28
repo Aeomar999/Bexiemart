@@ -218,7 +218,9 @@ export default function TrackOrderScreen() {
         <View className="flex-row items-center justify-between">
           <View className="flex-row items-center gap-3">
             <BackButton onPress={() => router.replace("/(customer)/(tabs)/(home)")} />
-            <Text className="text-[20px] font-heading font-black text-foreground">Track Order</Text>
+            <Text className="text-display-sm font-heading font-black text-foreground">
+              Track Order
+            </Text>
           </View>
           {canCancel && (
             <Pressable
@@ -227,7 +229,7 @@ export default function TrackOrderScreen() {
               disabled={actioning}
             >
               <Icon name="x" size={14} color="#ef4444" />
-              <Text className="text-[13px] font-bold text-error font-heading">Cancel</Text>
+              <Text className="text-sm font-bold text-error font-heading">Cancel</Text>
             </Pressable>
           )}
         </View>
@@ -236,17 +238,17 @@ export default function TrackOrderScreen() {
       {/* Bottom Sheet */}
       <View className="absolute bottom-0 left-0 right-0">
         <View
-          className="bg-card rounded-t-[32px] p-6 border-t border-border"
+          className="bg-card rounded-t-3xl p-6 border-t border-border"
           style={{ paddingBottom: Math.max(insets.bottom, 24) }}
         >
           <View className="w-12 h-1.5 bg-secondary rounded-full mx-auto mb-6" />
 
           <View className="flex-row justify-between items-end mb-6">
             <View>
-              <Text className="text-[24px] font-heading font-black text-foreground">
+              <Text className="text-display-md font-heading font-black text-foreground">
                 {STATUS_LABEL[status] ?? status}
               </Text>
-              <Text className="text-[15px] font-body text-muted-foreground mt-1">
+              <Text className="text-body-lg font-body text-muted-foreground mt-1">
                 {status === "PENDING"
                   ? "Finding the nearest rider"
                   : delivered
@@ -258,7 +260,7 @@ export default function TrackOrderScreen() {
               <View
                 className={`w-2 h-2 rounded-full ${isActive(status) ? "bg-emerald-500" : "bg-slate-400"}`}
               />
-              <Text className="text-[12px] font-bold uppercase tracking-wider text-primary">
+              <Text className="text-body-sm font-bold uppercase tracking-wider text-primary">
                 {job.jobNumber}
               </Text>
             </View>
@@ -266,16 +268,16 @@ export default function TrackOrderScreen() {
 
           {/* Rider Info */}
           {job.dispatcher ? (
-            <View className="flex-row items-center justify-between bg-background p-4 rounded-[24px] border border-border mb-6">
+            <View className="flex-row items-center justify-between bg-background p-4 rounded-2xl border border-border mb-6">
               <View className="flex-row items-center gap-4">
                 <View className="w-12 h-12 rounded-full bg-secondary items-center justify-center border border-border">
                   <Icon name="user" size={24} color="#64748b" />
                 </View>
                 <View>
-                  <Text className="text-[16px] font-bold text-foreground font-heading">
+                  <Text className="text-body-lg font-bold text-foreground font-heading">
                     {job.dispatcher.user.name}
                   </Text>
-                  <Text className="text-[13px] text-muted-foreground font-body">
+                  <Text className="text-sm text-muted-foreground font-body">
                     {job.dispatcher.vehicleType} • {job.dispatcher.plateNumber}
                   </Text>
                 </View>
@@ -288,8 +290,8 @@ export default function TrackOrderScreen() {
               </Pressable>
             </View>
           ) : (
-            <View className="flex-row items-center justify-center bg-background p-6 rounded-[24px] border border-border mb-6 border-dashed">
-              <Text className="text-[14px] text-muted-foreground font-body">
+            <View className="flex-row items-center justify-center bg-background p-6 rounded-2xl border border-border mb-6 border-dashed">
+              <Text className="text-body-md text-muted-foreground font-body">
                 Matching you with a rider nearby...
               </Text>
             </View>
@@ -304,7 +306,7 @@ export default function TrackOrderScreen() {
               {actioning ? (
                 <ActivityIndicator color="#fff" />
               ) : (
-                <Text className="text-white font-bold text-[16px]">Confirm Delivery</Text>
+                <Text className="text-white font-bold text-body-lg">Confirm Delivery</Text>
               )}
             </Pressable>
           )}

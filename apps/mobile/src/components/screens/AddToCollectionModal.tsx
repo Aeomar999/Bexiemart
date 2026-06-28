@@ -27,9 +27,9 @@ export function AddToCollectionModal({ visible, productId, onClose }: Props) {
     <Modal visible={visible} transparent animationType="slide">
       <View className="flex-1 bg-black/50 justify-end">
         <Pressable className="absolute inset-0" onPress={onClose} />
-        <View className="bg-card rounded-t-[32px] p-6 pb-10 max-h-[70%]">
+        <View className="bg-card rounded-t-3xl p-6 pb-10 max-h-[70%]">
           <View className="flex-row justify-between items-center mb-6">
-            <Text className="text-[20px] font-heading font-black text-foreground">
+            <Text className="text-display-sm font-heading font-black text-foreground">
               Save to Collection
             </Text>
             <Pressable
@@ -59,7 +59,7 @@ export function AddToCollectionModal({ visible, productId, onClose }: Props) {
                 >
                   <View className="flex-row items-center gap-3">
                     <Icon name="folder" size={20} color="var(--color-primary)" />
-                    <Text className="text-[16px] font-bold text-foreground font-body">
+                    <Text className="text-body-lg font-bold text-foreground font-body">
                       {item.name}
                     </Text>
                   </View>

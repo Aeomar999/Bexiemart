@@ -38,7 +38,7 @@ export default function OrderDetailsScreen() {
   if (!order) {
     return (
       <View className="flex-1 bg-background items-center justify-center">
-        <Text className="text-[16px] text-muted-foreground">Order not found.</Text>
+        <Text className="text-body-lg text-muted-foreground">Order not found.</Text>
       </View>
     );
   }
@@ -51,7 +51,7 @@ export default function OrderDetailsScreen() {
             onPress={() => handleAction("cancelled")}
             className="flex-1 py-4 items-center rounded-full bg-rose-50 border border-rose-100"
           >
-            <Text className="text-[15px] font-bold text-error">Reject</Text>
+            <Text className="text-body-lg font-bold text-error">Reject</Text>
           </Pressable>
           <View className="flex-1">
             <Button
@@ -92,7 +92,7 @@ export default function OrderDetailsScreen() {
             onPress={() => handleAction("completed")}
             className="w-full py-4 items-center rounded-full border border-border bg-card"
           >
-            <Text className="text-[15px] font-bold text-muted-foreground">
+            <Text className="text-body-lg font-bold text-muted-foreground">
               Mark as Completed (Self-Delivery)
             </Text>
           </Pressable>
@@ -116,16 +116,16 @@ export default function OrderDetailsScreen() {
             color="#0f172a"
           />
           <View>
-            <Text className="text-[14px] text-muted-foreground font-bold mb-0.5">
+            <Text className="text-body-md text-muted-foreground font-bold mb-0.5">
               Order Details
             </Text>
-            <Text className="text-[18px] font-heading font-black text-foreground leading-tight">
+            <Text className="text-heading-md font-heading font-black text-foreground leading-tight">
               {order.id}
             </Text>
           </View>
         </View>
         <View className="px-3 py-1 rounded-full bg-blue-100">
-          <Text className="text-[12px] font-bold text-blue-700">{order.status.toUpperCase()}</Text>
+          <Text className="text-body-sm font-bold text-blue-700">{order.status.toUpperCase()}</Text>
         </View>
       </View>
 
@@ -135,15 +135,15 @@ export default function OrderDetailsScreen() {
         showsVerticalScrollIndicator={false}
       >
         {/* Customer Info */}
-        <View className="bg-card rounded-[20px] border border-border p-5">
-          <Text className="text-[16px] font-bold text-foreground mb-4">Customer Info</Text>
+        <View className="bg-card rounded-2xl border border-border p-5">
+          <Text className="text-body-lg font-bold text-foreground mb-4">Customer Info</Text>
           <View className="flex-row items-center mb-4">
             <View className="w-12 h-12 rounded-full bg-muted items-center justify-center mr-3">
               <Icon name="user" size={20} color="#64748b" />
             </View>
             <View className="flex-1">
-              <Text className="text-[16px] font-bold text-foreground">{order.customer.name}</Text>
-              <Text className="text-[14px] text-muted-foreground mt-0.5">
+              <Text className="text-body-lg font-bold text-foreground">{order.customer.name}</Text>
+              <Text className="text-body-md text-muted-foreground mt-0.5">
                 {order.customer.phone}
               </Text>
             </View>
@@ -152,7 +152,7 @@ export default function OrderDetailsScreen() {
             </Pressable>
           </View>
 
-          <View className="bg-background rounded-[12px] p-3 flex-row items-start">
+          <View className="bg-background rounded-lg p-3 flex-row items-start">
             <Icon
               name="map-pin"
               size={16}
@@ -160,10 +160,8 @@ export default function OrderDetailsScreen() {
               style={{ marginTop: 2, marginRight: 8 }}
             />
             <View className="flex-1">
-              <Text className="text-[13px] font-bold text-muted-foreground mb-0.5">
-                {order.type}
-              </Text>
-              <Text className="text-[13px] text-muted-foreground leading-relaxed">
+              <Text className="text-sm font-bold text-muted-foreground mb-0.5">{order.type}</Text>
+              <Text className="text-sm text-muted-foreground leading-relaxed">
                 {order.customer.address}
               </Text>
             </View>
@@ -171,8 +169,8 @@ export default function OrderDetailsScreen() {
         </View>
 
         {/* Order Items */}
-        <View className="bg-card rounded-[20px] border border-border p-5">
-          <Text className="text-[16px] font-bold text-foreground mb-4">Order Items</Text>
+        <View className="bg-card rounded-2xl border border-border p-5">
+          <Text className="text-body-lg font-bold text-foreground mb-4">Order Items</Text>
 
           <View className="gap-4 mb-4">
             {order.items.map((item: any, index: number) => (
@@ -182,13 +180,13 @@ export default function OrderDetailsScreen() {
               >
                 <View className="flex-row items-start flex-1 pr-4">
                   <View className="w-6 h-6 rounded bg-muted items-center justify-center mr-3 mt-0.5">
-                    <Text className="text-[12px] font-bold text-muted-foreground">
+                    <Text className="text-body-sm font-bold text-muted-foreground">
                       {item.quantity}x
                     </Text>
                   </View>
-                  <Text className="text-[15px] font-medium text-foreground">{item.name}</Text>
+                  <Text className="text-body-lg font-medium text-foreground">{item.name}</Text>
                 </View>
-                <Text className="text-[15px] font-bold text-foreground">
+                <Text className="text-body-lg font-bold text-foreground">
                   GHS {(item.price * item.quantity).toFixed(2)}
                 </Text>
               </View>
@@ -197,18 +195,18 @@ export default function OrderDetailsScreen() {
 
           <View className="border-t border-border pt-4 gap-2">
             <View className="flex-row justify-between">
-              <Text className="text-[14px] text-muted-foreground">Subtotal</Text>
-              <Text className="text-[14px] text-foreground">GHS {order.subtotal.toFixed(2)}</Text>
+              <Text className="text-body-md text-muted-foreground">Subtotal</Text>
+              <Text className="text-body-md text-foreground">GHS {order.subtotal.toFixed(2)}</Text>
             </View>
             <View className="flex-row justify-between">
-              <Text className="text-[14px] text-muted-foreground">Delivery Fee</Text>
-              <Text className="text-[14px] text-foreground">
+              <Text className="text-body-md text-muted-foreground">Delivery Fee</Text>
+              <Text className="text-body-md text-foreground">
                 GHS {order.deliveryFee.toFixed(2)}
               </Text>
             </View>
             <View className="flex-row justify-between mt-2 pt-2 border-t border-border">
-              <Text className="text-[16px] font-bold text-foreground">Total</Text>
-              <Text className="text-[18px] font-black text-primary">
+              <Text className="text-body-lg font-bold text-foreground">Total</Text>
+              <Text className="text-heading-md font-black text-primary">
                 GHS {order.total.toFixed(2)}
               </Text>
             </View>
