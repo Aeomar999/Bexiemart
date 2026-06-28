@@ -41,7 +41,7 @@ export default function TransactionsScreen() {
           >
             <Icon name="arrow-left" size={24} color="#0f172a" />
           </Pressable>
-          <Text className="text-[20px] font-heading font-bold text-foreground ml-2">
+          <Text className="text-display-sm font-heading font-bold text-foreground ml-2">
             Transaction History
           </Text>
         </View>
@@ -56,7 +56,7 @@ export default function TransactionsScreen() {
             className={`px-4 py-2 rounded-full border ${filter === f ? "bg-foreground border-foreground" : "bg-card border-border"}`}
           >
             <Text
-              className={`text-[14px] font-bold capitalize ${filter === f ? "text-background" : "text-muted-foreground"}`}
+              className={`text-body-md font-bold capitalize ${filter === f ? "text-background" : "text-muted-foreground"}`}
             >
               {f === "order" ? "Earnings" : f}
             </Text>
@@ -74,17 +74,17 @@ export default function TransactionsScreen() {
             <View className="w-16 h-16 rounded-full bg-slate-100 items-center justify-center mb-4">
               <Icon name="file-text" size={24} color="#94a3b8" />
             </View>
-            <Text className="text-[16px] font-bold text-foreground mb-1">
+            <Text className="text-body-lg font-bold text-foreground mb-1">
               No Transactions Found
             </Text>
-            <Text className="text-[14px] text-muted-foreground text-center">
+            <Text className="text-body-md text-muted-foreground text-center">
               {filter === "all"
                 ? "You haven't made any transactions yet."
                 : `You have no ${filter === "order" ? "earning" : filter} transactions.`}
             </Text>
           </View>
         ) : (
-          <View className="bg-card rounded-[20px] border border-border overflow-hidden">
+          <View className="bg-card rounded-2xl border border-border overflow-hidden">
             {filteredTransactions.map((trx: any, index: number) => {
               const isWithdrawal = trx.type === "withdrawal";
 
@@ -107,23 +107,21 @@ export default function TransactionsScreen() {
                     </View>
                     <View className="flex-1 pr-4">
                       <Text
-                        className="text-[15px] font-bold font-heading text-foreground mb-0.5"
+                        className="text-body-lg font-bold font-heading text-foreground mb-0.5"
                         numberOfLines={1}
                       >
                         {trx.title}
                       </Text>
-                      <Text className="text-[13px] font-body text-muted-foreground">
-                        {trx.date}
-                      </Text>
+                      <Text className="text-sm font-body text-muted-foreground">{trx.date}</Text>
                     </View>
                   </View>
                   <View className="items-end">
                     <Text
-                      className={`text-[15px] font-bold font-heading ${isWithdrawal ? "text-foreground" : "text-green-600"}`}
+                      className={`text-body-lg font-bold font-heading ${isWithdrawal ? "text-foreground" : "text-green-600"}`}
                     >
                       {isWithdrawal ? "" : "+"}GH₵ {Math.abs(trx.amount).toFixed(2)}
                     </Text>
-                    <Text className="text-[12px] font-body text-muted-foreground capitalize mt-0.5">
+                    <Text className="text-body-sm font-body text-muted-foreground capitalize mt-0.5">
                       {trx.status}
                     </Text>
                   </View>

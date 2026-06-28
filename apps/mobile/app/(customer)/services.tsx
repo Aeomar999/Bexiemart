@@ -113,7 +113,7 @@ export default function ServicesScreen() {
         <View className="flex-row justify-between items-center mb-4">
           <View className="flex-row items-center gap-3">
             <BackButton />
-            <Text className="text-[20px] font-heading font-black text-foreground">
+            <Text className="text-display-sm font-heading font-black text-foreground">
               Home Services
             </Text>
           </View>
@@ -123,7 +123,7 @@ export default function ServicesScreen() {
           <Icon name="search" size={18} color="#64748b" />
           <TextInput
             placeholder="What service do you need?"
-            className="flex-1 ml-2 font-body text-[15px] text-foreground"
+            className="flex-1 ml-2 font-body text-body-lg text-foreground"
             value={searchQuery}
             onChangeText={setSearchQuery}
           />
@@ -139,22 +139,22 @@ export default function ServicesScreen() {
         {/* Active Booking Banner */}
         {activeBookings.length > 0 && (
           <View className="px-5 mt-6">
-            <View className="bg-primary rounded-[20px] p-4 flex-row items-center justify-between shadow-sm border border-primary-hover">
+            <View className="bg-primary rounded-2xl p-4 flex-row items-center justify-between shadow-sm border border-primary-hover">
               <View className="flex-row items-center gap-3">
                 <View className="w-10 h-10 bg-card/20 rounded-full items-center justify-center">
                   <Icon name="calendar" size={20} color="#fff" />
                 </View>
                 <View>
-                  <Text className="text-white font-bold font-heading text-[15px]">
+                  <Text className="text-white font-bold font-heading text-body-lg">
                     Upcoming Appointment
                   </Text>
-                  <Text className="text-white/80 font-body text-[12px] mt-0.5">
+                  <Text className="text-white/80 font-body text-body-sm mt-0.5">
                     {activeBookings[0].providerName} • {activeBookings[0].time}
                   </Text>
                 </View>
               </View>
               <View className="bg-card/20 px-3 py-1.5 rounded-full">
-                <Text className="text-white font-bold text-[12px]">View</Text>
+                <Text className="text-white font-bold text-body-sm">View</Text>
               </View>
             </View>
           </View>
@@ -177,17 +177,17 @@ export default function ServicesScreen() {
               renderItem={({ item }) => (
                 <View style={{ width: Dimensions.get("window").width, paddingHorizontal: 20 }}>
                   <Pressable
-                    className={`w-full h-36 rounded-[24px] ${item.color} overflow-hidden p-5 justify-center relative`}
+                    className={`w-full h-36 rounded-2xl ${item.color} overflow-hidden p-5 justify-center relative`}
                   >
-                    <Text className="text-white font-heading font-black text-[22px] mb-1">
+                    <Text className="text-white font-heading font-black text-display-sm mb-1">
                       {item.title}
                     </Text>
-                    <Text className="text-white/90 font-body text-[13px] w-2/3 mb-4">
+                    <Text className="text-white/90 font-body text-sm w-2/3 mb-4">
                       {item.subtitle}
                     </Text>
                     <View className="bg-card px-4 py-2 rounded-full self-start">
                       <Text
-                        className={`text-[12px] font-bold ${item.color.replace("bg-", "text-")}`}
+                        className={`text-body-sm font-bold ${item.color.replace("bg-", "text-")}`}
                       >
                         Book Now
                       </Text>
@@ -217,10 +217,12 @@ export default function ServicesScreen() {
         {searchQuery === "" && (
           <View className={`px-5 ${activeCategory ? "mt-6 mb-6" : "mb-10"}`}>
             <View className="flex-row justify-between items-center mb-4">
-              <Text className="text-[18px] font-heading font-bold text-foreground">Categories</Text>
+              <Text className="text-heading-md font-heading font-bold text-foreground">
+                Categories
+              </Text>
               {activeCategory && (
                 <Pressable onPress={() => setActiveCategory(null)}>
-                  <Text className="text-primary font-bold text-[13px]">Clear Filter</Text>
+                  <Text className="text-primary font-bold text-sm">Clear Filter</Text>
                 </Pressable>
               )}
             </View>
@@ -235,13 +237,13 @@ export default function ServicesScreen() {
                     onPress={() => setActiveCategory(isActive ? null : item.name)}
                   >
                     <View
-                      className={`w-16 h-16 rounded-[20px] items-center justify-center mb-2 ${isActive ? "border border-primary" : ""}`}
+                      className={`w-16 h-16 rounded-2xl items-center justify-center mb-2 ${isActive ? "border border-primary" : ""}`}
                       style={{ backgroundColor: isActive ? "#eff6ff" : item.color + "15" }}
                     >
                       <Icon name={item.icon} size={28} color={isActive ? "#3b82f6" : item.color} />
                     </View>
                     <Text
-                      className={`text-[12px] ${isActive ? "font-black text-primary-hover" : "font-bold text-foreground"}`}
+                      className={`text-body-sm ${isActive ? "font-black text-primary-hover" : "font-bold text-foreground"}`}
                     >
                       {item.name}
                     </Text>
@@ -254,7 +256,7 @@ export default function ServicesScreen() {
 
         {/* Providers List */}
         <View className="px-5 pb-10">
-          <Text className="text-[18px] font-heading font-bold text-foreground mb-4">
+          <Text className="text-heading-md font-heading font-bold text-foreground mb-4">
             {searchQuery
               ? "Search Results"
               : activeCategory
@@ -276,31 +278,31 @@ export default function ServicesScreen() {
               {filteredProviders.map((provider: any) => (
                 <Pressable
                   key={provider.id}
-                  className="bg-card rounded-[24px] p-4 flex-row items-center border border-border"
+                  className="bg-card rounded-2xl p-4 flex-row items-center border border-border"
                   onPress={() => router.push(`/(customer)/services/${provider.id}`)}
                 >
-                  <View className="w-20 h-20 bg-muted rounded-[16px] items-center justify-center mr-4 overflow-hidden">
+                  <View className="w-20 h-20 bg-muted rounded-xl items-center justify-center mr-4 overflow-hidden">
                     <Icon name="user" size={32} color="#94a3b8" />
                   </View>
                   <View className="flex-1">
-                    <Text className="text-[15px] font-bold text-foreground font-heading mb-0.5">
+                    <Text className="text-body-lg font-bold text-foreground font-heading mb-0.5">
                       {provider.vendor?.shopName ?? provider.name}
                     </Text>
-                    <Text className="text-[12px] text-muted-foreground font-body mb-2">
+                    <Text className="text-body-sm text-muted-foreground font-body mb-2">
                       {provider.name}
                     </Text>
 
                     <View className="flex-row items-center justify-between">
                       <View className="flex-row items-center">
                         <Icon name="star" size={12} color="#f59e0b" />
-                        <Text className="text-[12px] font-bold text-muted-foreground ml-1">
+                        <Text className="text-body-sm font-bold text-muted-foreground ml-1">
                           {Number(provider.rating).toFixed(1)}
                         </Text>
-                        <Text className="text-[12px] text-muted-foreground ml-1">
+                        <Text className="text-body-sm text-muted-foreground ml-1">
                           ({provider.ratingCount})
                         </Text>
                       </View>
-                      <Text className="text-[13px] font-bold text-primary">
+                      <Text className="text-sm font-bold text-primary">
                         {provider.priceDisplay ?? `GHS ${Number(provider.price).toFixed(2)}`}
                       </Text>
                     </View>

@@ -122,7 +122,9 @@ export default function VendorProfileScreen() {
         style={{ paddingTop: (insets.top || 12) + 12 }}
       >
         <BackButton className="mr-3" />
-        <Text className="text-[20px] font-heading font-black text-foreground">Store Profile</Text>
+        <Text className="text-display-sm font-heading font-black text-foreground">
+          Store Profile
+        </Text>
       </View>
 
       <ScrollView
@@ -139,7 +141,7 @@ export default function VendorProfileScreen() {
               setPhotoTarget("banner");
               setPhotoModalVisible(true);
             }}
-            className="w-full h-32 bg-secondary rounded-[20px] items-center justify-center overflow-hidden mb-[-40px]"
+            className="w-full h-32 bg-secondary rounded-2xl items-center justify-center overflow-hidden mb-[-40px]"
           >
             {bannerUrl ? (
               <Image
@@ -168,7 +170,7 @@ export default function VendorProfileScreen() {
               />
             ) : (
               <View className="w-full h-full bg-primary-subtle items-center justify-center">
-                <Text className="text-[32px] font-heading font-black text-primary">
+                <Text className="text-display-lg font-heading font-black text-primary">
                   {storeName ? storeName.charAt(0).toUpperCase() : "S"}
                 </Text>
               </View>
@@ -179,8 +181,8 @@ export default function VendorProfileScreen() {
           </Pressable>
         </View>
 
-        <View className="bg-card rounded-[20px] border border-border p-5 gap-4">
-          <Text className="text-[16px] font-bold text-foreground mb-2">Basic Info</Text>
+        <View className="bg-card rounded-2xl border border-border p-5 gap-4">
+          <Text className="text-body-lg font-bold text-foreground mb-2">Basic Info</Text>
           <Input
             label="Store Name"
             placeholder="Enter store name"
@@ -199,8 +201,8 @@ export default function VendorProfileScreen() {
           />
         </View>
 
-        <View className="bg-card rounded-[20px] border border-border p-5 gap-4">
-          <Text className="text-[16px] font-bold text-foreground mb-2">Contact Info</Text>
+        <View className="bg-card rounded-2xl border border-border p-5 gap-4">
+          <Text className="text-body-lg font-bold text-foreground mb-2">Contact Info</Text>
           <Input
             label="Phone Number"
             placeholder="+233 XX XXX XXXX"
@@ -241,16 +243,16 @@ export default function VendorProfileScreen() {
             className="absolute inset-0"
             onPress={() => !isUploading && setPhotoModalVisible(false)}
           />
-          <View className="bg-card rounded-t-[32px] p-6 pb-12">
+          <View className="bg-card rounded-t-3xl p-6 pb-12">
             <View className="w-12 h-1.5 bg-secondary rounded-full self-center mb-6" />
-            <Text className="text-[20px] font-heading font-bold text-foreground mb-6">
+            <Text className="text-display-sm font-heading font-bold text-foreground mb-6">
               Update {photoTarget === "banner" ? "Cover Photo" : "Store Logo"}
             </Text>
 
             {isUploading ? (
               <View className="py-8 items-center justify-center">
                 <ProfileSkeleton />
-                <Text className="mt-4 text-[15px] font-bold text-muted-foreground">
+                <Text className="mt-4 text-body-lg font-bold text-muted-foreground">
                   Uploading photo...
                 </Text>
               </View>
@@ -258,33 +260,33 @@ export default function VendorProfileScreen() {
               <View className="gap-3">
                 <Pressable
                   style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
-                  className="flex-row items-center p-4 bg-background border border-border rounded-[20px]"
+                  className="flex-row items-center p-4 bg-background border border-border rounded-2xl"
                   onPress={() => handlePhotoOption("camera")}
                 >
                   <View className="w-12 h-12 bg-card rounded-full items-center justify-center border border-border">
                     <Icon name="camera" size={20} color="#0f172a" />
                   </View>
                   <View className="ml-4 flex-1">
-                    <Text className="text-[16px] font-bold text-foreground mb-0.5">Take Photo</Text>
-                    <Text className="text-[13px] font-body text-muted-foreground">
-                      Use your camera
+                    <Text className="text-body-lg font-bold text-foreground mb-0.5">
+                      Take Photo
                     </Text>
+                    <Text className="text-sm font-body text-muted-foreground">Use your camera</Text>
                   </View>
                 </Pressable>
 
                 <Pressable
                   style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
-                  className="flex-row items-center p-4 bg-background border border-border rounded-[20px]"
+                  className="flex-row items-center p-4 bg-background border border-border rounded-2xl"
                   onPress={() => handlePhotoOption("library")}
                 >
                   <View className="w-12 h-12 bg-card rounded-full items-center justify-center border border-border">
                     <Icon name="image" size={20} color="#0f172a" />
                   </View>
                   <View className="ml-4 flex-1">
-                    <Text className="text-[16px] font-bold text-foreground mb-0.5">
+                    <Text className="text-body-lg font-bold text-foreground mb-0.5">
                       Choose from Library
                     </Text>
-                    <Text className="text-[13px] font-body text-muted-foreground">
+                    <Text className="text-sm font-body text-muted-foreground">
                       Select from camera roll
                     </Text>
                   </View>
@@ -293,7 +295,7 @@ export default function VendorProfileScreen() {
                 {photoTarget === "logo" && (
                   <Pressable
                     style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
-                    className="flex-row items-center p-4 bg-rose-50 border border-rose-100 rounded-[20px] mt-2"
+                    className="flex-row items-center p-4 bg-rose-50 border border-rose-100 rounded-2xl mt-2"
                     onPress={() => {
                       setPhotoModalVisible(false);
                       setPhotoTarget(null);
@@ -303,8 +305,8 @@ export default function VendorProfileScreen() {
                       <Icon name="trash-2" size={20} color="#ef4444" />
                     </View>
                     <View className="ml-4 flex-1">
-                      <Text className="text-[16px] font-bold text-error mb-0.5">Remove Logo</Text>
-                      <Text className="text-[13px] font-body text-rose-500">
+                      <Text className="text-body-lg font-bold text-error mb-0.5">Remove Logo</Text>
+                      <Text className="text-sm font-body text-rose-500">
                         Revert to default initial
                       </Text>
                     </View>

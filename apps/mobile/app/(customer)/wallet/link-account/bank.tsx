@@ -121,7 +121,7 @@ export default function AddBankAccountScreen() {
       >
         <View className="flex-row items-center gap-3">
           <BackButton />
-          <Text className="text-[20px] font-heading font-black text-foreground">
+          <Text className="text-display-sm font-heading font-black text-foreground">
             Add Bank Account
           </Text>
         </View>
@@ -195,7 +195,7 @@ export default function AddBankAccountScreen() {
                             />
                           </View>
                           <Text
-                            className={`font-medium text-[14px] ${selectedBank?.code === bank.code ? "text-blue-600" : "text-gray-700"}`}
+                            className={`font-medium text-body-md ${selectedBank?.code === bank.code ? "text-blue-600" : "text-gray-700"}`}
                           >
                             {bank.name}
                           </Text>
@@ -237,7 +237,7 @@ export default function AddBankAccountScreen() {
                   <Text className="text-green-800 text-xs font-bold uppercase tracking-wider mb-0.5">
                     Account Verified
                   </Text>
-                  <Text className="text-success font-bold text-[15px]">{resolvedName}</Text>
+                  <Text className="text-success font-bold text-body-lg">{resolvedName}</Text>
                 </View>
               </View>
             ) : resolveError ? (

@@ -60,7 +60,9 @@ export default function BecomeDispatcherScreen() {
         style={{ paddingTop: Math.max(insets.top, 12) + 12 }}
       >
         <BackButton className="-ml-2 mr-2" />
-        <Text className="text-[20px] font-heading font-black text-foreground">Drive with us</Text>
+        <Text className="text-display-sm font-heading font-black text-foreground">
+          Drive with us
+        </Text>
       </View>
 
       <ScrollView className="flex-1 px-5 pt-6" contentContainerClassName="pb-10">
@@ -77,7 +79,7 @@ export default function BecomeDispatcherScreen() {
         </View>
 
         {/* Vehicle Type Selection */}
-        <Text className="text-[15px] font-bold font-body text-foreground mb-2">Vehicle Type</Text>
+        <Text className="text-body-lg font-bold font-body text-foreground mb-2">Vehicle Type</Text>
         <View className="flex-row gap-3 mb-6">
           {["bike", "car"].map((type) => {
             const isSelected = form.vehicleType === type;
@@ -102,25 +104,25 @@ export default function BecomeDispatcherScreen() {
           })}
         </View>
 
-        <Text className="text-[15px] font-bold font-body text-foreground mb-2">
+        <Text className="text-body-lg font-bold font-body text-foreground mb-2">
           License Plate Number
         </Text>
         <TextInput
           value={form.licensePlate}
           onChangeText={(val) => setForm((prev) => ({ ...prev, licensePlate: val }))}
           placeholder="e.g. AS-1234-21"
-          className="bg-card border border-border p-4 rounded-xl font-body text-[16px] mb-6 text-foreground"
+          className="bg-card border border-border p-4 rounded-xl font-body text-body-lg mb-6 text-foreground"
           placeholderTextColor="#94a3b8"
         />
 
-        <Text className="text-[15px] font-bold font-body text-foreground mb-2">
+        <Text className="text-body-lg font-bold font-body text-foreground mb-2">
           Driver's License ID
         </Text>
         <TextInput
           value={form.licenseNumber}
           onChangeText={(val) => setForm((prev) => ({ ...prev, licenseNumber: val }))}
           placeholder="Enter license ID"
-          className="bg-card border border-border p-4 rounded-xl font-body text-[16px] mb-8 text-foreground"
+          className="bg-card border border-border p-4 rounded-xl font-body text-body-lg mb-8 text-foreground"
           placeholderTextColor="#94a3b8"
         />
 
@@ -132,7 +134,7 @@ export default function BecomeDispatcherScreen() {
           {createProfile.isPending ? (
             <ActivityIndicator color="#ffffff" />
           ) : (
-            <Text className="text-white font-bold font-heading text-[16px]">
+            <Text className="text-white font-bold font-heading text-body-lg">
               Submit Application
             </Text>
           )}

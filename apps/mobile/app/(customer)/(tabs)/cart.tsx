@@ -126,7 +126,7 @@ export default function CartScreen() {
           className="px-5 pt-4 pb-4 bg-card border-b border-border"
           style={{ paddingTop: insets.top + 12 }}
         >
-          <Text className="text-[20px] font-heading font-black text-foreground">Cart</Text>
+          <Text className="text-display-sm font-heading font-black text-foreground">Cart</Text>
         </View>
         <EmptyState
           title="Your cart is empty"
@@ -147,7 +147,7 @@ export default function CartScreen() {
         className="px-5 pt-4 pb-4 bg-card border-b border-border"
         style={{ paddingTop: insets.top + 12 }}
       >
-        <Text className="text-[20px] font-heading font-black text-foreground">
+        <Text className="text-display-sm font-heading font-black text-foreground">
           Cart ({itemCount})
         </Text>
       </View>
@@ -166,11 +166,11 @@ export default function CartScreen() {
             {/* Vendor Header */}
             <View className="flex-row items-center justify-between mb-3 px-1">
               <View className="flex-row items-center gap-2">
-                <View className="w-[22px] h-[22px] rounded-[6px] bg-primary items-center justify-center">
+                <View className="w-[22px] h-[22px] rounded-md bg-primary items-center justify-center">
                   <Icon name="check" size={14} color="#fff" />
                 </View>
                 <Icon name="store" size={16} color="#475569" />
-                <Text className="text-[16px] font-heading font-bold text-foreground">
+                <Text className="text-body-lg font-heading font-bold text-foreground">
                   {group.vendor}
                 </Text>
               </View>
@@ -179,7 +179,7 @@ export default function CartScreen() {
                   style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
                   onPress={() => router.push(`/(customer)/store/${group.vendorId}`)}
                 >
-                  <Text className="text-[12px] font-bold text-primary">Visit Store</Text>
+                  <Text className="text-body-sm font-bold text-primary">Visit Store</Text>
                 </Pressable>
               )}
             </View>
@@ -189,16 +189,16 @@ export default function CartScreen() {
               <Pressable
                 style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
                 key={item.productId}
-                className="flex-row bg-card rounded-[24px] p-4 border border-border gap-3 mb-3 shadow-[0_4px_10px_rgba(0,0,0,0.02)]"
+                className="flex-row bg-card rounded-2xl p-4 border border-border gap-3 mb-3 shadow-[0_4px_10px_rgba(0,0,0,0.02)]"
                 onPress={() => router.push(`/(customer)/product/${item.productId}`)}
               >
                 <View className="flex-row items-center mr-1">
-                  <View className="w-[22px] h-[22px] rounded-[6px] bg-primary items-center justify-center">
+                  <View className="w-[22px] h-[22px] rounded-md bg-primary items-center justify-center">
                     <Icon name="check" size={14} color="#fff" />
                   </View>
                 </View>
 
-                <View className="w-[84px] h-[84px] rounded-[16px] bg-background items-center justify-center overflow-hidden border border-border">
+                <View className="w-[84px] h-[84px] rounded-xl bg-background items-center justify-center overflow-hidden border border-border">
                   {item.imageUrl ? (
                     <Image
                       source={{ uri: item.imageUrl }}
@@ -213,7 +213,7 @@ export default function CartScreen() {
                 <View className="flex-1 justify-between py-0.5">
                   <View className="flex-row justify-between items-start">
                     <Text
-                      className="text-[15px] font-semibold text-foreground font-body flex-1 pr-2"
+                      className="text-body-lg font-semibold text-foreground font-body flex-1 pr-2"
                       numberOfLines={2}
                     >
                       {item.name}
@@ -230,7 +230,7 @@ export default function CartScreen() {
                   <View className="flex-row items-center justify-between mt-2">
                     <View className="flex-1 mr-2">
                       <Text
-                        className="text-[16px] font-black text-primary font-heading"
+                        className="text-body-lg font-black text-primary font-heading"
                         numberOfLines={1}
                         adjustsFontSizeToFit
                       >
@@ -241,7 +241,7 @@ export default function CartScreen() {
                         })}
                       </Text>
                       {item.stock <= 5 && (
-                        <Text className="text-[10px] text-amber-600 font-body mt-0.5">
+                        <Text className="text-caption text-amber-600 font-body mt-0.5">
                           Only {item.stock} left
                         </Text>
                       )}
@@ -266,7 +266,7 @@ export default function CartScreen() {
                           color={item.quantity <= 1 ? "#cbd5e1" : "#475569"}
                         />
                       </Pressable>
-                      <Text className="text-[14px] font-bold text-foreground font-body w-6 text-center">
+                      <Text className="text-body-md font-bold text-foreground font-body w-6 text-center">
                         {item.quantity}
                       </Text>
                       <Pressable
@@ -301,7 +301,7 @@ export default function CartScreen() {
         <BlurView
           intensity={90}
           tint="light"
-          className="px-5 py-5 rounded-t-[32px] border-t border-border/50 shadow-2xl bg-white/80"
+          className="px-5 py-5 rounded-t-3xl border-t border-border/50 shadow-2xl bg-white/80"
         >
           {/* Coupon Section */}
           {!couponApplied ? (
@@ -309,7 +309,7 @@ export default function CartScreen() {
               <View className="flex-1 flex-row items-center gap-2 bg-background rounded-full px-4 h-11 border border-border">
                 <Icon name="ticket-percent" size={16} color="#94a3b8" />
                 <TextInput
-                  className="flex-1 font-body text-[14px] text-foreground"
+                  className="flex-1 font-body text-body-md text-foreground"
                   placeholder="Enter coupon code"
                   placeholderTextColor="#94a3b8"
                   value={couponCode}
@@ -321,27 +321,29 @@ export default function CartScreen() {
                 className="bg-primary rounded-full px-5 h-11 items-center justify-center active:scale-95"
                 onPress={handleApplyCoupon}
               >
-                <Text className="text-[14px] font-bold text-white font-body">Apply</Text>
+                <Text className="text-body-md font-bold text-white font-body">Apply</Text>
               </Pressable>
             </View>
           ) : (
-            <View className="flex-row items-center justify-between bg-emerald-50 rounded-[16px] px-5 py-4 mb-5 border border-emerald-100">
+            <View className="flex-row items-center justify-between bg-emerald-50 rounded-xl px-5 py-4 mb-5 border border-emerald-100">
               <View className="flex-row items-center gap-3">
                 <View className="w-8 h-8 rounded-full bg-emerald-500 items-center justify-center">
                   <Icon name="ticket-percent" size={16} color="#fff" />
                 </View>
                 <View>
-                  <Text className="text-[14px] font-bold text-emerald-700 font-body">
+                  <Text className="text-body-md font-bold text-emerald-700 font-body">
                     CAMPUS10 applied
                   </Text>
-                  <Text className="text-[12px] text-emerald-600 font-body">10% off your order</Text>
+                  <Text className="text-body-sm text-emerald-600 font-body">
+                    10% off your order
+                  </Text>
                 </View>
               </View>
               <Pressable
                 style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
                 onPress={handleRemoveCoupon}
               >
-                <Text className="text-[14px] font-bold text-error font-body">Remove</Text>
+                <Text className="text-body-md font-bold text-error font-body">Remove</Text>
               </Pressable>
             </View>
           )}
@@ -349,11 +351,11 @@ export default function CartScreen() {
           {/* Price Breakdown */}
           <View className="gap-2 mb-5">
             <View className="flex-row justify-between">
-              <Text className="text-[14px] text-muted-foreground font-body">
+              <Text className="text-body-md text-muted-foreground font-body">
                 Subtotal ({itemCount} items)
               </Text>
               <Text
-                className="text-[14px] font-semibold text-foreground font-body"
+                className="text-body-md font-semibold text-foreground font-body"
                 numberOfLines={1}
                 adjustsFontSizeToFit
               >
@@ -365,15 +367,15 @@ export default function CartScreen() {
               </Text>
             </View>
             <View className="flex-row justify-between">
-              <Text className="text-[14px] text-muted-foreground font-body">Delivery fee</Text>
-              <Text className="text-[14px] font-medium text-muted-foreground font-body">
+              <Text className="text-body-md text-muted-foreground font-body">Delivery fee</Text>
+              <Text className="text-body-md font-medium text-muted-foreground font-body">
                 Calculated at checkout
               </Text>
             </View>
             {couponApplied && (
               <View className="flex-row justify-between">
-                <Text className="text-[14px] text-emerald-600 font-body">Discount (10%)</Text>
-                <Text className="text-[14px] font-semibold text-emerald-600 font-body">
+                <Text className="text-body-md text-emerald-600 font-body">Discount (10%)</Text>
+                <Text className="text-body-md font-semibold text-emerald-600 font-body">
                   - GHS{" "}
                   {discount.toLocaleString("en-US", {
                     minimumFractionDigits: 2,
@@ -383,10 +385,10 @@ export default function CartScreen() {
               </View>
             )}
             <View className="flex-row justify-between pt-3 border-t border-border/50">
-              <Text className="text-[18px] font-bold text-foreground font-heading">Total</Text>
+              <Text className="text-heading-md font-bold text-foreground font-heading">Total</Text>
               <View className="flex-1 items-end pl-4">
                 <Text
-                  className="text-[24px] font-bold text-primary font-heading"
+                  className="text-display-md font-bold text-primary font-heading"
                   numberOfLines={1}
                   adjustsFontSizeToFit
                 >
@@ -405,11 +407,11 @@ export default function CartScreen() {
             onPress={handleCheckout}
             className="w-full h-14 bg-primary rounded-full flex-row items-center justify-between px-6 active:scale-[0.98]"
           >
-            <Text className="text-[16px] font-bold text-white font-heading">
+            <Text className="text-body-lg font-bold text-white font-heading">
               Proceed to Checkout
             </Text>
             <Text
-              className="text-[16px] font-black text-white font-heading"
+              className="text-body-lg font-black text-white font-heading"
               numberOfLines={1}
               adjustsFontSizeToFit
             >

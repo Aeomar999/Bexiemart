@@ -65,7 +65,7 @@ export default function PaymentMethodsScreen() {
       >
         <View className="flex-row items-center">
           <BackButton className="mr-3" />
-          <Text className="text-[20px] font-heading font-black text-foreground">
+          <Text className="text-display-sm font-heading font-black text-foreground">
             Payout Methods
           </Text>
         </View>
@@ -77,14 +77,14 @@ export default function PaymentMethodsScreen() {
         </View>
       ) : (
         <ScrollView className="flex-1 px-5 pt-6 pb-12">
-          <Text className="text-[14px] text-muted-foreground mb-6 leading-relaxed">
+          <Text className="text-body-md text-muted-foreground mb-6 leading-relaxed">
             Manage where your earnings are sent when you request a withdrawal. You can add up to 3
             payout methods.
           </Text>
 
           <View className="gap-4 mb-6">
             {methods.map((method: any) => (
-              <View key={method.id} className="bg-card rounded-[20px] border border-border p-5">
+              <View key={method.id} className="bg-card rounded-2xl border border-border p-5">
                 <View className="flex-row justify-between items-start mb-4">
                   <View className="flex-row items-center">
                     <View
@@ -94,15 +94,15 @@ export default function PaymentMethodsScreen() {
                       <Icon name={method.icon} size={20} color={method.color} />
                     </View>
                     <View>
-                      <Text className="text-[16px] font-bold text-foreground mb-0.5">
+                      <Text className="text-body-lg font-bold text-foreground mb-0.5">
                         {method.title}
                       </Text>
-                      <Text className="text-[14px] text-muted-foreground">{method.account}</Text>
+                      <Text className="text-body-md text-muted-foreground">{method.account}</Text>
                     </View>
                   </View>
                   {method.isDefault && (
                     <View className="bg-green-100 px-2 py-1 rounded-full">
-                      <Text className="text-[10px] font-bold text-success">DEFAULT</Text>
+                      <Text className="text-caption font-bold text-success">DEFAULT</Text>
                     </View>
                   )}
                 </View>
@@ -113,7 +113,7 @@ export default function PaymentMethodsScreen() {
                       className="flex-1 items-center border-r border-border py-1"
                       onPress={() => setDefaultMethod.mutate({ type: method.type, id: method.id })}
                     >
-                      <Text className="text-[14px] font-bold text-muted-foreground">
+                      <Text className="text-body-md font-bold text-muted-foreground">
                         Set as Default
                       </Text>
                     </Pressable>
@@ -131,7 +131,7 @@ export default function PaymentMethodsScreen() {
                       ]);
                     }}
                   >
-                    <Text className="text-[14px] font-bold text-rose-500">Remove</Text>
+                    <Text className="text-body-md font-bold text-rose-500">Remove</Text>
                   </Pressable>
                 </View>
               </View>
@@ -141,7 +141,7 @@ export default function PaymentMethodsScreen() {
           <View className="gap-3">
             <Pressable
               onPress={() => openAddModal("momo")}
-              className="bg-primary-subtle border border-border border-dashed rounded-[20px] p-6 items-center justify-center flex-row"
+              className="bg-primary-subtle border border-border border-dashed rounded-2xl p-6 items-center justify-center flex-row"
             >
               <Icon
                 name="smartphone"
@@ -149,11 +149,11 @@ export default function PaymentMethodsScreen() {
                 color="var(--color-primary)"
                 style={{ marginRight: 8 }}
               />
-              <Text className="text-[16px] font-bold text-primary">Add Mobile Money</Text>
+              <Text className="text-body-lg font-bold text-primary">Add Mobile Money</Text>
             </Pressable>
             <Pressable
               onPress={() => openAddModal("bank")}
-              className="bg-primary-subtle border border-border border-dashed rounded-[20px] p-6 items-center justify-center flex-row"
+              className="bg-primary-subtle border border-border border-dashed rounded-2xl p-6 items-center justify-center flex-row"
             >
               <Icon
                 name="briefcase"
@@ -161,7 +161,7 @@ export default function PaymentMethodsScreen() {
                 color="var(--color-primary)"
                 style={{ marginRight: 8 }}
               />
-              <Text className="text-[16px] font-bold text-primary">Add Bank Account</Text>
+              <Text className="text-body-lg font-bold text-primary">Add Bank Account</Text>
             </Pressable>
           </View>
         </ScrollView>
@@ -176,9 +176,9 @@ export default function PaymentMethodsScreen() {
       >
         <View className="flex-1 justify-end bg-black/40">
           <Pressable className="absolute inset-0" onPress={() => setAddModalVisible(false)} />
-          <View className="bg-card rounded-t-[32px] p-6 pb-12">
+          <View className="bg-card rounded-t-3xl p-6 pb-12">
             <View className="w-12 h-1.5 bg-secondary rounded-full self-center mb-6" />
-            <Text className="text-[20px] font-heading font-bold text-foreground mb-6">
+            <Text className="text-display-sm font-heading font-bold text-foreground mb-6">
               Add {addType === "bank" ? "Bank Account" : "Mobile Money"}
             </Text>
 

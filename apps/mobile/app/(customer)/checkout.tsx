@@ -163,7 +163,7 @@ export default function CheckoutScreen() {
       >
         <View className="flex-row items-center gap-3">
           <BackButton />
-          <Text className="text-[20px] font-heading font-black text-foreground">Checkout</Text>
+          <Text className="text-display-sm font-heading font-black text-foreground">Checkout</Text>
         </View>
       </View>
 
@@ -184,7 +184,7 @@ export default function CheckoutScreen() {
             </Text>
           </View>
 
-          <View className="gap-4 bg-card rounded-[24px] p-5 border border-border">
+          <View className="gap-4 bg-card rounded-2xl p-5 border border-border">
             <Input
               label="Full name"
               placeholder="Kofi Mensah"
@@ -244,7 +244,7 @@ export default function CheckoutScreen() {
           <View className="gap-3">
             <Pressable
               style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
-              className={`flex-row items-center gap-4 p-5 rounded-[24px] border ${
+              className={`flex-row items-center gap-4 p-5 rounded-2xl border ${
                 deliveryMethod === "standard"
                   ? "border-primary bg-primary-subtle/30"
                   : "border-border bg-card"
@@ -271,7 +271,7 @@ export default function CheckoutScreen() {
 
             <Pressable
               style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
-              className={`flex-row items-center gap-4 p-5 rounded-[24px] border ${
+              className={`flex-row items-center gap-4 p-5 rounded-2xl border ${
                 deliveryMethod === "express"
                   ? "border-primary bg-primary-subtle/30"
                   : "border-border bg-card"
@@ -312,7 +312,7 @@ export default function CheckoutScreen() {
           <View className="gap-3">
             <Pressable
               style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
-              className={`flex-row items-center gap-4 p-5 rounded-[24px] border ${
+              className={`flex-row items-center gap-4 p-5 rounded-2xl border ${
                 paymentMethod === "card"
                   ? "border-primary bg-primary-subtle/30"
                   : "border-border bg-card"
@@ -339,7 +339,7 @@ export default function CheckoutScreen() {
 
             <Pressable
               style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
-              className={`flex-row items-center gap-4 p-5 rounded-[24px] border ${
+              className={`flex-row items-center gap-4 p-5 rounded-2xl border ${
                 paymentMethod === "momo"
                   ? "border-primary bg-primary-subtle/30"
                   : "border-border bg-card"
@@ -366,7 +366,7 @@ export default function CheckoutScreen() {
 
             <Pressable
               style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
-              className={`flex-row items-center gap-4 p-5 rounded-[24px] border ${
+              className={`flex-row items-center gap-4 p-5 rounded-2xl border ${
                 paymentMethod === "wallet"
                   ? "border-primary bg-primary-subtle/30"
                   : "border-border bg-card"
@@ -395,16 +395,16 @@ export default function CheckoutScreen() {
 
         {/* BexieCoins */}
         <View className="px-5 mt-6">
-          <View className="bg-amber-50 rounded-[24px] p-5 border border-amber-200 flex-row items-center justify-between">
+          <View className="bg-amber-50 rounded-2xl p-5 border border-amber-200 flex-row items-center justify-between">
             <View className="flex-row items-center gap-3">
               <View className="w-10 h-10 rounded-full bg-amber-100 items-center justify-center">
                 <Icon name="award" size={20} color="#d97706" />
               </View>
               <View>
-                <Text className="text-[15px] font-bold text-amber-900 font-heading">
+                <Text className="text-body-lg font-bold text-amber-900 font-heading">
                   Use BexieCoins
                 </Text>
-                <Text className="text-[13px] text-amber-700 font-body">
+                <Text className="text-sm text-amber-700 font-body">
                   Apply 1,000 coins for GHS 10 off
                 </Text>
               </View>
@@ -435,7 +435,7 @@ export default function CheckoutScreen() {
             Order Summary
           </Text>
 
-          <View className="bg-card rounded-[24px] p-5 border border-border">
+          <View className="bg-card rounded-2xl p-5 border border-border">
             {items.map((item: CartItemData) => (
               <View
                 key={item.productId}

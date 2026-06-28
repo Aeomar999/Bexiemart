@@ -31,7 +31,7 @@ export default function VendorHelpScreen() {
         style={{ paddingTop: (insets.top || 12) + 12 }}
       >
         <BackButton className="mr-3" />
-        <Text className="text-[20px] font-heading font-black text-foreground">
+        <Text className="text-display-sm font-heading font-black text-foreground">
           Seller Help Center
         </Text>
       </View>
@@ -44,31 +44,31 @@ export default function VendorHelpScreen() {
           />
         </View>
 
-        <Text className="text-[18px] font-bold text-foreground mb-4">
+        <Text className="text-heading-md font-bold text-foreground mb-4">
           Frequently Asked Questions
         </Text>
         <View className="gap-3 mb-8">
           {FAQS.map((faq, idx) => (
-            <View key={idx} className="bg-card rounded-[16px] border border-border p-4">
-              <Text className="text-[15px] font-bold text-foreground mb-2">{faq.q}</Text>
-              <Text className="text-[14px] text-muted-foreground leading-relaxed">{faq.a}</Text>
+            <View key={idx} className="bg-card rounded-xl border border-border p-4">
+              <Text className="text-body-lg font-bold text-foreground mb-2">{faq.q}</Text>
+              <Text className="text-body-md text-muted-foreground leading-relaxed">{faq.a}</Text>
             </View>
           ))}
         </View>
 
-        <View className="bg-primary-subtle border border-border rounded-[24px] p-6 items-center">
+        <View className="bg-primary-subtle border border-border rounded-2xl p-6 items-center">
           <View className="w-16 h-16 rounded-full bg-primary-subtle items-center justify-center mb-4">
             <Icon name="life-buoy" size={24} color="var(--color-primary)" />
           </View>
-          <Text className="text-[18px] font-bold text-foreground mb-2">Need more help?</Text>
-          <Text className="text-[14px] text-muted-foreground text-center mb-6">
+          <Text className="text-heading-md font-bold text-foreground mb-2">Need more help?</Text>
+          <Text className="text-body-md text-muted-foreground text-center mb-6">
             Our dedicated seller support team is here to assist you 24/7.
           </Text>
           <Pressable
             className="bg-primary w-full py-4 rounded-full items-center"
             onPress={() => router.push("/(vendor)/(settings)/contact")}
           >
-            <Text className="text-white font-bold text-[15px]">Contact Support</Text>
+            <Text className="text-white font-bold text-body-lg">Contact Support</Text>
           </Pressable>
         </View>
       </ScrollView>

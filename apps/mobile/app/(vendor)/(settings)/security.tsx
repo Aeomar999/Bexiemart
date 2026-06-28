@@ -18,19 +18,19 @@ export default function SecurityScreen() {
         style={{ paddingTop: (insets.top || 12) + 12 }}
       >
         <BackButton className="mr-3" />
-        <Text className="text-[20px] font-heading font-black text-foreground">Security</Text>
+        <Text className="text-display-sm font-heading font-black text-foreground">Security</Text>
       </View>
 
       <ScrollView className="flex-1 px-5 pt-6 pb-12" showsVerticalScrollIndicator={false}>
-        <View className="bg-card rounded-[24px] border border-border overflow-hidden mb-6">
+        <View className="bg-card rounded-2xl border border-border overflow-hidden mb-6">
           <Pressable
             className="p-4 border-b border-border flex-row justify-between items-center"
             style={({ pressed }) => [{ backgroundColor: pressed ? "#f8fafc" : "white" }]}
             onPress={() => router.push("/(vendor)/(settings)/change-password")}
           >
             <View>
-              <Text className="text-[15px] font-bold text-foreground">Change Password</Text>
-              <Text className="text-[12px] text-muted-foreground mt-0.5">
+              <Text className="text-body-lg font-bold text-foreground">Change Password</Text>
+              <Text className="text-body-sm text-muted-foreground mt-0.5">
                 Last changed 3 months ago
               </Text>
             </View>
@@ -42,18 +42,20 @@ export default function SecurityScreen() {
             onPress={() => router.push("/(vendor)/(settings)/change-pin")}
           >
             <View>
-              <Text className="text-[15px] font-bold text-foreground">Change PIN</Text>
-              <Text className="text-[12px] text-muted-foreground mt-0.5">Used for withdrawals</Text>
+              <Text className="text-body-lg font-bold text-foreground">Change PIN</Text>
+              <Text className="text-body-sm text-muted-foreground mt-0.5">
+                Used for withdrawals
+              </Text>
             </View>
             <Icon name="chevron-right" size={20} color="#cbd5e1" />
           </Pressable>
         </View>
 
-        <Text className="text-[16px] font-bold text-foreground mb-3 ml-1">
+        <Text className="text-body-lg font-bold text-foreground mb-3 ml-1">
           Two-Factor Authentication
         </Text>
         <Pressable
-          className="bg-card rounded-[24px] border border-border overflow-hidden p-5 mb-6"
+          className="bg-card rounded-2xl border border-border overflow-hidden p-5 mb-6"
           style={({ pressed }) => [{ opacity: pressed ? 0.8 : 1 }]}
           onPress={() => router.push("/(vendor)/(settings)/two-factor")}
         >
@@ -63,25 +65,25 @@ export default function SecurityScreen() {
                 <Icon name="shield" size={18} color="var(--color-primary)" />
               </View>
               <View>
-                <Text className="text-[15px] font-bold text-foreground">Manage 2FA</Text>
-                <Text className="text-[13px] text-green-600 font-bold mt-0.5">Enabled</Text>
+                <Text className="text-body-lg font-bold text-foreground">Manage 2FA</Text>
+                <Text className="text-sm text-green-600 font-bold mt-0.5">Enabled</Text>
               </View>
             </View>
             <Icon name="chevron-right" size={20} color="#cbd5e1" />
           </View>
-          <Text className="text-[13px] text-muted-foreground leading-relaxed">
+          <Text className="text-sm text-muted-foreground leading-relaxed">
             We'll ask for a code from your authenticator app when you log in from an unrecognized
             device or withdraw funds.
           </Text>
         </Pressable>
 
-        <Text className="text-[16px] font-bold text-foreground mb-3 ml-1">Recent Devices</Text>
-        <View className="bg-card rounded-[24px] border border-border overflow-hidden">
+        <Text className="text-body-lg font-bold text-foreground mb-3 ml-1">Recent Devices</Text>
+        <View className="bg-card rounded-2xl border border-border overflow-hidden">
           <View className="p-4 border-b border-border flex-row items-center">
             <Icon name="smartphone" size={24} color="#64748b" style={{ marginRight: 16 }} />
             <View className="flex-1">
-              <Text className="text-[15px] font-bold text-foreground">iPhone 14 Pro</Text>
-              <Text className="text-[12px] text-primary font-bold">This Device • Active Now</Text>
+              <Text className="text-body-lg font-bold text-foreground">iPhone 14 Pro</Text>
+              <Text className="text-body-sm text-primary font-bold">This Device • Active Now</Text>
             </View>
             <View className="w-2 h-2 rounded-full bg-green-500" />
           </View>
@@ -98,8 +100,8 @@ export default function SecurityScreen() {
           >
             <Icon name="monitor" size={24} color="#64748b" style={{ marginRight: 16 }} />
             <View className="flex-1">
-              <Text className="text-[15px] font-bold text-foreground">MacBook Pro</Text>
-              <Text className="text-[12px] text-muted-foreground">Accra, Ghana • 2 days ago</Text>
+              <Text className="text-body-lg font-bold text-foreground">MacBook Pro</Text>
+              <Text className="text-body-sm text-muted-foreground">Accra, Ghana • 2 days ago</Text>
             </View>
             <Icon name="more-vertical" size={20} color="#cbd5e1" />
           </Pressable>
@@ -115,17 +117,17 @@ export default function SecurityScreen() {
       >
         <View className="flex-1 justify-end bg-black/40">
           <Pressable className="absolute inset-0" onPress={() => setSelectedDevice(null)} />
-          <View className="bg-card rounded-t-[32px] p-6 pb-12">
+          <View className="bg-card rounded-t-3xl p-6 pb-12">
             <View className="w-12 h-1.5 bg-secondary rounded-full self-center mb-6" />
 
             <View className="items-center mb-6">
               <View className="w-16 h-16 rounded-full bg-muted items-center justify-center mb-4">
                 <Icon name="monitor" size={32} color="#64748b" />
               </View>
-              <Text className="text-[20px] font-heading font-bold text-foreground">
+              <Text className="text-display-sm font-heading font-bold text-foreground">
                 {selectedDevice?.name}
               </Text>
-              <Text className="text-[14px] text-muted-foreground mt-1">
+              <Text className="text-body-md text-muted-foreground mt-1">
                 {selectedDevice?.location} • Last active {selectedDevice?.time}
               </Text>
             </View>
@@ -139,14 +141,14 @@ export default function SecurityScreen() {
                 }}
               >
                 <Icon name="log-out" size={20} color="#ef4444" style={{ marginRight: 8 }} />
-                <Text className="text-[16px] font-bold text-error">Log out of this device</Text>
+                <Text className="text-body-lg font-bold text-error">Log out of this device</Text>
               </Pressable>
 
               <Pressable
                 className="w-full py-4 rounded-full bg-muted items-center justify-center"
                 onPress={() => setSelectedDevice(null)}
               >
-                <Text className="text-[16px] font-bold text-muted-foreground">Cancel</Text>
+                <Text className="text-body-lg font-bold text-muted-foreground">Cancel</Text>
               </Pressable>
             </View>
           </View>

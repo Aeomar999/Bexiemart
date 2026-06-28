@@ -85,7 +85,7 @@ export default function FoodDeliveryScreen() {
         <View className="flex-row justify-between items-center mb-4">
           <View className="flex-row items-center gap-3">
             <BackButton />
-            <Text className="text-[20px] font-heading font-black text-foreground">
+            <Text className="text-display-sm font-heading font-black text-foreground">
               Food Delivery
             </Text>
           </View>
@@ -97,7 +97,7 @@ export default function FoodDeliveryScreen() {
             <Icon name="shopping-bag" size={20} color="#0f172a" />
             {cartItemCount > 0 && (
               <View className="absolute top-0 right-0 w-4 h-4 bg-error rounded-full items-center justify-center">
-                <Text className="text-white font-bold text-[9px]">{cartItemCount}</Text>
+                <Text className="text-white font-bold text-caption">{cartItemCount}</Text>
               </View>
             )}
           </Pressable>
@@ -107,7 +107,7 @@ export default function FoodDeliveryScreen() {
           <Icon name="search" size={18} color="#64748b" />
           <TextInput
             placeholder="Search restaurants, dishes..."
-            className="flex-1 ml-2 font-body text-[15px] text-foreground"
+            className="flex-1 ml-2 font-body text-body-lg text-foreground"
             value={searchQuery}
             onChangeText={setSearchQuery}
           />
@@ -159,7 +159,7 @@ export default function FoodDeliveryScreen() {
                         />
                       </View>
                       <Text
-                        className={`text-[13px] font-bold font-body ${isSelected ? "text-orange-600" : "text-muted-foreground"}`}
+                        className={`text-sm font-bold font-body ${isSelected ? "text-orange-600" : "text-muted-foreground"}`}
                       >
                         {item.name}
                       </Text>
@@ -186,7 +186,7 @@ export default function FoodDeliveryScreen() {
                   renderItem={({ item }) => (
                     <View style={{ width: Dimensions.get("window").width, paddingHorizontal: 20 }}>
                       <Pressable
-                        className={`w-full h-40 rounded-[24px] ${item.color} overflow-hidden relative`}
+                        className={`w-full h-40 rounded-2xl ${item.color} overflow-hidden relative`}
                         onPress={() => router.push(`/(customer)/restaurant/1`)}
                       >
                         <Image
@@ -197,14 +197,16 @@ export default function FoodDeliveryScreen() {
                         <View className="absolute inset-0 bg-black/50" />
 
                         <View className="flex-1 p-5 justify-center">
-                          <Text className="text-white font-heading font-black text-[24px] mb-1">
+                          <Text className="text-white font-heading font-black text-display-md mb-1">
                             {item.title}
                           </Text>
-                          <Text className="text-white/90 font-body text-[14px] mb-4">
+                          <Text className="text-white/90 font-body text-body-md mb-4">
                             {item.subtitle}
                           </Text>
                           <View className="bg-card px-4 py-2 rounded-full self-start">
-                            <Text className="text-foreground font-bold text-[12px]">Order Now</Text>
+                            <Text className="text-foreground font-bold text-body-sm">
+                              Order Now
+                            </Text>
                           </View>
                         </View>
                       </Pressable>
@@ -224,17 +226,17 @@ export default function FoodDeliveryScreen() {
 
             {/* Restaurants List */}
             <View className="px-5 pb-10">
-              <Text className="text-[18px] font-heading font-bold text-foreground mb-4">
+              <Text className="text-heading-md font-heading font-bold text-foreground mb-4">
                 {searchQuery || selectedCategory ? "Results" : "Popular Restaurants"}
               </Text>
 
               {filteredRestaurants.length === 0 ? (
                 <View className="items-center justify-center py-10">
                   <Icon name="search" size={48} color="#cbd5e1" />
-                  <Text className="text-[16px] font-bold text-muted-foreground mt-4">
+                  <Text className="text-body-lg font-bold text-muted-foreground mt-4">
                     No restaurants found
                   </Text>
-                  <Text className="text-[14px] text-muted-foreground mt-1">
+                  <Text className="text-body-md text-muted-foreground mt-1">
                     Try adjusting your search or filters.
                   </Text>
                 </View>
@@ -244,7 +246,7 @@ export default function FoodDeliveryScreen() {
                     <Pressable
                       style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
                       key={restaurant.id}
-                      className="bg-card rounded-[24px] overflow-hidden border border-border"
+                      className="bg-card rounded-2xl overflow-hidden border border-border"
                       onPress={() => router.push(`/(customer)/restaurant/${restaurant.id}`)}
                     >
                       <View className="h-32 bg-secondary items-center justify-center">
@@ -260,23 +262,23 @@ export default function FoodDeliveryScreen() {
                       </View>
                       <View className="p-4">
                         <View className="flex-row justify-between items-start mb-2">
-                          <Text className="text-[16px] font-bold text-foreground font-heading">
+                          <Text className="text-body-lg font-bold text-foreground font-heading">
                             {restaurant.shopName}
                           </Text>
                         </View>
-                        <Text className="text-[13px] text-muted-foreground font-body mb-3">
+                        <Text className="text-sm text-muted-foreground font-body mb-3">
                           {restaurant.description ?? `${restaurant._count?.foodItems ?? 0} items`}
                         </Text>
                         <View className="flex-row gap-4">
                           <View className="flex-row items-center gap-1.5">
                             <Icon name="map-pin" size={14} color="#64748b" />
-                            <Text className="text-[13px] font-bold text-muted-foreground">
+                            <Text className="text-sm font-bold text-muted-foreground">
                               {restaurant.city ?? restaurant.address ?? "Accra"}
                             </Text>
                           </View>
                           <View className="flex-row items-center gap-1.5">
                             <Icon name="shopping-bag" size={14} color="#64748b" />
-                            <Text className="text-[13px] font-bold text-muted-foreground">
+                            <Text className="text-sm font-bold text-muted-foreground">
                               {restaurant._count?.foodItems ?? 0} items
                             </Text>
                           </View>

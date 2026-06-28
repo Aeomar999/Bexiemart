@@ -201,7 +201,7 @@ export default function DispatcherMap() {
           <View className="w-16 h-16 bg-slate-100 rounded-full items-center justify-center mb-4">
             <Icon name="moon" size={24} color="#64748b" />
           </View>
-          <Text className="text-foreground font-bold text-[18px] font-heading mb-2">
+          <Text className="text-foreground font-bold text-heading-md font-heading mb-2">
             You are offline
           </Text>
           <Text className="text-muted-foreground text-center font-body">
@@ -224,7 +224,7 @@ export default function DispatcherMap() {
               <Icon name="radio" size={24} color="#10b981" />
             </View>
           )}
-          <Text className="text-foreground font-bold text-[18px] font-heading mb-2">
+          <Text className="text-foreground font-bold text-heading-md font-heading mb-2">
             Looking for tasks...
           </Text>
           <Text className="text-muted-foreground text-center font-body">
@@ -242,7 +242,7 @@ export default function DispatcherMap() {
         >
           <View className="w-12 h-1.5 bg-slate-200 rounded-full self-center my-3" />
           <View className="px-5 pb-5 pt-2">
-            <Text className="text-foreground font-bold text-[18px] mb-4 font-heading">
+            <Text className="text-foreground font-bold text-heading-md mb-4 font-heading">
               New Task Available
             </Text>
 
@@ -260,7 +260,7 @@ export default function DispatcherMap() {
                         : "Ride Request"}
                   </Text>
                 </View>
-                <Text className="font-black text-primary text-[18px] font-heading">
+                <Text className="font-black text-primary text-heading-md font-heading">
                   GH₵ {Number(displayRide.driverPayout).toFixed(2)}
                 </Text>
               </View>
@@ -269,7 +269,7 @@ export default function DispatcherMap() {
                 <View className="flex-row items-center gap-3">
                   <View className="w-2 h-2 rounded-full bg-error" />
                   <Text
-                    className="text-muted-foreground text-[14px] font-body flex-1"
+                    className="text-muted-foreground text-body-md font-body flex-1"
                     numberOfLines={1}
                   >
                     {displayRide.pickupAddress}
@@ -278,7 +278,7 @@ export default function DispatcherMap() {
                 <View className="flex-row items-center gap-3">
                   <View className="w-2 h-2 rounded-full bg-emerald-500" />
                   <Text
-                    className="text-muted-foreground text-[14px] font-body flex-1"
+                    className="text-muted-foreground text-body-md font-body flex-1"
                     numberOfLines={1}
                   >
                     {displayRide.dropoffAddress}
@@ -340,12 +340,12 @@ export default function DispatcherMap() {
                   )}
                 </View>
                 <View>
-                  <Text className="font-bold text-[16px] text-foreground font-heading">
+                  <Text className="font-bold text-body-lg text-foreground font-heading">
                     {displayRide.customer?.name || "Customer"}
                   </Text>
                   <View className="flex-row items-center gap-1">
                     <Icon name="star" size={12} color="#f59e0b" />
-                    <Text className="text-muted-foreground text-[13px] font-body">4.9</Text>
+                    <Text className="text-muted-foreground text-sm font-body">4.9</Text>
                   </View>
                 </View>
               </View>
@@ -370,7 +370,7 @@ export default function DispatcherMap() {
                     <Icon name="map-pin" size={16} color="#e11d48" />
                   </View>
                   <View>
-                    <Text className="text-muted-foreground text-[12px] font-body">
+                    <Text className="text-muted-foreground text-body-sm font-body">
                       Pick up from
                     </Text>
                     <Text className="font-bold text-foreground font-body">
@@ -384,7 +384,9 @@ export default function DispatcherMap() {
                     <Icon name="navigation" size={16} color="#10b981" />
                   </View>
                   <View>
-                    <Text className="text-muted-foreground text-[12px] font-body">Drop off at</Text>
+                    <Text className="text-muted-foreground text-body-sm font-body">
+                      Drop off at
+                    </Text>
                     <Text className="font-bold text-foreground font-body">
                       {displayRide.dropoffAddress}
                     </Text>
@@ -477,7 +479,7 @@ export default function DispatcherMap() {
             <View
               className={`w-3 h-3 rounded-full ${isOnline ? "bg-emerald-500" : "bg-slate-400"}`}
             />
-            <Text className="text-foreground font-bold text-[16px] font-heading">
+            <Text className="text-foreground font-bold text-body-lg font-heading">
               {isOnline ? "You're Online" : "You're Offline"}
             </Text>
           </View>

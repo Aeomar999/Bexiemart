@@ -103,7 +103,9 @@ export default function AddCardScreen() {
       >
         <View className="flex-row items-center gap-3">
           <BackButton />
-          <Text className="text-[20px] font-heading font-black text-foreground">Add New Card</Text>
+          <Text className="text-display-sm font-heading font-black text-foreground">
+            Add New Card
+          </Text>
         </View>
       </View>
 
@@ -149,34 +151,34 @@ export default function AddCardScreen() {
                       <Icon name="wifi" size={16} color="rgba(255,255,255,0.7)" />
                     </View>
                   )}
-                  <Text className="text-white text-[22px] font-black italic tracking-widest">
+                  <Text className="text-white text-display-sm font-black italic tracking-widest">
                     {cardType}
                   </Text>
                 </View>
               </View>
 
               <View>
-                <Text className="text-white/80 text-[20px] font-mono tracking-[0.15em] mb-4">
+                <Text className="text-white/80 text-display-sm font-mono tracking-[0.15em] mb-4">
                   {number || "•••• •••• •••• ••••"}
                 </Text>
 
                 <View className="flex-row justify-between items-end">
                   <View>
-                    <Text className="text-white/50 text-[10px] font-bold uppercase tracking-widest mb-1">
+                    <Text className="text-white/50 text-caption font-bold uppercase tracking-widest mb-1">
                       Cardholder Name
                     </Text>
                     <Text
-                      className="text-white text-[15px] font-bold tracking-wide"
+                      className="text-white text-body-lg font-bold tracking-wide"
                       numberOfLines={1}
                     >
                       {name ? name.toUpperCase() : "YOUR NAME"}
                     </Text>
                   </View>
                   <View className="items-end">
-                    <Text className="text-white/50 text-[10px] font-bold uppercase tracking-widest mb-1">
+                    <Text className="text-white/50 text-caption font-bold uppercase tracking-widest mb-1">
                       Expiry
                     </Text>
-                    <Text className="text-white text-[14px] font-bold tracking-wide">
+                    <Text className="text-white text-body-md font-bold tracking-wide">
                       {expiry || "MM/YY"}
                     </Text>
                   </View>
