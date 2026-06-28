@@ -99,7 +99,7 @@ export default function AddMomoAccountScreen() {
       >
         <View className="flex-row items-center gap-3">
           <BackButton />
-          <Text className="text-[20px] font-heading font-black text-foreground">
+          <Text className="text-display-sm font-heading font-black text-foreground">
             Add Mobile Money
           </Text>
         </View>
@@ -148,7 +148,7 @@ export default function AddMomoAccountScreen() {
                     </View>
                     <View className="flex-1">
                       <Text
-                        className={`font-bold text-[16px] ${isSelected ? `text-[${provider.textColor}]` : "text-gray-900"}`}
+                        className={`font-bold text-body-lg ${isSelected ? `text-[${provider.textColor}]` : "text-gray-900"}`}
                         style={isSelected ? { color: provider.textColor } : {}}
                       >
                         {provider.name}

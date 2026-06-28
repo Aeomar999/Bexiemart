@@ -55,7 +55,7 @@ export default function VendorReviewsScreen() {
         style={{ paddingTop: (insets.top || 12) + 12 }}
       >
         <BackButton className="mr-3" />
-        <Text className="text-[20px] font-heading font-black text-foreground">
+        <Text className="text-display-sm font-heading font-black text-foreground">
           Customer Reviews
         </Text>
       </View>
@@ -67,7 +67,7 @@ export default function VendorReviewsScreen() {
       ) : (
         <ScrollView className="flex-1 px-5 pt-6 pb-12">
           {/* Analytics Card */}
-          <View className="bg-card rounded-[24px] border border-border p-6 mb-6 items-center flex-row">
+          <View className="bg-card rounded-2xl border border-border p-6 mb-6 items-center flex-row">
             <View className="items-center mr-6 border-r border-border pr-6">
               <Text className="text-[48px] font-heading font-black text-foreground">
                 {avgRating}
@@ -83,14 +83,14 @@ export default function VendorReviewsScreen() {
                   />
                 ))}
               </View>
-              <Text className="text-[12px] text-muted-foreground">
+              <Text className="text-body-sm text-muted-foreground">
                 Based on {(reviews ?? []).length} reviews
               </Text>
             </View>
             <View className="flex-1 gap-2">
               {ratingDistribution.map((item) => (
                 <View key={item.rating} className="flex-row items-center">
-                  <Text className="text-[12px] font-bold text-muted-foreground w-3">
+                  <Text className="text-body-sm font-bold text-muted-foreground w-3">
                     {item.rating}
                   </Text>
                   <View className="flex-1 h-2 bg-muted rounded-full mx-2 overflow-hidden">
@@ -105,37 +105,37 @@ export default function VendorReviewsScreen() {
           </View>
 
           {/* Review List */}
-          <Text className="text-[18px] font-bold text-foreground mb-4">Recent Reviews</Text>
+          <Text className="text-heading-md font-bold text-foreground mb-4">Recent Reviews</Text>
           <View className="gap-4">
             {(reviews ?? []).map((review: any) => (
-              <View key={review.id} className="bg-card rounded-[20px] border border-border p-5">
+              <View key={review.id} className="bg-card rounded-2xl border border-border p-5">
                 <View className="flex-row justify-between items-start mb-3">
                   <View className="flex-row items-center">
                     <View className="w-10 h-10 rounded-full bg-secondary items-center justify-center mr-3">
-                      <Text className="text-[16px] font-bold text-muted-foreground">
+                      <Text className="text-body-lg font-bold text-muted-foreground">
                         {review.customer?.charAt(0) || "?"}
                       </Text>
                     </View>
                     <View>
-                      <Text className="text-[15px] font-bold text-foreground">
+                      <Text className="text-body-lg font-bold text-foreground">
                         {review.customer}
                       </Text>
-                      <Text className="text-[12px] text-muted-foreground">{review.date}</Text>
+                      <Text className="text-body-sm text-muted-foreground">{review.date}</Text>
                     </View>
                   </View>
                   <View className="flex-row bg-amber-50 px-2 py-1 rounded-full items-center">
                     <Icon name="star" size={12} color="#f59e0b" />
-                    <Text className="text-[12px] font-bold text-amber-600 ml-1">
+                    <Text className="text-body-sm font-bold text-amber-600 ml-1">
                       {review.rating}.0
                     </Text>
                   </View>
                 </View>
-                <Text className="text-[14px] text-muted-foreground leading-relaxed mb-4">
+                <Text className="text-body-md text-muted-foreground leading-relaxed mb-4">
                   "{review.comment}"
                 </Text>
 
                 {review.reply ? (
-                  <View className="bg-background p-3 rounded-[12px] border border-border">
+                  <View className="bg-background p-3 rounded-lg border border-border">
                     <View className="flex-row items-center mb-1">
                       <Icon
                         name="corner-down-right"
@@ -143,9 +143,9 @@ export default function VendorReviewsScreen() {
                         color="#64748b"
                         style={{ marginRight: 6 }}
                       />
-                      <Text className="text-[13px] font-bold text-foreground">Your Reply</Text>
+                      <Text className="text-sm font-bold text-foreground">Your Reply</Text>
                     </View>
-                    <Text className="text-[13px] text-muted-foreground">{review.reply}</Text>
+                    <Text className="text-sm text-muted-foreground">{review.reply}</Text>
                   </View>
                 ) : (
                   <Pressable
@@ -153,7 +153,7 @@ export default function VendorReviewsScreen() {
                       setReplyModalId(review.id);
                       setReplyText("");
                     }}
-                    className="flex-row items-center justify-center py-2.5 bg-primary-subtle rounded-[12px] border border-border"
+                    className="flex-row items-center justify-center py-2.5 bg-primary-subtle rounded-lg border border-border"
                   >
                     <Icon
                       name="message-circle"
@@ -161,7 +161,7 @@ export default function VendorReviewsScreen() {
                       color="var(--color-primary)"
                       style={{ marginRight: 6 }}
                     />
-                    <Text className="text-[14px] font-bold text-primary">Reply to Customer</Text>
+                    <Text className="text-body-md font-bold text-primary">Reply to Customer</Text>
                   </Pressable>
                 )}
               </View>
@@ -179,16 +179,16 @@ export default function VendorReviewsScreen() {
       >
         <View className="flex-1 justify-end bg-black/40">
           <Pressable className="absolute inset-0" onPress={() => setReplyModalId(null)} />
-          <View className="bg-card rounded-t-[32px] p-6 pb-12">
+          <View className="bg-card rounded-t-3xl p-6 pb-12">
             <View className="w-12 h-1.5 bg-secondary rounded-full self-center mb-6" />
-            <Text className="text-[20px] font-heading font-bold text-foreground mb-6">
+            <Text className="text-display-sm font-heading font-bold text-foreground mb-6">
               Reply to Review
             </Text>
 
             <View className="gap-4">
-              <View className="bg-background rounded-[16px] border border-border p-4">
+              <View className="bg-background rounded-xl border border-border p-4">
                 <TextInput
-                  className="text-[15px] text-foreground min-h-[100px]"
+                  className="text-body-lg text-foreground min-h-[100px]"
                   placeholder="Write your reply..."
                   placeholderTextColor="#94a3b8"
                   value={replyText}

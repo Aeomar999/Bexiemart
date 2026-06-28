@@ -17,7 +17,7 @@ export default function AnalyticsScreen() {
         style={{ paddingTop: (insets.top || 12) + 12 }}
       >
         <BackButton className="mr-3" />
-        <Text className="text-[20px] font-heading font-black text-foreground">
+        <Text className="text-display-sm font-heading font-black text-foreground">
           Analytics Overview
         </Text>
       </View>
@@ -34,19 +34,19 @@ export default function AnalyticsScreen() {
         ) : (
           <>
             {/* Mock Chart Area */}
-            <View className="bg-card p-5 rounded-[24px] border border-border mb-6">
+            <View className="bg-card p-5 rounded-2xl border border-border mb-6">
               <View className="flex-row justify-between items-end mb-6">
                 <View>
-                  <Text className="text-[13px] font-bold text-muted-foreground mb-1">
+                  <Text className="text-sm font-bold text-muted-foreground mb-1">
                     Total Revenue (30 Days)
                   </Text>
-                  <Text className="text-[28px] font-heading font-black text-foreground">
+                  <Text className="text-display-md font-heading font-black text-foreground">
                     GHS {analytics?.totalRevenue30d?.toFixed(2) ?? "0.00"}
                   </Text>
                 </View>
                 <View className="bg-green-100 px-2 py-1 rounded-full flex-row items-center">
                   <Icon name="trending-up" size={14} color="#16a34a" style={{ marginRight: 4 }} />
-                  <Text className="text-[12px] font-bold text-success">
+                  <Text className="text-body-sm font-bold text-success">
                     {analytics?.revenueGrowth ?? "+0%"}
                   </Text>
                 </View>
@@ -75,7 +75,7 @@ export default function AnalyticsScreen() {
               </View>
               <View className="flex-row justify-between mt-2 px-2">
                 {["Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map((day) => (
-                  <Text key={day} className="text-[10px] text-muted-foreground font-bold">
+                  <Text key={day} className="text-caption text-muted-foreground font-bold">
                     {day}
                   </Text>
                 ))}
@@ -83,37 +83,37 @@ export default function AnalyticsScreen() {
             </View>
 
             {/* Top Selling Products */}
-            <Text className="text-[16px] font-bold text-foreground mb-3 ml-1">
+            <Text className="text-body-lg font-bold text-foreground mb-3 ml-1">
               Top Selling Items
             </Text>
-            <View className="bg-card rounded-[24px] border border-border overflow-hidden mb-12">
+            <View className="bg-card rounded-2xl border border-border overflow-hidden mb-12">
               {(analytics?.topProducts ?? []).map((product: any, index: number, arr: any[]) => (
                 <View
                   key={product.id}
                   className={`p-4 flex-row items-center justify-between ${index < arr.length - 1 ? "border-b border-border" : ""}`}
                 >
                   <View className="w-10 h-10 rounded-full bg-muted items-center justify-center mr-3">
-                    <Text className="text-[14px] font-bold text-muted-foreground">
+                    <Text className="text-body-md font-bold text-muted-foreground">
                       #{index + 1}
                     </Text>
                   </View>
                   <View className="flex-1 pr-4">
                     <Text
-                      className="text-[15px] font-bold text-foreground mb-0.5"
+                      className="text-body-lg font-bold text-foreground mb-0.5"
                       numberOfLines={1}
                     >
                       {product.name}
                     </Text>
-                    <Text className="text-[12px] text-muted-foreground">
+                    <Text className="text-body-sm text-muted-foreground">
                       {product.sales} units sold
                     </Text>
                   </View>
                   <View className="items-end">
-                    <Text className="text-[14px] font-bold text-foreground">
+                    <Text className="text-body-md font-bold text-foreground">
                       GHS {product.revenue.toFixed(2)}
                     </Text>
                     <Text
-                      className={`text-[12px] font-bold mt-0.5 ${product.trend?.startsWith("+") ? "text-green-600" : "text-red-500"}`}
+                      className={`text-body-sm font-bold mt-0.5 ${product.trend?.startsWith("+") ? "text-green-600" : "text-red-500"}`}
                     >
                       {product.trend}
                     </Text>

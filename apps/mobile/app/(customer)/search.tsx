@@ -70,7 +70,7 @@ export default function SearchScreen() {
       <View className="flex-1 bg-card">
         <View className="px-5 pb-4 pt-16 flex-row gap-3 items-center">
           <BackButton />
-          <Text className="text-[20px] font-heading font-black text-foreground">Search</Text>
+          <Text className="text-display-sm font-heading font-black text-foreground">Search</Text>
         </View>
         <ErrorState message="Failed to load search results." onRetry={refetch} />
       </View>
@@ -86,10 +86,10 @@ export default function SearchScreen() {
       >
         <BackButton />
 
-        <View className="flex-1 flex-row items-center bg-background h-[48px] rounded-[16px] px-4 border border-border focus:border-primary">
+        <View className="flex-1 flex-row items-center bg-background h-12 rounded-xl px-4 border border-border focus:border-primary">
           <Icon name="search" size={18} color="#64748b" />
           <TextInput
-            className="flex-1 ml-2 text-[15px] font-body text-foreground h-full"
+            className="flex-1 ml-2 text-body-lg font-body text-foreground h-full"
             placeholder="Search Bexiemart..."
             placeholderTextColor="#94a3b8"
             value={query}
@@ -107,7 +107,7 @@ export default function SearchScreen() {
 
         <Pressable
           style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
-          className={`w-12 h-[48px] rounded-[16px] items-center justify-center ${showFilters ? "bg-primary-subtle border border-border" : "bg-background border border-border"}`}
+          className={`w-12 h-12 rounded-xl items-center justify-center ${showFilters ? "bg-primary-subtle border border-border" : "bg-background border border-border"}`}
           onPress={() => setShowFilters(!showFilters)}
         >
           <Icon name="sliders" size={20} color={showFilters ? "var(--color-primary)" : "#0f172a"} />
@@ -120,14 +120,14 @@ export default function SearchScreen() {
             {/* Recent Searches */}
             <View className="mb-8">
               <View className="flex-row justify-between items-center mb-4">
-                <Text className="text-[16px] font-heading font-bold text-foreground">
+                <Text className="text-body-lg font-heading font-bold text-foreground">
                   Recent Searches
                 </Text>
                 <Pressable
                   style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
                   onPress={() => setRecentSearches([])}
                 >
-                  <Text className="text-[13px] font-bold text-muted-foreground">Clear</Text>
+                  <Text className="text-sm font-bold text-muted-foreground">Clear</Text>
                 </Pressable>
               </View>
               <View className="gap-0">
@@ -139,7 +139,7 @@ export default function SearchScreen() {
                     onPress={() => setQuery(item)}
                   >
                     <Icon name="clock" size={16} color="#94a3b8" />
-                    <Text className="ml-3 text-[15px] font-body text-muted-foreground flex-1">
+                    <Text className="ml-3 text-body-lg font-body text-muted-foreground flex-1">
                       {item}
                     </Text>
                     <Icon name="arrow-up-left" size={16} color="#cbd5e1" />
@@ -150,7 +150,7 @@ export default function SearchScreen() {
 
             {/* Trending Tags */}
             <View>
-              <Text className="text-[16px] font-heading font-bold text-foreground mb-4">
+              <Text className="text-body-lg font-heading font-bold text-foreground mb-4">
                 Trending Now
               </Text>
               <View className="flex-row flex-wrap gap-2">
@@ -161,7 +161,7 @@ export default function SearchScreen() {
                     className="px-4 py-2 bg-primary-subtle rounded-full border border-border"
                     onPress={() => setQuery(tag)}
                   >
-                    <Text className="text-[13px] font-bold text-primary font-body">{tag}</Text>
+                    <Text className="text-sm font-bold text-primary font-body">{tag}</Text>
                   </Pressable>
                 ))}
               </View>
@@ -169,7 +169,7 @@ export default function SearchScreen() {
           </View>
         ) : (
           <View className="p-5">
-            <Text className="text-[14px] font-bold text-muted-foreground font-heading mb-4 px-1">
+            <Text className="text-body-md font-bold text-muted-foreground font-heading mb-4 px-1">
               {isPending ? "Searching..." : `${results.length} Results for "${query}"`}
             </Text>
 
@@ -192,10 +192,10 @@ export default function SearchScreen() {
                   <Pressable
                     style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
                     key={item.id}
-                    className="flex-row items-center bg-card rounded-[24px] p-4 border border-border shadow-[0_10px_20px_rgba(0,0,0,0.03)]"
+                    className="flex-row items-center bg-card rounded-2xl p-4 border border-border shadow-lg"
                     onPress={() => router.push(`/(customer)/product/${item.id}` as any)}
                   >
-                    <View className="w-20 h-20 rounded-[16px] bg-muted items-center justify-center overflow-hidden">
+                    <View className="w-20 h-20 rounded-xl bg-muted items-center justify-center overflow-hidden">
                       {item.image ? (
                         <Image
                           source={{ uri: item.image }}
@@ -210,16 +210,16 @@ export default function SearchScreen() {
                       <Text className="text-caption text-primary font-bold uppercase tracking-wide mb-1">
                         {item.vendor}
                       </Text>
-                      <Text className="text-[16px] font-bold text-foreground font-heading mb-1">
+                      <Text className="text-body-lg font-bold text-foreground font-heading mb-1">
                         {item.name}
                       </Text>
                       <View className="flex-row justify-between items-center mt-1">
-                        <Text className="text-[15px] font-black text-foreground">
+                        <Text className="text-body-lg font-black text-foreground">
                           GHS {item.price.toFixed(2)}
                         </Text>
                         <View className="flex-row items-center gap-1">
                           <Icon name="star" size={12} color="#f59e0b" />
-                          <Text className="text-[12px] font-bold text-muted-foreground">
+                          <Text className="text-body-sm font-bold text-muted-foreground">
                             {item.rating}
                           </Text>
                         </View>
@@ -237,11 +237,11 @@ export default function SearchScreen() {
       {showFilters && (
         <View className="absolute inset-0 bg-black/40 justify-end z-50">
           <View
-            className="bg-card rounded-t-[32px] p-6 shadow-2xl"
+            className="bg-card rounded-t-3xl p-6 shadow-2xl"
             style={{ paddingBottom: Math.max(insets.bottom, 24) }}
           >
             <View className="flex-row justify-between items-center mb-6">
-              <Text className="text-[20px] font-heading font-black text-foreground">
+              <Text className="text-display-sm font-heading font-black text-foreground">
                 Filter & Sort
               </Text>
               <Pressable
@@ -253,13 +253,13 @@ export default function SearchScreen() {
               </Pressable>
             </View>
 
-            <Text className="text-[14px] font-bold text-foreground font-heading mb-3">
+            <Text className="text-body-md font-bold text-foreground font-heading mb-3">
               Price Range (GHS)
             </Text>
             <View className="flex-row gap-3 mb-6">
-              <View className="flex-1 bg-background h-12 rounded-[16px] px-4 justify-center border border-border">
+              <View className="flex-1 bg-background h-12 rounded-xl px-4 justify-center border border-border">
                 <TextInput
-                  className="text-[15px] font-body text-foreground"
+                  className="text-body-lg font-body text-foreground"
                   placeholder="Min"
                   placeholderTextColor="#94a3b8"
                   keyboardType="numeric"
@@ -267,9 +267,9 @@ export default function SearchScreen() {
                   onChangeText={setMinPrice}
                 />
               </View>
-              <View className="flex-1 bg-background h-12 rounded-[16px] px-4 justify-center border border-border">
+              <View className="flex-1 bg-background h-12 rounded-xl px-4 justify-center border border-border">
                 <TextInput
-                  className="text-[15px] font-body text-foreground"
+                  className="text-body-lg font-body text-foreground"
                   placeholder="Max"
                   placeholderTextColor="#94a3b8"
                   keyboardType="numeric"
@@ -279,7 +279,9 @@ export default function SearchScreen() {
               </View>
             </View>
 
-            <Text className="text-[14px] font-bold text-foreground font-heading mb-3">Sort By</Text>
+            <Text className="text-body-md font-bold text-foreground font-heading mb-3">
+              Sort By
+            </Text>
             <View className="flex-row flex-wrap gap-2 mb-8">
               {SORT_OPTIONS.map((sort, idx) => (
                 <Pressable
@@ -289,7 +291,7 @@ export default function SearchScreen() {
                   onPress={() => setSortOption(idx)}
                 >
                   <Text
-                    className={`text-[13px] font-bold ${idx === sortOption ? "text-white" : "text-muted-foreground"}`}
+                    className={`text-sm font-bold ${idx === sortOption ? "text-white" : "text-muted-foreground"}`}
                   >
                     {sort}
                   </Text>

@@ -77,7 +77,7 @@ export default function AddFoodScreen() {
         style={{ paddingTop: (insets.top || 12) + 12 }}
       >
         <BackButton className="mr-3" />
-        <Text className="text-[20px] font-heading font-black text-foreground">
+        <Text className="text-display-sm font-heading font-black text-foreground">
           {isEdit ? "Edit Food Item" : "Add Food Item"}
         </Text>
       </View>
@@ -91,20 +91,20 @@ export default function AddFoodScreen() {
         {/* Image Upload Area */}
         <Pressable
           style={({ pressed }) => [{ opacity: pressed ? 0.8 : 1 }]}
-          className="w-full h-48 bg-muted rounded-[20px] items-center justify-center border-2 border-dashed border-border mb-8"
+          className="w-full h-48 bg-muted rounded-2xl items-center justify-center border-2 border-dashed border-border mb-8"
         >
           <View className="w-14 h-14 bg-card rounded-full items-center justify-center mb-3">
             <Icon name="camera" size={24} color="#64748b" />
           </View>
-          <Text className="text-[14px] font-bold text-muted-foreground">
+          <Text className="text-body-md font-bold text-muted-foreground">
             Add Mouthwatering Photos
           </Text>
-          <Text className="text-[12px] text-muted-foreground mt-1">Upload up to 3 images</Text>
+          <Text className="text-body-sm text-muted-foreground mt-1">Upload up to 3 images</Text>
         </Pressable>
 
         <View className="gap-5">
           <View>
-            <Text className="text-[16px] font-bold text-foreground mb-4">Meal Details</Text>
+            <Text className="text-body-lg font-bold text-foreground mb-4">Meal Details</Text>
             <View className="gap-4">
               <Input
                 label="Item Name"
@@ -115,7 +115,7 @@ export default function AddFoodScreen() {
 
               {/* Horizontal Category Selector */}
               <View>
-                <Text className="text-[14px] font-bold text-muted-foreground mb-2">Category</Text>
+                <Text className="text-body-md font-bold text-muted-foreground mb-2">Category</Text>
                 <ScrollView horizontal showsHorizontalScrollIndicator={false}>
                   <View className="flex-row gap-2">
                     {CATEGORIES.map((cat) => (
@@ -125,7 +125,7 @@ export default function AddFoodScreen() {
                         className={`px-4 py-2 rounded-full border ${category === cat ? "bg-foreground border-border" : "bg-card border-border"}`}
                       >
                         <Text
-                          className={`text-[13px] font-bold ${category === cat ? "text-white" : "text-muted-foreground"}`}
+                          className={`text-sm font-bold ${category === cat ? "text-white" : "text-muted-foreground"}`}
                         >
                           {cat}
                         </Text>
@@ -149,7 +149,7 @@ export default function AddFoodScreen() {
           <View className="h-px bg-secondary my-2" />
 
           <View>
-            <Text className="text-[16px] font-bold text-foreground mb-4">Pricing & Timing</Text>
+            <Text className="text-body-lg font-bold text-foreground mb-4">Pricing & Timing</Text>
             <View className="flex-row gap-4">
               <View className="flex-1">
                 <Input
@@ -174,7 +174,7 @@ export default function AddFoodScreen() {
           <View className="h-px bg-secondary my-2" />
 
           <View>
-            <Text className="text-[16px] font-bold text-foreground mb-4">Dietary Tags</Text>
+            <Text className="text-body-lg font-bold text-foreground mb-4">Dietary Tags</Text>
             <View className="flex-row flex-wrap gap-3">
               {[
                 { id: "spicy", label: "Spicy", icon: "activity" },
@@ -197,7 +197,7 @@ export default function AddFoodScreen() {
                     }
                   />
                   <Text
-                    className={`ml-2 text-[13px] font-bold ${dietaryTags[tag.id as keyof typeof dietaryTags] ? "text-primary-hover" : "text-muted-foreground"}`}
+                    className={`ml-2 text-sm font-bold ${dietaryTags[tag.id as keyof typeof dietaryTags] ? "text-primary-hover" : "text-muted-foreground"}`}
                   >
                     {tag.label}
                   </Text>
@@ -209,7 +209,7 @@ export default function AddFoodScreen() {
           <View className="h-px bg-secondary my-2" />
 
           <View>
-            <Text className="text-[16px] font-bold text-foreground mb-4">Availability</Text>
+            <Text className="text-body-lg font-bold text-foreground mb-4">Availability</Text>
             <View className="flex-row bg-muted p-1 rounded-xl">
               <Pressable
                 onPress={() => setStatus("available")}
@@ -221,7 +221,7 @@ export default function AddFoodScreen() {
                 }
               >
                 <Text
-                  className={`text-[14px] font-bold ${status === "available" ? "text-green-600" : "text-muted-foreground"}`}
+                  className={`text-body-md font-bold ${status === "available" ? "text-green-600" : "text-muted-foreground"}`}
                 >
                   Available
                 </Text>
@@ -236,7 +236,7 @@ export default function AddFoodScreen() {
                 }
               >
                 <Text
-                  className={`text-[14px] font-bold ${status === "sold_out" ? "text-error" : "text-muted-foreground"}`}
+                  className={`text-body-md font-bold ${status === "sold_out" ? "text-error" : "text-muted-foreground"}`}
                 >
                   Sold Out
                 </Text>
@@ -256,7 +256,7 @@ export default function AddFoodScreen() {
               onPress={() => handleSubmit("draft")}
               className="w-full py-4 items-center rounded-full border border-border bg-card"
             >
-              <Text className="text-[15px] font-bold text-muted-foreground">Save as Draft</Text>
+              <Text className="text-body-lg font-bold text-muted-foreground">Save as Draft</Text>
             </Pressable>
           </View>
         </View>

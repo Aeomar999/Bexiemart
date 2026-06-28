@@ -47,7 +47,7 @@ export function Skeleton({ width = "100%", height = 20, borderRadius = 4, style 
 export function ProductCardSkeleton() {
   return (
     <Animated.View
-      className="bg-card rounded-[24px] overflow-hidden border border-border"
+      className="bg-card rounded-2xl overflow-hidden border border-border"
       style={{ width: "48%", marginBottom: 16 }}
     >
       <Skeleton width="100%" height={160} borderRadius={0} />
@@ -62,7 +62,7 @@ export function ProductCardSkeleton() {
 
 export function CartItemSkeleton() {
   return (
-    <Animated.View className="flex-row bg-card rounded-[24px] p-4 border border-border gap-3 mb-3 shadow-[0_4px_10px_rgba(0,0,0,0.02)]">
+    <Animated.View className="flex-row bg-card rounded-2xl p-4 border border-border gap-3 mb-3 shadow-[0_4px_10px_rgba(0,0,0,0.02)]">
       <Skeleton width={22} height={22} borderRadius={6} />
       <Skeleton width={84} height={84} borderRadius={16} />
       <Animated.View className="flex-1 py-1 justify-between">
@@ -83,7 +83,7 @@ export function ListSkeleton() {
       {[1, 2, 3, 4, 5].map((key) => (
         <Animated.View
           key={key}
-          className="flex-row items-center p-4 mb-4 bg-card rounded-[24px] border border-border"
+          className="flex-row items-center p-4 mb-4 bg-card rounded-2xl border border-border"
         >
           <Skeleton width={50} height={50} borderRadius={25} style={{ marginRight: 16 }} />
           <Animated.View className="flex-1">

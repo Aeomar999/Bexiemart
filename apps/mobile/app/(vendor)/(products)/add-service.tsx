@@ -78,7 +78,7 @@ export default function AddServiceScreen() {
         style={{ paddingTop: (insets.top || 12) + 12 }}
       >
         <BackButton className="mr-3" />
-        <Text className="text-[20px] font-heading font-black text-foreground">
+        <Text className="text-display-sm font-heading font-black text-foreground">
           {isEdit ? "Edit Service" : "Add Service"}
         </Text>
       </View>
@@ -92,20 +92,20 @@ export default function AddServiceScreen() {
         {/* Image Upload Area */}
         <Pressable
           style={({ pressed }) => [{ opacity: pressed ? 0.8 : 1 }]}
-          className="w-full h-48 bg-muted rounded-[20px] items-center justify-center border-2 border-dashed border-border mb-8"
+          className="w-full h-48 bg-muted rounded-2xl items-center justify-center border-2 border-dashed border-border mb-8"
         >
           <View className="w-14 h-14 bg-card rounded-full items-center justify-center mb-3">
             <Icon name="camera" size={24} color="#64748b" />
           </View>
-          <Text className="text-[14px] font-bold text-muted-foreground">Add Cover Photo</Text>
-          <Text className="text-[12px] text-muted-foreground mt-1">
+          <Text className="text-body-md font-bold text-muted-foreground">Add Cover Photo</Text>
+          <Text className="text-body-sm text-muted-foreground mt-1">
             Make your service stand out
           </Text>
         </Pressable>
 
         <View className="gap-5">
           <View>
-            <Text className="text-[16px] font-bold text-foreground mb-4">Basic Details</Text>
+            <Text className="text-body-lg font-bold text-foreground mb-4">Basic Details</Text>
             <View className="gap-4">
               <Input
                 label="Service Name"
@@ -133,14 +133,14 @@ export default function AddServiceScreen() {
           <View className="h-px bg-secondary my-2" />
 
           <View>
-            <Text className="text-[16px] font-bold text-foreground mb-4">Pricing Model</Text>
+            <Text className="text-body-lg font-bold text-foreground mb-4">Pricing Model</Text>
             <View className="flex-row bg-muted p-1 rounded-xl mb-4">
               <Pressable
                 onPress={() => setPricingModel("fixed")}
                 className={`flex-1 py-2 items-center justify-center rounded-lg ${pricingModel === "fixed" ? "bg-card border border-border" : ""}`}
               >
                 <Text
-                  className={`text-[13px] font-bold ${pricingModel === "fixed" ? "text-foreground" : "text-muted-foreground"}`}
+                  className={`text-sm font-bold ${pricingModel === "fixed" ? "text-foreground" : "text-muted-foreground"}`}
                 >
                   Fixed Price
                 </Text>
@@ -150,7 +150,7 @@ export default function AddServiceScreen() {
                 className={`flex-1 py-2 items-center justify-center rounded-lg ${pricingModel === "hourly" ? "bg-card border border-border" : ""}`}
               >
                 <Text
-                  className={`text-[13px] font-bold ${pricingModel === "hourly" ? "text-foreground" : "text-muted-foreground"}`}
+                  className={`text-sm font-bold ${pricingModel === "hourly" ? "text-foreground" : "text-muted-foreground"}`}
                 >
                   Hourly Rate
                 </Text>
@@ -181,14 +181,14 @@ export default function AddServiceScreen() {
           <View className="h-px bg-secondary my-2" />
 
           <View>
-            <Text className="text-[16px] font-bold text-foreground mb-4">Location</Text>
+            <Text className="text-body-lg font-bold text-foreground mb-4">Location</Text>
             <View className="flex-row bg-muted p-1 rounded-xl">
               <Pressable
                 onPress={() => setLocationType("in_person")}
                 className={`flex-1 py-2 items-center justify-center rounded-lg ${locationType === "in_person" ? "bg-card border border-border" : ""}`}
               >
                 <Text
-                  className={`text-[13px] font-bold ${locationType === "in_person" ? "text-foreground" : "text-muted-foreground"}`}
+                  className={`text-sm font-bold ${locationType === "in_person" ? "text-foreground" : "text-muted-foreground"}`}
                 >
                   In-Person
                 </Text>
@@ -198,14 +198,14 @@ export default function AddServiceScreen() {
                 className={`flex-1 py-2 items-center justify-center rounded-lg ${locationType === "remote" ? "bg-card border border-border" : ""}`}
               >
                 <Text
-                  className={`text-[13px] font-bold ${locationType === "remote" ? "text-foreground" : "text-muted-foreground"}`}
+                  className={`text-sm font-bold ${locationType === "remote" ? "text-foreground" : "text-muted-foreground"}`}
                 >
                   Remote / Digital
                 </Text>
               </Pressable>
             </View>
             {locationType === "in_person" && (
-              <Text className="text-[12px] text-muted-foreground mt-3 ml-1">
+              <Text className="text-body-sm text-muted-foreground mt-3 ml-1">
                 Customers will see your registered business address.
               </Text>
             )}
@@ -223,7 +223,7 @@ export default function AddServiceScreen() {
               onPress={() => handleSubmit("draft")}
               className="w-full py-4 items-center rounded-full border border-border bg-card"
             >
-              <Text className="text-[15px] font-bold text-muted-foreground">Save as Draft</Text>
+              <Text className="text-body-lg font-bold text-muted-foreground">Save as Draft</Text>
             </Pressable>
           </View>
         </View>

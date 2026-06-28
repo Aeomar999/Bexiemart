@@ -92,7 +92,7 @@ export default function EditPhoneScreen() {
       >
         <View className="flex-row items-center gap-3">
           <BackButton />
-          <Text className="text-[20px] font-heading font-black text-foreground">
+          <Text className="text-display-sm font-heading font-black text-foreground">
             Update Phone Number
           </Text>
         </View>
@@ -106,7 +106,7 @@ export default function EditPhoneScreen() {
 
         {error ? <Announcement type="error" message={error} /> : null}
 
-        <View className={`bg-card p-6 rounded-[24px] border border-border ${error ? "mt-4" : ""}`}>
+        <View className={`bg-card p-6 rounded-2xl border border-border ${error ? "mt-4" : ""}`}>
           {step === "request" ? (
             <>
               <Input
@@ -140,7 +140,7 @@ export default function EditPhoneScreen() {
                   setCode(text);
                   setError("");
                 }}
-                className="text-center text-[24px] tracking-widest font-heading font-bold"
+                className="text-center text-display-md tracking-widest font-heading font-bold"
               />
               <View className="mt-4 gap-3">
                 <Button

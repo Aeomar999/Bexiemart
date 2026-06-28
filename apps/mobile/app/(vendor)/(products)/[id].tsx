@@ -134,7 +134,7 @@ export default function ListingDetailsScreen() {
   if (!item) {
     return (
       <View className="flex-1 bg-background items-center justify-center">
-        <Text className="text-[16px] text-muted-foreground">Listing not found.</Text>
+        <Text className="text-body-lg text-muted-foreground">Listing not found.</Text>
       </View>
     );
   }
@@ -148,7 +148,7 @@ export default function ListingDetailsScreen() {
       >
         <View className="flex-row items-center">
           <BackButton className="mr-3" />
-          <Text className="text-[20px] font-heading font-black text-foreground">
+          <Text className="text-display-sm font-heading font-black text-foreground">
             {item.type} Details
           </Text>
         </View>
@@ -156,7 +156,7 @@ export default function ListingDetailsScreen() {
           className={`px-3 py-1 rounded-full ${item.status === "active" || item.status === "available" ? "bg-green-100" : "bg-secondary"}`}
         >
           <Text
-            className={`text-[12px] font-bold ${item.status === "active" || item.status === "available" ? "text-success" : "text-muted-foreground"}`}
+            className={`text-body-sm font-bold ${item.status === "active" || item.status === "available" ? "text-success" : "text-muted-foreground"}`}
           >
             {item.status.toUpperCase().replace("_", " ")}
           </Text>
@@ -179,7 +179,7 @@ export default function ListingDetailsScreen() {
             {item.images.map((img: any, idx: number) => (
               <View
                 key={idx}
-                className="w-64 h-64 bg-secondary rounded-[24px] overflow-hidden border border-border"
+                className="w-64 h-64 bg-secondary rounded-2xl overflow-hidden border border-border"
               >
                 <Image
                   source={{ uri: img.url }}
@@ -190,21 +190,21 @@ export default function ListingDetailsScreen() {
             ))}
           </ScrollView>
         ) : (
-          <View className="w-full h-64 bg-secondary rounded-[24px] items-center justify-center mb-6 border border-border">
+          <View className="w-full h-64 bg-secondary rounded-2xl items-center justify-center mb-6 border border-border">
             <Icon name="image" size={48} color="#94a3b8" />
-            <Text className="text-[14px] text-muted-foreground mt-4">No images available</Text>
+            <Text className="text-body-md text-muted-foreground mt-4">No images available</Text>
           </View>
         )}
 
         {/* Basic Info */}
         <View className="mb-8">
-          <Text className="text-[28px] font-heading font-bold text-foreground mb-2">
+          <Text className="text-display-md font-heading font-bold text-foreground mb-2">
             {item.name}
           </Text>
-          <Text className="text-[24px] font-bold text-primary mb-4">
+          <Text className="text-display-md font-bold text-primary mb-4">
             GHS {item.price.toFixed(2)}
           </Text>
-          <Text className="text-[15px] font-body text-muted-foreground leading-relaxed">
+          <Text className="text-body-lg font-body text-muted-foreground leading-relaxed">
             {item.description}
           </Text>
         </View>
@@ -213,21 +213,21 @@ export default function ListingDetailsScreen() {
 
         {/* Specifications */}
         <View className="mb-8">
-          <Text className="text-[18px] font-heading font-bold text-foreground mb-4">
+          <Text className="text-heading-md font-heading font-bold text-foreground mb-4">
             Specifications
           </Text>
-          <View className="bg-card rounded-[20px] border border-border overflow-hidden">
+          <View className="bg-card rounded-2xl border border-border overflow-hidden">
             <View className="flex-row items-center justify-between p-4 border-b border-border">
-              <Text className="text-[14px] text-muted-foreground font-body">Category</Text>
-              <Text className="text-[14px] font-bold text-foreground">{item.category}</Text>
+              <Text className="text-body-md text-muted-foreground font-body">Category</Text>
+              <Text className="text-body-md font-bold text-foreground">{item.category}</Text>
             </View>
             {item.details.map((detail: any, index: number) => (
               <View
                 key={detail.label}
                 className={`flex-row items-center justify-between p-4 ${index < item.details.length - 1 ? "border-b border-border" : ""}`}
               >
-                <Text className="text-[14px] text-muted-foreground font-body">{detail.label}</Text>
-                <Text className="text-[14px] font-bold text-foreground">{detail.value}</Text>
+                <Text className="text-body-md text-muted-foreground font-body">{detail.label}</Text>
+                <Text className="text-body-md font-bold text-foreground">{detail.value}</Text>
               </View>
             ))}
           </View>
@@ -241,7 +241,7 @@ export default function ListingDetailsScreen() {
             onPress={handleDelete}
             className="w-full py-4 items-center rounded-full bg-rose-50 border border-rose-100"
           >
-            <Text className="text-[15px] font-bold text-error">Delete Listing</Text>
+            <Text className="text-body-lg font-bold text-error">Delete Listing</Text>
           </Pressable>
         </View>
       </ScrollView>

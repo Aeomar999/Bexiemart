@@ -6,9 +6,9 @@ interface CardProps extends ViewProps {
 }
 
 const variantStyles: Record<string, string> = {
-  elevated: "bg-card rounded-[24px] shadow-[0_10px_20px_rgba(0,0,0,0.05)] border border-border",
-  outlined: "bg-card rounded-[24px] border border-border",
-  flat: "bg-background rounded-[24px]",
+  elevated: "bg-card rounded-2xl shadow-lg border border-border",
+  outlined: "bg-card rounded-2xl border border-border",
+  flat: "bg-background rounded-2xl",
 };
 
 const paddingStyles: Record<string, string> = {
@@ -26,10 +26,7 @@ export function Card({
   ...props
 }: CardProps) {
   return (
-    <View
-      className={`${variantStyles[variant]} ${paddingStyles[padding]} ${className}`}
-      {...props}
-    >
+    <View className={`${variantStyles[variant]} ${paddingStyles[padding]} ${className}`} {...props}>
       {children}
     </View>
   );

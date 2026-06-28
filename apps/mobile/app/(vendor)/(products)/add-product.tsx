@@ -115,7 +115,7 @@ export default function AddProductScreen() {
         style={{ paddingTop: (insets.top || 12) + 12 }}
       >
         <BackButton className="mr-3" />
-        <Text className="text-[20px] font-heading font-black text-foreground">
+        <Text className="text-display-sm font-heading font-black text-foreground">
           {isEdit ? "Edit Product" : "Add Product"}
         </Text>
       </View>
@@ -136,7 +136,7 @@ export default function AddProductScreen() {
 
         <View className="gap-5">
           <View>
-            <Text className="text-[16px] font-bold text-foreground mb-4">Basic Details</Text>
+            <Text className="text-body-lg font-bold text-foreground mb-4">Basic Details</Text>
             <View className="gap-4">
               <Input
                 label="Product Name"
@@ -167,7 +167,7 @@ export default function AddProductScreen() {
           <View className="h-px bg-secondary my-2" />
 
           <View>
-            <Text className="text-[16px] font-bold text-foreground mb-4">Pricing</Text>
+            <Text className="text-body-lg font-bold text-foreground mb-4">Pricing</Text>
             <View className="flex-row gap-4">
               <View className="flex-1">
                 <Input
@@ -194,7 +194,7 @@ export default function AddProductScreen() {
           <View className="h-px bg-secondary my-2" />
 
           <View>
-            <Text className="text-[16px] font-bold text-foreground mb-4">Inventory</Text>
+            <Text className="text-body-lg font-bold text-foreground mb-4">Inventory</Text>
             <View className="flex-row gap-4">
               <View className="flex-1">
                 <Input
@@ -220,14 +220,14 @@ export default function AddProductScreen() {
           <View className="h-px bg-secondary my-2" />
 
           <View>
-            <Text className="text-[16px] font-bold text-foreground mb-4">Shipping</Text>
+            <Text className="text-body-lg font-bold text-foreground mb-4">Shipping</Text>
             <Pressable
               onPress={() => setShippingRequired(!shippingRequired)}
-              className="flex-row items-center justify-between p-4 bg-card rounded-[16px] border border-border"
+              className="flex-row items-center justify-between p-4 bg-card rounded-xl border border-border"
             >
               <View>
-                <Text className="text-[15px] font-bold text-foreground">Physical Product</Text>
-                <Text className="text-[13px] text-muted-foreground mt-1">
+                <Text className="text-body-lg font-bold text-foreground">Physical Product</Text>
+                <Text className="text-sm text-muted-foreground mt-1">
                   This item requires shipping
                 </Text>
               </View>
@@ -260,7 +260,7 @@ export default function AddProductScreen() {
               className="w-full py-4 items-center rounded-full border border-border bg-card"
               disabled={loading}
             >
-              <Text className="text-[15px] font-bold text-muted-foreground">Save as Draft</Text>
+              <Text className="text-body-lg font-bold text-muted-foreground">Save as Draft</Text>
             </Pressable>
           </View>
         </View>

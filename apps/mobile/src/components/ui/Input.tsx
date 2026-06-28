@@ -36,7 +36,7 @@ export const Input = forwardRef<TextInput, InputProps>(
         )}
 
         <View
-          className={`flex-row items-center gap-3 px-4 h-[48px] rounded-[16px] border ${isFocused ? "border-primary bg-background" : "border-border bg-background"} ${error ? "border-error bg-error-light/30" : ""} ${!editable ? "bg-muted" : ""}`}
+          className={`flex-row items-center gap-3 px-4 h-12 rounded-xl border ${isFocused ? "border-primary bg-background" : "border-border bg-background"} ${error ? "border-error bg-error-light/30" : ""} ${!editable ? "bg-muted" : ""}`}
         >
           {leftIcon}
           <TextInput

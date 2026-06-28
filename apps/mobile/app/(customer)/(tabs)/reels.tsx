@@ -114,7 +114,7 @@ export default function ReelsScreen() {
             <View className="w-12 h-12 rounded-full bg-black/40 items-center justify-center mb-1">
               <Icon name="heart" size={24} color={isLiked ? "#ef4444" : "#fff"} />
             </View>
-            <Text className="text-white font-bold text-[12px] shadow-sm">
+            <Text className="text-white font-bold text-body-sm shadow-sm">
               {item.likesCount ?? 0}
             </Text>
           </Pressable>
@@ -129,14 +129,14 @@ export default function ReelsScreen() {
             <View className="w-12 h-12 rounded-full bg-black/40 items-center justify-center mb-1">
               <Icon name="message-circle" size={24} color="#fff" />
             </View>
-            <Text className="text-white font-bold text-[12px] shadow-sm">0</Text>
+            <Text className="text-white font-bold text-body-sm shadow-sm">0</Text>
           </Pressable>
 
           <Pressable className="items-center" onPress={() => handleShare(item)}>
             <View className="w-12 h-12 rounded-full bg-black/40 items-center justify-center mb-1">
               <Icon name="share-2" size={24} color="#fff" />
             </View>
-            <Text className="text-white font-bold text-[12px] shadow-sm">{item.shares ?? 0}</Text>
+            <Text className="text-white font-bold text-body-sm shadow-sm">{item.shares ?? 0}</Text>
           </Pressable>
         </View>
 
@@ -149,7 +149,7 @@ export default function ReelsScreen() {
             <View className="w-10 h-10 rounded-full bg-secondary border-2 border-card items-center justify-center overflow-hidden">
               <Icon name="user" size={20} color="#94a3b8" />
             </View>
-            <Text className="text-white font-bold text-[15px] shadow-sm">
+            <Text className="text-white font-bold text-body-lg shadow-sm">
               @{vendorName.replace(/\s+/g, "")}
             </Text>
             <Pressable
@@ -162,13 +162,16 @@ export default function ReelsScreen() {
                 })
               }
             >
-              <Text className="text-white font-bold text-[11px]">
+              <Text className="text-white font-bold text-caption">
                 {isFollowing ? "Following" : "Follow"}
               </Text>
             </Pressable>
           </View>
 
-          <Text className="text-white font-body text-[14px] mb-4 shadow-sm w-4/5" numberOfLines={2}>
+          <Text
+            className="text-white font-body text-body-md mb-4 shadow-sm w-4/5"
+            numberOfLines={2}
+          >
             {item.caption}
           </Text>
 
@@ -182,10 +185,10 @@ export default function ReelsScreen() {
                 <Icon name="shopping-bag" size={20} color="#0f172a" />
               </View>
               <View className="flex-1 pr-2">
-                <Text className="text-white font-bold text-[14px]" numberOfLines={1}>
+                <Text className="text-white font-bold text-body-md" numberOfLines={1}>
                   {productName}
                 </Text>
-                <Text className="text-white/80 font-body text-[12px]">
+                <Text className="text-white/80 font-body text-body-sm">
                   GHS {Number(productPrice).toFixed(2)}
                 </Text>
               </View>
@@ -200,7 +203,7 @@ export default function ReelsScreen() {
                 });
               }}
             >
-              <Text className="text-white font-bold text-[13px]">Buy</Text>
+              <Text className="text-white font-bold text-sm">Buy</Text>
             </Pressable>
           </Pressable>
         </View>
@@ -246,7 +249,9 @@ export default function ReelsScreen() {
           className="w-10 h-10 rounded-full bg-black/40 items-center justify-center backdrop-blur-md"
           color="#fff"
         />
-        <Text className="text-[18px] font-heading font-bold text-white shadow-sm">Discover</Text>
+        <Text className="text-heading-md font-heading font-bold text-white shadow-sm">
+          Discover
+        </Text>
         <Pressable
           style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
           className="w-10 h-10 rounded-full bg-black/40 items-center justify-center backdrop-blur-md"
@@ -267,12 +272,14 @@ export default function ReelsScreen() {
           className="flex-1 justify-end bg-black/50"
         >
           <View
-            className="bg-card rounded-t-[32px] h-2/3"
+            className="bg-card rounded-t-3xl h-2/3"
             style={{ paddingBottom: Math.max(insets.bottom, 20) }}
           >
             {/* Modal Header */}
             <View className="flex-row justify-between items-center p-5 border-b border-border">
-              <Text className="text-[16px] font-bold font-heading text-foreground">0 comments</Text>
+              <Text className="text-body-lg font-bold font-heading text-foreground">
+                0 comments
+              </Text>
               <Pressable
                 onPress={() => setCommentModalVisible(false)}
                 className="w-8 h-8 rounded-full bg-muted items-center justify-center"
@@ -289,7 +296,7 @@ export default function ReelsScreen() {
               estimatedItemSize={60}
               ListEmptyComponent={
                 <View className="items-center justify-center py-10">
-                  <Text className="text-muted-foreground text-[14px]">
+                  <Text className="text-muted-foreground text-body-md">
                     No comments yet. Be the first!
                   </Text>
                 </View>
@@ -297,21 +304,21 @@ export default function ReelsScreen() {
               renderItem={({ item }: { item: any }) => (
                 <View className="flex-row gap-3 mb-6">
                   <View className="w-8 h-8 rounded-full bg-secondary items-center justify-center">
-                    <Text className="text-muted-foreground font-bold text-[12px]">
+                    <Text className="text-muted-foreground font-bold text-body-sm">
                       {item.username.charAt(0).toUpperCase()}
                     </Text>
                   </View>
                   <View className="flex-1">
-                    <Text className="text-[12px] text-muted-foreground font-bold mb-1">
+                    <Text className="text-body-sm text-muted-foreground font-bold mb-1">
                       {item.username}
                     </Text>
-                    <Text className="text-[14px] text-foreground font-body leading-tight">
+                    <Text className="text-body-md text-foreground font-body leading-tight">
                       {item.text}
                     </Text>
                   </View>
                   <View className="items-center">
                     <Icon name="heart" size={14} color="#94a3b8" />
-                    <Text className="text-[10px] text-muted-foreground mt-1">{item.likes}</Text>
+                    <Text className="text-caption text-muted-foreground mt-1">{item.likes}</Text>
                   </View>
                 </View>
               )}
@@ -320,7 +327,7 @@ export default function ReelsScreen() {
             {/* Comment Input */}
             <View className="px-5 pt-3 border-t border-border flex-row items-center gap-3">
               <TextInput
-                className="flex-1 bg-muted rounded-full h-12 px-5 font-body text-[14px] text-foreground"
+                className="flex-1 bg-muted rounded-full h-12 px-5 font-body text-body-md text-foreground"
                 placeholder="Add comment..."
                 value={newComment}
                 onChangeText={setNewComment}

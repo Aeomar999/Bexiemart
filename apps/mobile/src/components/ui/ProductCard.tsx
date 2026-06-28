@@ -41,7 +41,7 @@ export function ProductCard({
         onPress={onPress}
       >
         <Card variant="flat" padding="none">
-          <View className="w-full h-[150px] rounded-[16px] bg-muted mb-2 items-center justify-center overflow-hidden">
+          <View className="w-full h-[150px] rounded-xl bg-muted mb-2 items-center justify-center overflow-hidden">
             {imageUrl ? (
               <Image
                 source={{ uri: imageUrl }}
@@ -54,12 +54,12 @@ export function ProductCard({
           </View>
           <View className="flex-row justify-between items-center px-1">
             <View className="flex-row items-center">
-              <Text className="text-[12px] font-bold text-foreground">
+              <Text className="text-body-sm font-bold text-foreground">
                 GHS {numericPrice.toFixed(0)}
               </Text>
               {rating && <Icon name="star" size={10} color="#f59e0b" style={{ marginLeft: 4 }} />}
             </View>
-            {rating && <Text className="text-[10px] text-muted-foreground">{rating}</Text>}
+            {rating && <Text className="text-caption text-muted-foreground">{rating}</Text>}
           </View>
         </Card>
       </Pressable>
@@ -74,7 +74,7 @@ export function ProductCard({
         onPress={onPress}
       >
         <Card variant="outlined" padding="sm" className="flex-row">
-          <View className="w-[80px] h-[80px] rounded-[12px] bg-muted items-center justify-center overflow-hidden mr-4">
+          <View className="w-[80px] h-[80px] rounded-lg bg-muted items-center justify-center overflow-hidden mr-4">
             {imageUrl ? (
               <Image
                 source={{ uri: imageUrl }}
@@ -87,7 +87,10 @@ export function ProductCard({
           </View>
           <View className="flex-1 justify-center">
             <View className="flex-row justify-between items-start mb-1">
-              <Text className="text-[15px] font-bold text-foreground flex-1 pr-2" numberOfLines={1}>
+              <Text
+                className="text-body-lg font-bold text-foreground flex-1 pr-2"
+                numberOfLines={1}
+              >
                 {name}
               </Text>
               {onFavoriteToggle && (
@@ -102,17 +105,17 @@ export function ProductCard({
               )}
             </View>
             {subtitle && (
-              <Text className="text-[12px] text-muted-foreground font-body mb-2" numberOfLines={1}>
+              <Text className="text-body-sm text-muted-foreground font-body mb-2" numberOfLines={1}>
                 {subtitle}
               </Text>
             )}
             <View className="flex-row items-center justify-between mt-auto">
               <View className="flex-row items-center gap-1.5">
-                <Text className="text-[15px] font-bold text-foreground">
+                <Text className="text-body-lg font-bold text-foreground">
                   GHS {numericPrice.toFixed(2)}
                 </Text>
                 {numericOldPrice && numericOldPrice > numericPrice && (
-                  <Text className="text-[11px] text-muted-foreground line-through">
+                  <Text className="text-caption text-muted-foreground line-through">
                     GHS {numericOldPrice.toFixed(2)}
                   </Text>
                 )}
@@ -120,7 +123,9 @@ export function ProductCard({
               {rating && (
                 <View className="flex-row items-center bg-background px-1.5 py-0.5 rounded-full">
                   <Icon name="star" size={10} color="#f59e0b" />
-                  <Text className="text-[10px] font-bold text-muted-foreground ml-1">{rating}</Text>
+                  <Text className="text-caption font-bold text-muted-foreground ml-1">
+                    {rating}
+                  </Text>
                 </View>
               )}
             </View>
@@ -139,7 +144,7 @@ export function ProductCard({
     >
       <Card variant="flat" padding="none">
         <View
-          className="w-full rounded-[16px] bg-muted mb-2 items-center justify-center relative overflow-hidden"
+          className="w-full rounded-xl bg-muted mb-2 items-center justify-center relative overflow-hidden"
           style={{ aspectRatio: 1 }}
         >
           {imageUrl ? (
@@ -162,20 +167,20 @@ export function ProductCard({
             </Pressable>
           )}
         </View>
-        <Text className="text-[14px] font-bold text-foreground" numberOfLines={1}>
+        <Text className="text-body-md font-bold text-foreground" numberOfLines={1}>
           {name}
         </Text>
         {subtitle && (
-          <Text className="text-[11px] text-muted-foreground font-body mb-1" numberOfLines={1}>
+          <Text className="text-caption text-muted-foreground font-body mb-1" numberOfLines={1}>
             {subtitle}
           </Text>
         )}
         <View className="flex-row items-center gap-1.5">
-          <Text className="text-[14px] font-bold text-foreground">
+          <Text className="text-body-md font-bold text-foreground">
             GHS {numericPrice.toFixed(2)}
           </Text>
           {numericOldPrice && numericOldPrice > numericPrice && (
-            <Text className="text-[10px] text-muted-foreground line-through">
+            <Text className="text-caption text-muted-foreground line-through">
               GHS {numericOldPrice.toFixed(2)}
             </Text>
           )}

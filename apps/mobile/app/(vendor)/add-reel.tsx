@@ -112,7 +112,7 @@ export default function AddReelScreen() {
       >
         <View className="flex-row items-center gap-3">
           <BackButton />
-          <Text className="text-[20px] font-heading font-black text-foreground">New Reel</Text>
+          <Text className="text-display-sm font-heading font-black text-foreground">New Reel</Text>
         </View>
       </View>
 
@@ -128,7 +128,7 @@ export default function AddReelScreen() {
               { opacity: pressed ? 0.95 : 1, transform: [{ scale: pressed ? 0.98 : 1 }] },
             ]}
             onPress={() => setUploadModalVisible(true)}
-            className="w-full bg-background rounded-[32px] overflow-hidden items-center justify-center relative shadow-lg shadow-black/10"
+            className="w-full bg-background rounded-3xl overflow-hidden items-center justify-center relative shadow-lg shadow-black/10"
             style={{ aspectRatio: 9 / 16 }}
           >
             {videoUrl ? (
@@ -145,18 +145,18 @@ export default function AddReelScreen() {
                 </View>
                 <View className="absolute top-4 right-4 bg-black/50 backdrop-blur-md px-4 py-2 rounded-full flex-row items-center border border-white/10">
                   <Icon name="camera" size={14} color="#fff" style={{ marginRight: 6 }} />
-                  <Text className="text-white font-bold text-[12px]">Replace</Text>
+                  <Text className="text-white font-bold text-body-sm">Replace</Text>
                 </View>
               </>
             ) : (
-              <View className="items-center justify-center p-6 w-full h-full border-[3px] border-dashed border-border rounded-[32px] m-1">
+              <View className="items-center justify-center p-6 w-full h-full border-[3px] border-dashed border-border rounded-3xl m-1">
                 <View className="w-20 h-20 rounded-full bg-primary/20 items-center justify-center mb-5">
                   <Icon name="video" size={32} color="#38bdf8" />
                 </View>
-                <Text className="text-[20px] font-heading font-black text-white mb-2 tracking-tight">
+                <Text className="text-display-sm font-heading font-black text-white mb-2 tracking-tight">
                   Upload Video
                 </Text>
-                <Text className="text-[14px] text-muted-foreground text-center font-body px-8">
+                <Text className="text-body-md text-muted-foreground text-center font-body px-8">
                   High quality vertical videos (9:16) perform best.
                 </Text>
               </View>
@@ -165,9 +165,9 @@ export default function AddReelScreen() {
         </View>
 
         {/* Details Section */}
-        <View className="bg-white rounded-[24px] border border-border p-1 mb-6 shadow-sm shadow-sm/50">
+        <View className="bg-white rounded-2xl border border-border p-1 mb-6 shadow-sm shadow-sm/50">
           <TextInput
-            className="p-5 font-body text-[16px] text-foreground min-h-[120px]"
+            className="p-5 font-body text-body-lg text-foreground min-h-[120px]"
             placeholder="Write a catchy caption... #trending #fashion"
             placeholderTextColor="#94a3b8"
             value={description}
@@ -178,27 +178,27 @@ export default function AddReelScreen() {
         </View>
 
         {/* Link Product Section */}
-        <Text className="text-[14px] font-bold text-muted-foreground mb-3 ml-2 uppercase tracking-wider">
+        <Text className="text-body-md font-bold text-muted-foreground mb-3 ml-2 uppercase tracking-wider">
           Shoppable Link
         </Text>
         <Pressable
           style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
-          className={`flex-row items-center p-4 rounded-[24px] border ${linkedProduct ? "bg-primary-subtle border-border" : "bg-white border-border border-dashed"}`}
+          className={`flex-row items-center p-4 rounded-2xl border ${linkedProduct ? "bg-primary-subtle border-border" : "bg-white border-border border-dashed"}`}
           onPress={() => setProductModalVisible(true)}
         >
           {linkedProduct ? (
             <>
-              <View className="w-14 h-14 bg-white rounded-[16px] items-center justify-center border border-border shadow-sm shadow-none">
+              <View className="w-14 h-14 bg-white rounded-xl items-center justify-center border border-border shadow-sm shadow-none">
                 <Icon name="shopping-bag" size={24} color="var(--color-primary)" />
               </View>
               <View className="ml-4 flex-1">
                 <Text
-                  className="text-[16px] font-bold text-foreground mb-1 tracking-tight"
+                  className="text-body-lg font-bold text-foreground mb-1 tracking-tight"
                   numberOfLines={1}
                 >
                   {linkedProduct.name}
                 </Text>
-                <Text className="text-[14px] text-primary font-bold">
+                <Text className="text-body-md text-primary font-bold">
                   GHS {linkedProduct.price.toFixed(2)}
                 </Text>
               </View>
@@ -208,14 +208,14 @@ export default function AddReelScreen() {
             </>
           ) : (
             <>
-              <View className="w-14 h-14 bg-muted rounded-[16px] items-center justify-center">
+              <View className="w-14 h-14 bg-muted rounded-xl items-center justify-center">
                 <Icon name="tag" size={24} color="#64748b" />
               </View>
               <View className="ml-4 flex-1">
-                <Text className="text-[16px] font-bold text-foreground mb-0.5 tracking-tight">
+                <Text className="text-body-lg font-bold text-foreground mb-0.5 tracking-tight">
                   Tag a Product
                 </Text>
-                <Text className="text-[13px] text-muted-foreground font-body">
+                <Text className="text-sm text-muted-foreground font-body">
                   Allow customers to buy while watching
                 </Text>
               </View>
@@ -253,7 +253,7 @@ export default function AddReelScreen() {
             onPress={() => !isUploading && setUploadModalVisible(false)}
           />
           <View
-            className="bg-white rounded-t-[32px] p-6"
+            className="bg-white rounded-t-3xl p-6"
             style={{ paddingBottom: Math.max(insets.bottom, 20) }}
           >
             <View className="w-12 h-1.5 bg-muted rounded-full self-center mb-8" />
@@ -261,32 +261,32 @@ export default function AddReelScreen() {
             {isUploading ? (
               <View className="py-10 items-center justify-center">
                 <ListSkeleton />
-                <Text className="mt-6 text-[18px] font-heading font-bold text-foreground tracking-tight">
+                <Text className="mt-6 text-heading-md font-heading font-bold text-foreground tracking-tight">
                   Processing video...
                 </Text>
-                <Text className="mt-2 text-[14px] text-muted-foreground text-center px-10">
+                <Text className="mt-2 text-body-md text-muted-foreground text-center px-10">
                   Optimizing for the best playback experience on mobile devices.
                 </Text>
               </View>
             ) : (
               <>
-                <Text className="text-[24px] font-heading font-black text-foreground mb-6 tracking-tight">
+                <Text className="text-display-md font-heading font-black text-foreground mb-6 tracking-tight">
                   Select Source
                 </Text>
                 <View className="gap-4">
                   <Pressable
                     style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
-                    className="flex-row items-center p-5 bg-background border border-border rounded-[24px]"
+                    className="flex-row items-center p-5 bg-background border border-border rounded-2xl"
                     onPress={handleUploadOption}
                   >
                     <View className="w-14 h-14 bg-white rounded-full items-center justify-center shadow-sm shadow-sm">
                       <Icon name="camera" size={24} color="#0f172a" />
                     </View>
                     <View className="ml-4 flex-1">
-                      <Text className="text-[16px] font-bold text-foreground mb-1 tracking-tight">
+                      <Text className="text-body-lg font-bold text-foreground mb-1 tracking-tight">
                         Record Video
                       </Text>
-                      <Text className="text-[13px] font-body text-muted-foreground">
+                      <Text className="text-sm font-body text-muted-foreground">
                         Use camera to capture content
                       </Text>
                     </View>
@@ -295,17 +295,17 @@ export default function AddReelScreen() {
 
                   <Pressable
                     style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
-                    className="flex-row items-center p-5 bg-primary-subtle border border-border rounded-[24px]"
+                    className="flex-row items-center p-5 bg-primary-subtle border border-border rounded-2xl"
                     onPress={handleUploadOption}
                   >
                     <View className="w-14 h-14 bg-primary rounded-full items-center justify-center shadow-md shadow-none">
                       <Icon name="image" size={24} color="#fff" />
                     </View>
                     <View className="ml-4 flex-1">
-                      <Text className="text-[16px] font-bold text-foreground mb-1 tracking-tight">
+                      <Text className="text-body-lg font-bold text-foreground mb-1 tracking-tight">
                         Choose from Gallery
                       </Text>
-                      <Text className="text-[13px] font-body text-primary-hover">
+                      <Text className="text-sm font-body text-primary-hover">
                         Select an existing video
                       </Text>
                     </View>
@@ -330,11 +330,11 @@ export default function AddReelScreen() {
           className="flex-1 justify-end bg-black/60"
         >
           <View
-            className="bg-white rounded-t-[32px] h-[80%]"
+            className="bg-white rounded-t-3xl h-[80%]"
             style={{ paddingBottom: Math.max(insets.bottom, 20) }}
           >
             <View className="p-6 pb-4 border-b border-border flex-row items-center justify-between">
-              <Text className="text-[20px] font-heading font-black text-foreground tracking-tight">
+              <Text className="text-display-sm font-heading font-black text-foreground tracking-tight">
                 Tag Product
               </Text>
               <Pressable
@@ -350,7 +350,7 @@ export default function AddReelScreen() {
                 <Icon name="search" size={20} color="#64748b" />
                 <TextInput
                   placeholder="Search your products..."
-                  className="flex-1 ml-3 font-body text-[15px] text-foreground"
+                  className="flex-1 ml-3 font-body text-body-lg text-foreground"
                   placeholderTextColor="#94a3b8"
                 />
               </View>
@@ -364,22 +364,22 @@ export default function AddReelScreen() {
                     setSelectedProductId(product.id);
                     setProductModalVisible(false);
                   }}
-                  className={`flex-row items-center p-4 mb-3 rounded-[20px] border ${selectedProductId === product.id ? "bg-primary-subtle border-border" : "bg-background border-border"}`}
+                  className={`flex-row items-center p-4 mb-3 rounded-2xl border ${selectedProductId === product.id ? "bg-primary-subtle border-border" : "bg-background border-border"}`}
                 >
-                  <View className="w-16 h-16 bg-muted rounded-[12px] items-center justify-center">
+                  <View className="w-16 h-16 bg-muted rounded-lg items-center justify-center">
                     <Icon name="package" size={24} color="#94a3b8" />
                   </View>
                   <View className="ml-4 flex-1">
                     <Text
-                      className="text-[16px] font-bold text-foreground mb-1 tracking-tight"
+                      className="text-body-lg font-bold text-foreground mb-1 tracking-tight"
                       numberOfLines={1}
                     >
                       {product.name}
                     </Text>
-                    <Text className="text-[13px] text-muted-foreground font-body mb-1">
+                    <Text className="text-sm text-muted-foreground font-body mb-1">
                       {product.category}
                     </Text>
-                    <Text className="text-[14px] text-primary font-bold">
+                    <Text className="text-body-md text-primary font-bold">
                       GHS {product.price.toFixed(2)}
                     </Text>
                   </View>

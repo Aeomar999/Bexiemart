@@ -124,7 +124,7 @@ export default function PaymentMethodsScreen() {
       >
         <View className="flex-row items-center gap-3">
           <BackButton />
-          <Text className="text-[20px] font-heading font-black text-foreground">
+          <Text className="text-display-sm font-heading font-black text-foreground">
             Payment Methods
           </Text>
         </View>
@@ -152,7 +152,7 @@ export default function PaymentMethodsScreen() {
             <Pressable
               style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
               key={method.id}
-              className={`bg-card rounded-[24px] p-5 border shadow-[0_10px_20px_rgba(0,0,0,0.02)] ${method.isDefault ? "border-primary bg-primary-subtle/20" : "border-border"}`}
+              className={`bg-card rounded-2xl p-5 border shadow-lg ${method.isDefault ? "border-primary bg-primary-subtle/20" : "border-border"}`}
               onPress={() => handleSetDefault(method.id)}
             >
               <View className="flex-row justify-between items-start mb-4">
@@ -168,10 +168,10 @@ export default function PaymentMethodsScreen() {
                     />
                   </View>
                   <View>
-                    <Text className="text-[16px] font-heading font-bold text-foreground capitalize">
+                    <Text className="text-body-lg font-heading font-bold text-foreground capitalize">
                       {method.provider} {method.type === "card" ? "Card" : "MoMo"}
                     </Text>
-                    <Text className="text-[13px] text-muted-foreground font-body mt-0.5">
+                    <Text className="text-sm text-muted-foreground font-body mt-0.5">
                       {method.details}
                     </Text>
                   </View>
@@ -179,7 +179,7 @@ export default function PaymentMethodsScreen() {
                 <View className="flex-row gap-2">
                   {method.isDefault && (
                     <View className="bg-primary px-2 py-0.5 rounded-md justify-center">
-                      <Text className="text-[10px] font-bold text-white uppercase tracking-wider">
+                      <Text className="text-caption font-bold text-white uppercase tracking-wider">
                         Default
                       </Text>
                     </View>
@@ -205,19 +205,19 @@ export default function PaymentMethodsScreen() {
 
               <View className="flex-row justify-between items-center bg-background p-3 rounded-xl border border-border">
                 <View>
-                  <Text className="text-[11px] text-muted-foreground font-body uppercase tracking-wider mb-0.5">
+                  <Text className="text-caption text-muted-foreground font-body uppercase tracking-wider mb-0.5">
                     Cardholder
                   </Text>
-                  <Text className="text-[14px] font-bold text-foreground font-body">
+                  <Text className="text-body-md font-bold text-foreground font-body">
                     {method.holderName}
                   </Text>
                 </View>
                 {method.expiry && (
                   <View className="items-end">
-                    <Text className="text-[11px] text-muted-foreground font-body uppercase tracking-wider mb-0.5">
+                    <Text className="text-caption text-muted-foreground font-body uppercase tracking-wider mb-0.5">
                       Expires
                     </Text>
-                    <Text className="text-[14px] font-bold text-foreground font-body">
+                    <Text className="text-body-md font-bold text-foreground font-body">
                       {method.expiry}
                     </Text>
                   </View>
@@ -234,7 +234,7 @@ export default function PaymentMethodsScreen() {
                       handleSetDefault(method.id);
                     }}
                   >
-                    <Text className="text-[13px] font-bold text-muted-foreground font-heading">
+                    <Text className="text-sm font-bold text-muted-foreground font-heading">
                       Set as Default
                     </Text>
                   </Pressable>
@@ -263,11 +263,11 @@ export default function PaymentMethodsScreen() {
             className="flex-1 justify-end"
           >
             <View
-              className="bg-card rounded-t-[32px] p-6 pb-10"
+              className="bg-card rounded-t-3xl p-6 pb-10"
               style={{ paddingBottom: Math.max(insets.bottom, 24) }}
             >
               <View className="flex-row justify-between items-center mb-6">
-                <Text className="text-[20px] font-heading font-bold text-foreground">
+                <Text className="text-display-sm font-heading font-bold text-foreground">
                   Add Payment Method
                 </Text>
                 <Pressable
@@ -302,7 +302,7 @@ export default function PaymentMethodsScreen() {
                         color={formData.type === opt.type ? "var(--color-primary)" : "#64748b"}
                       />
                       <Text
-                        className={`text-[12px] mt-1 font-bold ${formData.type === opt.type ? "text-primary-hover" : "text-muted-foreground"}`}
+                        className={`text-body-sm mt-1 font-bold ${formData.type === opt.type ? "text-primary-hover" : "text-muted-foreground"}`}
                       >
                         {opt.label}
                       </Text>
@@ -311,7 +311,7 @@ export default function PaymentMethodsScreen() {
                 </View>
 
                 {/* Provider Selection */}
-                <Text className="text-[13px] font-bold text-muted-foreground mb-2 ml-1">
+                <Text className="text-sm font-bold text-muted-foreground mb-2 ml-1">
                   Select Provider
                 </Text>
                 <View className="flex-row flex-wrap gap-2 mb-4">
@@ -325,7 +325,7 @@ export default function PaymentMethodsScreen() {
                       className={`px-4 py-2 rounded-full border ${formData.provider === prov ? "border-primary bg-primary-subtle" : "border-border bg-card"}`}
                     >
                       <Text
-                        className={`text-[13px] font-bold capitalize ${formData.provider === prov ? "text-primary-hover" : "text-muted-foreground"}`}
+                        className={`text-sm font-bold capitalize ${formData.provider === prov ? "text-primary-hover" : "text-muted-foreground"}`}
                       >
                         {prov}
                       </Text>
@@ -336,11 +336,11 @@ export default function PaymentMethodsScreen() {
                 {/* Inputs */}
                 <View className="gap-4">
                   <View>
-                    <Text className="text-[13px] font-bold text-muted-foreground mb-1.5 ml-1">
+                    <Text className="text-sm font-bold text-muted-foreground mb-1.5 ml-1">
                       {formData.type === "card" ? "Cardholder Name" : "Account Name"}
                     </Text>
                     <TextInput
-                      className="bg-background border border-border rounded-2xl px-4 py-3.5 text-[15px] font-body text-foreground"
+                      className="bg-background border border-border rounded-2xl px-4 py-3.5 text-body-lg font-body text-foreground"
                       placeholder="Jerry Doe"
                       value={formData.holderName}
                       onChangeText={(text) => setFormData({ ...formData, holderName: text })}
@@ -348,11 +348,11 @@ export default function PaymentMethodsScreen() {
                   </View>
 
                   <View>
-                    <Text className="text-[13px] font-bold text-muted-foreground mb-1.5 ml-1">
+                    <Text className="text-sm font-bold text-muted-foreground mb-1.5 ml-1">
                       {formData.type === "card" ? "Card Number" : "Phone Number"}
                     </Text>
                     <TextInput
-                      className="bg-background border border-border rounded-2xl px-4 py-3.5 text-[15px] font-body text-foreground"
+                      className="bg-background border border-border rounded-2xl px-4 py-3.5 text-body-lg font-body text-foreground"
                       placeholder={
                         formData.type === "card" ? "**** **** **** 4242" : "024 123 4567"
                       }
@@ -364,11 +364,11 @@ export default function PaymentMethodsScreen() {
 
                   {formData.type === "card" && (
                     <View>
-                      <Text className="text-[13px] font-bold text-muted-foreground mb-1.5 ml-1">
+                      <Text className="text-sm font-bold text-muted-foreground mb-1.5 ml-1">
                         Expiry Date
                       </Text>
                       <TextInput
-                        className="bg-background border border-border rounded-2xl px-4 py-3.5 text-[15px] font-body text-foreground"
+                        className="bg-background border border-border rounded-2xl px-4 py-3.5 text-body-lg font-body text-foreground"
                         placeholder="MM/YY"
                         value={formData.expiry}
                         onChangeText={(text) => setFormData({ ...formData, expiry: text })}
@@ -382,7 +382,7 @@ export default function PaymentMethodsScreen() {
                 onPress={handleSave}
                 className="bg-primary py-4 rounded-full items-center mt-2"
               >
-                <Text className="text-white font-bold text-[16px]">Save Payment Method</Text>
+                <Text className="text-white font-bold text-body-lg">Save Payment Method</Text>
               </Pressable>
             </View>
           </KeyboardAvoidingView>

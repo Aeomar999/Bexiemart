@@ -24,13 +24,13 @@ export default function ChangePinScreen() {
         style={{ paddingTop: (insets.top || 12) + 12 }}
       >
         <BackButton className="mr-3" />
-        <Text className="text-[20px] font-heading font-black text-foreground">
+        <Text className="text-display-sm font-heading font-black text-foreground">
           Change Withdrawal PIN
         </Text>
       </View>
 
       <ScrollView className="flex-1 px-5 pt-6 pb-12" showsVerticalScrollIndicator={false}>
-        <Text className="text-[14px] text-muted-foreground mb-8 leading-relaxed">
+        <Text className="text-body-md text-muted-foreground mb-8 leading-relaxed">
           Your 4-digit PIN is required to authorize withdrawals and sensitive account changes. Keep
           it safe.
         </Text>
@@ -44,7 +44,7 @@ export default function ChangePinScreen() {
             keyboardType="number-pad"
             maxLength={4}
             placeholder="••••"
-            className="tracking-[4px] text-[20px]"
+            className="tracking-[4px] text-display-sm"
             leftIcon={<Icon name="lock" size={20} color="#94a3b8" />}
           />
         </View>
@@ -58,7 +58,7 @@ export default function ChangePinScreen() {
             keyboardType="number-pad"
             maxLength={4}
             placeholder="••••"
-            className="tracking-[4px] text-[20px]"
+            className="tracking-[4px] text-display-sm"
             leftIcon={<Icon name="key" size={20} color="#94a3b8" />}
           />
         </View>
@@ -72,7 +72,7 @@ export default function ChangePinScreen() {
             keyboardType="number-pad"
             maxLength={4}
             placeholder="••••"
-            className="tracking-[4px] text-[20px]"
+            className="tracking-[4px] text-display-sm"
             leftIcon={<Icon name="check-circle" size={20} color="#94a3b8" />}
             error={
               confirmPin.length === 4 && newPin !== confirmPin ? "PINs do not match." : undefined
@@ -90,7 +90,7 @@ export default function ChangePinScreen() {
           }}
         />
         <Pressable className="mt-6 self-center" onPress={() => {}}>
-          <Text className="text-[14px] font-bold text-primary">Forgot PIN?</Text>
+          <Text className="text-body-md font-bold text-primary">Forgot PIN?</Text>
         </Pressable>
       </ScrollView>
     </View>

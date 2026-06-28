@@ -60,7 +60,7 @@ export default function DispatcherTasks() {
           <View className="w-20 h-20 bg-slate-100 rounded-full items-center justify-center mb-4">
             <Icon name="package" size={32} color="#94a3b8" />
           </View>
-          <Text className="text-[18px] font-bold font-heading text-foreground mb-2">
+          <Text className="text-heading-md font-bold font-heading text-foreground mb-2">
             No Available Tasks
           </Text>
           <Text className="text-muted-foreground font-body text-center">
@@ -81,7 +81,7 @@ export default function DispatcherTasks() {
                 </View>
                 <Text className="font-bold text-foreground font-body">Ride Request</Text>
               </View>
-              <Text className="font-black text-primary text-[18px] font-heading">
+              <Text className="font-black text-primary text-heading-md font-heading">
                 GH₵ {Number(ride.driverPayout).toFixed(2)}
               </Text>
             </View>
@@ -90,7 +90,7 @@ export default function DispatcherTasks() {
               <View className="flex-row items-center gap-3">
                 <View className="w-2 h-2 rounded-full bg-error" />
                 <Text
-                  className="text-muted-foreground text-[14px] font-body flex-1"
+                  className="text-muted-foreground text-body-md font-body flex-1"
                   numberOfLines={1}
                 >
                   {ride.pickupAddress || "Pickup Location"}
@@ -99,7 +99,7 @@ export default function DispatcherTasks() {
               <View className="flex-row items-center gap-3">
                 <View className="w-2 h-2 rounded-full bg-emerald-500" />
                 <Text
-                  className="text-muted-foreground text-[14px] font-body flex-1"
+                  className="text-muted-foreground text-body-md font-body flex-1"
                   numberOfLines={1}
                 >
                   {ride.dropoffAddress || "Dropoff Location"}
@@ -169,7 +169,7 @@ export default function DispatcherTasks() {
           <View className="w-20 h-20 bg-primary-subtle rounded-full items-center justify-center mb-4">
             <Icon name="truck" size={32} color="var(--color-primary)" />
           </View>
-          <Text className="text-[18px] font-bold font-heading text-foreground mb-2">
+          <Text className="text-heading-md font-bold font-heading text-foreground mb-2">
             No Active Tasks
           </Text>
           <Text className="text-muted-foreground font-body text-center">
@@ -189,11 +189,11 @@ export default function DispatcherTasks() {
             <View className="flex-row items-center justify-between mb-3">
               <View>
                 <Text className="font-bold text-foreground font-body">Active Ride</Text>
-                <Text className="text-primary font-bold text-[12px] uppercase tracking-wider">
+                <Text className="text-primary font-bold text-body-sm uppercase tracking-wider">
                   {ride.status}
                 </Text>
               </View>
-              <Text className="font-black text-foreground text-[18px] font-heading">
+              <Text className="font-black text-foreground text-heading-md font-heading">
                 GH₵ {Number(ride.driverPayout).toFixed(2)}
               </Text>
             </View>
@@ -202,7 +202,7 @@ export default function DispatcherTasks() {
               <View className="flex-row items-center gap-3">
                 <View className="w-2 h-2 rounded-full bg-error" />
                 <Text
-                  className="text-muted-foreground text-[14px] font-body flex-1"
+                  className="text-muted-foreground text-body-md font-body flex-1"
                   numberOfLines={1}
                 >
                   {ride.pickupAddress || "Pickup Location"}
@@ -211,7 +211,7 @@ export default function DispatcherTasks() {
               <View className="flex-row items-center gap-3">
                 <View className="w-2 h-2 rounded-full bg-emerald-500" />
                 <Text
-                  className="text-muted-foreground text-[14px] font-body flex-1"
+                  className="text-muted-foreground text-body-md font-body flex-1"
                   numberOfLines={1}
                 >
                   {ride.dropoffAddress || "Dropoff Location"}
@@ -248,7 +248,7 @@ export default function DispatcherTasks() {
           <View className="w-20 h-20 bg-slate-100 rounded-full items-center justify-center mb-4">
             <Icon name="check-circle" size={32} color="#94a3b8" />
           </View>
-          <Text className="text-[18px] font-bold font-heading text-foreground mb-2">
+          <Text className="text-heading-md font-bold font-heading text-foreground mb-2">
             No History Yet
           </Text>
           <Text className="text-muted-foreground font-body text-center">
@@ -280,7 +280,7 @@ export default function DispatcherTasks() {
                 <Text className="font-bold text-foreground font-heading">
                   Ride {ride.status === "DELIVERED" ? "Completed" : "Cancelled"}
                 </Text>
-                <Text className="text-muted-foreground text-[13px] font-body" numberOfLines={1}>
+                <Text className="text-muted-foreground text-sm font-body" numberOfLines={1}>
                   {new Date(ride.updatedAt).toLocaleTimeString([], {
                     hour: "2-digit",
                     minute: "2-digit",
@@ -290,7 +290,7 @@ export default function DispatcherTasks() {
               </View>
             </View>
             <Text
-              className={`font-black text-[16px] font-heading ${ride.status === "DELIVERED" ? "text-emerald-600" : "text-muted-foreground"}`}
+              className={`font-black text-body-lg font-heading ${ride.status === "DELIVERED" ? "text-emerald-600" : "text-muted-foreground"}`}
             >
               {ride.status === "DELIVERED" ? "+" : ""}GH₵ {Number(ride.price).toFixed(2)}
             </Text>
@@ -317,7 +317,7 @@ export default function DispatcherTasks() {
         className="px-5 pb-4 bg-card border-b border-border"
         style={{ paddingTop: Math.max(insets.top, 12) + 12 }}
       >
-        <Text className="text-[20px] font-heading font-black text-foreground mb-4">Tasks</Text>
+        <Text className="text-display-sm font-heading font-black text-foreground mb-4">Tasks</Text>
 
         {/* Custom Tab Bar */}
         <View className="flex-row bg-slate-100 p-1 rounded-xl">

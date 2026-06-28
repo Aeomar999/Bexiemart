@@ -78,12 +78,14 @@ export default function RewardsScreen() {
       >
         <View className="flex-row items-center gap-3">
           <BackButton />
-          <Text className="text-[20px] font-heading font-black text-foreground">BexieRewards</Text>
+          <Text className="text-display-sm font-heading font-black text-foreground">
+            BexieRewards
+          </Text>
         </View>
       </View>
 
       <ScrollView className="flex-1 px-5 pt-6 pb-20">
-        <View className="rounded-[32px] shadow-[0_20px_40px_rgba(217,119,6,0.2)] overflow-hidden mb-8">
+        <View className="rounded-3xl shadow-[0_20px_40px_rgba(217,119,6,0.2)] overflow-hidden mb-8">
           <LinearGradient
             colors={["#f59e0b", "#d97706"]}
             start={{ x: 0, y: 0 }}
@@ -96,16 +98,16 @@ export default function RewardsScreen() {
             <View className="w-16 h-16 rounded-full bg-card/20 items-center justify-center mb-4">
               <Icon name="star" size={32} color="#fff" />
             </View>
-            <Text className="text-[14px] font-heading font-bold text-white/90 uppercase tracking-wider mb-2">
+            <Text className="text-body-md font-heading font-bold text-white/90 uppercase tracking-wider mb-2">
               Your Balance
             </Text>
             <Text className="text-[48px] font-black text-white font-heading mb-1">
               {bexieCoins.toLocaleString()}
             </Text>
-            <Text className="text-[15px] text-white/80 font-medium font-body mb-1">
+            <Text className="text-body-lg text-white/80 font-medium font-body mb-1">
               Gold Tier Member
             </Text>
-            <Text className="text-[13px] text-white/60 font-body mb-6">100 coins = GHS 1.00</Text>
+            <Text className="text-sm text-white/60 font-body mb-6">100 coins = GHS 1.00</Text>
 
             <Button
               title={`Convert to GHS ${(bexieCoins * COIN_RATE).toFixed(2)}`}
@@ -116,10 +118,10 @@ export default function RewardsScreen() {
           </LinearGradient>
         </View>
 
-        <Text className="text-[18px] font-bold text-foreground font-heading mb-4 px-1">
+        <Text className="text-heading-md font-bold text-foreground font-heading mb-4 px-1">
           How to earn coins
         </Text>
-        <View className="bg-card rounded-[24px] border border-border overflow-hidden mb-8 shadow-[0_10px_20px_rgba(0,0,0,0.02)]">
+        <View className="bg-card rounded-2xl border border-border overflow-hidden mb-8 shadow-lg">
           {EARNING_METHODS.map((method, idx) => {
             const isLast = idx === EARNING_METHODS.length - 1;
             return (
@@ -131,14 +133,14 @@ export default function RewardsScreen() {
                   <Icon name={method.icon} size={22} color="#d97706" />
                 </View>
                 <View className="flex-1">
-                  <Text className="text-[15px] font-bold text-foreground">{method.title}</Text>
+                  <Text className="text-body-lg font-bold text-foreground">{method.title}</Text>
                   <View className="flex-row items-center mt-1">
                     <Icon name="plus-circle" size={14} color="#f59e0b" />
-                    <Text className="text-[13px] font-bold text-amber-500 ml-1">
+                    <Text className="text-sm font-bold text-amber-500 ml-1">
                       {method.coins} Coins
                     </Text>
                     {method.repeat && (
-                      <Text className="text-[12px] text-muted-foreground ml-2">
+                      <Text className="text-body-sm text-muted-foreground ml-2">
                         ({method.repeat})
                       </Text>
                     )}
@@ -148,7 +150,7 @@ export default function RewardsScreen() {
                   {method.completed ? (
                     <View className="px-3 py-1 bg-emerald-50 rounded-full flex-row items-center">
                       <Icon name="check" size={12} color="#059669" />
-                      <Text className="text-[12px] font-bold text-emerald-600 ml-1">Done</Text>
+                      <Text className="text-body-sm font-bold text-emerald-600 ml-1">Done</Text>
                     </View>
                   ) : (
                     <Pressable
@@ -160,7 +162,7 @@ export default function RewardsScreen() {
                         }
                       }}
                     >
-                      <Text className="text-[13px] font-bold text-muted-foreground">Go</Text>
+                      <Text className="text-sm font-bold text-muted-foreground">Go</Text>
                     </Pressable>
                   )}
                 </View>
