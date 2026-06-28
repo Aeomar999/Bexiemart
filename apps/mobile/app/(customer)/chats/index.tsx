@@ -50,11 +50,11 @@ export default function ChatListScreen() {
 
         <View className="flex-1 ml-4">
           <View className="flex-row justify-between items-center mb-1">
-            <Text className="font-bold text-foreground text-[16px]" numberOfLines={1}>
+            <Text className="font-bold text-foreground text-body-lg" numberOfLines={1}>
               {otherParticipant.name}
             </Text>
             {item.lastMessage && (
-              <Text className="text-muted-foreground text-[12px]">
+              <Text className="text-muted-foreground text-body-sm">
                 {formatDistanceToNow(new Date(item.lastMessage.createdAt), { addSuffix: true })}
               </Text>
             )}
@@ -62,7 +62,7 @@ export default function ChatListScreen() {
 
           <View className="flex-row justify-between items-center">
             <Text
-              className={`text-[14px] flex-1 mr-4 ${
+              className={`text-body-md flex-1 mr-4 ${
                 item.unreadCount > 0 ? "font-bold text-foreground" : "text-muted-foreground"
               }`}
               numberOfLines={1}
@@ -74,7 +74,7 @@ export default function ChatListScreen() {
 
             {item.unreadCount > 0 && (
               <View className="bg-primary w-5 h-5 rounded-full items-center justify-center">
-                <Text className="text-white text-[10px] font-bold">
+                <Text className="text-white text-caption font-bold">
                   {item.unreadCount > 9 ? "9+" : item.unreadCount}
                 </Text>
               </View>
@@ -93,7 +93,7 @@ export default function ChatListScreen() {
       >
         <View className="flex-row items-center gap-3">
           <BackButton />
-          <Text className="text-[20px] font-heading font-black text-foreground">Chats</Text>
+          <Text className="text-display-sm font-heading font-black text-foreground">Chats</Text>
         </View>
       </View>
 
@@ -108,10 +108,10 @@ export default function ChatListScreen() {
         ListEmptyComponent={
           <View className="flex-1 items-center justify-center py-20 px-5">
             <Icon name="message-square" size={64} color="#cbd5e1" />
-            <Text className="text-foreground font-heading font-bold text-[18px] mt-4 text-center">
+            <Text className="text-foreground font-heading font-bold text-heading-md mt-4 text-center">
               No messages yet
             </Text>
-            <Text className="text-muted-foreground font-body text-[14px] mt-2 text-center">
+            <Text className="text-muted-foreground font-body text-body-md mt-2 text-center">
               Your conversations with vendors and riders will appear here.
             </Text>
           </View>

@@ -47,7 +47,7 @@ export default function CheckoutSuccessScreen() {
             : `Processing via ${paymentMethod === "momo" ? "Mobile Money" : "Card"}...`}
         </Text>
         {parsedTotal > 0 && (
-          <Text className="text-[32px] font-black text-primary font-heading mt-6">
+          <Text className="text-display-lg font-black text-primary font-heading mt-6">
             GHS {Number(parsedTotal).toFixed(2)}
           </Text>
         )}
@@ -109,7 +109,7 @@ export default function CheckoutSuccessScreen() {
       <Text className="text-body-md text-muted-foreground font-body text-center leading-relaxed mb-3">
         Your order has been placed successfully. You will receive a confirmation shortly.
       </Text>
-      <View className="bg-card rounded-[24px] p-6 w-full border border-border mb-8 gap-3">
+      <View className="bg-card rounded-2xl p-6 w-full border border-border mb-8 gap-3">
         <View className="flex-row justify-between py-1.5 border-b border-border">
           <Text className="text-body-sm text-muted-foreground font-body">Order Number</Text>
           <Text className="text-body-sm font-bold text-foreground font-heading">{orderNumber}</Text>

@@ -69,10 +69,10 @@ export default function TopUpScreen() {
         <View className="w-20 h-20 bg-card rounded-full items-center justify-center mb-6">
           <Icon name="check" size={40} color="#10b981" />
         </View>
-        <Text className="text-[32px] font-black text-white font-heading text-center mb-2">
+        <Text className="text-display-lg font-black text-white font-heading text-center mb-2">
           Top-Up Initiated!
         </Text>
-        <Text className="text-[16px] text-white/80 font-body text-center mb-10 px-4">
+        <Text className="text-body-lg text-white/80 font-body text-center mb-10 px-4">
           GHS {parseFloat(amount || "0").toFixed(2)} - Complete payment to add funds.
         </Text>
         {payUrl ? (
@@ -105,7 +105,9 @@ export default function TopUpScreen() {
       >
         <View className="flex-row items-center gap-3">
           <BackButton />
-          <Text className="text-[20px] font-heading font-black text-foreground">Top Up Wallet</Text>
+          <Text className="text-display-sm font-heading font-black text-foreground">
+            Top Up Wallet
+          </Text>
         </View>
       </View>
 
@@ -116,11 +118,11 @@ export default function TopUpScreen() {
         keyboardShouldPersistTaps="always"
         keyboardDismissMode="on-drag"
       >
-        <Text className="text-[14px] font-bold text-muted-foreground font-heading mb-2 ml-1 mt-2">
+        <Text className="text-body-md font-bold text-muted-foreground font-heading mb-2 ml-1 mt-2">
           Amount to Add
         </Text>
-        <View className="bg-background p-4 rounded-[20px] mb-6 flex-row items-center">
-          <Text className="text-[20px] font-bold text-foreground mr-2">GHS</Text>
+        <View className="bg-background p-4 rounded-2xl mb-6 flex-row items-center">
+          <Text className="text-display-sm font-bold text-foreground mr-2">GHS</Text>
           <TextInput
             value={amount}
             onChangeText={setAmount}
@@ -170,7 +172,7 @@ export default function TopUpScreen() {
           })}
         </View>
 
-        <Text className="text-[16px] font-bold text-foreground font-heading mb-4 px-1">
+        <Text className="text-body-lg font-bold text-foreground font-heading mb-4 px-1">
           Payment Method
         </Text>
         <View
@@ -257,7 +259,7 @@ export default function TopUpScreen() {
           title={isProcessing ? "Processing..." : `Top Up GHS ${amount || "0"}`}
           size="lg"
           disabled={!isValidAmount || isProcessing}
-          className="w-full rounded-[16px]"
+          className="w-full rounded-xl"
           onPress={handleTopUp}
         />
       </View>

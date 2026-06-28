@@ -28,7 +28,7 @@ export function CategoryCard({
     >
       <Card variant="outlined" padding="sm">
         <View
-          className="w-full rounded-[16px] bg-background mb-2 overflow-hidden flex-row flex-wrap"
+          className="w-full rounded-xl bg-background mb-2 overflow-hidden flex-row flex-wrap"
           style={{ aspectRatio: 1 }}
         >
           {[0, 1, 2, 3].map((idx) => (
@@ -51,11 +51,11 @@ export function CategoryCard({
           ))}
         </View>
         <View className="flex-row justify-between items-center">
-          <Text className="text-[12px] font-bold text-foreground w-2/3" numberOfLines={1}>
+          <Text className="text-body-sm font-bold text-foreground w-2/3" numberOfLines={1}>
             {name}
           </Text>
           <View className="bg-primary-subtle px-2 py-0.5 rounded-full">
-            <Text className="text-[10px] font-bold text-primary">{count}</Text>
+            <Text className="text-caption font-bold text-primary">{count}</Text>
           </View>
         </View>
       </Card>

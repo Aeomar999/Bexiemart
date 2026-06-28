@@ -61,7 +61,9 @@ export default function VendorPromotionsScreen() {
       >
         <View className="flex-row items-center">
           <BackButton className="mr-3" />
-          <Text className="text-[20px] font-heading font-black text-foreground">Promotions</Text>
+          <Text className="text-display-sm font-heading font-black text-foreground">
+            Promotions
+          </Text>
         </View>
       </View>
 
@@ -72,12 +74,12 @@ export default function VendorPromotionsScreen() {
       ) : (
         <ScrollView className="flex-1 px-5 pt-6 pb-12">
           {/* Flash Sales Opt-in */}
-          <View className="bg-primary rounded-[20px] p-5 mb-8 relative overflow-hidden">
+          <View className="bg-primary rounded-2xl p-5 mb-8 relative overflow-hidden">
             <View className="absolute top-0 right-0 w-32 h-32 bg-card/10 rounded-full -mr-10 -mt-10" />
             <View className="flex-row items-center justify-between mb-2">
               <View className="flex-row items-center">
                 <Icon name="zap" size={20} color="#fcd34d" style={{ marginRight: 8 }} />
-                <Text className="text-[18px] font-heading font-black text-white">
+                <Text className="text-heading-md font-heading font-black text-white">
                   BexieMart Flash Sales
                 </Text>
               </View>
@@ -88,7 +90,7 @@ export default function VendorPromotionsScreen() {
                 thumbColor={"#ffffff"}
               />
             </View>
-            <Text className="text-[14px] text-white/80 leading-relaxed">
+            <Text className="text-body-md text-white/80 leading-relaxed">
               Opt-in to platform-wide flash sales. BexieMart will automatically apply a 15% discount
               to your top products during flash sale hours.
             </Text>
@@ -96,13 +98,13 @@ export default function VendorPromotionsScreen() {
 
           {/* Custom Coupons */}
           <View className="flex-row justify-between items-center mb-4">
-            <Text className="text-[18px] font-bold text-foreground">Store Coupons</Text>
+            <Text className="text-heading-md font-bold text-foreground">Store Coupons</Text>
             <Pressable
               onPress={openCreate}
               className="bg-primary-subtle px-3 py-1.5 rounded-full flex-row items-center"
             >
               <Icon name="plus" size={14} color="var(--color-primary)" style={{ marginRight: 4 }} />
-              <Text className="text-[12px] font-bold text-primary">Create New</Text>
+              <Text className="text-body-sm font-bold text-primary">Create New</Text>
             </Pressable>
           </View>
 
@@ -110,27 +112,27 @@ export default function VendorPromotionsScreen() {
             {(coupons ?? []).map((promo: any) => (
               <View
                 key={promo.id}
-                className="bg-card rounded-[16px] border border-border p-4 flex-row items-center"
+                className="bg-card rounded-xl border border-border p-4 flex-row items-center"
               >
                 <View className="w-12 h-12 rounded-full bg-background items-center justify-center mr-4 border border-border border-dashed">
                   <Icon name="tag" size={20} color="#64748b" />
                 </View>
                 <View className="flex-1">
                   <View className="flex-row items-center mb-1">
-                    <Text className="text-[16px] font-heading font-black text-foreground mr-2">
+                    <Text className="text-body-lg font-heading font-black text-foreground mr-2">
                       {promo.code}
                     </Text>
                     <View
                       className={`px-2 py-0.5 rounded-full ${promo.active ? "bg-green-100" : "bg-secondary"}`}
                     >
                       <Text
-                        className={`text-[10px] font-bold ${promo.active ? "text-success" : "text-muted-foreground"}`}
+                        className={`text-caption font-bold ${promo.active ? "text-success" : "text-muted-foreground"}`}
                       >
                         {promo.active ? "ACTIVE" : "INACTIVE"}
                       </Text>
                     </View>
                   </View>
-                  <Text className="text-[13px] text-muted-foreground">
+                  <Text className="text-sm text-muted-foreground">
                     {promo.value} • Used {promo.uses ?? 0} times
                   </Text>
                 </View>
@@ -155,9 +157,9 @@ export default function VendorPromotionsScreen() {
       >
         <View className="flex-1 justify-end bg-black/40">
           <Pressable className="absolute inset-0" onPress={() => setModalVisible(false)} />
-          <View className="bg-card rounded-t-[32px] p-6 pb-12">
+          <View className="bg-card rounded-t-3xl p-6 pb-12">
             <View className="w-12 h-1.5 bg-secondary rounded-full self-center mb-6" />
-            <Text className="text-[20px] font-heading font-bold text-foreground mb-6">
+            <Text className="text-display-sm font-heading font-bold text-foreground mb-6">
               {editingId ? "Edit Coupon" : "Create Coupon"}
             </Text>
 

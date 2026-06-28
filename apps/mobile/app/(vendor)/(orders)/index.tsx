@@ -41,7 +41,7 @@ export default function OrdersManagerScreen() {
     <View className="flex-1 bg-background" style={{ paddingTop: insets.top }}>
       {/* Header */}
       <View className="px-5 py-4 bg-card border-b border-border">
-        <Text className="text-[28px] font-heading font-black text-foreground">Orders</Text>
+        <Text className="text-display-md font-heading font-black text-foreground">Orders</Text>
       </View>
 
       {/* Filters */}
@@ -63,7 +63,7 @@ export default function OrdersManagerScreen() {
                 className={`flex-row items-center px-4 py-2 rounded-full border ${isActive ? "bg-foreground border-border" : "bg-card border-border"}`}
               >
                 <Text
-                  className={`text-[13px] font-bold ${isActive ? "text-white" : "text-muted-foreground"}`}
+                  className={`text-sm font-bold ${isActive ? "text-white" : "text-muted-foreground"}`}
                 >
                   {filter}
                 </Text>
@@ -72,7 +72,7 @@ export default function OrdersManagerScreen() {
                     className={`ml-2 px-1.5 py-0.5 rounded-full ${isActive ? "bg-card/20" : "bg-muted"}`}
                   >
                     <Text
-                      className={`text-[10px] font-bold ${isActive ? "text-white" : "text-muted-foreground"}`}
+                      className={`text-caption font-bold ${isActive ? "text-white" : "text-muted-foreground"}`}
                     >
                       {count}
                     </Text>
@@ -111,27 +111,27 @@ export default function OrdersManagerScreen() {
               <Pressable
                 key={order.id}
                 onPress={() => router.push(`/(vendor)/(orders)/${order.id}`)}
-                className="bg-card rounded-[20px] border border-border overflow-hidden"
+                className="bg-card rounded-2xl border border-border overflow-hidden"
               >
                 <View className="p-5 border-b border-border flex-row justify-between items-start">
                   <View>
-                    <Text className="text-[16px] font-bold text-foreground mb-1">{order.id}</Text>
-                    <Text className="text-[13px] text-muted-foreground">{order.time}</Text>
+                    <Text className="text-body-lg font-bold text-foreground mb-1">{order.id}</Text>
+                    <Text className="text-sm text-muted-foreground">{order.time}</Text>
                   </View>
                   <View className={`px-2.5 py-1 rounded-full ${bgClass}`}>
-                    <Text className={`text-[11px] font-bold ${textClass}`}>
+                    <Text className={`text-caption font-bold ${textClass}`}>
                       {order.status.toUpperCase()}
                     </Text>
                   </View>
                 </View>
                 <View className="px-5 py-4 flex-row justify-between items-center bg-background/50">
                   <View>
-                    <Text className="text-[14px] font-bold text-foreground">{order.customer}</Text>
-                    <Text className="text-[13px] text-muted-foreground">
+                    <Text className="text-body-md font-bold text-foreground">{order.customer}</Text>
+                    <Text className="text-sm text-muted-foreground">
                       {order.items} {order.items === 1 ? "item" : "items"}
                     </Text>
                   </View>
-                  <Text className="text-[16px] font-black text-primary">
+                  <Text className="text-body-lg font-black text-primary">
                     GHS {order.total.toFixed(2)}
                   </Text>
                 </View>

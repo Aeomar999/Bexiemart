@@ -115,7 +115,9 @@ export default function FavoritesScreen() {
         <View className="flex-row items-center gap-3">
           <BackButton />
           <View className="flex-1">
-            <Text className="text-[20px] font-heading font-black text-foreground">Collections</Text>
+            <Text className="text-display-sm font-heading font-black text-foreground">
+              Collections
+            </Text>
             <Text className="text-body-sm text-muted-foreground font-body mt-0.5">
               {displayItems.length} saved item{displayItems.length !== 1 ? "s" : ""}
             </Text>
@@ -142,7 +144,7 @@ export default function FavoritesScreen() {
               onPress={() => setActiveCollectionId("all")}
             >
               <Text
-                className={`text-[13px] font-bold ${activeCollectionId === "all" ? "text-white" : "text-muted-foreground"}`}
+                className={`text-sm font-bold ${activeCollectionId === "all" ? "text-white" : "text-muted-foreground"}`}
               >
                 All Items ({allFavorites.length})
               </Text>
@@ -161,7 +163,7 @@ export default function FavoritesScreen() {
                   color={activeCollectionId === collection.id ? "#fff" : "#94a3b8"}
                 />
                 <Text
-                  className={`text-[13px] font-bold ${activeCollectionId === collection.id ? "text-white" : "text-muted-foreground"}`}
+                  className={`text-sm font-bold ${activeCollectionId === collection.id ? "text-white" : "text-muted-foreground"}`}
                 >
                   {collection.name} ({collection._count.items})
                 </Text>
@@ -202,7 +204,7 @@ export default function FavoritesScreen() {
           return (
             <Pressable
               style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
-              className="flex-1 bg-card rounded-[24px] overflow-hidden shadow-[0_10px_20px_rgba(0,0,0,0.05)] border border-border pb-3"
+              className="flex-1 bg-card rounded-2xl overflow-hidden shadow-lg border border-border pb-3"
               onPress={() => router.push(`/(customer)/product/${item.id}`)}
             >
               <View
@@ -256,7 +258,7 @@ export default function FavoritesScreen() {
                     </Text>
                     <View className="flex-row items-center gap-1 mt-0.5">
                       <Icon name="star" size={10} color="#f59e0b" />
-                      <Text className="text-[10px] text-muted-foreground font-body">
+                      <Text className="text-caption text-muted-foreground font-body">
                         {item.rating || "0.0"}
                       </Text>
                     </View>

@@ -52,7 +52,9 @@ export default function RequestMoneyScreen() {
       >
         <View className="flex-row items-center gap-3">
           <BackButton />
-          <Text className="text-[20px] font-heading font-black text-foreground">Request Money</Text>
+          <Text className="text-display-sm font-heading font-black text-foreground">
+            Request Money
+          </Text>
         </View>
       </View>
 
@@ -63,11 +65,11 @@ export default function RequestMoneyScreen() {
         keyboardShouldPersistTaps="always"
         keyboardDismissMode="on-drag"
       >
-        <Text className="text-[14px] font-bold text-muted-foreground font-heading mb-2 ml-1 mt-4">
+        <Text className="text-body-md font-bold text-muted-foreground font-heading mb-2 ml-1 mt-4">
           Request Amount
         </Text>
-        <View className="bg-background p-4 rounded-[20px] mb-8 flex-row items-center">
-          <Text className="text-[20px] font-bold text-foreground mr-2">GHS</Text>
+        <View className="bg-background p-4 rounded-2xl mb-8 flex-row items-center">
+          <Text className="text-display-sm font-bold text-foreground mr-2">GHS</Text>
           <TextInput
             value={amount}
             onChangeText={setAmount}
@@ -75,22 +77,22 @@ export default function RequestMoneyScreen() {
             placeholder="0.00"
             placeholderTextColor="#cbd5e1"
             maxLength={6}
-            className="flex-1 text-[32px] font-black text-foreground font-heading p-0 m-0"
+            className="flex-1 text-display-lg font-black text-foreground font-heading p-0 m-0"
           />
         </View>
 
-        <View className="bg-emerald-50/50 p-5 rounded-[20px] mb-8 border border-emerald-100">
+        <View className="bg-emerald-50/50 p-5 rounded-2xl mb-8 border border-emerald-100">
           <View className="w-10 h-10 rounded-full bg-emerald-100 items-center justify-center mb-3">
             <Icon name="arrow-down-left" size={20} color="#059669" />
           </View>
-          <Text className="text-[14px] text-muted-foreground font-body leading-[22px]">
+          <Text className="text-body-md text-muted-foreground font-body leading-[22px]">
             Ask friends, family, or customers for money. They will receive a notification and a
             secure link to pay.
           </Text>
         </View>
 
         <View className="mb-6">
-          <Text className="text-[14px] font-bold text-muted-foreground font-heading mb-2 ml-1">
+          <Text className="text-body-md font-bold text-muted-foreground font-heading mb-2 ml-1">
             Request From
           </Text>
           <Input
@@ -103,7 +105,7 @@ export default function RequestMoneyScreen() {
         </View>
 
         <View className="mb-6">
-          <Text className="text-[14px] font-bold text-muted-foreground font-heading mb-2 ml-1">
+          <Text className="text-body-md font-bold text-muted-foreground font-heading mb-2 ml-1">
             Note (Optional)
           </Text>
           <Input
@@ -121,7 +123,7 @@ export default function RequestMoneyScreen() {
           title={`Request GHS ${amount || "0"}`}
           size="lg"
           disabled={!isValidAmount || !contact}
-          className="w-full rounded-[16px]"
+          className="w-full rounded-xl"
           onPress={handleRequest}
         />
       </View>

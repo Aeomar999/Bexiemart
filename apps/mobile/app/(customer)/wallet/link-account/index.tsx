@@ -53,7 +53,9 @@ export default function LinkAccountScreen() {
       >
         <View className="flex-row items-center gap-3">
           <BackButton />
-          <Text className="text-[20px] font-heading font-black text-foreground">Link Account</Text>
+          <Text className="text-display-sm font-heading font-black text-foreground">
+            Link Account
+          </Text>
         </View>
       </View>
 

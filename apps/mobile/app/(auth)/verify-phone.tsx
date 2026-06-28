@@ -146,7 +146,7 @@ export default function VerifyPhoneScreen() {
                 <View
                   key={i}
                   pointerEvents="none"
-                  className={`w-12 h-14 rounded-[12px] items-center justify-center border-b-2 ${
+                  className={`w-12 h-14 rounded-lg items-center justify-center border-b-2 ${
                     code.length === i
                       ? "border-primary bg-primary-subtle"
                       : code.length > i
@@ -154,7 +154,7 @@ export default function VerifyPhoneScreen() {
                         : "border-border bg-background"
                   }`}
                 >
-                  <Text className="text-[28px] font-heading font-bold text-foreground">
+                  <Text className="text-display-md font-heading font-bold text-foreground">
                     {code[i] || ""}
                   </Text>
                 </View>

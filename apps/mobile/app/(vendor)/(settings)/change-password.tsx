@@ -52,11 +52,13 @@ export default function ChangePasswordScreen() {
           className="w-10 h-10 rounded-full bg-background items-center justify-center mr-3"
           color="#0f172a"
         />
-        <Text className="text-[20px] font-heading font-black text-foreground">Change Password</Text>
+        <Text className="text-display-sm font-heading font-black text-foreground">
+          Change Password
+        </Text>
       </View>
 
       <ScrollView className="flex-1 px-5 pt-6 pb-12" showsVerticalScrollIndicator={false}>
-        <Text className="text-[14px] text-muted-foreground mb-6 leading-relaxed">
+        <Text className="text-body-md text-muted-foreground mb-6 leading-relaxed">
           Your password must be at least 8 characters long and include a mix of letters, numbers,
           and symbols.
         </Text>
@@ -97,7 +99,7 @@ export default function ChangePasswordScreen() {
                 />
               </View>
               <Text
-                className={`text-[12px] font-bold ${strength === 1 ? "text-red-500" : strength === 2 ? "text-amber-500" : "text-green-500"}`}
+                className={`text-body-sm font-bold ${strength === 1 ? "text-red-500" : strength === 2 ? "text-amber-500" : "text-green-500"}`}
               >
                 {strengthText}
               </Text>
@@ -131,7 +133,7 @@ export default function ChangePasswordScreen() {
           }}
         />
         <Pressable className="mt-6 self-center" onPress={() => {}}>
-          <Text className="text-[14px] font-bold text-primary">Forgot Current Password?</Text>
+          <Text className="text-body-md font-bold text-primary">Forgot Current Password?</Text>
         </Pressable>
       </ScrollView>
     </View>

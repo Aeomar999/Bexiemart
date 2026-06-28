@@ -46,7 +46,7 @@ export default function NotificationsScreen() {
       >
         <View className="flex-row items-center gap-3">
           <BackButton />
-          <Text className="text-[20px] font-heading font-black text-foreground flex-1">
+          <Text className="text-display-sm font-heading font-black text-foreground flex-1">
             Notifications
           </Text>
           {unreadCount > 0 && (
@@ -85,7 +85,7 @@ export default function NotificationsScreen() {
             return (
               <Pressable
                 style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
-                className={`flex-row gap-4 p-5 rounded-[24px] border mb-3 ${
+                className={`flex-row gap-4 p-5 rounded-2xl border mb-3 ${
                   item.read ? "bg-card border-border" : "bg-primary-subtle/40 border-border"
                 }`}
                 onPress={() => markAsRead(item.id)}

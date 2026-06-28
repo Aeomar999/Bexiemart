@@ -199,7 +199,9 @@ export default function BookRiderScreen() {
       >
         <View className="flex-row items-center gap-3">
           <BackButton />
-          <Text className="text-[20px] font-heading font-black text-foreground">Book a Rider</Text>
+          <Text className="text-display-sm font-heading font-black text-foreground">
+            Book a Rider
+          </Text>
         </View>
       </View>
 
@@ -209,33 +211,33 @@ export default function BookRiderScreen() {
         keyboardShouldPersistTaps="always"
       >
         {/* Location Box */}
-        <View className="bg-card rounded-[24px] p-5 border border-border mb-6">
-          <Text className="text-[14px] font-bold text-muted-foreground font-heading mb-2">
+        <View className="bg-card rounded-2xl p-5 border border-border mb-6">
+          <Text className="text-body-md font-bold text-muted-foreground font-heading mb-2">
             Pickup Location
           </Text>
           <Pressable
             onPress={() => setSelectingField("pickup")}
-            className="flex-row items-center bg-background rounded-[16px] px-4 h-12 border border-border mb-4"
+            className="flex-row items-center bg-background rounded-xl px-4 h-12 border border-border mb-4"
           >
             <Icon name="map-pin" size={16} color="#059669" />
             <Text
-              className={`flex-1 ml-2 font-body text-[15px] ${pickup ? "text-foreground" : "text-muted-foreground"}`}
+              className={`flex-1 ml-2 font-body text-body-lg ${pickup ? "text-foreground" : "text-muted-foreground"}`}
               numberOfLines={1}
             >
               {pickup || "Where are you?"}
             </Text>
           </Pressable>
 
-          <Text className="text-[14px] font-bold text-muted-foreground font-heading mb-2">
+          <Text className="text-body-md font-bold text-muted-foreground font-heading mb-2">
             Drop-off Location
           </Text>
           <Pressable
             onPress={() => setSelectingField("dropoff")}
-            className="flex-row items-center bg-background rounded-[16px] px-4 h-12 border border-border"
+            className="flex-row items-center bg-background rounded-xl px-4 h-12 border border-border"
           >
             <Icon name="map-pin" size={16} color="#ef4444" />
             <Text
-              className={`flex-1 ml-2 font-body text-[15px] ${dropoff ? "text-foreground" : "text-muted-foreground"}`}
+              className={`flex-1 ml-2 font-body text-body-lg ${dropoff ? "text-foreground" : "text-muted-foreground"}`}
               numberOfLines={1}
             >
               {dropoff || "Where are you going?"}
@@ -244,7 +246,7 @@ export default function BookRiderScreen() {
         </View>
 
         {/* Rider Selection */}
-        <Text className="text-[16px] font-bold text-foreground font-heading mb-4 px-1">
+        <Text className="text-body-lg font-bold text-foreground font-heading mb-4 px-1">
           Choose Rider Type
         </Text>
         <View className="gap-3 mb-8">
@@ -254,7 +256,7 @@ export default function BookRiderScreen() {
             return (
               <Pressable
                 key={rider.id}
-                className={`flex-row items-center gap-4 p-5 rounded-[24px] border ${isSelected ? "border-primary bg-primary-subtle" : "border-border bg-card"}`}
+                className={`flex-row items-center gap-4 p-5 rounded-2xl border ${isSelected ? "border-primary bg-primary-subtle" : "border-border bg-card"}`}
                 onPress={() => setSelectedRider(rider.id)}
               >
                 <View
@@ -264,11 +266,11 @@ export default function BookRiderScreen() {
                   <Icon name={rider.icon} size={22} color={rider.color} />
                 </View>
                 <View className="flex-1">
-                  <Text className="text-[16px] font-bold font-body text-foreground">
+                  <Text className="text-body-lg font-bold font-body text-foreground">
                     {rider.label}
                   </Text>
                   <Text
-                    className={`text-[13px] font-body ${isSelected ? "text-primary" : "text-muted-foreground"}`}
+                    className={`text-sm font-body ${isSelected ? "text-primary" : "text-muted-foreground"}`}
                   >
                     Arrives in {rider.time}
                   </Text>
@@ -277,7 +279,7 @@ export default function BookRiderScreen() {
                   <ActivityIndicator size="small" color="#94a3b8" />
                 ) : (
                   <Text
-                    className={`text-[16px] font-bold font-heading ${isSelected ? "text-primary-hover" : "text-foreground"}`}
+                    className={`text-body-lg font-bold font-heading ${isSelected ? "text-primary-hover" : "text-foreground"}`}
                   >
                     {fare != null ? `GHS ${fare.toFixed(2)}` : "--"}
                   </Text>
@@ -302,7 +304,7 @@ export default function BookRiderScreen() {
           {booking ? (
             <ActivityIndicator color="#fff" />
           ) : (
-            <Text className="text-white font-bold text-[16px]">
+            <Text className="text-white font-bold text-body-lg">
               {selectedFare != null
                 ? `Book ${RIDER_TYPES.find((r) => r.id === selectedRider)?.label} • GHS ${selectedFare.toFixed(2)}`
                 : "Select pickup & drop-off"}
@@ -315,11 +317,11 @@ export default function BookRiderScreen() {
       <Modal visible={!!selectingField} animationType="slide" transparent>
         <View className="flex-1 justify-end bg-black/40">
           <View
-            className="bg-card rounded-t-[32px] p-6 h-2/3"
+            className="bg-card rounded-t-3xl p-6 h-2/3"
             style={{ paddingBottom: Math.max(insets.bottom, 20) }}
           >
             <View className="flex-row justify-between items-center mb-6">
-              <Text className="text-[20px] font-bold font-heading text-foreground">
+              <Text className="text-display-sm font-bold font-heading text-foreground">
                 Select {selectingField === "pickup" ? "Pickup" : "Drop-off"} Location
               </Text>
               <Pressable
@@ -344,16 +346,14 @@ export default function BookRiderScreen() {
                   )}
                 </View>
                 <View className="flex-1">
-                  <Text className="text-[16px] font-bold text-primary font-heading">
+                  <Text className="text-body-lg font-bold text-primary font-heading">
                     Use Current Location
                   </Text>
-                  <Text className="text-[13px] text-muted-foreground mt-1">
-                    Get this spot from GPS
-                  </Text>
+                  <Text className="text-sm text-muted-foreground mt-1">Get this spot from GPS</Text>
                 </View>
               </TouchableOpacity>
 
-              <Text className="text-[14px] font-bold text-muted-foreground mb-3">
+              <Text className="text-body-md font-bold text-muted-foreground mb-3">
                 Saved Addresses
               </Text>
               {savedAddresses.map((addr: any) => (
@@ -376,8 +376,8 @@ export default function BookRiderScreen() {
                     />
                   </View>
                   <View className="flex-1">
-                    <Text className="text-[16px] font-bold text-foreground">{addr.type}</Text>
-                    <Text className="text-[13px] text-muted-foreground mt-1">
+                    <Text className="text-body-lg font-bold text-foreground">{addr.type}</Text>
+                    <Text className="text-sm text-muted-foreground mt-1">
                       {addr.address}, {addr.city}
                     </Text>
                   </View>
@@ -385,11 +385,11 @@ export default function BookRiderScreen() {
               ))}
 
               <View className="mt-8 pt-4 border-t border-border">
-                <Text className="text-[14px] font-bold text-muted-foreground mb-3">
+                <Text className="text-body-md font-bold text-muted-foreground mb-3">
                   Or enter manually
                 </Text>
                 <TextInput
-                  className="bg-background border border-border rounded-[16px] px-4 h-12 font-body text-[15px]"
+                  className="bg-background border border-border rounded-xl px-4 h-12 font-body text-body-lg"
                   placeholder="Type any address..."
                   onSubmitEditing={(e) => handleSelectAddress(e.nativeEvent.text)}
                   returnKeyType="search"

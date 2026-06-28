@@ -90,7 +90,7 @@ export default function TransactionsScreen() {
               className="w-10 h-10 rounded-full bg-background items-center justify-center"
               color="#0f172a"
             />
-            <Text className="text-[20px] font-heading font-black text-foreground">
+            <Text className="text-display-sm font-heading font-black text-foreground">
               Transactions
             </Text>
           </View>
@@ -105,7 +105,7 @@ export default function TransactionsScreen() {
               className={`px-4 py-2 rounded-full border ${filter === f ? "bg-foreground border-border" : "bg-card border-border"}`}
             >
               <Text
-                className={`text-[14px] font-bold ${filter === f ? "text-white" : "text-muted-foreground"}`}
+                className={`text-body-md font-bold ${filter === f ? "text-white" : "text-muted-foreground"}`}
               >
                 {f === "ALL" ? "All Activity" : f === "IN" ? "Money In" : "Money Out"}
               </Text>

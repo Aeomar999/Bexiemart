@@ -22,7 +22,7 @@ export default function VendorInboxScreen() {
         style={{ paddingTop: (insets.top || 12) + 12 }}
       >
         <BackButton className="mr-3" />
-        <Text className="text-[20px] font-heading font-black text-foreground">Inbox</Text>
+        <Text className="text-display-sm font-heading font-black text-foreground">Inbox</Text>
       </View>
 
       {isLoading ? (
@@ -48,7 +48,7 @@ export default function VendorInboxScreen() {
               <Pressable
                 key={chat.id}
                 onPress={() => router.push(`/(vendor)/inbox/${chat.id}`)}
-                className={`flex-row items-center p-4 bg-card border border-border rounded-[16px] mb-3 ${chat.unread ? "bg-primary-subtle/50 border-border" : ""}`}
+                className={`flex-row items-center p-4 bg-card border border-border rounded-xl mb-3 ${chat.unread ? "bg-primary-subtle/50 border-border" : ""}`}
               >
                 <View className="w-12 h-12 rounded-full bg-secondary items-center justify-center mr-3 relative">
                   <Icon name="user" size={20} color="#64748b" />
@@ -59,14 +59,14 @@ export default function VendorInboxScreen() {
                 <View className="flex-1">
                   <View className="flex-row justify-between items-center mb-1">
                     <Text
-                      className={`text-[15px] font-bold ${chat.unread ? "text-foreground" : "text-muted-foreground"}`}
+                      className={`text-body-lg font-bold ${chat.unread ? "text-foreground" : "text-muted-foreground"}`}
                     >
                       {chat.customer}
                     </Text>
-                    <Text className="text-[12px] text-muted-foreground">{chat.time}</Text>
+                    <Text className="text-body-sm text-muted-foreground">{chat.time}</Text>
                   </View>
                   <Text
-                    className={`text-[13px] ${chat.unread ? "font-bold text-foreground" : "text-muted-foreground"}`}
+                    className={`text-sm ${chat.unread ? "font-bold text-foreground" : "text-muted-foreground"}`}
                     numberOfLines={1}
                   >
                     {chat.latestMessage}

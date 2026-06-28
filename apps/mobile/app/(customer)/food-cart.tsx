@@ -202,17 +202,19 @@ export default function FoodCartScreen() {
         >
           <View className="flex-row items-center gap-3">
             <BackButton />
-            <Text className="text-[20px] font-heading font-black text-foreground">Food Cart</Text>
+            <Text className="text-display-sm font-heading font-black text-foreground">
+              Food Cart
+            </Text>
           </View>
         </View>
         <View className="flex-1 items-center justify-center p-5">
           <View className="w-24 h-24 bg-secondary rounded-full items-center justify-center mb-4">
             <Icon name="shopping-bag" size={40} color="#94a3b8" />
           </View>
-          <Text className="text-[20px] font-heading font-bold text-foreground mb-2">
+          <Text className="text-display-sm font-heading font-bold text-foreground mb-2">
             Your cart is empty
           </Text>
-          <Text className="text-[14px] font-body text-muted-foreground text-center mb-6">
+          <Text className="text-body-md font-body text-muted-foreground text-center mb-6">
             Looks like you haven't added any food yet.
           </Text>
           <Pressable
@@ -220,7 +222,7 @@ export default function FoodCartScreen() {
             className="bg-primary px-8 py-4 rounded-full"
             onPress={() => router.back()}
           >
-            <Text className="text-white font-bold text-[16px]">Browse Restaurants</Text>
+            <Text className="text-white font-bold text-body-lg">Browse Restaurants</Text>
           </Pressable>
         </View>
       </View>
@@ -237,7 +239,7 @@ export default function FoodCartScreen() {
       >
         <View className="flex-row items-center gap-3">
           <BackButton />
-          <Text className="text-[20px] font-heading font-black text-foreground">
+          <Text className="text-display-sm font-heading font-black text-foreground">
             Food Cart ({itemCount})
           </Text>
         </View>
@@ -249,11 +251,11 @@ export default function FoodCartScreen() {
         contentContainerStyle={{ paddingBottom: 120 }}
       >
         <View className="px-5 pt-6 pb-2">
-          <Text className="text-[16px] font-bold text-foreground mb-4">
+          <Text className="text-body-lg font-bold text-foreground mb-4">
             Order from <Text className="text-primary">{restaurantName}</Text>
           </Text>
 
-          <View className="bg-card rounded-[24px] border border-border overflow-hidden">
+          <View className="bg-card rounded-2xl border border-border overflow-hidden">
             {items.map((item: any, index: number) => (
               <View
                 key={item.id}
@@ -261,10 +263,10 @@ export default function FoodCartScreen() {
               >
                 <View className="flex-row justify-between mb-3">
                   <View className="flex-1 pr-4">
-                    <Text className="text-[16px] font-bold text-foreground mb-1">
+                    <Text className="text-body-lg font-bold text-foreground mb-1">
                       {item.foodItem?.name ?? item.name}
                     </Text>
-                    <Text className="text-[15px] font-bold text-primary">
+                    <Text className="text-body-lg font-bold text-primary">
                       GHS {Number(item.price).toFixed(2)}
                     </Text>
                   </View>
@@ -290,7 +292,7 @@ export default function FoodCartScreen() {
                         color={item.quantity <= 1 ? "#cbd5e1" : "#475569"}
                       />
                     </Pressable>
-                    <Text className="text-[15px] font-bold text-foreground w-6 text-center">
+                    <Text className="text-body-lg font-bold text-foreground w-6 text-center">
                       {item.quantity}
                     </Text>
                     <Pressable
@@ -301,7 +303,7 @@ export default function FoodCartScreen() {
                       <Icon name="plus" size={16} color="#475569" />
                     </Pressable>
                   </View>
-                  <Text className="text-[15px] font-bold text-foreground">
+                  <Text className="text-body-lg font-bold text-foreground">
                     GHS {(Number(item.price) * item.quantity).toFixed(2)}
                   </Text>
                 </View>
@@ -312,23 +314,23 @@ export default function FoodCartScreen() {
 
         {/* Delivery Address */}
         <View className="px-5 mt-6">
-          <Text className="text-[16px] font-bold text-foreground mb-3 font-heading">
+          <Text className="text-body-lg font-bold text-foreground mb-3 font-heading">
             Delivery Address
           </Text>
           <Pressable
             onPress={() => setSelectingAddress(true)}
-            className="bg-card rounded-[24px] p-4 border border-border flex-row items-center gap-3"
+            className="bg-card rounded-2xl p-4 border border-border flex-row items-center gap-3"
           >
             <View className="w-10 h-10 rounded-full bg-primary-subtle items-center justify-center border border-border">
               <Icon name="map-pin" size={18} color="var(--color-primary)" />
             </View>
             <View className="flex-1">
               {deliveryAddress ? (
-                <Text className="text-[15px] font-bold text-foreground" numberOfLines={1}>
+                <Text className="text-body-lg font-bold text-foreground" numberOfLines={1}>
                   {deliveryAddress}
                 </Text>
               ) : (
-                <Text className="text-[15px] text-muted-foreground">
+                <Text className="text-body-lg text-muted-foreground">
                   Tap to choose where to deliver
                 </Text>
               )}
@@ -338,20 +340,20 @@ export default function FoodCartScreen() {
         </View>
 
         <View className="px-5 mt-6">
-          <View className="bg-card rounded-[24px] p-5 border border-border">
-            <Text className="text-[16px] font-bold text-foreground mb-4 font-heading">
+          <View className="bg-card rounded-2xl p-5 border border-border">
+            <Text className="text-body-lg font-bold text-foreground mb-4 font-heading">
               Order Summary
             </Text>
 
             <View className="flex-row justify-between mb-3">
-              <Text className="text-[14px] text-muted-foreground">Subtotal</Text>
-              <Text className="text-[14px] font-bold text-foreground">
+              <Text className="text-body-md text-muted-foreground">Subtotal</Text>
+              <Text className="text-body-md font-bold text-foreground">
                 GHS {subtotal.toFixed(2)}
               </Text>
             </View>
             <View className="flex-row justify-between mb-4">
-              <Text className="text-[14px] text-muted-foreground">Delivery Fee</Text>
-              <Text className="text-[14px] font-bold text-foreground">
+              <Text className="text-body-md text-muted-foreground">Delivery Fee</Text>
+              <Text className="text-body-md font-bold text-foreground">
                 {quotingFee
                   ? "Calculating..."
                   : deliveryFee != null
@@ -365,13 +367,13 @@ export default function FoodCartScreen() {
             <View className="h-[1px] bg-muted mb-4" />
 
             <View className="flex-row justify-between items-center">
-              <Text className="text-[16px] font-bold text-foreground">Total</Text>
-              <Text className="text-[20px] font-black text-primary">
+              <Text className="text-body-lg font-bold text-foreground">Total</Text>
+              <Text className="text-display-sm font-black text-primary">
                 GHS {(subtotal + (deliveryFee ?? 0)).toFixed(2)}
               </Text>
             </View>
             {deliveryFee == null && (
-              <Text className="text-[12px] text-muted-foreground mt-1">
+              <Text className="text-body-sm text-muted-foreground mt-1">
                 Delivery fee is added based on distance to your address.
               </Text>
             )}
@@ -395,11 +397,11 @@ export default function FoodCartScreen() {
       <Modal visible={selectingAddress} animationType="slide" transparent>
         <View className="flex-1 justify-end bg-black/40">
           <View
-            className="bg-card rounded-t-[32px] p-6 h-2/3"
+            className="bg-card rounded-t-3xl p-6 h-2/3"
             style={{ paddingBottom: Math.max(insets.bottom, 20) }}
           >
             <View className="flex-row justify-between items-center mb-6">
-              <Text className="text-[20px] font-bold font-heading text-foreground">
+              <Text className="text-display-sm font-bold font-heading text-foreground">
                 Delivery Location
               </Text>
               <Pressable
@@ -424,16 +426,16 @@ export default function FoodCartScreen() {
                   )}
                 </View>
                 <View className="flex-1">
-                  <Text className="text-[16px] font-bold text-primary font-heading">
+                  <Text className="text-body-lg font-bold text-primary font-heading">
                     Use Current Location
                   </Text>
-                  <Text className="text-[13px] text-muted-foreground mt-1">
+                  <Text className="text-sm text-muted-foreground mt-1">
                     Deliver to where you are now
                   </Text>
                 </View>
               </TouchableOpacity>
 
-              <Text className="text-[14px] font-bold text-muted-foreground mb-3">
+              <Text className="text-body-md font-bold text-muted-foreground mb-3">
                 Saved Addresses
               </Text>
               {savedAddresses.map((addr: any) => (
@@ -456,8 +458,8 @@ export default function FoodCartScreen() {
                     />
                   </View>
                   <View className="flex-1">
-                    <Text className="text-[16px] font-bold text-foreground">{addr.type}</Text>
-                    <Text className="text-[13px] text-muted-foreground mt-1">
+                    <Text className="text-body-lg font-bold text-foreground">{addr.type}</Text>
+                    <Text className="text-sm text-muted-foreground mt-1">
                       {addr.address}, {addr.city}
                     </Text>
                   </View>
@@ -465,11 +467,11 @@ export default function FoodCartScreen() {
               ))}
 
               <View className="mt-8 pt-4 border-t border-border">
-                <Text className="text-[14px] font-bold text-muted-foreground mb-3">
+                <Text className="text-body-md font-bold text-muted-foreground mb-3">
                   Or enter manually
                 </Text>
                 <TextInput
-                  className="bg-background border border-border rounded-[16px] px-4 h-12 font-body text-[15px]"
+                  className="bg-background border border-border rounded-xl px-4 h-12 font-body text-body-lg"
                   placeholder="Type your delivery address..."
                   onSubmitEditing={(e) => selectAddress(e.nativeEvent.text)}
                   returnKeyType="search"

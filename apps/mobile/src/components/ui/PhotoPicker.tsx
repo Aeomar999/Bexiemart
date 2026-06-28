@@ -61,7 +61,7 @@ export function PhotoPicker({
           {images.map((img, idx) => (
             <View
               key={idx}
-              className="w-[30%] relative rounded-[16px] overflow-hidden border border-border"
+              className="w-[30%] relative rounded-xl overflow-hidden border border-border"
               style={{ aspectRatio: 1 }}
             >
               <Image
@@ -80,7 +80,7 @@ export function PhotoPicker({
           {images.length < maxSelections && (
             <Pressable
               onPress={pickImage}
-              className="w-[30%] bg-muted rounded-[16px] items-center justify-center border-2 border-dashed border-border"
+              className="w-[30%] bg-muted rounded-xl items-center justify-center border-2 border-dashed border-border"
               style={{ aspectRatio: 1 }}
             >
               <Icon name="plus" size={24} color="#64748b" />
@@ -91,13 +91,13 @@ export function PhotoPicker({
         <Pressable
           onPress={pickImage}
           style={({ pressed }) => [{ opacity: pressed ? 0.8 : 1 }]}
-          className="w-full h-48 bg-muted rounded-[20px] items-center justify-center border-2 border-dashed border-border mb-8"
+          className="w-full h-48 bg-muted rounded-2xl items-center justify-center border-2 border-dashed border-border mb-8"
         >
           <View className="w-14 h-14 bg-card rounded-full items-center justify-center mb-3">
             <Icon name="camera" size={24} color="#64748b" />
           </View>
-          <Text className="text-[14px] font-bold text-muted-foreground">Add Photos</Text>
-          <Text className="text-[12px] text-muted-foreground mt-1">
+          <Text className="text-body-md font-bold text-muted-foreground">Add Photos</Text>
+          <Text className="text-body-sm text-muted-foreground mt-1">
             Upload up to {maxSelections} images
           </Text>
         </Pressable>

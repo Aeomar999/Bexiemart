@@ -33,15 +33,15 @@ const textColors: Record<string, string> = {
 };
 
 const sizeStyles: Record<string, string> = {
-  sm: "h-[40px] px-5 rounded-full",
-  md: "h-[48px] px-6 rounded-full",
-  lg: "h-[56px] px-8 rounded-full",
+  sm: "h-10 px-5 rounded-full",
+  md: "h-12 px-6 rounded-full",
+  lg: "h-14 px-8 rounded-full",
 };
 
 const textSizes: Record<string, string> = {
-  sm: "text-[13px]",
-  md: "text-[15px]",
-  lg: "text-[16px]",
+  sm: "text-sm",
+  md: "text-body-lg",
+  lg: "text-body-lg",
 };
 
 export const Button = forwardRef<View, ButtonProps>(

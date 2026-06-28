@@ -47,9 +47,9 @@ export function CreateCollectionModal({ visible, onClose }: Props) {
       <Pressable className="flex-1 bg-black/50 justify-end" onPress={onClose}>
         <Pressable onStartShouldSetResponder={() => true} onResponderRelease={() => {}}>
           <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "height"}>
-            <View className="bg-card rounded-t-[32px] p-6 pb-10">
+            <View className="bg-card rounded-t-3xl p-6 pb-10">
               <View className="flex-row justify-between items-center mb-6">
-                <Text className="text-[20px] font-heading font-black text-foreground">
+                <Text className="text-display-sm font-heading font-black text-foreground">
                   New Collection
                 </Text>
                 <Pressable
@@ -62,13 +62,13 @@ export function CreateCollectionModal({ visible, onClose }: Props) {
               </View>
 
               <View className="mb-6">
-                <Text className="text-[14px] font-bold text-foreground font-heading mb-3">
+                <Text className="text-body-md font-bold text-foreground font-heading mb-3">
                   Collection Name
                 </Text>
-                <View className="flex-row items-center bg-background h-[52px] rounded-[16px] px-4 border border-border focus:border-primary">
+                <View className="flex-row items-center bg-background h-[52px] rounded-xl px-4 border border-border focus:border-primary">
                   <Icon name="folder" size={20} color="#94a3b8" />
                   <TextInput
-                    className="flex-1 ml-3 text-[16px] font-body text-foreground h-full"
+                    className="flex-1 ml-3 text-body-lg font-body text-foreground h-full"
                     placeholder="e.g., Summer Outfits"
                     placeholderTextColor="#94a3b8"
                     value={name}
@@ -81,7 +81,7 @@ export function CreateCollectionModal({ visible, onClose }: Props) {
               <Button
                 title="Create Collection"
                 size="lg"
-                className="w-full rounded-[16px]"
+                className="w-full rounded-xl"
                 onPress={handleCreate}
                 disabled={!name.trim() || createCollection.isPending}
                 loading={createCollection.isPending}

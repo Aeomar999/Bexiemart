@@ -116,14 +116,14 @@ export default function StaffManagementScreen() {
       >
         <View className="flex-row items-center">
           <BackButton className="mr-3" />
-          <Text className="text-[20px] font-heading font-black text-foreground">Staff</Text>
+          <Text className="text-display-sm font-heading font-black text-foreground">Staff</Text>
         </View>
         <Pressable
           onPress={openAddForm}
           className="bg-primary-subtle px-3 py-1.5 rounded-full flex-row items-center"
         >
           <Icon name="plus" size={14} color="var(--color-primary)" style={{ marginRight: 4 }} />
-          <Text className="text-[12px] font-bold text-primary">Add Staff</Text>
+          <Text className="text-body-sm font-bold text-primary">Add Staff</Text>
         </Pressable>
       </View>
 
@@ -133,7 +133,7 @@ export default function StaffManagementScreen() {
         </View>
       ) : (
         <ScrollView className="flex-1 px-5 pt-6 pb-12">
-          <View className="bg-card rounded-[24px] border border-border overflow-hidden shadow-[0_10px_20px_rgba(0,0,0,0.02)]">
+          <View className="bg-card rounded-2xl border border-border overflow-hidden shadow-lg">
             {list.map((staff: any, idx: number) => {
               const isLast = idx === list.length - 1;
               return (
@@ -141,26 +141,26 @@ export default function StaffManagementScreen() {
                   <View className="flex-row items-center justify-between mb-3">
                     <View className="flex-row items-center">
                       <View className="w-12 h-12 rounded-full bg-primary-subtle items-center justify-center mr-3 border-2 border-card shadow-sm">
-                        <Text className="text-[16px] font-heading font-black text-primary">
+                        <Text className="text-body-lg font-heading font-black text-primary">
                           {staff.name.charAt(0)}
                         </Text>
                       </View>
                       <View>
                         <View className="flex-row items-center">
-                          <Text className="text-[16px] font-bold text-foreground mr-2">
+                          <Text className="text-body-lg font-bold text-foreground mr-2">
                             {staff.name}
                           </Text>
                           <View
                             className={`px-2 py-0.5 rounded-full ${staff.role === "Owner" ? "bg-amber-100" : "bg-muted"}`}
                           >
                             <Text
-                              className={`text-[10px] font-bold ${staff.role === "Owner" ? "text-amber-700" : "text-muted-foreground"}`}
+                              className={`text-caption font-bold ${staff.role === "Owner" ? "text-amber-700" : "text-muted-foreground"}`}
                             >
                               {staff.role}
                             </Text>
                           </View>
                         </View>
-                        <Text className="text-[13px] text-muted-foreground">{staff.email}</Text>
+                        <Text className="text-sm text-muted-foreground">{staff.email}</Text>
                       </View>
                     </View>
 
@@ -175,8 +175,8 @@ export default function StaffManagementScreen() {
                   </View>
 
                   {staff.role !== "Owner" && (
-                    <View className="flex-row items-center justify-between bg-background p-3 rounded-[12px] border border-border mt-2">
-                      <Text className="text-[14px] font-medium text-muted-foreground">
+                    <View className="flex-row items-center justify-between bg-background p-3 rounded-lg border border-border mt-2">
+                      <Text className="text-body-md font-medium text-muted-foreground">
                         Account Access
                       </Text>
                       <Switch
@@ -203,9 +203,9 @@ export default function StaffManagementScreen() {
       >
         <View className="flex-1 justify-end bg-black/40">
           <Pressable className="absolute inset-0" onPress={() => setFormModalVisible(false)} />
-          <View className="bg-card rounded-t-[32px] p-6 pb-12">
+          <View className="bg-card rounded-t-3xl p-6 pb-12">
             <View className="w-12 h-1.5 bg-secondary rounded-full self-center mb-6" />
-            <Text className="text-[20px] font-heading font-bold text-foreground mb-6">
+            <Text className="text-display-sm font-heading font-bold text-foreground mb-6">
               {editingId ? "Edit Staff Details" : "Add New Staff"}
             </Text>
 
@@ -226,7 +226,7 @@ export default function StaffManagementScreen() {
               />
 
               <View>
-                <Text className="text-[14px] font-bold text-muted-foreground mb-2">Role</Text>
+                <Text className="text-body-md font-bold text-muted-foreground mb-2">Role</Text>
                 <View className="flex-row gap-2">
                   {ROLES.map((r) => (
                     <Pressable
@@ -235,7 +235,7 @@ export default function StaffManagementScreen() {
                       className={`px-4 py-2 rounded-full border ${role === r ? "bg-foreground border-border" : "bg-card border-border"}`}
                     >
                       <Text
-                        className={`text-[13px] font-bold ${role === r ? "text-white" : "text-muted-foreground"}`}
+                        className={`text-sm font-bold ${role === r ? "text-white" : "text-muted-foreground"}`}
                       >
                         {r}
                       </Text>
@@ -265,24 +265,26 @@ export default function StaffManagementScreen() {
       >
         <View className="flex-1 justify-end bg-black/40">
           <Pressable className="absolute inset-0" onPress={() => setActionModalVisible(false)} />
-          <View className="bg-card rounded-t-[32px] p-6 pb-12">
+          <View className="bg-card rounded-t-3xl p-6 pb-12">
             <View className="w-12 h-1.5 bg-secondary rounded-full self-center mb-6" />
-            <Text className="text-[20px] font-heading font-bold text-foreground mb-6">
+            <Text className="text-display-sm font-heading font-bold text-foreground mb-6">
               Manage Staff
             </Text>
 
             <View className="gap-3">
               <Pressable
                 style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
-                className="flex-row items-center p-4 bg-background border border-border rounded-[20px]"
+                className="flex-row items-center p-4 bg-background border border-border rounded-2xl"
                 onPress={openEditForm}
               >
                 <View className="w-12 h-12 bg-card rounded-full items-center justify-center border border-border">
                   <Icon name="edit-2" size={20} color="#0f172a" />
                 </View>
                 <View className="ml-4 flex-1">
-                  <Text className="text-[16px] font-bold text-foreground mb-0.5">Edit Details</Text>
-                  <Text className="text-[13px] font-body text-muted-foreground">
+                  <Text className="text-body-lg font-bold text-foreground mb-0.5">
+                    Edit Details
+                  </Text>
+                  <Text className="text-sm font-body text-muted-foreground">
                     Change name, email or role
                   </Text>
                 </View>
@@ -291,17 +293,15 @@ export default function StaffManagementScreen() {
 
               <Pressable
                 style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
-                className="flex-row items-center p-4 bg-rose-50 border border-rose-100 rounded-[20px]"
+                className="flex-row items-center p-4 bg-rose-50 border border-rose-100 rounded-2xl"
                 onPress={handleDeleteStaff}
               >
                 <View className="w-12 h-12 bg-card rounded-full items-center justify-center border border-rose-100">
                   <Icon name="trash-2" size={20} color="#ef4444" />
                 </View>
                 <View className="ml-4 flex-1">
-                  <Text className="text-[16px] font-bold text-error mb-0.5">Remove Staff</Text>
-                  <Text className="text-[13px] font-body text-rose-500">
-                    Revoke access permanently
-                  </Text>
+                  <Text className="text-body-lg font-bold text-error mb-0.5">Remove Staff</Text>
+                  <Text className="text-sm font-body text-rose-500">Revoke access permanently</Text>
                 </View>
                 <Icon name="chevron-right" size={20} color="#f87171" />
               </Pressable>

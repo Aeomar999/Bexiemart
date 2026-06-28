@@ -32,11 +32,11 @@ export function EmptyState({
         <Icon name={finalIcon as any} size={32} color="var(--color-primary)" />
       </View>
 
-      <Text className="text-[24px] font-heading font-black text-foreground mb-3 text-center">
+      <Text className="text-display-md font-heading font-black text-foreground mb-3 text-center">
         {title}
       </Text>
 
-      <Text className="text-[16px] font-body text-muted-foreground text-center mb-8 max-w-[85%] leading-relaxed">
+      <Text className="text-body-lg font-body text-muted-foreground text-center mb-8 max-w-[85%] leading-relaxed">
         {description}
       </Text>
 
@@ -44,9 +44,9 @@ export function EmptyState({
         <Pressable
           onPress={onAction}
           style={({ pressed }) => [{ opacity: pressed ? 0.8 : 1 }]}
-          className="bg-primary px-8 py-4 rounded-full flex-row items-center justify-center shadow-[0_4px_12px_rgba(0,76,255,0.15)]"
+          className="bg-primary px-8 py-4 rounded-full flex-row items-center justify-center shadow-md"
         >
-          <Text className="text-white font-heading font-bold text-[16px]">{actionLabel}</Text>
+          <Text className="text-white font-heading font-bold text-body-lg">{actionLabel}</Text>
         </Pressable>
       )}
     </View>

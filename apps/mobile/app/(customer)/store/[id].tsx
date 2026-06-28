@@ -191,7 +191,7 @@ export default function StoreProfileScreen() {
                     <Text className="text-heading-sm font-bold text-foreground font-heading">
                       {store.totalProducts}
                     </Text>
-                    <Text className="text-[10px] text-muted-foreground font-body uppercase tracking-wider mt-1">
+                    <Text className="text-caption text-muted-foreground font-body uppercase tracking-wider mt-1">
                       Products
                     </Text>
                   </View>
@@ -200,7 +200,7 @@ export default function StoreProfileScreen() {
                     <Text className="text-heading-sm font-bold text-foreground font-heading flex-row items-center gap-1">
                       {store.rating} <Icon name="star" size={12} color="#f59e0b" />
                     </Text>
-                    <Text className="text-[10px] text-muted-foreground font-body uppercase tracking-wider mt-1">
+                    <Text className="text-caption text-muted-foreground font-body uppercase tracking-wider mt-1">
                       Rating
                     </Text>
                   </View>
@@ -209,7 +209,7 @@ export default function StoreProfileScreen() {
                     <Text className="text-heading-sm font-bold text-foreground font-heading">
                       {store.visits}
                     </Text>
-                    <Text className="text-[10px] text-muted-foreground font-body uppercase tracking-wider mt-1">
+                    <Text className="text-caption text-muted-foreground font-body uppercase tracking-wider mt-1">
                       Store Visits
                     </Text>
                   </View>
@@ -244,7 +244,7 @@ export default function StoreProfileScreen() {
           return (
             <Pressable
               style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
-              className="flex-1 bg-card rounded-[24px] overflow-hidden border border-border pb-3 mb-4"
+              className="flex-1 bg-card rounded-2xl overflow-hidden border border-border pb-3 mb-4"
               onPress={() => router.push(`/(customer)/product/${item.id}`)}
             >
               <View
@@ -262,7 +262,9 @@ export default function StoreProfileScreen() {
                 )}
                 {discount > 0 && (
                   <View className="absolute top-2 left-2 bg-error px-2 py-0.5 rounded-lg">
-                    <Text className="text-[10px] font-bold text-white font-body">-{discount}%</Text>
+                    <Text className="text-caption font-bold text-white font-body">
+                      -{discount}%
+                    </Text>
                   </View>
                 )}
                 <Pressable
@@ -307,7 +309,9 @@ export default function StoreProfileScreen() {
                 </View>
                 <View className="flex-row items-center gap-1 mt-2">
                   <Icon name="star" size={10} color="#f59e0b" />
-                  <Text className="text-[10px] text-muted-foreground font-body">{item.rating}</Text>
+                  <Text className="text-caption text-muted-foreground font-body">
+                    {item.rating}
+                  </Text>
                 </View>
               </View>
             </Pressable>

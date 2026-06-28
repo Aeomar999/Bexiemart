@@ -104,7 +104,9 @@ export default function OperatingHoursScreen() {
         style={{ paddingTop: (insets.top || 12) + 12 }}
       >
         <BackButton className="mr-3" />
-        <Text className="text-[20px] font-heading font-black text-foreground">Operating Hours</Text>
+        <Text className="text-display-sm font-heading font-black text-foreground">
+          Operating Hours
+        </Text>
       </View>
 
       {isLoading ? (
@@ -117,7 +119,7 @@ export default function OperatingHoursScreen() {
           contentContainerClassName="pb-12 pt-6 gap-6"
           showsVerticalScrollIndicator={false}
         >
-          <View className="bg-card rounded-[24px] border border-border overflow-hidden shadow-[0_10px_20px_rgba(0,0,0,0.02)]">
+          <View className="bg-card rounded-2xl border border-border overflow-hidden shadow-lg">
             {DAYS_OF_WEEK.map((day, idx) => {
               const isLast = idx === DAYS_OF_WEEK.length - 1;
               const data = hours[day.id] || { isOpen: false, open: "08:00 AM", close: "06:00 PM" };
@@ -126,7 +128,7 @@ export default function OperatingHoursScreen() {
                 <View key={day.id} className={`p-5 ${!isLast ? "border-b border-border" : ""}`}>
                   <View className="flex-row items-center justify-between mb-2">
                     <Text
-                      className={`text-[16px] font-bold ${data.isOpen ? "text-foreground" : "text-muted-foreground"}`}
+                      className={`text-body-lg font-bold ${data.isOpen ? "text-foreground" : "text-muted-foreground"}`}
                     >
                       {day.label}
                     </Text>
@@ -150,13 +152,15 @@ export default function OperatingHoursScreen() {
                             currentValue: data.open,
                           })
                         }
-                        className="flex-1 bg-background rounded-[12px] px-4 py-3 border border-border"
+                        className="flex-1 bg-background rounded-lg px-4 py-3 border border-border"
                       >
-                        <Text className="text-[12px] text-muted-foreground mb-0.5">
+                        <Text className="text-body-sm text-muted-foreground mb-0.5">
                           Opening Time
                         </Text>
                         <View className="flex-row items-center justify-between">
-                          <Text className="text-[15px] font-bold text-foreground">{data.open}</Text>
+                          <Text className="text-body-lg font-bold text-foreground">
+                            {data.open}
+                          </Text>
                           <Icon name="chevron-down" size={16} color="#64748b" />
                         </View>
                       </Pressable>
@@ -173,13 +177,13 @@ export default function OperatingHoursScreen() {
                             currentValue: data.close,
                           })
                         }
-                        className="flex-1 bg-background rounded-[12px] px-4 py-3 border border-border"
+                        className="flex-1 bg-background rounded-lg px-4 py-3 border border-border"
                       >
-                        <Text className="text-[12px] text-muted-foreground mb-0.5">
+                        <Text className="text-body-sm text-muted-foreground mb-0.5">
                           Closing Time
                         </Text>
                         <View className="flex-row items-center justify-between">
-                          <Text className="text-[15px] font-bold text-foreground">
+                          <Text className="text-body-lg font-bold text-foreground">
                             {data.close}
                           </Text>
                           <Icon name="chevron-down" size={16} color="#64748b" />
@@ -187,7 +191,7 @@ export default function OperatingHoursScreen() {
                       </Pressable>
                     </View>
                   ) : (
-                    <Text className="text-[14px] text-muted-foreground mt-1">Closed</Text>
+                    <Text className="text-body-md text-muted-foreground mt-1">Closed</Text>
                   )}
                 </View>
               );
@@ -213,9 +217,9 @@ export default function OperatingHoursScreen() {
       >
         <View className="flex-1 justify-end bg-black/40">
           <Pressable className="absolute inset-0" onPress={() => setPickerConfig(null)} />
-          <View className="bg-card rounded-t-[32px] p-6 pb-12 h-[60%]">
+          <View className="bg-card rounded-t-3xl p-6 pb-12 h-[60%]">
             <View className="w-12 h-1.5 bg-secondary rounded-full self-center mb-6" />
-            <Text className="text-[20px] font-heading font-bold text-foreground mb-6">
+            <Text className="text-display-sm font-heading font-bold text-foreground mb-6">
               Select {pickerConfig?.type === "open" ? "Opening" : "Closing"} Time
             </Text>
 
@@ -229,12 +233,12 @@ export default function OperatingHoursScreen() {
                   <Pressable
                     style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
                     onPress={() => handleTimeSelect(item)}
-                    className={`flex-row items-center justify-between p-4 rounded-[16px] mb-2 border ${
+                    className={`flex-row items-center justify-between p-4 rounded-xl mb-2 border ${
                       isSelected ? "bg-primary-subtle border-border" : "bg-card border-border"
                     }`}
                   >
                     <Text
-                      className={`text-[16px] font-bold ${
+                      className={`text-body-lg font-bold ${
                         isSelected ? "text-primary-hover" : "text-foreground"
                       }`}
                     >

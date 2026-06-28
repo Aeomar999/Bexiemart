@@ -167,7 +167,7 @@ export default function AddressesScreen() {
       >
         <View className="flex-row items-center gap-3">
           <BackButton />
-          <Text className="text-[20px] font-heading font-black text-foreground">
+          <Text className="text-display-sm font-heading font-black text-foreground">
             Delivery Addresses
           </Text>
         </View>
@@ -186,7 +186,7 @@ export default function AddressesScreen() {
             <Pressable
               style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
               key={address.id}
-              className={`bg-card rounded-[24px] p-5 border shadow-[0_10px_20px_rgba(0,0,0,0.02)] ${address.isDefault ? "border-primary bg-primary-subtle/20" : "border-border"}`}
+              className={`bg-card rounded-2xl p-5 border shadow-lg ${address.isDefault ? "border-primary bg-primary-subtle/20" : "border-border"}`}
               onPress={() => handleSetDefault(address.id)}
             >
               <View className="flex-row justify-between items-start mb-3">
@@ -200,14 +200,14 @@ export default function AddressesScreen() {
                       color={address.isDefault ? "var(--color-primary)" : "#64748b"}
                     />
                   </View>
-                  <Text className="text-[14px] font-heading font-bold text-foreground uppercase tracking-wider">
+                  <Text className="text-body-md font-heading font-bold text-foreground uppercase tracking-wider">
                     {address.type}
                   </Text>
                 </View>
                 <View className="flex-row gap-2">
                   {address.isDefault && (
                     <View className="bg-primary px-2 py-0.5 rounded-md justify-center">
-                      <Text className="text-[10px] font-bold text-white uppercase tracking-wider">
+                      <Text className="text-caption font-bold text-white uppercase tracking-wider">
                         Default
                       </Text>
                     </View>
@@ -221,16 +221,16 @@ export default function AddressesScreen() {
                 </View>
               </View>
 
-              <Text className="text-[16px] font-bold text-foreground font-body mb-1">
+              <Text className="text-body-lg font-bold text-foreground font-body mb-1">
                 {address.name}
               </Text>
-              <Text className="text-[14px] text-muted-foreground font-body mb-0.5">
+              <Text className="text-body-md text-muted-foreground font-body mb-0.5">
                 {address.address}
               </Text>
-              <Text className="text-[14px] text-muted-foreground font-body mb-3">
+              <Text className="text-body-md text-muted-foreground font-body mb-3">
                 {address.city}
               </Text>
-              <Text className="text-[14px] font-medium text-foreground font-body mb-4">
+              <Text className="text-body-md font-medium text-foreground font-body mb-4">
                 {address.phone}
               </Text>
 
@@ -243,7 +243,7 @@ export default function AddressesScreen() {
                     openEditModal(address);
                   }}
                 >
-                  <Text className="text-[13px] font-bold text-primary font-heading">Edit</Text>
+                  <Text className="text-sm font-bold text-primary font-heading">Edit</Text>
                 </Pressable>
                 {!address.isDefault && (
                   <Pressable
@@ -254,7 +254,7 @@ export default function AddressesScreen() {
                       handleSetDefault(address.id);
                     }}
                   >
-                    <Text className="text-[13px] font-bold text-muted-foreground font-heading">
+                    <Text className="text-sm font-bold text-muted-foreground font-heading">
                       Set Default
                     </Text>
                   </Pressable>
@@ -286,11 +286,11 @@ export default function AddressesScreen() {
             className="flex-1 justify-end"
           >
             <View
-              className="bg-card rounded-t-[32px] p-6 pb-10"
+              className="bg-card rounded-t-3xl p-6 pb-10"
               style={{ paddingBottom: Math.max(insets.bottom, 24) }}
             >
               <View className="flex-row justify-between items-center mb-6">
-                <Text className="text-[20px] font-heading font-bold text-foreground">
+                <Text className="text-display-sm font-heading font-bold text-foreground">
                   {editingId ? "Edit Address" : "Add Address"}
                 </Text>
                 <Pressable
@@ -316,7 +316,7 @@ export default function AddressesScreen() {
                         color={formData.type === type ? "var(--color-primary)" : "#64748b"}
                       />
                       <Text
-                        className={`text-[12px] mt-1 font-bold ${formData.type === type ? "text-primary-hover" : "text-muted-foreground"}`}
+                        className={`text-body-sm mt-1 font-bold ${formData.type === type ? "text-primary-hover" : "text-muted-foreground"}`}
                       >
                         {type}
                       </Text>
@@ -365,7 +365,7 @@ export default function AddressesScreen() {
                 onPress={handleSave}
                 className="bg-primary py-4 rounded-full items-center mt-2"
               >
-                <Text className="text-white font-bold text-[16px]">Save Address</Text>
+                <Text className="text-white font-bold text-body-lg">Save Address</Text>
               </Pressable>
             </View>
           </KeyboardAvoidingView>

@@ -17,14 +17,16 @@ export default function ContactUsScreen() {
       >
         <View className="flex-row items-center gap-3">
           <BackButton />
-          <Text className="text-[20px] font-heading font-black text-foreground">Contact Us</Text>
+          <Text className="text-display-sm font-heading font-black text-foreground">
+            Contact Us
+          </Text>
         </View>
       </View>
       <ScrollView className="flex-1">
         <View className="px-5 gap-4 pb-12">
           <Pressable
             style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
-            className="bg-card p-5 rounded-[24px] border border-border items-center gap-2"
+            className="bg-card p-5 rounded-2xl border border-border items-center gap-2"
             onPress={() =>
               Linking.openURL("mailto:support@bexiemart.com").catch(() =>
                 Toast.show({
@@ -47,7 +49,7 @@ export default function ContactUsScreen() {
           </Pressable>
           <Pressable
             style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
-            className="bg-card p-5 rounded-[24px] border border-border items-center gap-2"
+            className="bg-card p-5 rounded-2xl border border-border items-center gap-2"
             onPress={() =>
               Linking.openURL("tel:+233241234567").catch(() =>
                 Toast.show({ type: "error", text1: "Call failed", text2: "No phone app available" })

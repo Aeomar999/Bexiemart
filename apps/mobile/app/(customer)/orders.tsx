@@ -47,7 +47,9 @@ export default function OrdersScreen() {
       >
         <View className="flex-row items-center gap-3">
           <BackButton />
-          <Text className="text-[20px] font-heading font-black text-foreground">Order History</Text>
+          <Text className="text-display-sm font-heading font-black text-foreground">
+            Order History
+          </Text>
         </View>
 
         {/* Filters */}
@@ -62,7 +64,7 @@ export default function OrdersScreen() {
               }`}
             >
               <Text
-                className={`text-[14px] font-bold capitalize ${
+                className={`text-body-md font-bold capitalize ${
                   filter === f ? "text-white" : "text-muted-foreground"
                 }`}
               >
@@ -103,7 +105,7 @@ export default function OrdersScreen() {
             return (
               <Pressable
                 style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
-                className="bg-card p-5 rounded-[24px] border border-border shadow-[0_10px_20px_rgba(0,0,0,0.03)] mb-4"
+                className="bg-card p-5 rounded-2xl border border-border shadow-lg mb-4"
                 onPress={() => {
                   if (item.status !== "delivered" && item.status !== "cancelled") {
                     router.push("/(customer)/track-order");
@@ -119,7 +121,7 @@ export default function OrdersScreen() {
                 {/* Order Header */}
                 <View className="flex-row justify-between items-center mb-4">
                   <View>
-                    <Text className="text-[14px] font-heading font-bold text-foreground">
+                    <Text className="text-body-md font-heading font-bold text-foreground">
                       Order #{item.id}
                     </Text>
                     <Text className="text-body-sm font-body text-muted-foreground mt-0.5">
@@ -131,21 +133,21 @@ export default function OrdersScreen() {
                     style={{ backgroundColor: status.bg }}
                   >
                     <Icon name={status.icon} size={12} color={status.color} />
-                    <Text className="text-[12px] font-bold ml-1.5" style={{ color: status.color }}>
+                    <Text className="text-body-sm font-bold ml-1.5" style={{ color: status.color }}>
                       {status.label}
                     </Text>
                   </View>
                 </View>
 
                 {/* Items */}
-                <View className="bg-background p-4 rounded-[16px] mb-4">
+                <View className="bg-background p-4 rounded-xl mb-4">
                   {item.items.map((cartItem: any, idx: number) => (
                     <View
                       key={idx}
                       className={`flex-row justify-between items-center ${idx !== item.items.length - 1 ? "mb-2" : ""}`}
                     >
                       <Text
-                        className="text-[14px] font-body font-medium text-muted-foreground flex-1"
+                        className="text-body-md font-body font-medium text-muted-foreground flex-1"
                         numberOfLines={1}
                       >
                         {cartItem.qty}x {cartItem.name}
@@ -160,7 +162,7 @@ export default function OrdersScreen() {
                     <Text className="text-caption font-body text-muted-foreground mb-0.5">
                       Total Amount
                     </Text>
-                    <Text className="text-[16px] font-heading font-black text-primary">
+                    <Text className="text-body-lg font-heading font-black text-primary">
                       GHS {item.total.toFixed(2)}
                     </Text>
                   </View>
@@ -180,7 +182,7 @@ export default function OrdersScreen() {
                       }
                     }}
                   >
-                    <Text className="text-[14px] font-bold text-primary">
+                    <Text className="text-body-md font-bold text-primary">
                       {item.status === "delivered" ? "Reorder" : "Track"}
                     </Text>
                   </Pressable>

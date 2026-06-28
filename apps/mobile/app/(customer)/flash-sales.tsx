@@ -47,13 +47,15 @@ export default function FlashSalesScreen() {
         <View className="flex-row items-center justify-between">
           <View className="flex-row items-center gap-3">
             <BackButton />
-            <Text className="text-[20px] font-heading font-black text-foreground">Flash Sales</Text>
+            <Text className="text-display-sm font-heading font-black text-foreground">
+              Flash Sales
+            </Text>
           </View>
           <View className="flex-row items-center gap-2">
             {sale?.endDate && (
               <View className="flex-row items-center gap-1 bg-rose-50 px-3 py-1.5 rounded-full border border-rose-200">
                 <Icon name="clock" size={12} color="#e11d48" />
-                <Text className="text-[11px] font-bold text-error font-body">
+                <Text className="text-caption font-bold text-error font-body">
                   {formatNumber(timeLeft.hours)}:{formatNumber(timeLeft.minutes)}:
                   {formatNumber(timeLeft.seconds)}
                 </Text>
@@ -78,10 +80,10 @@ export default function FlashSalesScreen() {
       ) : !sale ? (
         <View className="flex-1 items-center justify-center p-10">
           <Icon name="clock" size={48} color="#cbd5e1" />
-          <Text className="text-[16px] font-bold text-muted-foreground mt-4">
+          <Text className="text-body-lg font-bold text-muted-foreground mt-4">
             No active flash sales
           </Text>
-          <Text className="text-[14px] text-muted-foreground mt-1">
+          <Text className="text-body-md text-muted-foreground mt-1">
             Check back later for exciting deals!
           </Text>
         </View>
@@ -97,10 +99,10 @@ export default function FlashSalesScreen() {
             return (
               <Pressable
                 style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
-                className="bg-card rounded-[24px] p-4 flex-row gap-4 mb-4 border border-border shadow-[0_4px_10px_rgba(0,0,0,0.03)]"
+                className="bg-card rounded-2xl p-4 flex-row gap-4 mb-4 border border-border shadow-[0_4px_10px_rgba(0,0,0,0.03)]"
                 onPress={() => router.push(`/(customer)/product/${item.product.id}`)}
               >
-                <View className="w-[110px] h-[110px] rounded-[16px] bg-background items-center justify-center overflow-hidden border border-border relative">
+                <View className="w-[110px] h-[110px] rounded-xl bg-background items-center justify-center overflow-hidden border border-border relative">
                   {item.product?.image ? (
                     <Image
                       source={{ uri: item.product.image }}
@@ -111,7 +113,7 @@ export default function FlashSalesScreen() {
                     <Icon name="image" size={32} color="#cbd5e1" />
                   )}
                   <View className="absolute top-0 left-0 bg-error px-2 py-1 rounded-br-[12px] rounded-tl-[16px]">
-                    <Text className="text-[10px] font-bold text-white uppercase">
+                    <Text className="text-caption font-bold text-white uppercase">
                       {item.discountPercent}% OFF
                     </Text>
                   </View>
@@ -126,7 +128,7 @@ export default function FlashSalesScreen() {
                       {item.product.name}
                     </Text>
                     <View className="flex-row items-center gap-2 mb-2">
-                      <Text className="text-[18px] font-black text-error font-heading">
+                      <Text className="text-heading-md font-black text-error font-heading">
                         GHS {Number(item.discountedPrice).toFixed(2)}
                       </Text>
                       <Text className="text-body-sm text-muted-foreground line-through">
@@ -137,10 +139,10 @@ export default function FlashSalesScreen() {
 
                   <View>
                     <View className="flex-row justify-between mb-1.5">
-                      <Text className="text-[10px] font-bold text-rose-500 uppercase">
+                      <Text className="text-caption font-bold text-rose-500 uppercase">
                         {claimedPercent}% Claimed
                       </Text>
-                      <Text className="text-[10px] text-muted-foreground font-medium">
+                      <Text className="text-caption text-muted-foreground font-medium">
                         Limited Stock
                       </Text>
                     </View>

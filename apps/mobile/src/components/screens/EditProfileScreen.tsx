@@ -105,7 +105,9 @@ export function EditProfileScreen() {
         style={{ paddingTop: (insets.top || 12) + 12 }}
       >
         <BackButton />
-        <Text className="text-[20px] font-heading font-black text-foreground">Edit Profile</Text>
+        <Text className="text-display-sm font-heading font-black text-foreground">
+          Edit Profile
+        </Text>
       </View>
 
       <KeyboardAvoidingView
@@ -130,7 +132,7 @@ export function EditProfileScreen() {
           </View>
 
           {/* Form Fields */}
-          <View className="bg-card rounded-[24px] p-5 border border-border mb-6">
+          <View className="bg-card rounded-2xl p-5 border border-border mb-6">
             <View className="mb-4">
               <Input
                 label="Full Name"
@@ -175,12 +177,12 @@ export function EditProfileScreen() {
             </View>
 
             <View className="mb-2">
-              <Text className="text-[14px] font-bold text-foreground font-heading mb-2 ml-1">
+              <Text className="text-body-md font-bold text-foreground font-heading mb-2 ml-1">
                 Bio (Optional)
               </Text>
-              <View className="min-h-[100px] bg-background rounded-[16px] px-4 py-3 border border-border">
+              <View className="min-h-[100px] bg-background rounded-xl px-4 py-3 border border-border">
                 <TextInput
-                  className="text-[15px] font-body text-foreground flex-1"
+                  className="text-body-lg font-body text-foreground flex-1"
                   placeholder="Tell us a bit about yourself..."
                   placeholderTextColor="#94a3b8"
                   multiline

@@ -34,7 +34,7 @@ export default function CardsScreen() {
       >
         <View className="flex-row items-center gap-3">
           <BackButton />
-          <Text className="text-[20px] font-heading font-black text-foreground">My Cards</Text>
+          <Text className="text-display-sm font-heading font-black text-foreground">My Cards</Text>
         </View>
       </View>
 
@@ -108,7 +108,7 @@ export default function CardsScreen() {
 
                     {/* Middle Row: Number */}
                     <View className="mt-4">
-                      <Text className="text-white/70 text-[10px] uppercase tracking-[2px] mb-1 font-medium">
+                      <Text className="text-white/70 text-caption uppercase tracking-[2px] mb-1 font-medium">
                         Card Number
                       </Text>
                       <View className="flex-row items-center mt-1">
@@ -130,21 +130,21 @@ export default function CardsScreen() {
                     {/* Bottom Row: Name & Expiry */}
                     <View className="flex-row justify-between items-end mt-4">
                       <View className="flex-1 pr-4">
-                        <Text className="text-white/70 text-[10px] uppercase tracking-[2px] mb-1 font-medium">
+                        <Text className="text-white/70 text-caption uppercase tracking-[2px] mb-1 font-medium">
                           Cardholder Name
                         </Text>
                         <Text
-                          className="text-white font-bold text-[15px] tracking-widest uppercase shadow-sm"
+                          className="text-white font-bold text-body-lg tracking-widest uppercase shadow-sm"
                           numberOfLines={1}
                         >
                           {item.cardholderName}
                         </Text>
                       </View>
                       <View className="items-end">
-                        <Text className="text-white/70 text-[10px] uppercase tracking-[2px] mb-1 font-medium">
+                        <Text className="text-white/70 text-caption uppercase tracking-[2px] mb-1 font-medium">
                           Valid Thru
                         </Text>
-                        <Text className="text-white font-bold text-[15px] tracking-widest shadow-sm">
+                        <Text className="text-white font-bold text-body-lg tracking-widest shadow-sm">
                           {item.expiryMonth}/{item.expiryYear}
                         </Text>
                       </View>

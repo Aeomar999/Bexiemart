@@ -60,20 +60,22 @@ export default function ReferralsScreen() {
       >
         <View className="flex-row items-center gap-3">
           <BackButton />
-          <Text className="text-[20px] font-heading font-black text-foreground">Refer & Earn</Text>
+          <Text className="text-display-sm font-heading font-black text-foreground">
+            Refer & Earn
+          </Text>
         </View>
       </View>
 
       <ScrollView className="flex-1" contentContainerStyle={{ padding: 20 }}>
         {/* Banner */}
-        <View className="bg-amber-100 rounded-[32px] p-8 items-center border border-amber-200 mb-6 shadow-sm relative overflow-hidden">
+        <View className="bg-amber-100 rounded-3xl p-8 items-center border border-amber-200 mb-6 shadow-sm relative overflow-hidden">
           <View className="absolute top-[-20px] right-[-20px] opacity-10">
             <Icon name="gift" size={120} color="#d97706" />
           </View>
           <View className="w-20 h-20 bg-amber-500 rounded-full items-center justify-center mb-4 border-4 border-card shadow-lg">
             <Icon name="gift" size={36} color="#fff" />
           </View>
-          <Text className="text-[24px] font-heading font-black text-amber-900 text-center mb-2">
+          <Text className="text-display-md font-heading font-black text-amber-900 text-center mb-2">
             Get 50 BexieCoins
           </Text>
           <Text className="text-body-md text-amber-700 font-medium text-center">
@@ -82,7 +84,7 @@ export default function ReferralsScreen() {
         </View>
 
         {/* Code Sharing */}
-        <View className="bg-card rounded-[24px] p-5 border border-border shadow-sm mb-6">
+        <View className="bg-card rounded-2xl p-5 border border-border shadow-sm mb-6">
           <Text className="text-body-md font-bold text-foreground font-heading mb-4">
             Your Referral Code
           </Text>
@@ -90,14 +92,14 @@ export default function ReferralsScreen() {
             <ActivityIndicator size="small" color="var(--color-primary)" />
           ) : referralCode ? (
             <View className="flex-row items-center gap-3">
-              <View className="flex-1 bg-background rounded-[16px] border border-border py-4 items-center justify-center border-dashed">
-                <Text className="text-[20px] font-mono font-bold text-primary tracking-wider">
+              <View className="flex-1 bg-background rounded-xl border border-border py-4 items-center justify-center border-dashed">
+                <Text className="text-display-sm font-mono font-bold text-primary tracking-wider">
                   {referralCode}
                 </Text>
               </View>
               <Pressable
                 style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
-                className="w-14 h-14 bg-primary-subtle rounded-[16px] items-center justify-center border border-border"
+                className="w-14 h-14 bg-primary-subtle rounded-xl items-center justify-center border border-border"
                 onPress={async () => {
                   await Clipboard.setStringAsync(referralCode);
                   Toast.show({
@@ -112,11 +114,11 @@ export default function ReferralsScreen() {
             </View>
           ) : (
             <Pressable
-              className="bg-primary rounded-[16px] py-4 items-center"
+              className="bg-primary rounded-xl py-4 items-center"
               onPress={handleGenerateCode}
               disabled={isGenerating}
             >
-              <Text className="text-white font-bold text-[16px]">
+              <Text className="text-white font-bold text-body-lg">
                 {isGenerating ? "Generating..." : "Generate Referral Code"}
               </Text>
             </Pressable>
@@ -132,20 +134,22 @@ export default function ReferralsScreen() {
         </View>
 
         {/* Stats */}
-        <Text className="text-[18px] font-heading font-bold text-foreground mb-4">Your Stats</Text>
+        <Text className="text-heading-md font-heading font-bold text-foreground mb-4">
+          Your Stats
+        </Text>
         <View className="flex-row gap-4 mb-6">
-          <View className="flex-1 bg-card p-5 rounded-[24px] border border-border items-center">
+          <View className="flex-1 bg-card p-5 rounded-2xl border border-border items-center">
             <Icon name="users" size={24} color="#64748b" />
-            <Text className="text-[24px] font-heading font-black text-foreground mt-2">
+            <Text className="text-display-md font-heading font-black text-foreground mt-2">
               {referredCount}
             </Text>
             <Text className="text-caption font-body text-muted-foreground mt-1">
               Friends Joined
             </Text>
           </View>
-          <View className="flex-1 bg-card p-5 rounded-[24px] border border-border items-center">
+          <View className="flex-1 bg-card p-5 rounded-2xl border border-border items-center">
             <Icon name="award" size={24} color="#f59e0b" />
-            <Text className="text-[24px] font-heading font-black text-amber-500 mt-2">
+            <Text className="text-display-md font-heading font-black text-amber-500 mt-2">
               {rewardsEarned}
             </Text>
             <Text className="text-caption font-body text-muted-foreground mt-1">Coins Earned</Text>
@@ -153,7 +157,7 @@ export default function ReferralsScreen() {
         </View>
 
         {/* How it works */}
-        <View className="bg-muted rounded-[24px] p-6 mb-10">
+        <View className="bg-muted rounded-2xl p-6 mb-10">
           <Text className="text-body-md font-bold text-foreground font-heading mb-4">
             How it works
           </Text>

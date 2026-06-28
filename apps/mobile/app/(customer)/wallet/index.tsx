@@ -77,7 +77,7 @@ export default function WalletScreen() {
       >
         <View className="flex-row items-center gap-3">
           <BackButton />
-          <Text className="text-[20px] font-heading font-black text-foreground">Wallet</Text>
+          <Text className="text-display-sm font-heading font-black text-foreground">Wallet</Text>
         </View>
       </View>
       <ScrollView
@@ -150,12 +150,12 @@ export default function WalletScreen() {
                   <View className="flex-row justify-between items-start">
                     <View className="flex-1 pr-4">
                       <Text
-                        className="text-white text-[15px] font-bold tracking-wide"
+                        className="text-white text-body-lg font-bold tracking-wide"
                         numberOfLines={1}
                       >
                         {cards[0]?.cardholderName}
                       </Text>
-                      <Text className="text-white/80 text-[13px] mt-1.5 font-mono tracking-[0.15em]">
+                      <Text className="text-white/80 text-sm mt-1.5 font-mono tracking-[0.15em]">
                         •••• •••• •••• {cards[0]?.last4}
                       </Text>
                     </View>
@@ -166,11 +166,11 @@ export default function WalletScreen() {
                         >
                           <Icon name="wifi" size={16} color="rgba(255,255,255,0.7)" />
                         </View>
-                        <Text className="text-white text-[24px] font-black italic tracking-widest">
+                        <Text className="text-white text-display-md font-black italic tracking-widest">
                           {cards[0]?.type?.toUpperCase() || "CARD"}
                         </Text>
                       </View>
-                      <Text className="text-white/60 text-[9px] mt-0.5 font-bold uppercase tracking-widest">
+                      <Text className="text-white/60 text-caption mt-0.5 font-bold uppercase tracking-widest">
                         Valid {cards[0]?.expiryMonth}/{cards[0]?.expiryYear?.slice(-2)}
                       </Text>
                     </View>
@@ -215,7 +215,7 @@ export default function WalletScreen() {
                 <View className="absolute bottom-[-80px] left-[-20px] w-[200px] h-[200px] rounded-full bg-white/5" />
 
                 <View className="mb-6">
-                  <Text className="text-white/70 text-[12px] font-bold uppercase tracking-widest mb-1">
+                  <Text className="text-white/70 text-body-sm font-bold uppercase tracking-widest mb-1">
                     Total Balance
                   </Text>
                   <View className="flex-row items-baseline">
@@ -230,7 +230,7 @@ export default function WalletScreen() {
                           })
                         : "••••••"}
                     </Text>
-                    <Text className="text-white/80 text-[18px] font-bold ml-2">{currency}</Text>
+                    <Text className="text-white/80 text-heading-md font-bold ml-2">{currency}</Text>
                   </View>
                 </View>
 
@@ -245,13 +245,13 @@ export default function WalletScreen() {
 
                   <View className="flex-row gap-3">
                     <Pressable
-                      className="bg-white/15 w-[48px] h-[48px] rounded-full items-center justify-center border border-white/10"
+                      className="bg-white/15 w-12 h-12 rounded-full items-center justify-center border border-white/10"
                       onPress={onRefresh}
                     >
                       <Icon name="refresh-cw" size={18} color="#fff" />
                     </Pressable>
                     <Pressable
-                      className="bg-white/15 w-[48px] h-[48px] rounded-full items-center justify-center border border-white/10"
+                      className="bg-white/15 w-12 h-12 rounded-full items-center justify-center border border-white/10"
                       onPress={() => setShowBalance(!showBalance)}
                     >
                       <Icon name={showBalance ? "eye-off" : "eye"} size={18} color="#fff" />
@@ -301,7 +301,7 @@ export default function WalletScreen() {
             onPress={() => router.push("/(customer)/wallet/rewards")}
             className="mb-8"
           >
-            <View className="rounded-[24px] shadow-sm overflow-hidden">
+            <View className="rounded-2xl shadow-sm overflow-hidden">
               <LinearGradient
                 colors={["#f59e0b", "#d97706"]}
                 start={{ x: 0, y: 0 }}
@@ -312,17 +312,17 @@ export default function WalletScreen() {
                   <Icon name="award" size={120} color="#fff" />
                 </View>
                 <View className="flex-row justify-between items-center mb-3">
-                  <Text className="text-[14px] font-heading font-bold text-white/90 uppercase tracking-wider">
+                  <Text className="text-body-md font-heading font-bold text-white/90 uppercase tracking-wider">
                     Gold Tier
                   </Text>
                   <View className="bg-card/20 px-3 py-1 rounded-full">
-                    <Text className="text-[12px] font-bold text-white">How to earn</Text>
+                    <Text className="text-body-sm font-bold text-white">How to earn</Text>
                   </View>
                 </View>
-                <Text className="text-[28px] font-black text-white font-heading mb-1">
+                <Text className="text-display-md font-black text-white font-heading mb-1">
                   {bexieCoins.toLocaleString()}
                 </Text>
-                <Text className="text-[14px] text-white/80 font-medium font-body">
+                <Text className="text-body-md text-white/80 font-medium font-body">
                   BexieCoins Available
                 </Text>
               </LinearGradient>
@@ -332,19 +332,19 @@ export default function WalletScreen() {
 
         <View className="px-5">
           <View className="flex-row justify-between items-center mb-4">
-            <Text className="text-[18px] font-heading font-bold text-foreground">
+            <Text className="text-heading-md font-heading font-bold text-foreground">
               Recent Activity
             </Text>
             <Pressable
               style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
               onPress={() => router.push("/(customer)/wallet/transactions")}
             >
-              <Text className="text-[14px] font-bold text-primary font-body">View All</Text>
+              <Text className="text-body-md font-bold text-primary font-body">View All</Text>
             </Pressable>
           </View>
 
           {transactions.length === 0 ? (
-            <View className="bg-card p-6 rounded-[24px] border border-border">
+            <View className="bg-card p-6 rounded-2xl border border-border">
               <EmptyState
                 iconName="file-text"
                 title="No transactions yet"
@@ -352,7 +352,7 @@ export default function WalletScreen() {
               />
             </View>
           ) : (
-            <View className="bg-card rounded-[24px] border border-border overflow-hidden">
+            <View className="bg-card rounded-2xl border border-border overflow-hidden">
               {transactions.slice(0, 5).map((tx: any, index: number) => {
                 const colors = getTransactionColors(tx.type);
                 const prefix = getAmountPrefix(tx.type);
@@ -374,17 +374,17 @@ export default function WalletScreen() {
                     </View>
                     <View className="flex-1">
                       <Text
-                        className="text-[15px] font-bold text-foreground font-body"
+                        className="text-body-lg font-bold text-foreground font-body"
                         numberOfLines={1}
                       >
                         {tx.description}
                       </Text>
-                      <Text className="text-[12px] text-muted-foreground font-body mt-0.5">
+                      <Text className="text-body-sm text-muted-foreground font-body mt-0.5">
                         {formatDate(tx.createdAt ?? tx.date)}
                       </Text>
                     </View>
                     <Text
-                      className={`text-[15px] font-bold font-heading ${isPositive ? "text-emerald-600" : "text-foreground"}`}
+                      className={`text-body-lg font-bold font-heading ${isPositive ? "text-emerald-600" : "text-foreground"}`}
                     >
                       {prefix} {currency} {Number(tx.amount || tx.netAmount).toFixed(2)}
                     </Text>

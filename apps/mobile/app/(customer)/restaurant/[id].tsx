@@ -73,7 +73,7 @@ export default function RestaurantScreen() {
       >
         <View className="flex-row items-center gap-3">
           <BackButton />
-          <Text className="text-[20px] font-heading font-black text-foreground">
+          <Text className="text-display-sm font-heading font-black text-foreground">
             {restaurant?.shopName || "Restaurant"}
           </Text>
         </View>
@@ -111,49 +111,49 @@ export default function RestaurantScreen() {
           <View className="absolute bottom-0 left-0 right-0 h-40 bg-black/60 z-0" />
 
           <View className="p-5 z-10">
-            <Text className="text-white font-heading font-black text-[32px]">
+            <Text className="text-white font-heading font-black text-display-lg">
               {restaurant.shopName}
             </Text>
-            <Text className="text-white/90 font-body text-[14px] mt-1">
+            <Text className="text-white/90 font-body text-body-md mt-1">
               {restaurant.description ?? "Restaurant"}
             </Text>
           </View>
         </View>
 
         {/* Info Card */}
-        <View className="bg-card rounded-[24px] mx-5 -mt-6 p-5 border border-border mb-6 z-20">
+        <View className="bg-card rounded-2xl mx-5 -mt-6 p-5 border border-border mb-6 z-20">
           <View className="flex-row justify-between">
             <View className="items-center">
               <View className="flex-row items-center">
                 <Icon name="map-pin" size={16} color="#64748b" />
-                <Text className="text-[16px] font-bold text-foreground ml-1">
+                <Text className="text-body-lg font-bold text-foreground ml-1">
                   {restaurant.city ?? restaurant.address ?? "Accra"}
                 </Text>
               </View>
-              <Text className="text-[12px] text-muted-foreground mt-1">Location</Text>
+              <Text className="text-body-sm text-muted-foreground mt-1">Location</Text>
             </View>
             <View className="w-[1px] bg-secondary" />
             <View className="items-center">
               <View className="flex-row items-center">
                 <Icon name="shopping-bag" size={16} color="#64748b" />
-                <Text className="text-[16px] font-bold text-foreground ml-1">
+                <Text className="text-body-lg font-bold text-foreground ml-1">
                   {restaurant._count?.foodItems ??
                     menuGroups.reduce((sum: number, g: any) => sum + g.items.length, 0)}
                 </Text>
               </View>
-              <Text className="text-[12px] text-muted-foreground mt-1">Menu Items</Text>
+              <Text className="text-body-sm text-muted-foreground mt-1">Menu Items</Text>
             </View>
             <View className="w-[1px] bg-secondary" />
             <View className="items-center">
               <View className="flex-row items-center">
                 <Icon name="clock" size={16} color="#64748b" />
-                <Text className="text-[16px] font-bold text-foreground ml-1">
+                <Text className="text-body-lg font-bold text-foreground ml-1">
                   {restaurant.hours?.length > 0
                     ? `${restaurant.hours[0].openTime ?? "09:00"}-${restaurant.hours[0].closeTime ?? "17:00"}`
                     : "Open"}
                 </Text>
               </View>
-              <Text className="text-[12px] text-muted-foreground mt-1">Hours</Text>
+              <Text className="text-body-sm text-muted-foreground mt-1">Hours</Text>
             </View>
           </View>
         </View>
@@ -172,7 +172,7 @@ export default function RestaurantScreen() {
                 className="pb-2 relative"
               >
                 <Text
-                  className={`text-[16px] font-bold ${activeCategory === cat.category ? "text-orange-600" : "text-muted-foreground"}`}
+                  className={`text-body-lg font-bold ${activeCategory === cat.category ? "text-orange-600" : "text-muted-foreground"}`}
                 >
                   {cat.category}
                 </Text>
@@ -191,26 +191,26 @@ export default function RestaurantScreen() {
               key={cat.category}
               style={{ display: activeCategory === cat.category ? "flex" : "none" }}
             >
-              <Text className="text-[20px] font-heading font-bold text-foreground mb-4">
+              <Text className="text-display-sm font-heading font-bold text-foreground mb-4">
                 {cat.category}
               </Text>
               <View className="gap-4">
                 {cat.items.map((item: any) => (
                   <View
                     key={item.id}
-                    className="bg-card rounded-[20px] p-4 border border-border flex-row justify-between"
+                    className="bg-card rounded-2xl p-4 border border-border flex-row justify-between"
                   >
                     <View className="flex-1 pr-4 justify-center">
-                      <Text className="text-[16px] font-bold text-foreground mb-1 font-heading">
+                      <Text className="text-body-lg font-bold text-foreground mb-1 font-heading">
                         {item.name}
                       </Text>
                       <Text
-                        className="text-[13px] text-muted-foreground mb-2 leading-tight font-body"
+                        className="text-sm text-muted-foreground mb-2 leading-tight font-body"
                         numberOfLines={2}
                       >
                         {item.description}
                       </Text>
-                      <Text className="text-[15px] font-bold text-primary font-heading">
+                      <Text className="text-body-lg font-bold text-primary font-heading">
                         GHS {item.price.toFixed(2)}
                       </Text>
                     </View>
@@ -225,7 +225,7 @@ export default function RestaurantScreen() {
                         onPress={() => handleAddToCart(item)}
                       >
                         <Icon name="plus" size={14} color="#ea580c" />
-                        <Text className="text-[13px] font-bold text-orange-600">Add</Text>
+                        <Text className="text-sm font-bold text-orange-600">Add</Text>
                       </Pressable>
                     </View>
                   </View>
@@ -246,11 +246,11 @@ export default function RestaurantScreen() {
           >
             <View className="flex-row items-center gap-3">
               <View className="bg-primary-hover w-8 h-8 rounded-full items-center justify-center">
-                <Text className="text-white font-bold text-[14px]">{cartItemCount}</Text>
+                <Text className="text-white font-bold text-body-md">{cartItemCount}</Text>
               </View>
-              <Text className="text-white font-bold text-[16px]">View Cart</Text>
+              <Text className="text-white font-bold text-body-lg">View Cart</Text>
             </View>
-            <Text className="text-white font-bold text-[16px]">GHS {cartSubtotal.toFixed(2)}</Text>
+            <Text className="text-white font-bold text-body-lg">GHS {cartSubtotal.toFixed(2)}</Text>
           </Pressable>
         </View>
       )}
