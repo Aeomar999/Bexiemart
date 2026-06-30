@@ -67,6 +67,8 @@ export default function RootLayout() {
   });
 
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
+  const authPromptActive = useAuthStore((s) => s.authPromptActive);
+  const setAuthPromptActive = useAuthStore((s) => s.setAuthPromptActive);
   const { authEnabled, ready: authFlagReady } = useAuthEnabled();
   const router = useRouter();
   const rootNavigationState = useRootNavigationState();
@@ -113,10 +115,17 @@ export default function RootLayout() {
         if (!hasLaunchedBefore && !inOnboardingGroup) {
           router.replace("/(onboarding)/welcome");
         } else if (!authEnabled) {
-          // Auth wall flagged off: guests browse freely. Only rescue them from
-          // the blank root index — allow visiting (auth) on demand (e.g. tapping
-          // "Sign in" to check out) instead of bouncing them straight back.
-          if (!segments[0]) {
+          // Auth wall flagged off: guests browse freely. Rescue them from the
+          // blank root index, and from the (auth) group too UNLESS they opened
+          // it on demand (tapped "Sign in"). Rescuing non-deliberate (auth)
+          // visits self-corrects the cold-start race where a slow flag load
+          // briefly routed a returning guest to login before the flag resolved.
+          if (!inAuthGroup && authPromptActive) {
+            // Guest left the on-demand sign-in flow; reset intent so a later
+            // race can still rescue them.
+            setAuthPromptActive(false);
+          }
+          if (!segments[0] || (inAuthGroup && !authPromptActive)) {
             router.replace("/(customer)/(tabs)/(home)");
           }
         } else if (hasLaunchedBefore && !inAuthGroup && !inOnboardingGroup) {
@@ -138,6 +147,7 @@ export default function RootLayout() {
     fontsLoaded,
     authEnabled,
     authFlagReady,
+    authPromptActive,
   ]);
 
   return (

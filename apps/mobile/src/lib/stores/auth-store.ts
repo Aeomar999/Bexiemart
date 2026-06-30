@@ -39,9 +39,14 @@ interface AuthState {
   isLoading: boolean;
   hasLaunchedBefore: boolean;
   hasSeenOnboarding: boolean;
+  // True while a guest is in an on-demand sign-in flow they deliberately opened
+  // (e.g. tapped "Sign in" to check out). Lets the router keep them on the auth
+  // screen instead of bouncing them back to guest browsing.
+  authPromptActive: boolean;
 
   setAuth: (user: User, token: string) => Promise<void>;
   setUser: (user: User) => void;
+  setAuthPromptActive: (active: boolean) => void;
   logout: () => Promise<void>;
   hydrate: () => Promise<void>;
   completeLaunch: () => Promise<void>;
@@ -55,16 +60,28 @@ export const useAuthStore = create<AuthState>((set) => ({
   isLoading: true,
   hasLaunchedBefore: false,
   hasSeenOnboarding: false,
+  authPromptActive: false,
 
   setAuth: async (user, token) => {
     await storage.setItem("bexiemart_token", token);
     const normalizedUser = { ...user, role: user.role?.toUpperCase() };
     await storage.setItem("bexiemart_user", JSON.stringify(normalizedUser));
-    set({ user: normalizedUser, token, isAuthenticated: true, isLoading: false });
+    // Sign-in succeeded — the on-demand prompt (if any) is resolved.
+    set({
+      user: normalizedUser,
+      token,
+      isAuthenticated: true,
+      isLoading: false,
+      authPromptActive: false,
+    });
   },
 
   setUser: (user) => {
     set({ user });
+  },
+
+  setAuthPromptActive: (active) => {
+    set({ authPromptActive: active });
   },
 
   logout: async () => {

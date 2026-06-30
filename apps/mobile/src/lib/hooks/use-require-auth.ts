@@ -17,6 +17,7 @@ import Toast from "@/lib/toast-polyfill";
 export function useRequireAuth() {
   const router = useRouter();
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
+  const setAuthPromptActive = useAuthStore((s) => s.setAuthPromptActive);
 
   return (action?: () => void): boolean => {
     if (isAuthenticated) {
@@ -29,6 +30,9 @@ export function useRequireAuth() {
       text1: "Sign in required",
       text2: "Sign in or create an account to continue.",
     });
+    // Mark this as a deliberate sign-in so the root router doesn't bounce the
+    // guest straight back to browsing.
+    setAuthPromptActive(true);
     router.push("/(auth)/login");
     return false;
   };
