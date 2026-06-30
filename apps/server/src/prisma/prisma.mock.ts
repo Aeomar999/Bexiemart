@@ -249,6 +249,15 @@ export const mockPrisma = (): any => ({
     delete: jest.fn(),
     count: jest.fn(),
   },
+  banner: {
+    findUnique: jest.fn(),
+    findMany: jest.fn(),
+    findFirst: jest.fn(),
+    create: jest.fn(),
+    update: jest.fn(),
+    delete: jest.fn(),
+    count: jest.fn(),
+  },
   foodItem: {
     findUnique: jest.fn(),
     findMany: jest.fn(),

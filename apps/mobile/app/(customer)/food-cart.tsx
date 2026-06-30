@@ -1,3 +1,4 @@
+import { tokens } from "@/theme/tokens";
 import { BackButton } from "@/components/ui/BackButton";
 import {
   View,
@@ -322,7 +323,7 @@ export default function FoodCartScreen() {
             className="bg-card rounded-2xl p-4 border border-border flex-row items-center gap-3"
           >
             <View className="w-10 h-10 rounded-full bg-primary-subtle items-center justify-center border border-border">
-              <Icon name="map-pin" size={18} color="var(--color-primary)" />
+              <Icon name="map-pin" size={18} color={tokens.primary} />
             </View>
             <View className="flex-1">
               {deliveryAddress ? (
@@ -420,9 +421,9 @@ export default function FoodCartScreen() {
               >
                 <View className="w-10 h-10 rounded-full bg-primary-subtle items-center justify-center border border-border">
                   {isLocating ? (
-                    <ActivityIndicator size="small" color="var(--color-primary)" />
+                    <ActivityIndicator size="small" color={tokens.primary} />
                   ) : (
-                    <Icon name="navigation" size={18} color="var(--color-primary)" />
+                    <Icon name="navigation" size={18} color={tokens.primary} />
                   )}
                 </View>
                 <View className="flex-1">

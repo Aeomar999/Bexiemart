@@ -1,3 +1,4 @@
+import { tokens } from "@/theme/tokens";
 import { BackButton } from "@/components/ui/BackButton";
 import { View, Text, ScrollView, Pressable, Modal, TextInput, Alert } from "react-native";
 import { useRouter } from "expo-router";
@@ -158,7 +159,7 @@ export default function VendorReviewsScreen() {
                     <Icon
                       name="message-circle"
                       size={16}
-                      color="var(--color-primary)"
+                      color={tokens.primary}
                       style={{ marginRight: 6 }}
                     />
                     <Text className="text-body-md font-bold text-primary">Reply to Customer</Text>

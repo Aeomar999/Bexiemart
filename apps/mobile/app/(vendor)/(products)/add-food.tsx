@@ -1,3 +1,4 @@
+import { tokens } from "@/theme/tokens";
 import { BackButton } from "@/components/ui/BackButton";
 import { View, Text, ScrollView, Alert, Pressable, FlatList } from "react-native";
 import { useRouter, useLocalSearchParams } from "expo-router";
@@ -191,9 +192,7 @@ export default function AddFoodScreen() {
                     name={tag.icon}
                     size={14}
                     color={
-                      dietaryTags[tag.id as keyof typeof dietaryTags]
-                        ? "var(--color-primary)"
-                        : "#64748b"
+                      dietaryTags[tag.id as keyof typeof dietaryTags] ? tokens.primary : "#64748b"
                     }
                   />
                   <Text

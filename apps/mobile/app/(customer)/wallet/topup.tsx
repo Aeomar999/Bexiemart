@@ -1,3 +1,4 @@
+import { tokens } from "@/theme/tokens";
 import { BackButton } from "@/components/ui/BackButton";
 import { View, Text, ScrollView, TextInput, Keyboard, Pressable } from "react-native";
 import { useState } from "react";
@@ -212,7 +213,7 @@ export default function TopUpScreen() {
                   <Icon
                     name={method.icon}
                     size={18}
-                    color={isSelected ? "var(--color-primary)" : "#64748b"}
+                    color={isSelected ? tokens.primary : "#64748b"}
                   />
                 </View>
                 <Text

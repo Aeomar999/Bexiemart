@@ -1,3 +1,4 @@
+import { tokens } from "@/theme/tokens";
 import { BackButton } from "@/components/ui/BackButton";
 import { View, Text, Alert, TouchableOpacity } from "react-native";
 import { router } from "expo-router";
@@ -56,7 +57,7 @@ export default function ForgotPasswordScreen() {
       ) : (
         <View>
           <View className="w-16 h-16 rounded-2xl bg-primary-subtle items-center justify-center mb-6">
-            <FontAwesome5 name="key" size={24} color="var(--color-primary)" solid />
+            <FontAwesome5 name="key" size={24} color={tokens.primary} solid />
           </View>
           <Text className="text-display-md font-heading font-bold text-foreground mb-2">
             Forgot password?

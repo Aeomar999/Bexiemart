@@ -1,3 +1,4 @@
+import { tokens } from "@/theme/tokens";
 import { View, Text, ScrollView, Pressable, RefreshControl, ActivityIndicator } from "react-native";
 import { useState, useCallback } from "react";
 import { useRouter } from "expo-router";
@@ -40,7 +41,7 @@ const QUICK_ACTIONS = [
     id: "2",
     label: "Withdraw\nFunds",
     icon: "dollar-sign",
-    color: "var(--color-primary)",
+    color: tokens.primary,
     bg: "#e0e7ff",
     route: "/(vendor)/(earnings)",
   },
@@ -120,7 +121,7 @@ export default function DashboardScreen() {
           <RefreshControl
             refreshing={refreshing}
             onRefresh={onRefresh}
-            tintColor="var(--color-primary)"
+            tintColor={tokens.primary}
           />
         }
       >
@@ -213,7 +214,7 @@ export default function DashboardScreen() {
           <View className="flex-row flex-wrap justify-between gap-y-4">
             {statsLoading ? (
               <View className="w-full items-center py-8">
-                <ActivityIndicator size="small" color="var(--color-primary)" />
+                <ActivityIndicator size="small" color={tokens.primary} />
               </View>
             ) : statsError ? (
               <View className="w-full items-center py-8">

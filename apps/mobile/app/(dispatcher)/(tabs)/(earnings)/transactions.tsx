@@ -1,3 +1,5 @@
+import { RowsSkeleton } from "@/components/ui/Skeleton";
+import { tokens } from "@/theme/tokens";
 import { View, Text, ScrollView, Pressable, ActivityIndicator, Alert } from "react-native";
 import { useRouter } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -66,9 +68,7 @@ export default function TransactionsScreen() {
 
       <ScrollView className="flex-1 px-5" contentContainerClassName="pb-24">
         {isLoading ? (
-          <View className="py-20 items-center justify-center">
-            <ActivityIndicator size="small" color="var(--color-primary)" />
-          </View>
+          <RowsSkeleton />
         ) : filteredTransactions.length === 0 ? (
           <View className="py-20 items-center justify-center">
             <View className="w-16 h-16 rounded-full bg-slate-100 items-center justify-center mb-4">

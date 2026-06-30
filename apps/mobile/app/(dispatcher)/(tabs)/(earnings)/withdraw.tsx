@@ -1,3 +1,4 @@
+import { tokens } from "@/theme/tokens";
 import { BackButton } from "@/components/ui/BackButton";
 import {
   View,
@@ -167,7 +168,7 @@ export default function WithdrawFundsScreen() {
         <View className="bg-white rounded-3xl p-6 mb-8 border border-border shadow-sm shadow-sm/50 mt-4">
           <View className="flex-row justify-between items-center mb-6">
             <View className="flex-row items-center bg-primary-subtle px-3 py-1.5 rounded-full border border-border">
-              <Icon name="info" size={14} color="var(--color-primary)" style={{ marginRight: 6 }} />
+              <Icon name="info" size={14} color={tokens.primary} style={{ marginRight: 6 }} />
               <Text className="text-body-sm font-bold text-primary-hover">
                 Available: GHS {availableBalance.toFixed(2)}
               </Text>
@@ -246,7 +247,7 @@ export default function WithdrawFundsScreen() {
               style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
               onPress={() => setShowAddMethod(true)}
             >
-              <Icon name="plus" size={18} color="var(--color-primary)" style={{ marginRight: 8 }} />
+              <Icon name="plus" size={18} color={tokens.primary} style={{ marginRight: 8 }} />
               <Text className="text-body-lg font-bold text-primary">Add Payment Method</Text>
             </Pressable>
           </View>

@@ -1,3 +1,5 @@
+import { LoadingState } from "@/components/ui/LoadingState";
+import { tokens } from "@/theme/tokens";
 import { View, Text, Pressable, Linking, ActivityIndicator } from "react-native";
 import { useRouter, useLocalSearchParams } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -149,11 +151,7 @@ export default function TrackOrderScreen() {
   };
 
   if (isLoading || !job) {
-    return (
-      <View className="flex-1 bg-background items-center justify-center">
-        <ActivityIndicator color="var(--color-primary)" />
-      </View>
-    );
+    return <LoadingState type="detail" />;
   }
 
   const canCancel = ["PENDING", "ASSIGNED", "EN_ROUTE_PICKUP", "ARRIVED_PICKUP"].includes(status);
@@ -174,13 +172,13 @@ export default function TrackOrderScreen() {
         }}
       >
         {routeCoords.length > 1 ? (
-          <Polyline coordinates={routeCoords} strokeColor="var(--color-primary)" strokeWidth={4} />
+          <Polyline coordinates={routeCoords} strokeColor={tokens.primary} strokeWidth={4} />
         ) : (
           pickup &&
           dropoff && (
             <Polyline
               coordinates={[pickup, dropoff]}
-              strokeColor="var(--color-primary)"
+              strokeColor={tokens.primary}
               strokeWidth={4}
               lineDashPattern={[10, 10]}
             />

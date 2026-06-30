@@ -1,19 +1,12 @@
+import { LoadingState } from "@/components/ui/LoadingState";
 import { BackButton } from "@/components/ui/BackButton";
-import {
-  View,
-  Text,
-  ScrollView,
-  Pressable,
-  TextInput,
-  FlatList,
-  Dimensions,
-  ActivityIndicator,
-} from "react-native";
+import { View, Text, ScrollView, Pressable, TextInput, FlatList } from "react-native";
 import { useRouter } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { useState, useMemo, useCallback } from "react";
+import { useState, useMemo } from "react";
 import { Image } from "expo-image";
 import { Icon } from "@/components/ui/Icon";
+import { PromoBanner } from "@/components/ui/PromoBanner";
 import { useFoodRestaurants, useFoodCart } from "@/lib/hooks/use-food";
 
 const CATEGORIES = [
@@ -29,7 +22,6 @@ export default function FoodDeliveryScreen() {
 
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
-  const [activePromoIndex, setActivePromoIndex] = useState(0);
 
   const { data: restaurantsData, isLoading } = useFoodRestaurants(
     selectedCategory ? { category: selectedCategory } : undefined
@@ -38,25 +30,6 @@ export default function FoodDeliveryScreen() {
   const cartItems = cartData?.items ?? [];
   const cartItemCount = cartItems.reduce((acc: number, item: any) => acc + item.quantity, 0);
   const restaurants = restaurantsData ?? [];
-
-  const PROMO_BANNERS = [
-    {
-      id: "1",
-      title: "Free Delivery",
-      subtitle: "On your first 3 food orders!",
-      bgImage:
-        "https://images.unsplash.com/photo-1504674900247-0877df9cc836?q=80&w=800&auto=format&fit=crop",
-      color: "bg-orange-600",
-    },
-    {
-      id: "2",
-      title: "50% Off KFC",
-      subtitle: "Valid until 8 PM today",
-      bgImage:
-        "https://images.unsplash.com/photo-1513104890138-7c749659a591?q=80&w=800&auto=format&fit=crop",
-      color: "bg-rose-600",
-    },
-  ];
 
   const CATEGORIES = [
     { id: "1", name: "Fast Food", icon: "fast-forward" },
@@ -70,10 +43,6 @@ export default function FoodDeliveryScreen() {
     const q = searchQuery.toLowerCase();
     return restaurants.filter((r: any) => (r.shopName ?? "").toLowerCase().includes(q));
   }, [searchQuery, restaurants]);
-
-  const handleViewableItemsChanged = useCallback(({ viewableItems }: any) => {
-    if (viewableItems.length > 0) setActivePromoIndex(viewableItems[0].index ?? 0);
-  }, []);
 
   return (
     <View className="flex-1 bg-background">
@@ -125,9 +94,7 @@ export default function FoodDeliveryScreen() {
         keyboardShouldPersistTaps="handled"
       >
         {isLoading ? (
-          <View className="py-20 items-center">
-            <ActivityIndicator size="large" color="#64748b" />
-          </View>
+          <LoadingState type="grid" />
         ) : (
           <>
             {/* Categories */}
@@ -171,57 +138,7 @@ export default function FoodDeliveryScreen() {
 
             {/* Featured Banner */}
             {!searchQuery && !selectedCategory && (
-              <View className="mb-8">
-                <FlatList
-                  data={PROMO_BANNERS}
-                  horizontal
-                  pagingEnabled
-                  showsHorizontalScrollIndicator={false}
-                  decelerationRate="fast"
-                  snapToInterval={Dimensions.get("window").width}
-                  snapToAlignment="center"
-                  onViewableItemsChanged={handleViewableItemsChanged}
-                  viewabilityConfig={{ itemVisiblePercentThreshold: 50 }}
-                  keyExtractor={(item) => item.id}
-                  renderItem={({ item }) => (
-                    <View style={{ width: Dimensions.get("window").width, paddingHorizontal: 20 }}>
-                      <Pressable
-                        className={`w-full h-40 rounded-2xl ${item.color} overflow-hidden relative`}
-                        onPress={() => router.push(`/(customer)/restaurant/1`)}
-                      >
-                        <Image
-                          source={{ uri: item.bgImage }}
-                          style={{ width: "100%", height: "100%", position: "absolute" }}
-                          contentFit="cover"
-                        />
-                        <View className="absolute inset-0 bg-black/50" />
-
-                        <View className="flex-1 p-5 justify-center">
-                          <Text className="text-white font-heading font-black text-display-md mb-1">
-                            {item.title}
-                          </Text>
-                          <Text className="text-white/90 font-body text-body-md mb-4">
-                            {item.subtitle}
-                          </Text>
-                          <View className="bg-card px-4 py-2 rounded-full self-start">
-                            <Text className="text-foreground font-bold text-body-sm">
-                              Order Now
-                            </Text>
-                          </View>
-                        </View>
-                      </Pressable>
-                    </View>
-                  )}
-                />
-                <View className="flex-row justify-center items-center mt-3 gap-1.5">
-                  {PROMO_BANNERS.map((_, i) => (
-                    <View
-                      key={i}
-                      className={`h-1.5 rounded-full ${i === activePromoIndex ? "w-4 bg-orange-500" : "w-1.5 bg-secondary"}`}
-                    />
-                  ))}
-                </View>
-              </View>
+              <PromoBanner placement="FOOD" containerClassName="mb-8" />
             )}
 
             {/* Restaurants List */}

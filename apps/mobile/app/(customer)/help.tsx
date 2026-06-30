@@ -1,3 +1,4 @@
+import { tokens } from "@/theme/tokens";
 import { BackButton } from "@/components/ui/BackButton";
 import { View, Text, ScrollView, Pressable } from "react-native";
 import { useState } from "react";
@@ -56,7 +57,7 @@ export default function HelpCenterScreen() {
                   <Icon
                     name={isExpanded ? "chevron-up" : "chevron-down"}
                     size={20}
-                    color={isExpanded ? "var(--color-primary)" : "#64748b"}
+                    color={isExpanded ? tokens.primary : "#64748b"}
                   />
                 </View>
                 {isExpanded && (

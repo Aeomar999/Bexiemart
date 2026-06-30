@@ -1,3 +1,4 @@
+import { tokens } from "@/theme/tokens";
 import { BackButton } from "@/components/ui/BackButton";
 import { View, Text, ScrollView, Pressable, Switch } from "react-native";
 import { useRouter } from "expo-router";
@@ -48,7 +49,7 @@ export default function NotificationSettingsScreen() {
             <Switch
               value={toggles.newOrder}
               onValueChange={() => toggle("newOrder")}
-              trackColor={{ true: "var(--color-primary)" }}
+              trackColor={{ true: tokens.primary }}
             />
           </View>
           <View className="p-4 border-b border-border flex-row justify-between items-center">
@@ -61,7 +62,7 @@ export default function NotificationSettingsScreen() {
             <Switch
               value={toggles.orderCancel}
               onValueChange={() => toggle("orderCancel")}
-              trackColor={{ true: "var(--color-primary)" }}
+              trackColor={{ true: tokens.primary }}
             />
           </View>
           <View className="p-4 border-b border-border flex-row justify-between items-center">
@@ -74,7 +75,7 @@ export default function NotificationSettingsScreen() {
             <Switch
               value={toggles.payout}
               onValueChange={() => toggle("payout")}
-              trackColor={{ true: "var(--color-primary)" }}
+              trackColor={{ true: tokens.primary }}
             />
           </View>
           <View className="p-4 border-b border-border flex-row justify-between items-center">
@@ -87,7 +88,7 @@ export default function NotificationSettingsScreen() {
             <Switch
               value={toggles.chat}
               onValueChange={() => toggle("chat")}
-              trackColor={{ true: "var(--color-primary)" }}
+              trackColor={{ true: tokens.primary }}
             />
           </View>
           <View className="p-4 flex-row justify-between items-center">
@@ -100,7 +101,7 @@ export default function NotificationSettingsScreen() {
             <Switch
               value={toggles.promo}
               onValueChange={() => toggle("promo")}
-              trackColor={{ true: "var(--color-primary)" }}
+              trackColor={{ true: tokens.primary }}
             />
           </View>
         </View>
@@ -115,7 +116,7 @@ export default function NotificationSettingsScreen() {
             <Switch
               value={toggles.email}
               onValueChange={() => toggle("email")}
-              trackColor={{ true: "var(--color-primary)" }}
+              trackColor={{ true: tokens.primary }}
             />
           </View>
           <View className="p-4 flex-row justify-between items-center">
@@ -126,7 +127,7 @@ export default function NotificationSettingsScreen() {
             <Switch
               value={toggles.sms}
               onValueChange={() => toggle("sms")}
-              trackColor={{ true: "var(--color-primary)" }}
+              trackColor={{ true: tokens.primary }}
             />
           </View>
         </View>

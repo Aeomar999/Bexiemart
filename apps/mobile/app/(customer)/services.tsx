@@ -1,22 +1,14 @@
 import { BackButton } from "@/components/ui/BackButton";
-import {
-  View,
-  Text,
-  ScrollView,
-  Pressable,
-  TextInput,
-  FlatList,
-  Dimensions,
-  ActivityIndicator,
-} from "react-native";
+import { View, Text, ScrollView, Pressable, TextInput } from "react-native";
 import { useRouter } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Icon } from "@/components/ui/Icon";
-import { useState, useCallback, useMemo } from "react";
+import { useState, useMemo } from "react";
 import { useServices, useServiceBookings } from "@/lib/hooks/use-services";
 import { LoadingState } from "@/components/ui/LoadingState";
 import { ErrorState } from "@/components/ui/ErrorState";
 import { EmptyState } from "@/components/ui/EmptyState";
+import { PromoBanner } from "@/components/ui/PromoBanner";
 
 const CATEGORIES = [
   { id: "1", name: "Cleaning", icon: "wind", color: "#0ea5e9" },
@@ -26,26 +18,6 @@ const CATEGORIES = [
   { id: "5", name: "Painting", icon: "edit-2", color: "#8b5cf6" },
   { id: "6", name: "Beauty", icon: "scissors", color: "#ec4899" },
 ];
-const { width: SCREEN_WIDTH } = Dimensions.get("window");
-
-const PROMO_BANNERS = [
-  {
-    id: "1",
-    title: "Expert Services",
-    subtitle: "Verified professionals at your doorstep within 2 hours.",
-    color: "bg-purple-600",
-    iconColor: "rgba(255,255,255,0.1)",
-    icon: "tool",
-  },
-  {
-    id: "2",
-    title: "Home Deep Clean",
-    subtitle: "Get 20% off your first whole-house deep clean.",
-    color: "bg-primary",
-    iconColor: "rgba(255,255,255,0.1)",
-    icon: "wind",
-  },
-];
 
 export default function ServicesScreen() {
   const router = useRouter();
@@ -53,7 +25,6 @@ export default function ServicesScreen() {
 
   const [searchQuery, setSearchQuery] = useState("");
   const [activeCategory, setActiveCategory] = useState<string | null>(null);
-  const [activePromoIndex, setActivePromoIndex] = useState(0);
 
   const {
     data: servicesData,
@@ -92,12 +63,8 @@ export default function ServicesScreen() {
     return matchesSearch && matchesCategory;
   });
 
-  const handleViewableItemsChanged = useCallback(({ viewableItems }: any) => {
-    if (viewableItems.length > 0) setActivePromoIndex(viewableItems[0].index ?? 0);
-  }, []);
-
   if (isPending) {
-    return <LoadingState message="Loading services..." />;
+    return <LoadingState type="grid" message="Loading services..." />;
   }
 
   if (isError) {
@@ -162,55 +129,7 @@ export default function ServicesScreen() {
 
         {/* Promotional Banner */}
         {!activeCategory && searchQuery === "" && (
-          <View className="mb-8 mt-6">
-            <FlatList
-              data={PROMO_BANNERS}
-              horizontal
-              pagingEnabled
-              showsHorizontalScrollIndicator={false}
-              decelerationRate="fast"
-              snapToInterval={Dimensions.get("window").width}
-              snapToAlignment="center"
-              onViewableItemsChanged={handleViewableItemsChanged}
-              viewabilityConfig={{ itemVisiblePercentThreshold: 50 }}
-              keyExtractor={(item) => item.id}
-              renderItem={({ item }) => (
-                <View style={{ width: Dimensions.get("window").width, paddingHorizontal: 20 }}>
-                  <Pressable
-                    className={`w-full h-36 rounded-2xl ${item.color} overflow-hidden p-5 justify-center relative`}
-                  >
-                    <Text className="text-white font-heading font-black text-display-sm mb-1">
-                      {item.title}
-                    </Text>
-                    <Text className="text-white/90 font-body text-sm w-2/3 mb-4">
-                      {item.subtitle}
-                    </Text>
-                    <View className="bg-card px-4 py-2 rounded-full self-start">
-                      <Text
-                        className={`text-body-sm font-bold ${item.color.replace("bg-", "text-")}`}
-                      >
-                        Book Now
-                      </Text>
-                    </View>
-                    <Icon
-                      name={item.icon}
-                      size={100}
-                      color={item.iconColor}
-                      style={{ position: "absolute", right: -20, bottom: -20 }}
-                    />
-                  </Pressable>
-                </View>
-              )}
-            />
-            <View className="flex-row justify-center items-center mt-3 gap-1.5">
-              {PROMO_BANNERS.map((_, i) => (
-                <View
-                  key={i}
-                  className={`h-1.5 rounded-full ${i === activePromoIndex ? "w-4 bg-purple-600" : "w-1.5 bg-secondary"}`}
-                />
-              ))}
-            </View>
-          </View>
+          <PromoBanner placement="SERVICES" containerClassName="mb-8 mt-6" />
         )}
 
         {/* Categories */}

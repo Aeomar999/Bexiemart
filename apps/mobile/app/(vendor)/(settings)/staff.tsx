@@ -1,3 +1,4 @@
+import { tokens } from "@/theme/tokens";
 import { BackButton } from "@/components/ui/BackButton";
 import { View, Text, ScrollView, Pressable, Switch, Alert, Modal } from "react-native";
 import { useRouter } from "expo-router";
@@ -122,7 +123,7 @@ export default function StaffManagementScreen() {
           onPress={openAddForm}
           className="bg-primary-subtle px-3 py-1.5 rounded-full flex-row items-center"
         >
-          <Icon name="plus" size={14} color="var(--color-primary)" style={{ marginRight: 4 }} />
+          <Icon name="plus" size={14} color={tokens.primary} style={{ marginRight: 4 }} />
           <Text className="text-body-sm font-bold text-primary">Add Staff</Text>
         </Pressable>
       </View>

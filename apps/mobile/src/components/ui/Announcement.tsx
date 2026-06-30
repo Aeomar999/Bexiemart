@@ -1,3 +1,4 @@
+import { tokens } from "@/theme/tokens";
 import React from "react";
 import { View, Text } from "react-native";
 // @ts-expect-error
@@ -39,7 +40,7 @@ export function Announcement({ message, type = "error" }: AnnouncementProps) {
       borderClass = "border-primary/20";
       textClass = "text-primary";
       iconName = "info-circle";
-      iconColor = "var(--color-primary)";
+      iconColor = tokens.primary;
       break;
   }
 

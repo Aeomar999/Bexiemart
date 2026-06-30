@@ -1,3 +1,4 @@
+import { tokens } from "@/theme/tokens";
 import { View, Text, ScrollView, Switch, Pressable } from "react-native";
 import { useRouter } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -37,7 +38,7 @@ const PROFILE_SECTIONS = [
         icon: "shopping-bag",
         label: "Order History",
         route: "/(customer)/orders",
-        color: "var(--color-primary)",
+        color: tokens.primary,
       },
       {
         id: "favorites",
@@ -238,7 +239,7 @@ export default function ProfileScreen() {
                           <Switch
                             value={isDarkMode}
                             onValueChange={setIsDarkMode}
-                            trackColor={{ false: "#e2e8f0", true: "var(--color-primary)" }}
+                            trackColor={{ false: "#e2e8f0", true: tokens.primary }}
                             thumbColor={"#ffffff"}
                           />
                         ) : (

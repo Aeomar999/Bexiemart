@@ -30,6 +30,7 @@ import { VendorHoursModule } from "./modules/vendor-hours/vendor-hours.module";
 import { VendorDocumentsModule } from "./modules/vendor-documents/vendor-documents.module";
 import { UploadModule } from "./modules/upload/upload.module";
 import { FlashSalesModule } from "./modules/flash-sales/flash-sales.module";
+import { BannersModule } from "./modules/banners/banners.module";
 import { ReferralsModule } from "./modules/referrals/referrals.module";
 import { CustomerReelsModule } from "./modules/customer-reels/customer-reels.module";
 import { CustomerServicesModule } from "./modules/customer-services/customer-services.module";
@@ -89,6 +90,7 @@ import * as winston from "winston";
     VendorDocumentsModule,
     UploadModule,
     FlashSalesModule,
+    BannersModule,
     ReferralsModule,
     CustomerReelsModule,
     CustomerServicesModule,
