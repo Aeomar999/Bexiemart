@@ -1,3 +1,4 @@
+import { tokens } from "@/theme/tokens";
 import { BackButton } from "@/components/ui/BackButton";
 import { View, Text, ScrollView, Pressable, Alert, Modal } from "react-native";
 import { useRouter } from "expo-router";
@@ -143,24 +144,14 @@ export default function PaymentMethodsScreen() {
               onPress={() => openAddModal("momo")}
               className="bg-primary-subtle border border-border border-dashed rounded-2xl p-6 items-center justify-center flex-row"
             >
-              <Icon
-                name="smartphone"
-                size={20}
-                color="var(--color-primary)"
-                style={{ marginRight: 8 }}
-              />
+              <Icon name="smartphone" size={20} color={tokens.primary} style={{ marginRight: 8 }} />
               <Text className="text-body-lg font-bold text-primary">Add Mobile Money</Text>
             </Pressable>
             <Pressable
               onPress={() => openAddModal("bank")}
               className="bg-primary-subtle border border-border border-dashed rounded-2xl p-6 items-center justify-center flex-row"
             >
-              <Icon
-                name="briefcase"
-                size={20}
-                color="var(--color-primary)"
-                style={{ marginRight: 8 }}
-              />
+              <Icon name="briefcase" size={20} color={tokens.primary} style={{ marginRight: 8 }} />
               <Text className="text-body-lg font-bold text-primary">Add Bank Account</Text>
             </Pressable>
           </View>

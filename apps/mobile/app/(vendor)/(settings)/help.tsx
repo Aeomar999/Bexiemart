@@ -1,3 +1,4 @@
+import { tokens } from "@/theme/tokens";
 import { BackButton } from "@/components/ui/BackButton";
 import { View, Text, ScrollView, Pressable, TextInput } from "react-native";
 import { useRouter } from "expo-router";
@@ -58,7 +59,7 @@ export default function VendorHelpScreen() {
 
         <View className="bg-primary-subtle border border-border rounded-2xl p-6 items-center">
           <View className="w-16 h-16 rounded-full bg-primary-subtle items-center justify-center mb-4">
-            <Icon name="life-buoy" size={24} color="var(--color-primary)" />
+            <Icon name="life-buoy" size={24} color={tokens.primary} />
           </View>
           <Text className="text-heading-md font-bold text-foreground mb-2">Need more help?</Text>
           <Text className="text-body-md text-muted-foreground text-center mb-6">

@@ -1,3 +1,4 @@
+import { tokens } from "@/theme/tokens";
 import { BackButton } from "@/components/ui/BackButton";
 import { View, Text, ScrollView, Pressable, Linking } from "react-native";
 import { useRouter } from "expo-router";
@@ -38,7 +39,7 @@ export default function ContactUsScreen() {
             }
           >
             <View className="w-12 h-12 bg-primary-subtle rounded-full items-center justify-center">
-              <Icon name="mail" size={24} color="var(--color-primary)" />
+              <Icon name="mail" size={24} color={tokens.primary} />
             </View>
             <Text className="text-heading-sm font-bold text-foreground font-heading">
               Email Support

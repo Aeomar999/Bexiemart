@@ -1,3 +1,4 @@
+import { tokens } from "@/theme/tokens";
 import { BackButton } from "@/components/ui/BackButton";
 import {
   View,
@@ -28,7 +29,7 @@ const RIDER_TYPES: {
   color: string;
 }[] = [
   { id: "bike", label: "Motorbike", icon: "truck", time: "10-15 min", color: "#059669" },
-  { id: "car", label: "Car", icon: "car", time: "5-10 min", color: "var(--color-primary)" },
+  { id: "car", label: "Car", icon: "car", time: "5-10 min", color: tokens.primary },
   { id: "van", label: "Van", icon: "package", time: "15-20 min", color: "#7c3aed" },
 ];
 
@@ -340,9 +341,9 @@ export default function BookRiderScreen() {
               >
                 <View className="w-10 h-10 rounded-full bg-primary-subtle items-center justify-center border border-border">
                   {isLocating ? (
-                    <ActivityIndicator size="small" color="var(--color-primary)" />
+                    <ActivityIndicator size="small" color={tokens.primary} />
                   ) : (
-                    <Icon name="navigation" size={18} color="var(--color-primary)" />
+                    <Icon name="navigation" size={18} color={tokens.primary} />
                   )}
                 </View>
                 <View className="flex-1">

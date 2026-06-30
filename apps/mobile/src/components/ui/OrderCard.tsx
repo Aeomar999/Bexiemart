@@ -1,3 +1,4 @@
+import { tokens } from "@/theme/tokens";
 import { View, Text, Pressable } from "react-native";
 import { Icon } from "./Icon";
 import { Card } from "./Card";
@@ -21,7 +22,7 @@ export interface OrderCardProps {
 
 const statusConfig: Record<string, { label: string; color: string; bg: string; icon: string }> = {
   processing: { label: "Processing", color: "#d97706", bg: "#fef3c7", icon: "loader" },
-  shipped: { label: "Shipped", color: "var(--color-primary)", bg: "#e0e7ff", icon: "truck" },
+  shipped: { label: "Shipped", color: tokens.primary, bg: "#e0e7ff", icon: "truck" },
   delivered: { label: "Delivered", color: "#059669", bg: "#d1fae5", icon: "check-circle" },
   cancelled: { label: "Cancelled", color: "#ef4444", bg: "#fee2e2", icon: "x-circle" },
 };

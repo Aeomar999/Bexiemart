@@ -1,3 +1,4 @@
+import { tokens } from "@/theme/tokens";
 import { View, Text, TouchableOpacity } from "react-native";
 import { router, useLocalSearchParams } from "expo-router";
 import { useEffect, useState } from "react";
@@ -114,7 +115,7 @@ export default function VerifyEmailScreen() {
         {status === "idle" && !token && (
           <View className="items-center">
             <View className="w-16 h-16 rounded-2xl bg-primary-subtle items-center justify-center mb-6">
-              <FontAwesome5 name="envelope-open-text" size={28} color="var(--color-primary)" />
+              <FontAwesome5 name="envelope-open-text" size={28} color={tokens.primary} />
             </View>
             <Text className="text-display-md font-heading font-bold text-foreground mb-2 text-center">
               {phoneVerified === "true" ? "Phone verified! 🎉" : "Check your email"}

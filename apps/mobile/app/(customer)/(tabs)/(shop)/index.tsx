@@ -1,3 +1,4 @@
+import { tokens } from "@/theme/tokens";
 import { View, Text, ActivityIndicator, TextInput, Modal, Pressable } from "react-native";
 import { FlashList } from "@shopify/flash-list";
 import { Image } from "expo-image";
@@ -236,7 +237,7 @@ export default function ShopScreen() {
         ListFooterComponent={
           isFetchingNextPage ? (
             <View className="py-4 items-center">
-              <ActivityIndicator color="var(--color-primary)" />
+              <ActivityIndicator color={tokens.primary} />
             </View>
           ) : null
         }
@@ -362,9 +363,7 @@ export default function ShopScreen() {
                 >
                   {sortLabels[key]}
                 </Text>
-                {sortBy === key && (
-                  <Icon name="check-circle" size={20} color="var(--color-primary)" />
-                )}
+                {sortBy === key && <Icon name="check-circle" size={20} color={tokens.primary} />}
               </Pressable>
             ))}
           </View>

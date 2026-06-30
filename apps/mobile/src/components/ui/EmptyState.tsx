@@ -1,3 +1,4 @@
+import { tokens } from "@/theme/tokens";
 import React from "react";
 import { View, Text, Pressable } from "react-native";
 import { Icon } from "./Icon";
@@ -29,7 +30,7 @@ export function EmptyState({
       style={fullScreen ? { flex: 1, justifyContent: "center", alignItems: "center" } : undefined}
     >
       <View className="h-20 w-20 rounded-full bg-primary-subtle items-center justify-center mb-6">
-        <Icon name={finalIcon as any} size={32} color="var(--color-primary)" />
+        <Icon name={finalIcon as any} size={32} color={tokens.primary} />
       </View>
 
       <Text className="text-display-md font-heading font-black text-foreground mb-3 text-center">

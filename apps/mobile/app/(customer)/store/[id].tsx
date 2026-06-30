@@ -1,3 +1,4 @@
+import { tokens } from "@/theme/tokens";
 import { View, Text, FlatList, ActivityIndicator, Pressable } from "react-native";
 import { Image } from "expo-image";
 import { useRouter, useLocalSearchParams } from "expo-router";
@@ -58,7 +59,7 @@ export default function StoreProfileScreen() {
   };
 
   if (isStoreLoading || isProductsLoading) {
-    return <LoadingState message="Loading store details..." />;
+    return <LoadingState type="detail" message="Loading store details..." />;
   }
 
   if (isStoreError || storeError || isProductsError) {
@@ -110,7 +111,7 @@ export default function StoreProfileScreen() {
         ListFooterComponent={
           isFetchingNextPage ? (
             <View className="py-4 items-center">
-              <ActivityIndicator color="var(--color-primary)" />
+              <ActivityIndicator color={tokens.primary} />
             </View>
           ) : null
         }
@@ -157,7 +158,7 @@ export default function StoreProfileScreen() {
                     style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
                     onPress={() => router.push(`/chat?vendorId=${store.id}`)}
                   >
-                    <Icon name="message-circle" size={16} color="var(--color-primary)" />
+                    <Icon name="message-circle" size={16} color={tokens.primary} />
                     <Text className="text-primary font-bold font-body text-body-sm">
                       Contact Seller
                     </Text>

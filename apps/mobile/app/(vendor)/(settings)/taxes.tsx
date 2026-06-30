@@ -1,3 +1,4 @@
+import { tokens } from "@/theme/tokens";
 import { BackButton } from "@/components/ui/BackButton";
 import { View, Text, ScrollView, Pressable, Alert, Modal } from "react-native";
 import { useRouter } from "expo-router";
@@ -174,7 +175,7 @@ export default function TaxesDocumentsScreen() {
               className="border-2 border-dashed border-border rounded-xl p-6 items-center justify-center bg-primary-subtle"
             >
               <View className="w-12 h-12 rounded-full bg-card items-center justify-center mb-3 shadow-sm border border-border">
-                <Icon name="upload-cloud" size={20} color="var(--color-primary)" />
+                <Icon name="upload-cloud" size={20} color={tokens.primary} />
               </View>
               <Text className="text-body-lg font-bold text-primary-hover mb-1">Tap to Upload</Text>
               <Text className="text-body-sm text-primary">PDF, JPG, or PNG (Max 5MB)</Text>

@@ -1,3 +1,4 @@
+import { tokens } from "@/theme/tokens";
 import { BackButton } from "@/components/ui/BackButton";
 import { View, Text, ScrollView, Alert, Pressable } from "react-native";
 import { useRouter } from "expo-router";
@@ -325,7 +326,7 @@ export default function CheckoutScreen() {
                 {paymentMethod === "card" && <View className="w-3 h-3 rounded-full bg-primary" />}
               </View>
               <View className="w-10 h-10 rounded-xl bg-blue-50 items-center justify-center">
-                <Icon name="credit-card" size={20} color="var(--color-primary)" />
+                <Icon name="credit-card" size={20} color={tokens.primary} />
               </View>
               <View className="flex-1">
                 <Text className="text-body-md font-bold text-foreground font-body">

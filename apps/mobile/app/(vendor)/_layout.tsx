@@ -1,3 +1,4 @@
+import { tokens } from "@/theme/tokens";
 import { Tabs } from "expo-router";
 import { View, Text, TouchableOpacity } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -59,11 +60,11 @@ function CustomTabBar({ state, descriptors, navigation }: any) {
             }}
           >
             {options.tabBarIcon &&
-              options.tabBarIcon({ color: isFocused ? "var(--color-primary)" : "#94A3B8" })}
+              options.tabBarIcon({ color: isFocused ? tokens.primary : "#94A3B8" })}
             {isFocused && (
               <Text
                 style={{
-                  color: "var(--color-primary)",
+                  color: tokens.primary,
                   fontWeight: "bold",
                   fontSize: 14,
                   marginLeft: 8,

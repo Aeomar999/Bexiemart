@@ -1,3 +1,4 @@
+import { tokens } from "@/theme/tokens";
 import React, { useRef, useState } from "react";
 import { View, Text, Dimensions, TouchableOpacity } from "react-native";
 import { useRouter } from "expo-router";
@@ -92,7 +93,7 @@ export default function OnboardingScreen() {
             onPress={handleBack}
             className="w-10 h-10 rounded-full bg-primary-subtle items-center justify-center"
           >
-            <ArrowLeft color="var(--color-primary)" size={20} />
+            <ArrowLeft color={tokens.primary} size={20} />
           </TouchableOpacity>
         ) : (
           <View className="w-10 h-10" /> /* Spacer */

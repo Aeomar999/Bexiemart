@@ -1,3 +1,4 @@
+import { tokens } from "@/theme/tokens";
 import React, { useRef, useState, useEffect } from "react";
 import { View, Text, Animated, PanResponder, StyleSheet, Dimensions } from "react-native";
 import { Icon } from "./Icon";
@@ -14,7 +15,7 @@ interface SwipeButtonProps {
 export const SwipeButton: React.FC<SwipeButtonProps> = ({
   onComplete,
   text,
-  buttonColor = "var(--color-primary)",
+  buttonColor = tokens.primary,
   sliderColor = "#FFFFFF",
   iconName = "chevron-right",
   resetOnComplete = true,

@@ -1,3 +1,4 @@
+import { tokens } from "@/theme/tokens";
 import { BackButton } from "@/components/ui/BackButton";
 import {
   View,
@@ -54,7 +55,7 @@ export default function ProductDetailsScreen() {
   );
 
   if (isPending) {
-    return <LoadingState message="Loading product details..." />;
+    return <LoadingState type="detail" message="Loading product details..." />;
   }
 
   if (isError) {
@@ -267,7 +268,7 @@ export default function ProductDetailsScreen() {
                 <Icon
                   name={showFullDesc ? "chevron-up" : "chevron-down"}
                   size={14}
-                  color="var(--color-primary)"
+                  color={tokens.primary}
                 />
               </View>
             </Pressable>
@@ -285,7 +286,7 @@ export default function ProductDetailsScreen() {
           </Text>
           <View className="flex-row items-center gap-3">
             <View className="w-12 h-12 rounded-full bg-muted items-center justify-center">
-              <Icon name="store" size={22} color="var(--color-primary)" />
+              <Icon name="store" size={22} color={tokens.primary} />
             </View>
             <View className="flex-1">
               <Text className="text-body-md font-bold text-foreground font-body">
@@ -409,7 +410,7 @@ export default function ProductDetailsScreen() {
             className="w-full bg-primary-subtle py-4 rounded-full items-center justify-center mt-2 border border-border flex-row gap-2"
             onPress={() => router.push("/(customer)/review-modal")}
           >
-            <Icon name="edit-3" size={16} color="var(--color-primary)" />
+            <Icon name="edit-3" size={16} color={tokens.primary} />
             <Text className="text-body-sm font-bold text-primary font-body">Write a Review</Text>
           </Pressable>
         </View>

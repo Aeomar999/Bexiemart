@@ -88,6 +88,7 @@ const navigationConfig: NavGroup[] = [
         name: "Marketing", 
         icon: Megaphone,
         subItems: [
+          { name: "Banners", href: "/marketing/banners" },
           { name: "Flash Sales", href: "/marketing/flash-sales" },
           { name: "Coupons", href: "/marketing/coupons" },
         ]

@@ -1,3 +1,4 @@
+import { tokens } from "@/theme/tokens";
 import {
   TouchableOpacity,
   Text,
@@ -80,9 +81,7 @@ export const Button = forwardRef<View, ButtonProps>(
         {loading ? (
           <ActivityIndicator
             color={
-              variant === "outline" || variant === "ghost"
-                ? "var(--color-primary)"
-                : "var(--color-primary-text)"
+              variant === "outline" || variant === "ghost" ? tokens.primary : tokens.primaryText
             }
             size="small"
           />

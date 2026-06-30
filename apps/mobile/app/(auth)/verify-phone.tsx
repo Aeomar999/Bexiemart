@@ -1,3 +1,4 @@
+import { tokens } from "@/theme/tokens";
 import {
   View,
   Text,
@@ -184,7 +185,7 @@ export default function VerifyPhoneScreen() {
             <View className="h-10 justify-center items-center w-full mb-6">
               {status === "verifying" && (
                 <View className="flex-row items-center gap-2">
-                  <ActivityIndicator size="small" color="var(--color-primary)" />
+                  <ActivityIndicator size="small" color={tokens.primary} />
                   <Text className="text-body-md text-primary font-bold font-body">
                     Verifying...
                   </Text>
@@ -192,7 +193,7 @@ export default function VerifyPhoneScreen() {
               )}
               {status === "sending" && (
                 <View className="flex-row items-center gap-2">
-                  <ActivityIndicator size="small" color="var(--color-primary)" />
+                  <ActivityIndicator size="small" color={tokens.primary} />
                   <Text className="text-body-md text-muted-foreground font-body">
                     Sending code...
                   </Text>
