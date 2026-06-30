@@ -18,6 +18,8 @@
       },
       "env": {
         "EXPO_PUBLIC_API_URL": "https://bexiemart-production.up.railway.app/api/v1",
+        "EXPO_PUBLIC_POSTHOG_API_KEY": "phc_nQvLXaLZDchbn2RLbeBkZhtpFbDyPfU7jcSMYYnh8Dkx",
+        "EXPO_PUBLIC_POSTHOG_HOST": "https://us.i.posthog.com",
         "EXPO_PUBLIC_PAYSTACK_PUBLIC_KEY": "pk_test_8cd3b286f7b46cf8700f982bb1c8bb0f41afca0c",
         "EXPO_PUBLIC_CLOUDINARY_CLOUD_NAME": "duirkgqop"
       }
@@ -29,6 +31,8 @@
       },
       "env": {
         "EXPO_PUBLIC_API_URL": "https://bexiemart-production.up.railway.app/api/v1",
+        "EXPO_PUBLIC_POSTHOG_API_KEY": "phc_nQvLXaLZDchbn2RLbeBkZhtpFbDyPfU7jcSMYYnh8Dkx",
+        "EXPO_PUBLIC_POSTHOG_HOST": "https://us.i.posthog.com",
         "EXPO_PUBLIC_PAYSTACK_PUBLIC_KEY": "pk_test_8cd3b286f7b46cf8700f982bb1c8bb0f41afca0c",
         "EXPO_PUBLIC_CLOUDINARY_CLOUD_NAME": "duirkgqop"
       }
@@ -45,9 +49,8 @@
         "EXPO_PUBLIC_SENTRY_DSN": "https://0c4866316a83164b10cafea12af5a195@o4511490466119680.ingest.de.sentry.io/4511490530148432",
         "EXPO_PUBLIC_POSTHOG_API_KEY": "phc_nQvLXaLZDchbn2RLbeBkZhtpFbDyPfU7jcSMYYnh8Dkx",
         "EXPO_PUBLIC_POSTHOG_HOST": "https://us.i.posthog.com",
-        "EXPO_PUBLIC_PAYSTACK_PUBLIC_KEY": "pk_test_8cd3b286f7b46cf8700f982bb1c8bb0f41afca0c",
-        "SENTRY_AUTH_TOKEN": "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"
-  }
+        "EXPO_PUBLIC_PAYSTACK_PUBLIC_KEY": "pk_test_8cd3b286f7b46cf8700f982bb1c8bb0f41afca0c"
+      }
     }
   },
   "submit": {
