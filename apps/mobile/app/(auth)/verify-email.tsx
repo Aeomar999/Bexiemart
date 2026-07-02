@@ -1,11 +1,23 @@
 import { tokens } from "@/theme/tokens";
-import { View, Text, TouchableOpacity } from "react-native";
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  TextInput,
+  ActivityIndicator,
+  KeyboardAvoidingView,
+  Platform,
+} from "react-native";
 import { router, useLocalSearchParams } from "expo-router";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Button } from "../../src/components/ui/Button";
 import { Announcement } from "../../src/components/ui/Announcement";
-import { useVerifyEmail, useResendVerification } from "../../src/lib/hooks/use-auth";
+import {
+  useVerifyEmail,
+  useResendVerification,
+  useVerifyEmailOtp,
+} from "../../src/lib/hooks/use-auth";
 // @ts-expect-error
 import { FontAwesome5 } from "@expo/vector-icons";
 
@@ -16,14 +28,17 @@ export default function VerifyEmailScreen() {
     phoneVerified?: string;
   }>();
   const verifyEmail = useVerifyEmail();
+  const verifyEmailOtp = useVerifyEmailOtp();
   const resendVerification = useResendVerification();
   const insets = useSafeAreaInsets();
+  const inputRef = useRef<TextInput>(null);
 
   const [status, setStatus] = useState<"idle" | "verifying" | "success" | "error">(
     token ? "verifying" : "idle"
   );
   const [errorMessage, setErrorMessage] = useState("");
   const [resendError, setResendError] = useState("");
+  const [code, setCode] = useState("");
 
   useEffect(() => {
     if (token) {
@@ -39,6 +54,25 @@ export default function VerifyEmailScreen() {
     }
   }, [token]);
 
+  useEffect(() => {
+    if (code.length === 6 && status === "idle" && email) {
+      setStatus("verifying");
+      setErrorMessage("");
+      verifyEmailOtp.mutate(
+        { email, code },
+        {
+          onSuccess: () => {
+            setStatus("success");
+          },
+          onError: (err: any) => {
+            setErrorMessage(err?.message || "Invalid or expired code.");
+            setStatus("error");
+          },
+        }
+      );
+    }
+  }, [code, status, email]);
+
   const handleResend = () => {
     if (!email) return;
     setResendError("");
@@ -50,8 +84,12 @@ export default function VerifyEmailScreen() {
   };
 
   return (
-    <View className="flex-1 bg-background px-6" style={{ paddingTop: insets.top }}>
-      <View className="flex-1 justify-center py-12">
+    <KeyboardAvoidingView
+      className="flex-1 bg-background"
+      style={{ paddingTop: insets.top }}
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
+    >
+      <View className="flex-1 justify-center py-12 px-6">
         {status === "verifying" && (
           <View className="items-center">
             <View className="w-16 h-16 rounded-2xl bg-yellow-100 items-center justify-center mb-6">
@@ -106,8 +144,19 @@ export default function VerifyEmailScreen() {
                 />
               </View>
             )}
-            <TouchableOpacity className="mt-4" onPress={() => router.replace("/(auth)/login")}>
-              <Text className="text-body-md text-primary font-bold font-body">Back to sign in</Text>
+            <TouchableOpacity
+              className="mt-4"
+              onPress={() => {
+                setStatus("idle");
+                setCode("");
+              }}
+            >
+              <Text className="text-body-md text-primary font-bold font-body">
+                Try entering code again
+              </Text>
+            </TouchableOpacity>
+            <TouchableOpacity className="mt-2" onPress={() => router.replace("/(auth)/login")}>
+              <Text className="text-body-md text-muted-foreground font-body">Back to sign in</Text>
             </TouchableOpacity>
           </View>
         )}
@@ -126,14 +175,46 @@ export default function VerifyEmailScreen() {
               </Text>
             )}
             <Text className="text-body-lg text-muted-foreground font-body text-center">
-              We sent a verification link to{"\n"}
+              We sent a verification link and a 6-digit code to{"\n"}
               <Text className="font-bold text-foreground">{email || "your email"}</Text>
             </Text>
-            <Text className="text-body-md text-muted-foreground font-body text-center mt-6">
-              Click the link in the email to verify your account.
+
+            {/* OTP Input for Email Verification Code */}
+            <View className="flex-row justify-center gap-3 mt-8 mb-4 w-full relative">
+              {[...Array(6)].map((_, i) => (
+                <View
+                  key={i}
+                  pointerEvents="none"
+                  className={`w-12 h-14 rounded-lg items-center justify-center border-b-2 ${
+                    code.length === i
+                      ? "border-primary bg-primary-subtle"
+                      : code.length > i
+                        ? "border-foreground bg-muted"
+                        : "border-border bg-background"
+                  }`}
+                >
+                  <Text className="text-display-md font-heading font-bold text-foreground">
+                    {code[i] || ""}
+                  </Text>
+                </View>
+              ))}
+              <TextInput
+                ref={inputRef}
+                value={code}
+                onChangeText={setCode}
+                keyboardType="number-pad"
+                textContentType="oneTimeCode"
+                maxLength={6}
+                autoFocus
+                className="absolute w-full h-full opacity-0"
+                caretHidden={true}
+              />
+            </View>
+            <Text className="text-body-sm text-muted-foreground font-body text-center mb-6">
+              Enter the code from your email, or click the verification link.
             </Text>
 
-            <View className="w-full mt-8">
+            <View className="w-full mt-2">
               <Button
                 title="Resend email"
                 size="lg"
@@ -156,6 +237,6 @@ export default function VerifyEmailScreen() {
           </View>
         )}
       </View>
-    </View>
+    </KeyboardAvoidingView>
   );
 }
