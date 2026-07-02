@@ -7,37 +7,11 @@ import { betterAuth } from "better-auth";
 import { prismaAdapter } from "better-auth/adapters/prisma";
 import { phoneNumber } from "better-auth/plugins";
 import type { PrismaClient } from "@prisma/client";
-import * as nodemailer from "nodemailer";
 import { dash, sentinel } from "@better-auth/infra";
-
-const smtpPort = parseInt(process.env.SMTP_PORT || "465", 10);
-const transporter = nodemailer.createTransport({
-  host: process.env.SMTP_HOST || "smtp.gmail.com",
-  port: smtpPort,
-  secure: smtpPort === 465, // true for 465 (implicit TLS), false for 587 (STARTTLS)
-  auth: {
-    user: process.env.SMTP_USER,
-    pass: process.env.SMTP_PASS,
-  },
-  // Reuse connections instead of opening a fresh TLS handshake per email.
-  // Gmail throttles new connections, so pooling removes the per-send latency
-  // and the connection timeouts that caused verification emails to silently fail.
-  pool: true,
-  maxConnections: 3,
-  maxMessages: 100,
-  connectionTimeout: 10_000, // fail fast instead of hanging on a stalled connection
-  greetingTimeout: 10_000,
-  socketTimeout: 20_000,
-});
-
-// Surface SMTP misconfiguration at startup instead of discovering it only when
-// a fire-and-forget sendMail rejects into a swallowed .catch().
-transporter.verify().then(
-  () => {
-    if (isDev) console.log("SMTP transporter verified and ready");
-  },
-  (error) => console.error("SMTP transporter verification failed:", error?.message || error)
-);
+import * as crypto from "crypto";
+import { mailTransporter } from "./mail-transporter";
+import { sendOtpDualChannel } from "./otp-notification.service";
+import { buildEmailVerifyHtml } from "./templates/email-verify.template";
 
 export function createAuth(prisma: PrismaClient) {
   return betterAuth({
@@ -64,37 +38,33 @@ export function createAuth(prisma: PrismaClient) {
       }),
       phoneNumber({
         sendOTP: async ({ phoneNumber, code }) => {
-          if (isDev) {
-            console.log(
-              `\n\n=== SMS GATEWAY ===\nTo: ${phoneNumber}\nMessage: Your BexieMart verification code is: ${code}\n===================\n\n`
-            );
-          }
-          if (process.env.ARKESEL_API_KEY) {
-            fetch("https://sms.arkesel.com/api/v2/sms/send", {
-              method: "POST",
-              headers: {
-                "api-key": process.env.ARKESEL_API_KEY,
-                "Content-Type": "application/json",
+          let user = await prisma.user.findUnique({
+            where: { phoneNumber },
+            select: { email: true, name: true },
+          });
+
+          if (!user) {
+            const cleanPhone = phoneNumber.replace(/[^0-9]/g, "");
+            const suffix = cleanPhone.length >= 9 ? cleanPhone.slice(-9) : cleanPhone;
+            user = await prisma.user.findFirst({
+              where: {
+                phoneNumber: {
+                  endsWith: suffix,
+                },
               },
-              body: JSON.stringify({
-                sender: process.env.ARKESEL_SENDER_ID || "BexieMart",
-                message: `Your BexieMart verification code is: ${code}`,
-                recipients: [phoneNumber],
-              }),
-            })
-              .then(async (response) => {
-                const data = await response.json();
-                if (!response.ok || data.status === "error") {
-                  console.error("Arkesel SMS Failed:", data);
-                } else {
-                  console.log("Arkesel SMS Sent successfully:", data);
-                }
-              })
-              .catch((error) => {
-                console.error("Arkesel SMS Error:", error);
-              });
-          } else {
-            console.warn("ARKESEL_API_KEY not set, SMS was not sent to the real provider.");
+              select: { email: true, name: true },
+            });
+          }
+
+          const result = await sendOtpDualChannel({
+            phoneNumber,
+            code,
+            email: user?.email,
+            userName: user?.name,
+          });
+
+          if (!result.smsSuccess && !result.emailSuccess) {
+            throw new Error("Failed to deliver OTP via any channel");
           }
         },
       }),
@@ -107,47 +77,48 @@ export function createAuth(prisma: PrismaClient) {
     emailVerification: {
       sendOnSignUp: true,
       sendVerificationEmail: async ({ user, url, token }, request) => {
-        // In production BETTER_AUTH_URL is the public domain, so the link is used
-        // as-is. In local dev "localhost" is unreachable from a physical device on
-        // the LAN; set DEV_EMAIL_HOST (e.g. your machine's LAN IP) to rewrite it.
         const webUrl =
           isDev && process.env.DEV_EMAIL_HOST
             ? url.replace("localhost", process.env.DEV_EMAIL_HOST)
             : url;
         const appUrl = `bexiemart://verify-email?token=${token}`;
+
+        const emailOtpCode = Math.floor(100000 + Math.random() * 900000).toString();
+        const cuid = crypto.randomUUID();
+
+        await prisma.verification.create({
+          data: {
+            id: cuid,
+            identifier: `email-otp:${user.email}`,
+            value: emailOtpCode,
+            expiresAt: new Date(Date.now() + 5 * 60 * 1000),
+          },
+        });
+
         if (isDev) {
           console.log(
-            `\n\n=== EMAIL VERIFICATION ===\nTo: ${user.email}\nWeb: ${webUrl}\nApp: ${appUrl}\n==========================\n\n`
+            `\n\n=== EMAIL VERIFICATION ===\nTo: ${user.email}\nWeb: ${webUrl}\nApp: ${appUrl}\nOTP: ${emailOtpCode}\n==========================\n\n`
           );
         }
 
-        // Fire and forget: Do not await this promise so the auth API responds immediately
-        transporter
-          .sendMail({
+        const html = buildEmailVerifyHtml({
+          userName: user.name,
+          verifyUrl: webUrl,
+          otpCode: emailOtpCode,
+          token,
+        });
+
+        try {
+          const info = await mailTransporter.sendMail({
             from: process.env.EMAIL_FROM || "BexieMart <onboarding@bexiemart.com>",
             to: user.email,
             subject: "Verify your BexieMart Email",
-            html: `
-            <p>Hi ${user.name},</p>
-            <p>Click the button below to verify your email:</p>
-            <br/>
-            <a href="${webUrl}" style="display:inline-block;padding:14px 32px;background-color:#004CFF;color:#ffffff;text-decoration:none;border-radius:8px;font-weight:bold;font-size:16px;">
-              Verify Email
-            </a>
-            <br/><br/>
-            <p style="color:#64748B;font-size:14px;">
-              If the button above doesn't work, copy this link into your browser:<br/>
-              <a href="${webUrl}" style="color:#004CFF;">${webUrl}</a>
-            </p>
-            <br/>
-            <p style="color:#64748B;font-size:13px;">
-              <strong>Already have the app installed?</strong><br/>
-              <a href="${appUrl}" style="color:#64748B;">bexiemart://verify-email?token=${token}</a>
-            </p>
-          `,
-          })
-          .then((info) => console.log("Email sent successfully via Nodemailer:", info.messageId))
-          .catch((error) => console.error("Failed to send email via Nodemailer:", error));
+            html,
+          });
+          console.log("Email sent successfully via Nodemailer:", info.messageId);
+        } catch (error) {
+          console.error("Failed to send email via Nodemailer:", error);
+        }
       },
     },
     session: {
