@@ -1,3 +1,4 @@
+import { tokens } from "@/theme/tokens";
 import {
   View,
   Text,
@@ -54,6 +55,20 @@ export default function VerifyPhoneScreen() {
       verifyOTP();
     }
   }, [code]);
+
+  const maskPhone = (p?: string) => {
+    if (!p) return "";
+    if (p.length <= 5) return p;
+    return p.slice(0, 4) + "****" + p.slice(-2);
+  };
+
+  const maskEmail = (e?: string) => {
+    if (!e) return "";
+    const [user, domain] = e.split("@");
+    if (!domain) return e;
+    const maskedUser = user.length > 2 ? user[0] + "***" + user[user.length - 1] : user[0] + "***";
+    return `${maskedUser}@${domain}`;
+  };
 
   const getNormalizedPhone = () => {
     let normalizedPhone = (phone as string).trim().replace(/\s+/g, "");
@@ -136,8 +151,11 @@ export default function VerifyPhoneScreen() {
               Enter code
             </Text>
             <Text className="text-body-lg text-muted-foreground font-body text-center leading-relaxed">
-              We sent a 6-digit code to{"\n"}
-              <Text className="font-bold text-foreground">{phone}</Text>
+              We sent a verification code to your phone and email:{"\n"}
+              <Text className="font-bold text-foreground">{maskPhone(phone)}</Text>
+              {email ? (
+                <Text className="font-bold text-foreground"> &amp; {maskEmail(email)}</Text>
+              ) : null}
             </Text>
 
             {/* Custom Premium OTP Input */}
@@ -184,7 +202,7 @@ export default function VerifyPhoneScreen() {
             <View className="h-10 justify-center items-center w-full mb-6">
               {status === "verifying" && (
                 <View className="flex-row items-center gap-2">
-                  <ActivityIndicator size="small" color="var(--color-primary)" />
+                  <ActivityIndicator size="small" color={tokens.primary} />
                   <Text className="text-body-md text-primary font-bold font-body">
                     Verifying...
                   </Text>
@@ -192,7 +210,7 @@ export default function VerifyPhoneScreen() {
               )}
               {status === "sending" && (
                 <View className="flex-row items-center gap-2">
-                  <ActivityIndicator size="small" color="var(--color-primary)" />
+                  <ActivityIndicator size="small" color={tokens.primary} />
                   <Text className="text-body-md text-muted-foreground font-body">
                     Sending code...
                   </Text>

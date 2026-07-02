@@ -1,3 +1,4 @@
+import { tokens } from "@/theme/tokens";
 import { BackButton } from "@/components/ui/BackButton";
 import {
   View,
@@ -176,7 +177,7 @@ export default function AddressesScreen() {
           className="w-10 h-10 rounded-full bg-primary-subtle items-center justify-center border border-border"
           onPress={openAddModal}
         >
-          <Icon name="plus" size={20} color="var(--color-primary)" />
+          <Icon name="plus" size={20} color={tokens.primary} />
         </Pressable>
       </View>
 
@@ -197,7 +198,7 @@ export default function AddressesScreen() {
                     <Icon
                       name={getIcon(address.type)}
                       size={14}
-                      color={address.isDefault ? "var(--color-primary)" : "#64748b"}
+                      color={address.isDefault ? tokens.primary : "#64748b"}
                     />
                   </View>
                   <Text className="text-body-md font-heading font-bold text-foreground uppercase tracking-wider">
@@ -313,7 +314,7 @@ export default function AddressesScreen() {
                       <Icon
                         name={getIcon(type)}
                         size={18}
-                        color={formData.type === type ? "var(--color-primary)" : "#64748b"}
+                        color={formData.type === type ? tokens.primary : "#64748b"}
                       />
                       <Text
                         className={`text-body-sm mt-1 font-bold ${formData.type === type ? "text-primary-hover" : "text-muted-foreground"}`}

@@ -1,3 +1,4 @@
+import { tokens } from "@/theme/tokens";
 import { BackButton } from "@/components/ui/BackButton";
 import { View, Text, FlatList, Pressable, RefreshControl } from "react-native";
 import { useCallback } from "react";
@@ -12,7 +13,7 @@ import {
 } from "@/lib/hooks/use-notifications";
 
 const typeIcons: Record<string, { icon: string; color: string; bg: string }> = {
-  order: { icon: "shopping-bag", color: "var(--color-primary)", bg: "#e0e7ff" },
+  order: { icon: "shopping-bag", color: tokens.primary, bg: "#e0e7ff" },
   payment: { icon: "banknote", color: "#059669", bg: "#d1fae5" },
   shipping: { icon: "truck", color: "#d97706", bg: "#fef3c7" },
   promotion: { icon: "percent", color: "#db2777", bg: "#fce7f3" },
@@ -74,11 +75,7 @@ export default function NotificationsScreen() {
           keyExtractor={(item: any) => item.id}
           showsVerticalScrollIndicator={false}
           refreshControl={
-            <RefreshControl
-              refreshing={isLoading}
-              onRefresh={refetch}
-              tintColor="var(--color-primary)"
-            />
+            <RefreshControl refreshing={isLoading} onRefresh={refetch} tintColor={tokens.primary} />
           }
           renderItem={({ item }: { item: any }) => {
             const typeData = typeIcons[item.type] || typeIcons.system;

@@ -1,18 +1,18 @@
 @import "tailwindcss";
 
 @theme {
-  /* ── Brand Scale (Vibrant Indigo) ── */
-  --color-brand-50: #eef2ff;
-  --color-brand-100: #e0e7ff;
-  --color-brand-200: #c7d2fe;
-  --color-brand-300: #a5b4fc;
-  --color-brand-400: #818cf8;
-  --color-brand-500: #6366f1;
-  --color-brand-600: #4f46e5;
-  --color-brand-700: #4338ca;
-  --color-brand-800: #3730a3;
-  --color-brand-900: #312e81;
-  --color-brand-950: #1e1b4b;
+  /* ── Brand Scale (Bexiemart Navy — canonical, mirrors apps/mobile/global.css) ── */
+  --color-brand-50: #f0f7fb;
+  --color-brand-100: #dbeaf5;
+  --color-brand-200: #b9d5ea;
+  --color-brand-300: #88b7da;
+  --color-brand-400: #5193c6;
+  --color-brand-500: #2c75a9;
+  --color-brand-600: #1b5b8b;
+  --color-brand-700: #06406b;
+  --color-brand-800: #04365b;
+  --color-brand-900: #022d4d;
+  --color-brand-950: #011d35;
 
   /* ── Accent Scale (Sky) ── */
   --color-accent-50: #f0f9ff;

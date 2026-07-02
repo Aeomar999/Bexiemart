@@ -24,6 +24,10 @@ describe("AuthController", () => {
     session: {
       findUnique: jest.fn(),
     },
+    verification: {
+      findFirst: jest.fn(),
+      deleteMany: jest.fn(),
+    },
   };
 
   const mockAuth = {
@@ -219,6 +223,35 @@ describe("AuthController", () => {
       mockAuth.api.resetPassword.mockResolvedValue(undefined);
       const result = await controller.resetPassword({ newPassword: "NewPass1!", token: "tok-123" });
       expect(result.message).toBe("Password reset successfully.");
+    });
+  });
+
+  describe("verifyEmailOtp", () => {
+    it("should verify email successfully when OTP is valid", async () => {
+      mockPrisma.verification.findFirst.mockResolvedValue({
+        identifier: "email-otp:test@test.com",
+        value: "123456",
+      });
+      mockPrisma.user.update.mockResolvedValue({ id: "user-1", emailVerified: true });
+      mockPrisma.verification.deleteMany.mockResolvedValue({ count: 1 });
+
+      const result = await controller.verifyEmailOtp({ email: "test@test.com", code: "123456" });
+      expect(result.message).toBe("Email verified successfully.");
+      expect(mockPrisma.user.update).toHaveBeenCalledWith({
+        where: { email: "test@test.com" },
+        data: { emailVerified: true },
+      });
+      expect(mockPrisma.verification.deleteMany).toHaveBeenCalledWith({
+        where: { identifier: "email-otp:test@test.com" },
+      });
+    });
+
+    it("should throw UnauthorizedException when OTP is invalid or expired", async () => {
+      mockPrisma.verification.findFirst.mockResolvedValue(null);
+
+      await expect(
+        controller.verifyEmailOtp({ email: "test@test.com", code: "000000" })
+      ).rejects.toThrow("Invalid or expired verification code.");
     });
   });
 });

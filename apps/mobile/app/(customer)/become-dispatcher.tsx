@@ -1,3 +1,4 @@
+import { tokens } from "@/theme/tokens";
 import { BackButton } from "@/components/ui/BackButton";
 import { View, Text, TextInput, Pressable, ScrollView, ActivityIndicator } from "react-native";
 import { useState } from "react";
@@ -68,7 +69,7 @@ export default function BecomeDispatcherScreen() {
       <ScrollView className="flex-1 px-5 pt-6" contentContainerClassName="pb-10">
         <View className="items-center mb-8">
           <View className="w-20 h-20 bg-primary-subtle rounded-full items-center justify-center mb-4">
-            <Icon name="truck" size={32} color="var(--color-primary)" />
+            <Icon name="truck" size={32} color={tokens.primary} />
           </View>
           <Text className="text-2xl font-black font-heading text-foreground mb-2 text-center">
             Earn money on your schedule
@@ -92,7 +93,7 @@ export default function BecomeDispatcherScreen() {
                 <Icon
                   name={type === "bike" ? "briefcase" : "truck"}
                   size={24}
-                  color={isSelected ? "var(--color-primary)" : "#64748b"}
+                  color={isSelected ? tokens.primary : "#64748b"}
                 />
                 <Text
                   className={`mt-2 font-bold font-body capitalize ${isSelected ? "text-primary-hover" : "text-muted-foreground"}`}

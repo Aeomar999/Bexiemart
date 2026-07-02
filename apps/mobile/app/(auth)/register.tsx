@@ -1,3 +1,4 @@
+import { tokens } from "@/theme/tokens";
 import { BackButton } from "../../src/components/ui/BackButton";
 import { View, Text, ScrollView, TouchableOpacity, Dimensions } from "react-native";
 import { router } from "expo-router";
@@ -169,11 +170,7 @@ export default function RegisterScreen() {
       keyboardShouldPersistTaps="handled"
     >
       <View className="mb-8 mt-4">
-        <BackButton
-          onPress={handleBack}
-          className="mb-6 border-border"
-          color="var(--color-primary)"
-        />
+        <BackButton onPress={handleBack} className="mb-6 border-border" color={tokens.primary} />
 
         {/* Progress Bar */}
         <View className="w-full h-2 bg-primary-subtle rounded-full mb-6 overflow-hidden border border-border">
@@ -223,11 +220,11 @@ export default function RegisterScreen() {
                   <FontAwesome5
                     name="shopping-bag"
                     size={14}
-                    color={role === "customer" ? "var(--color-primary)" : "#64748B"}
+                    color={role === "customer" ? tokens.primary : "#64748B"}
                   />
                   <Text
                     className="font-heading font-semibold"
-                    style={{ color: role === "customer" ? "var(--color-primary)" : "#64748B" }}
+                    style={{ color: role === "customer" ? tokens.primary : "#64748B" }}
                   >
                     Shop
                   </Text>
@@ -253,11 +250,11 @@ export default function RegisterScreen() {
                   <FontAwesome5
                     name="store"
                     size={14}
-                    color={role === "vendor" ? "var(--color-primary)" : "#64748B"}
+                    color={role === "vendor" ? tokens.primary : "#64748B"}
                   />
                   <Text
                     className="font-heading font-semibold"
-                    style={{ color: role === "vendor" ? "var(--color-primary)" : "#64748B" }}
+                    style={{ color: role === "vendor" ? tokens.primary : "#64748B" }}
                   >
                     Sell
                   </Text>

@@ -128,3 +128,40 @@ export function ProfileSkeleton() {
     </Animated.View>
   );
 }
+
+export function GridSkeleton() {
+  return (
+    <Animated.View className="w-full flex-1 bg-background px-4 pt-4">
+      <Animated.View className="flex-row flex-wrap justify-between">
+        {[1, 2, 3, 4, 5, 6].map((key) => (
+          <ProductCardSkeleton key={key} />
+        ))}
+      </Animated.View>
+    </Animated.View>
+  );
+}
+
+/**
+ * Embeddable list of placeholder rows. Unlike `ListSkeleton` this has no
+ * full-screen wrapper, so it drops cleanly into an existing ScrollView /
+ * content section (e.g. earnings, transactions, notifications).
+ */
+export function RowsSkeleton({ count = 5, style }: { count?: number; style?: ViewStyle }) {
+  return (
+    <Animated.View style={style}>
+      {Array.from({ length: count }).map((_, i) => (
+        <Animated.View
+          key={i}
+          className="flex-row items-center p-4 mb-3 bg-card rounded-2xl border border-border"
+        >
+          <Skeleton width={44} height={44} borderRadius={22} style={{ marginRight: 16 }} />
+          <Animated.View className="flex-1">
+            <Skeleton width="70%" height={14} style={{ marginBottom: 8 }} />
+            <Skeleton width="40%" height={12} />
+          </Animated.View>
+          <Skeleton width={56} height={16} borderRadius={4} />
+        </Animated.View>
+      ))}
+    </Animated.View>
+  );
+}

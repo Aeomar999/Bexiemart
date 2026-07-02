@@ -1,3 +1,5 @@
+import { RowsSkeleton } from "@/components/ui/Skeleton";
+import { tokens } from "@/theme/tokens";
 import { BackButton } from "@/components/ui/BackButton";
 import { View, Text, ScrollView, Pressable, ActivityIndicator, Dimensions } from "react-native";
 import { useRouter } from "expo-router";
@@ -26,9 +28,7 @@ export default function AnalyticsScreen() {
 
       <ScrollView className="flex-1 px-5" contentContainerClassName="pb-24 pt-6 gap-6">
         {isLoading ? (
-          <View className="py-20 items-center justify-center">
-            <ActivityIndicator size="small" color="var(--color-primary)" />
-          </View>
+          <RowsSkeleton />
         ) : (
           <>
             <View className="bg-primary rounded-2xl p-6 mb-2">

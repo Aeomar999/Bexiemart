@@ -1,12 +1,6 @@
-import {
-  View,
-  Text,
-  ScrollView,
-  Pressable,
-  Alert,
-  ActivityIndicator,
-  RefreshControl,
-} from "react-native";
+import { RowsSkeleton } from "@/components/ui/Skeleton";
+import { tokens } from "@/theme/tokens";
+import { View, Text, ScrollView, Pressable, Alert, RefreshControl } from "react-native";
 import { useRouter } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Icon } from "@/components/ui/Icon";
@@ -101,15 +95,13 @@ export default function TransactionsScreen() {
           <RefreshControl
             refreshing={refreshing}
             onRefresh={onRefresh}
-            tintColor="var(--color-primary)"
+            tintColor={tokens.primary}
           />
         }
       >
         <View className="bg-card rounded-2xl border border-border overflow-hidden mb-12">
           {isLoading ? (
-            <View className="p-10 items-center justify-center">
-              <ActivityIndicator size="small" color="var(--color-primary)" />
-            </View>
+            <RowsSkeleton />
           ) : isError ? (
             <View className="p-10 items-center justify-center">
               <Text className="text-body-lg font-bold text-red-500">

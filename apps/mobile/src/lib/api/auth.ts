@@ -60,4 +60,9 @@ export const authApi = {
     const res = await apiClient.post("/auth/resend-verification", { email });
     return res;
   },
+
+  verifyEmailOtp: async (data: { email: string; code: string }) => {
+    const res = await apiClient.post("/auth/verify-email-otp", data);
+    return res;
+  },
 };

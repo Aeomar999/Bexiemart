@@ -1,3 +1,4 @@
+import { tokens } from "@/theme/tokens";
 import { BackButton } from "@/components/ui/BackButton";
 import { View, Text, ScrollView, Share, Pressable, ActivityIndicator } from "react-native";
 import { useRouter } from "expo-router";
@@ -89,7 +90,7 @@ export default function ReferralsScreen() {
             Your Referral Code
           </Text>
           {isLoading ? (
-            <ActivityIndicator size="small" color="var(--color-primary)" />
+            <ActivityIndicator size="small" color={tokens.primary} />
           ) : referralCode ? (
             <View className="flex-row items-center gap-3">
               <View className="flex-1 bg-background rounded-xl border border-border py-4 items-center justify-center border-dashed">
@@ -109,7 +110,7 @@ export default function ReferralsScreen() {
                   });
                 }}
               >
-                <Icon name="copy" size={24} color="var(--color-primary)" />
+                <Icon name="copy" size={24} color={tokens.primary} />
               </Pressable>
             </View>
           ) : (

@@ -1,3 +1,4 @@
+import { tokens } from "@/theme/tokens";
 import {
   View,
   Text,
@@ -185,7 +186,7 @@ export default function ChatDetailScreen() {
           disabled={isUploading}
         >
           {isUploading ? (
-            <ActivityIndicator size="small" color="var(--color-primary)" />
+            <ActivityIndicator size="small" color={tokens.primary} />
           ) : (
             <Icon name="image" size={20} color="#64748b" />
           )}

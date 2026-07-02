@@ -1,13 +1,19 @@
+import { tokens } from "@/theme/tokens";
 import React from "react";
 import { View, Text, ActivityIndicator } from "react-native";
-import { ListSkeleton, DetailSkeleton, ProfileSkeleton } from "./Skeleton";
+import { ListSkeleton, DetailSkeleton, ProfileSkeleton, GridSkeleton } from "./Skeleton";
 
 interface LoadingStateProps {
   message?: string;
-  type?: "spinner" | "list" | "detail" | "profile";
+  /**
+   * Loading presentation. Defaults to a skeleton (`list`) so pages never flash
+   * a bare spinner. Use `spinner` only for short, non-content waits where a
+   * skeleton would be misleading.
+   */
+  type?: "spinner" | "list" | "detail" | "profile" | "grid";
 }
 
-export function LoadingState({ message = "Loading...", type = "spinner" }: LoadingStateProps) {
+export function LoadingState({ message = "Loading...", type = "list" }: LoadingStateProps) {
   if (type === "list") {
     return <ListSkeleton />;
   }
@@ -20,9 +26,13 @@ export function LoadingState({ message = "Loading...", type = "spinner" }: Loadi
     return <ProfileSkeleton />;
   }
 
+  if (type === "grid") {
+    return <GridSkeleton />;
+  }
+
   return (
     <View className="flex-1 bg-background items-center justify-center p-6">
-      <ActivityIndicator size="large" color="var(--color-primary)" />
+      <ActivityIndicator size="large" color={tokens.primary} />
       {message && (
         <Text className="mt-4 text-body-lg font-bold text-muted-foreground text-center">
           {message}

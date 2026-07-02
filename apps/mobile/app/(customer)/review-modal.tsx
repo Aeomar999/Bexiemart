@@ -1,3 +1,4 @@
+import { tokens } from "@/theme/tokens";
 import { BackButton } from "@/components/ui/BackButton";
 import {
   View,
@@ -93,7 +94,7 @@ export default function ReviewModalScreen() {
               Write a Review
             </Text>
           </View>
-          {createReview.isPending && <ActivityIndicator color="var(--color-primary)" />}
+          {createReview.isPending && <ActivityIndicator color={tokens.primary} />}
         </View>
       </View>
 

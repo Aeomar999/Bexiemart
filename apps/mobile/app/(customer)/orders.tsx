@@ -1,3 +1,4 @@
+import { tokens } from "@/theme/tokens";
 import { BackButton } from "@/components/ui/BackButton";
 import { View, Text, FlatList, ScrollView, Pressable, RefreshControl } from "react-native";
 import { useState, useCallback } from "react";
@@ -12,7 +13,7 @@ import { useOrders } from "@/lib/hooks/use-orders";
 
 const statusConfig: Record<string, { label: string; color: string; bg: string; icon: string }> = {
   processing: { label: "Processing", color: "#d97706", bg: "#fef3c7", icon: "loader" },
-  shipped: { label: "Shipped", color: "var(--color-primary)", bg: "#e0e7ff", icon: "truck" },
+  shipped: { label: "Shipped", color: tokens.primary, bg: "#e0e7ff", icon: "truck" },
   delivered: { label: "Delivered", color: "#059669", bg: "#d1fae5", icon: "check-circle" },
   cancelled: { label: "Cancelled", color: "#ef4444", bg: "#fee2e2", icon: "x-circle" },
 };
@@ -93,11 +94,7 @@ export default function OrdersScreen() {
           contentContainerStyle={{ padding: 20, paddingBottom: 40 }}
           showsVerticalScrollIndicator={false}
           refreshControl={
-            <RefreshControl
-              refreshing={false}
-              onRefresh={refetch}
-              tintColor="var(--color-primary)"
-            />
+            <RefreshControl refreshing={false} onRefresh={refetch} tintColor={tokens.primary} />
           }
           renderItem={({ item }) => {
             const status = statusConfig[item.status];

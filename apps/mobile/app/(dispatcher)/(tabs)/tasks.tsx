@@ -1,3 +1,4 @@
+import { tokens } from "@/theme/tokens";
 import { View, Text, ScrollView, Pressable, RefreshControl } from "react-native";
 import { useState, useCallback } from "react";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -77,7 +78,7 @@ export default function DispatcherTasks() {
             <View className="flex-row items-center justify-between mb-3">
               <View className="flex-row items-center gap-2">
                 <View className="bg-primary-subtle p-2 rounded-full">
-                  <Icon name="package" size={16} color="var(--color-primary)" />
+                  <Icon name="package" size={16} color={tokens.primary} />
                 </View>
                 <Text className="font-bold text-foreground font-body">Ride Request</Text>
               </View>
@@ -167,7 +168,7 @@ export default function DispatcherTasks() {
       return (
         <View className="items-center justify-center py-20">
           <View className="w-20 h-20 bg-primary-subtle rounded-full items-center justify-center mb-4">
-            <Icon name="truck" size={32} color="var(--color-primary)" />
+            <Icon name="truck" size={32} color={tokens.primary} />
           </View>
           <Text className="text-heading-md font-bold font-heading text-foreground mb-2">
             No Active Tasks
@@ -358,7 +359,7 @@ export default function DispatcherTasks() {
           <RefreshControl
             refreshing={isManualRefreshing}
             onRefresh={handleRefresh}
-            tintColor="var(--color-primary)"
+            tintColor={tokens.primary}
           />
         }
       >

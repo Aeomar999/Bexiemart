@@ -1,3 +1,4 @@
+import { tokens } from "@/theme/tokens";
 import { View, Text, Switch, Pressable, Platform, Linking } from "react-native";
 import { useState, useRef, useEffect } from "react";
 import MapView, { Marker, Polyline, PROVIDER_GOOGLE } from "react-native-maps";
@@ -174,7 +175,7 @@ export default function DispatcherMap() {
         {userLocation && (taskStatus === "available" || taskStatus === "accepted") && (
           <Polyline
             coordinates={[userLocation, pickupCoords]}
-            strokeColor="var(--color-primary)"
+            strokeColor={tokens.primary}
             strokeWidth={4}
             lineDashPattern={[10, 10]} // Dashed line to indicate navigating to pickup
           />
@@ -183,7 +184,7 @@ export default function DispatcherMap() {
         {/* Route from Pickup to Dropoff */}
         <Polyline
           coordinates={[pickupCoords, dropoffCoords]}
-          strokeColor={taskStatus === "delivering" ? "var(--color-primary)" : "#94a3b8"}
+          strokeColor={taskStatus === "delivering" ? tokens.primary : "#94a3b8"}
           strokeWidth={taskStatus === "delivering" ? 4 : 3}
           lineDashPattern={taskStatus === "delivering" ? undefined : [5, 5]} // Solid if delivering, dashed otherwise
         />
@@ -250,7 +251,7 @@ export default function DispatcherMap() {
               <View className="flex-row items-center justify-between mb-3">
                 <View className="flex-row items-center gap-2">
                   <View className="bg-primary-subtle p-2 rounded-full">
-                    <Icon name="package" size={16} color="var(--color-primary)" />
+                    <Icon name="package" size={16} color={tokens.primary} />
                   </View>
                   <Text className="font-bold text-foreground font-body">
                     {displayRide.type === "FOOD"
@@ -288,7 +289,7 @@ export default function DispatcherMap() {
 
               <SwipeButton
                 text={acceptTask.isPending ? "Accepting..." : "Slide to Accept"}
-                buttonColor="var(--color-primary)"
+                buttonColor={tokens.primary}
                 onComplete={() => {
                   acceptTask.mutate(
                     { taskId: displayRide.id },
@@ -357,7 +358,7 @@ export default function DispatcherMap() {
                   onPress={handleCall}
                   className="w-10 h-10 rounded-full bg-primary-subtle items-center justify-center"
                 >
-                  <Icon name="phone" size={18} color="var(--color-primary)" />
+                  <Icon name="phone" size={18} color={tokens.primary} />
                 </Pressable>
               </View>
             </View>
@@ -424,7 +425,7 @@ export default function DispatcherMap() {
             {taskStatus === "delivering" && (
               <SwipeButton
                 text={updateStatus.isPending ? "Updating..." : "Slide to Deliver"}
-                buttonColor="var(--color-primary)"
+                buttonColor={tokens.primary}
                 iconName="check-circle"
                 onComplete={() => {
                   updateStatus.mutate(
@@ -511,7 +512,7 @@ export default function DispatcherMap() {
         className="absolute right-5 bg-card p-3 rounded-full shadow-md border border-border"
         style={{ top: Math.max(insets.top, 12) + 90 }}
       >
-        <Icon name="navigation" size={20} color="var(--color-primary)" />
+        <Icon name="navigation" size={20} color={tokens.primary} />
       </Pressable>
 
       {renderBottomSheet()}

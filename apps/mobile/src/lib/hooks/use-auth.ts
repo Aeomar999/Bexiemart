@@ -78,3 +78,12 @@ export function useLogout() {
     },
   });
 }
+
+export function useVerifyEmailOtp() {
+  return useMutation({
+    mutationFn: async (data: { email: string; code: string }) => {
+      const result = await authApi.verifyEmailOtp(data);
+      return result;
+    },
+  });
+}

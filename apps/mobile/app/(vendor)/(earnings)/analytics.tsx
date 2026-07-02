@@ -1,5 +1,7 @@
+import { RowsSkeleton } from "@/components/ui/Skeleton";
+import { tokens } from "@/theme/tokens";
 import { BackButton } from "@/components/ui/BackButton";
-import { View, Text, ScrollView, Pressable, ActivityIndicator } from "react-native";
+import { View, Text, ScrollView, Pressable } from "react-native";
 import { useRouter } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Icon } from "@/components/ui/Icon";
@@ -24,9 +26,7 @@ export default function AnalyticsScreen() {
 
       <ScrollView className="flex-1 px-5 pt-6 pb-12" showsVerticalScrollIndicator={false}>
         {isLoading ? (
-          <View className="items-center justify-center py-20">
-            <ActivityIndicator size="small" color="var(--color-primary)" />
-          </View>
+          <RowsSkeleton />
         ) : isError ? (
           <View className="items-center justify-center py-20">
             <Text className="text-body-sm text-red-500">Failed to load analytics</Text>
