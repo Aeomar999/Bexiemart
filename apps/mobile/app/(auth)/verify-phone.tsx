@@ -14,6 +14,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Button } from "../../src/components/ui/Button";
 import { Announcement } from "../../src/components/ui/Announcement";
 import { Input } from "../../src/components/ui/Input";
+import { SegmentedOtpInput } from "../../src/components/ui/SegmentedOtpInput";
 import { authClient } from "../../src/lib/api/better-auth";
 // @ts-expect-error
 import { FontAwesome5 } from "@expo/vector-icons";
@@ -158,45 +159,19 @@ export default function VerifyPhoneScreen() {
               ) : null}
             </Text>
 
-            {/* Custom Premium OTP Input */}
-            <View className="flex-row justify-center gap-3 mt-10 mb-8 w-full relative">
-              {[...Array(6)].map((_, i) => (
-                <View
-                  key={i}
-                  pointerEvents="none"
-                  className={`w-12 h-14 rounded-lg items-center justify-center border-b-2 ${
-                    code.length === i
-                      ? "border-primary bg-primary-subtle"
-                      : code.length > i
-                        ? "border-foreground bg-muted"
-                        : "border-border bg-background"
-                  }`}
-                >
-                  <Text className="text-display-md font-heading font-bold text-foreground">
-                    {code[i] || ""}
-                  </Text>
-                </View>
-              ))}
-              <TextInput
-                ref={inputRef}
-                value={code}
-                onChangeText={(text) => {
-                  if (status === "error") {
-                    setStatus("idle");
-                    setErrorMessage("");
-                  }
-                  setCode(text);
-                }}
-                keyboardType="number-pad"
-                textContentType="oneTimeCode"
-                autoComplete="sms-otp"
-                maxLength={6}
-                autoFocus
-                editable={status === "idle" || status === "error"}
-                className="absolute w-full h-full opacity-0"
-                caretHidden={true}
-              />
-            </View>
+            {/* Segmented Agency-Tier OTP Bezel Input */}
+            <SegmentedOtpInput
+              code={code}
+              onChangeCode={(text) => {
+                if (status === "error") {
+                  setStatus("idle");
+                  setErrorMessage("");
+                }
+                setCode(text);
+              }}
+              status={status}
+              disabled={status === "verifying" || status === "sending"}
+            />
 
             {/* Dynamic Status / Error Display */}
             <View className="h-10 justify-center items-center w-full mb-6">

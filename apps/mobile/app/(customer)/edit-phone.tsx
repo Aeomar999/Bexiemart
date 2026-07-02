@@ -5,6 +5,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Input } from "@/components/ui/Input";
 import { Button } from "@/components/ui/Button";
 import { BackButton } from "@/components/ui/BackButton";
+import { SegmentedOtpInput } from "@/components/ui/SegmentedOtpInput";
 import { useCurrentUser } from "@/lib/hooks/use-auth";
 import { authClient } from "@/lib/api/better-auth";
 import { Announcement } from "@/components/ui/Announcement";
@@ -130,18 +131,20 @@ export default function EditPhoneScreen() {
             </>
           ) : (
             <>
-              <Input
-                label="Verification Code"
-                placeholder="123456"
-                keyboardType="number-pad"
-                maxLength={6}
-                value={code}
-                onChangeText={(text) => {
-                  setCode(text);
-                  setError("");
-                }}
-                className="text-center text-display-md tracking-widest font-heading font-bold"
-              />
+              <View className="items-center mb-2">
+                <Text className="text-body-sm text-muted-foreground font-body font-medium mb-1">
+                  6-Digit Verification Code
+                </Text>
+                <SegmentedOtpInput
+                  code={code}
+                  onChangeCode={(text) => {
+                    setCode(text);
+                    setError("");
+                  }}
+                  status={error ? "error" : loading ? "verifying" : "idle"}
+                  disabled={loading}
+                />
+              </View>
               <View className="mt-4 gap-3">
                 <Button
                   title="Verify & Save"
