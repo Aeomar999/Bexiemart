@@ -1,3 +1,4 @@
+import { tokens } from "@/theme/tokens";
 import { logger } from "@/lib/logger";
 import React from "react";
 import { View, Text, Pressable, ScrollView } from "react-native";
@@ -73,7 +74,7 @@ export class ErrorBoundary extends React.Component<ErrorBoundaryProps, State> {
               className="bg-primary px-10 py-4 rounded-full active:opacity-80 flex-row items-center w-full justify-center"
               style={({ pressed }) => [
                 { opacity: pressed ? 0.7 : 1 },
-                { backgroundColor: "var(--color-primary)" },
+                { backgroundColor: tokens.primary },
               ]}
             >
               <Icon name="refresh-cw" size={20} color="white" />

@@ -4,7 +4,7 @@ export { Card } from "./Card";
 export { Badge } from "./Badge";
 export { EmptyState } from "./EmptyState";
 export { LoadingState } from "./LoadingState";
-export { Carousel } from "./Carousel";
+export { PromoBanner } from "./PromoBanner";
 export { SearchBar } from "./SearchBar";
 export { Icon } from "./Icon";
 export { ProductCard } from "./ProductCard";

@@ -1,3 +1,5 @@
+import { RowsSkeleton } from "@/components/ui/Skeleton";
+import { tokens } from "@/theme/tokens";
 import { View, Text, ScrollView, Pressable, ActivityIndicator, Alert } from "react-native";
 import { useRouter } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -45,9 +47,7 @@ export default function EarningsDashboardScreen() {
         showsVerticalScrollIndicator={false}
       >
         {isLoading ? (
-          <View className="items-center justify-center py-20">
-            <ActivityIndicator size="small" color="var(--color-primary)" />
-          </View>
+          <RowsSkeleton />
         ) : isError ? (
           <View className="items-center justify-center py-20">
             <Text className="text-body-md text-red-500 font-body">Failed to load earnings</Text>

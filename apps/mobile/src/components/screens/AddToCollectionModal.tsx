@@ -1,3 +1,4 @@
+import { tokens } from "@/theme/tokens";
 import { View, Text, Modal, Pressable, FlatList } from "react-native";
 import { Icon } from "@/components/ui/Icon";
 import { useCollections, useAddCollectionItem } from "@/lib/hooks/use-collections";
@@ -58,7 +59,7 @@ export function AddToCollectionModal({ visible, productId, onClose }: Props) {
                   disabled={addItem.isPending}
                 >
                   <View className="flex-row items-center gap-3">
-                    <Icon name="folder" size={20} color="var(--color-primary)" />
+                    <Icon name="folder" size={20} color={tokens.primary} />
                     <Text className="text-body-lg font-bold text-foreground font-body">
                       {item.name}
                     </Text>

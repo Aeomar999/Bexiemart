@@ -1,18 +1,11 @@
-import {
-  View,
-  Text,
-  ScrollView,
-  Pressable,
-  RefreshControl,
-  TextInput,
-  Dimensions,
-} from "react-native";
+import { tokens } from "@/theme/tokens";
+import { View, Text, ScrollView, Pressable, RefreshControl, TextInput } from "react-native";
 import { FlashList } from "@shopify/flash-list";
 import { useState, useCallback, useEffect } from "react";
 import { Image } from "expo-image";
 import { useRouter } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { Icon, SearchBar } from "@/components/ui";
+import { Icon, SearchBar, PromoBanner } from "@/components/ui";
 import { LoadingState } from "@/components/ui/LoadingState";
 import { ErrorState } from "@/components/ui/ErrorState";
 import { useProducts, useCategories } from "@/lib/hooks/use-products";
@@ -126,35 +119,44 @@ const QUICK_ACTIONS = [
   },
 ];
 
+// Soft, on-brand tint + foreground pairs for category tiles. Reused hue family
+// from FEATURED_HIGHLIGHTS so the home screen keeps one palette. Assigned by
+// position so the visible grid always shows varied, non-repeating colors.
+const CATEGORY_PALETTE = [
+  { tint: "#FCE7F3", fg: "#DB2777" }, // rose
+  { tint: "#DCFCE7", fg: "#16A34A" }, // green
+  { tint: "#FFEDD5", fg: "#EA580C" }, // orange
+  { tint: "#DBEAFE", fg: "#2563EB" }, // blue
+  { tint: "#F3E8FF", fg: "#7C3AED" }, // violet
+  { tint: "#FEF3C7", fg: "#D97706" }, // amber
+  { tint: "#CCFBF1", fg: "#0D9488" }, // teal
+  { tint: "#FFE4E6", fg: "#E11D48" }, // raspberry
+] as const;
+
+// Maps a category name to a semantic Feather icon. Keyword-matched with a
+// neutral "grid" fallback so an unknown category still renders a clean glyph
+// instead of a broken image placeholder.
+function getCategoryIcon(name: string): string {
+  const n = name.toLowerCase();
+  if (/beaut|health|cosmet|care|wellness|pharma/.test(n)) return "heart";
+  if (/book|stationer|office|paper/.test(n)) return "book";
+  if (/electron|phone|tablet|comput|gadget|laptop|device|tech/.test(n)) return "smartphone";
+  if (/fashion|cloth|apparel|wear|shoe|bag|accessor|jewel/.test(n)) return "shopping-bag";
+  if (/food|grocer|drink|beverage|snack|fresh/.test(n)) return "coffee";
+  if (/home|furnitur|kitchen|decor|living|garden/.test(n)) return "home";
+  if (/sport|fitness|outdoor|gym|bike/.test(n)) return "activity";
+  if (/toy|baby|kid|child/.test(n)) return "gift";
+  if (/auto|\bcar\b|vehicle|motor/.test(n)) return "truck";
+  if (/game|gaming|console/.test(n)) return "monitor";
+  if (/music|audio|sound|headphone/.test(n)) return "headphones";
+  if (/tool|hardware|diy|build|construct|industrial/.test(n)) return "tool";
+  return "grid";
+}
+
 export default function HomeScreen() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
   const [refreshing, setRefreshing] = useState(false);
-  const [activeHeroIndex, setActiveHeroIndex] = useState(0);
-
-  const HERO_BANNERS = [
-    {
-      id: "1",
-      title: "Holiday Deals Are Live!",
-      subtitle: "Up to 50% off",
-      bgImage:
-        "https://images.unsplash.com/photo-1607082348824-0a96f2a4b9da?q=80&w=800&auto=format&fit=crop",
-    },
-    {
-      id: "2",
-      title: "Fresh Groceries",
-      subtitle: "Delivered in 30 mins",
-      bgImage:
-        "https://images.unsplash.com/photo-1542838132-92c53300491e?q=80&w=800&auto=format&fit=crop",
-    },
-    {
-      id: "3",
-      title: "New Fashion Drops",
-      subtitle: "Shop latest trends",
-      bgImage:
-        "https://images.unsplash.com/photo-1441984904996-e0b6ba687e04?q=80&w=800&auto=format&fit=crop",
-    },
-  ];
 
   const {
     data: productsData,
@@ -197,15 +199,8 @@ export default function HomeScreen() {
     router.push(`/(customer)/(shop)?category=${encodeURIComponent(categoryName)}`);
   };
 
-  const handleViewableItemsChanged = useCallback(
-    ({ viewableItems }: { viewableItems: Array<{ index: number | null }> }) => {
-      if (viewableItems.length > 0) setActiveHeroIndex(viewableItems[0].index ?? 0);
-    },
-    []
-  );
-
   if (isProductsLoading || isCategoriesLoading) {
-    return <LoadingState message="Loading BexieMart..." />;
+    return <LoadingState type="grid" message="Loading BexieMart..." />;
   }
 
   if (isProductsError || isCategoriesError) {
@@ -247,70 +242,12 @@ export default function HomeScreen() {
           <RefreshControl
             refreshing={refreshing}
             onRefresh={onRefresh}
-            tintColor="var(--color-primary)"
+            tintColor={tokens.primary}
           />
         }
       >
         {/* ===== HERO BANNER ===== */}
-        <View className="mt-4">
-          <FlashList
-            data={HERO_BANNERS}
-            horizontal
-            pagingEnabled
-            showsHorizontalScrollIndicator={false}
-            decelerationRate="fast"
-            snapToInterval={Dimensions.get("window").width}
-            snapToAlignment="center"
-            estimatedItemSize={400}
-            onViewableItemsChanged={handleViewableItemsChanged}
-            viewabilityConfig={{ itemVisiblePercentThreshold: 50 }}
-            keyExtractor={(item) => item.id}
-            renderItem={({ item }) => (
-              <View style={{ width: Dimensions.get("window").width, paddingHorizontal: 20 }}>
-                <Pressable
-                  onPress={() => router.push("/(customer)/flash-sales")}
-                  className="w-full h-[180px] rounded-2xl overflow-hidden relative bg-surface-900 active:opacity-70"
-                >
-                  <Image
-                    source={{ uri: item.bgImage }}
-                    style={{ width: "100%", height: "100%", position: "absolute" }}
-                    contentFit="cover"
-                  />
-                  <View className="absolute inset-0 bg-black/50" />
-
-                  <View className="flex-1 p-5 justify-center">
-                    <View className="bg-success self-start px-2 py-1 rounded-md mb-2">
-                      <Text className="text-caption font-bold text-white uppercase tracking-wider">
-                        Limited Offer
-                      </Text>
-                    </View>
-
-                    <Text className="text-white text-display-md leading-[28px] font-heading font-black w-3/4 mb-1">
-                      {item.title}
-                    </Text>
-
-                    <Text className="text-white/90 text-body-sm font-body mb-4">
-                      {item.subtitle}
-                    </Text>
-
-                    <View className="bg-card self-start flex-row items-center rounded-full px-4 py-2">
-                      <Text className="text-foreground font-bold text-caption mr-1">Order Now</Text>
-                      <Icon name="arrow-right" size={14} color="#0f172a" />
-                    </View>
-                  </View>
-                </Pressable>
-              </View>
-            )}
-          />
-          <View className="flex-row justify-center items-center mt-3 gap-1.5">
-            {HERO_BANNERS.map((_, i) => (
-              <View
-                key={i}
-                className={`h-1.5 rounded-full ${i === activeHeroIndex ? "w-4 bg-primary" : "w-1.5 bg-secondary"}`}
-              />
-            ))}
-          </View>
-        </View>
+        <PromoBanner placement="HOME" containerClassName="mt-4" />
 
         {/* ===== ACTIVE RIDE BANNER ===== */}
         {activeRide && (
@@ -408,43 +345,66 @@ export default function HomeScreen() {
             </Pressable>
           </View>
           <View className="flex-row flex-wrap justify-between gap-y-4">
-            {categories.slice(0, 6).map((cat: Category) => (
-              <Pressable
-                key={cat.id}
-                className="w-[48%] active:opacity-70"
-                onPress={() => goToShopWithCategory(cat.name)}
-              >
-                <View
-                  className="w-full rounded-xl bg-background mb-2 overflow-hidden flex-row flex-wrap"
-                  style={{ aspectRatio: 1 }}
+            {categories.slice(0, 6).map((cat: Category, index: number) => {
+              const { tint, fg } = CATEGORY_PALETTE[index % CATEGORY_PALETTE.length];
+              const icon = getCategoryIcon(cat.name);
+              return (
+                <Pressable
+                  key={cat.id}
+                  className="w-[48%] active:opacity-90"
+                  onPress={() => goToShopWithCategory(cat.name)}
+                  accessibilityRole="button"
+                  accessibilityLabel={`${cat.name}, ${cat.count} ${cat.count === 1 ? "item" : "items"}`}
                 >
-                  {[0, 1, 2, 3].map((idx) => (
+                  <View
+                    className="w-full rounded-2xl overflow-hidden p-3.5 justify-between"
+                    style={{ aspectRatio: 1.1, backgroundColor: tint }}
+                  >
+                    {/* Brand-tinted glyph watermark for texture + per-tile identity */}
                     <View
-                      key={idx}
-                      className={`w-1/2 h-1/2 border border-card items-center justify-center ${idx === 0 || idx === 3 ? "bg-muted" : "bg-secondary"}`}
+                      pointerEvents="none"
+                      style={{ position: "absolute", right: -10, bottom: -12, opacity: 0.12 }}
                     >
-                      {(cat as any).imageUrls?.[idx] ? (
+                      <Icon name={icon} size={104} color={fg} />
+                    </View>
+
+                    {/* Medallion: real category image when present, icon fallback otherwise */}
+                    <View
+                      className="w-12 h-12 rounded-2xl bg-card items-center justify-center overflow-hidden"
+                      style={{
+                        shadowColor: "#0f172a",
+                        shadowOffset: { width: 0, height: 4 },
+                        shadowOpacity: 0.1,
+                        shadowRadius: 8,
+                        elevation: 3,
+                      }}
+                    >
+                      {cat.image ? (
                         <Image
-                          source={{ uri: (cat as any).imageUrls[idx] }}
+                          source={{ uri: cat.image }}
                           style={{ width: "100%", height: "100%" }}
                           contentFit="cover"
                         />
                       ) : (
-                        <Icon name="image" size={16} color="#cbd5e1" />
+                        <Icon name={icon} size={22} color={fg} />
                       )}
                     </View>
-                  ))}
-                </View>
-                <View className="flex-row justify-between items-center">
-                  <Text className="text-body-sm font-bold text-foreground w-2/3" numberOfLines={1}>
-                    {cat.name}
-                  </Text>
-                  <View className="bg-primary-subtle px-2 py-0.5 rounded-full">
-                    <Text className="text-caption font-bold text-primary">{cat.count}</Text>
+
+                    <View>
+                      <Text
+                        className="text-body-md font-heading font-bold text-foreground"
+                        numberOfLines={1}
+                      >
+                        {cat.name}
+                      </Text>
+                      <Text className="text-caption font-body text-muted-foreground mt-0.5">
+                        {cat.count} {cat.count === 1 ? "item" : "items"}
+                      </Text>
+                    </View>
                   </View>
-                </View>
-              </Pressable>
-            ))}
+                </Pressable>
+              );
+            })}
           </View>
         </View>
 
@@ -674,7 +634,7 @@ export default function HomeScreen() {
               Just For You
             </Text>
             <View className="bg-primary-subtle px-2 py-0.5 rounded-md border border-border flex-row items-center gap-1">
-              <Icon name="zap" size={10} color="var(--color-primary)" />
+              <Icon name="zap" size={10} color={tokens.primary} />
               <Text className="text-caption font-bold text-primary uppercase tracking-wider">
                 Personalized
               </Text>

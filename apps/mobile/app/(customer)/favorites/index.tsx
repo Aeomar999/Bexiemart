@@ -1,3 +1,4 @@
+import { tokens } from "@/theme/tokens";
 import { View, Text, FlatList, Pressable, RefreshControl, ScrollView } from "react-native";
 import { useState } from "react";
 import { useRouter } from "expo-router";
@@ -127,7 +128,7 @@ export default function FavoritesScreen() {
             className="w-10 h-10 rounded-full bg-primary-subtle border border-border items-center justify-center"
             onPress={() => setShowCreateModal(true)}
           >
-            <Icon name="folder-plus" size={18} color="var(--color-primary)" />
+            <Icon name="folder-plus" size={18} color={tokens.primary} />
           </Pressable>
         </View>
 
@@ -187,7 +188,7 @@ export default function FavoritesScreen() {
           <RefreshControl
             refreshing={isLoading}
             onRefresh={handleRefresh}
-            tintColor="var(--color-primary)"
+            tintColor={tokens.primary}
           />
         }
         ListEmptyComponent={
@@ -226,7 +227,7 @@ export default function FavoritesScreen() {
                     className="absolute top-2 right-12 w-8 h-8 rounded-full bg-card/90 items-center justify-center shadow-sm"
                     onPress={() => handleShowAddMenu(item.id)}
                   >
-                    <Icon name="folder-plus" size={15} color="var(--color-primary)" />
+                    <Icon name="folder-plus" size={15} color={tokens.primary} />
                   </Pressable>
                 )}
                 <Pressable

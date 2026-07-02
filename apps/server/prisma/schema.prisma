@@ -1044,6 +1044,35 @@ model FlashSaleItem {
   @@index([productId])
 }
 
+// ─── Promotional Banner Models ──────────────────────────────────────────────────
+
+enum BannerPlacement {
+  HOME
+  FOOD
+  SERVICES
+}
+
+/// Marketing carousel banners rendered on customer screens. Managed by admins
+/// and served publicly (guests included) via GET /banners/active.
+model Banner {
+  id        String          @id @default(cuid())
+  placement BannerPlacement
+  title     String
+  subtitle  String?
+  badge     String?
+  imageUrl  String
+  ctaLabel  String?
+  ctaRoute  String?
+  isActive  Boolean         @default(true)
+  sortOrder Int             @default(0)
+  startsAt  DateTime?
+  endsAt    DateTime?
+  createdAt DateTime        @default(now())
+  updatedAt DateTime        @updatedAt
+
+  @@index([placement, isActive])
+}
+
 // ─── Referral Models ───────────────────────────────────────────────────────────
 
 model Referral {

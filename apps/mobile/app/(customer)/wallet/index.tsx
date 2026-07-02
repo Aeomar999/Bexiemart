@@ -1,3 +1,4 @@
+import { tokens } from "@/theme/tokens";
 import { View, Text, ScrollView, Pressable, RefreshControl } from "react-native";
 import { useState, useCallback } from "react";
 import { LinearGradient } from "expo-linear-gradient";
@@ -21,7 +22,7 @@ const QUICK_ACTIONS = [
     id: "topup",
     label: "Top Up",
     icon: "plus",
-    color: "var(--color-primary)",
+    color: tokens.primary,
     route: "/(customer)/wallet/topup",
   },
   {

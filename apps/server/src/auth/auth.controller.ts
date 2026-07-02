@@ -28,6 +28,7 @@ import { ForgotPasswordDto } from "./dto/forgot-password.dto";
 import { ResetPasswordDto } from "./dto/reset-password.dto";
 import { ResendVerificationDto } from "./dto/resend-verification.dto";
 import { CheckAvailabilityDto } from "./dto/check-availability.dto";
+import { VerifyEmailOtpDto } from "./dto/verify-email-otp.dto";
 
 @ApiTags("Auth")
 @ApiBearerAuth()
@@ -281,6 +282,42 @@ export class AuthController {
 
     const isAvailable = Object.keys(errors).length === 0;
     return { isAvailable, errors };
+  }
+
+  @Throttle({ default: { limit: 5, ttl: 60000 } })
+  @ApiOperation({ summary: "Verify email using OTP code" })
+  @Post("verify-email-otp")
+  @HttpCode(HttpStatus.OK)
+  async verifyEmailOtp(@Body() body: VerifyEmailOtpDto) {
+    const { email, code } = body;
+    this.logger.log(`Email OTP verification attempt for: ${email}`);
+
+    // Find the most recent unexpired email-otp verification record
+    const verification = await this.prisma.verification.findFirst({
+      where: {
+        identifier: `email-otp:${email}`,
+        expiresAt: { gt: new Date() },
+      },
+      orderBy: { createdAt: "desc" },
+    });
+
+    if (!verification || verification.value !== code) {
+      throw new UnauthorizedException("Invalid or expired verification code.");
+    }
+
+    // Mark the user's email as verified
+    await this.prisma.user.update({
+      where: { email },
+      data: { emailVerified: true },
+    });
+
+    // Clean up used verification records for this email
+    await this.prisma.verification.deleteMany({
+      where: { identifier: `email-otp:${email}` },
+    });
+
+    this.logger.log(`Email verified via OTP for: ${email}`);
+    return { message: "Email verified successfully." };
   }
 
   @All("/*")

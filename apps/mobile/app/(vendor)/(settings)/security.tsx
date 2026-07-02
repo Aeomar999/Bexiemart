@@ -1,3 +1,4 @@
+import { tokens } from "@/theme/tokens";
 import { BackButton } from "@/components/ui/BackButton";
 import { View, Text, ScrollView, Pressable, Switch, Modal } from "react-native";
 import { useState } from "react";
@@ -62,7 +63,7 @@ export default function SecurityScreen() {
           <View className="flex-row justify-between items-start mb-4">
             <View className="flex-row items-center">
               <View className="w-10 h-10 rounded-full bg-primary-subtle items-center justify-center mr-3">
-                <Icon name="shield" size={18} color="var(--color-primary)" />
+                <Icon name="shield" size={18} color={tokens.primary} />
               </View>
               <View>
                 <Text className="text-body-lg font-bold text-foreground">Manage 2FA</Text>

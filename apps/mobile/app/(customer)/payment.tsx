@@ -1,3 +1,4 @@
+import { tokens } from "@/theme/tokens";
 import { BackButton } from "@/components/ui/BackButton";
 import {
   View,
@@ -142,7 +143,7 @@ export default function PaymentMethodsScreen() {
             setIsModalVisible(true);
           }}
         >
-          <Icon name="plus" size={20} color="var(--color-primary)" />
+          <Icon name="plus" size={20} color={tokens.primary} />
         </Pressable>
       </View>
 
@@ -299,7 +300,7 @@ export default function PaymentMethodsScreen() {
                       <Icon
                         name={opt.icon}
                         size={18}
-                        color={formData.type === opt.type ? "var(--color-primary)" : "#64748b"}
+                        color={formData.type === opt.type ? tokens.primary : "#64748b"}
                       />
                       <Text
                         className={`text-body-sm mt-1 font-bold ${formData.type === opt.type ? "text-primary-hover" : "text-muted-foreground"}`}

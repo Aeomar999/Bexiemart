@@ -1,3 +1,4 @@
+import { tokens } from "@/theme/tokens";
 import { BackButton } from "@/components/ui/BackButton";
 import { View, Text, TextInput, ScrollView, Pressable } from "react-native";
 import { Image } from "expo-image";
@@ -110,7 +111,7 @@ export default function SearchScreen() {
           className={`w-12 h-12 rounded-xl items-center justify-center ${showFilters ? "bg-primary-subtle border border-border" : "bg-background border border-border"}`}
           onPress={() => setShowFilters(!showFilters)}
         >
-          <Icon name="sliders" size={20} color={showFilters ? "var(--color-primary)" : "#0f172a"} />
+          <Icon name="sliders" size={20} color={showFilters ? tokens.primary : "#0f172a"} />
         </Pressable>
       </View>
 
@@ -175,7 +176,7 @@ export default function SearchScreen() {
 
             {isPending && rawResults.length === 0 ? (
               <View className="py-10">
-                <LoadingState message="Finding the best products for you..." />
+                <LoadingState type="grid" message="Finding the best products for you..." />
               </View>
             ) : results.length === 0 ? (
               <View className="py-10">

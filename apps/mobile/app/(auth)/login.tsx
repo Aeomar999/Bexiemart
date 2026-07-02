@@ -1,3 +1,4 @@
+import { tokens } from "@/theme/tokens";
 import { View, Text, TouchableOpacity } from "react-native";
 import { router } from "expo-router";
 import { useEffect, useState } from "react";
@@ -68,7 +69,7 @@ export default function LoginScreen() {
       <View className="flex-1 justify-center py-12">
         <View className="mb-10 items-center">
           <View className="w-16 h-16 rounded-2xl bg-primary-subtle items-center justify-center mb-6">
-            <FontAwesome5 name="store" size={28} color="var(--color-primary)" />
+            <FontAwesome5 name="store" size={28} color={tokens.primary} />
           </View>
           <Text className="text-display-md font-heading font-bold text-foreground mb-2 text-center">
             Welcome back
@@ -125,11 +126,7 @@ export default function LoginScreen() {
               >
                 <View className="flex-row items-center gap-4 mb-5">
                   <View className="w-14 h-14 bg-white rounded-full shadow-sm items-center justify-center border border-border">
-                    <FontAwesome5
-                      name="envelope-open-text"
-                      size={22}
-                      color="var(--color-primary)"
-                    />
+                    <FontAwesome5 name="envelope-open-text" size={22} color={tokens.primary} />
                   </View>
                   <View className="flex-1">
                     <Text className="text-heading-md font-heading font-black text-foreground mb-1">
@@ -149,7 +146,7 @@ export default function LoginScreen() {
                     <FontAwesome5
                       name="info-circle"
                       size={14}
-                      color="var(--color-primary)"
+                      color={tokens.primary}
                       style={{ marginTop: 2 }}
                     />
                     <Text className="flex-1 text-body-sm text-primary-hover leading-tight">
@@ -175,7 +172,7 @@ export default function LoginScreen() {
 
                 {countdown > 0 ? (
                   <View className="bg-white/80 border border-border py-3.5 px-4 rounded-full flex-row items-center justify-center gap-2">
-                    <FontAwesome5 name="clock" size={14} color="var(--color-primary)" />
+                    <FontAwesome5 name="clock" size={14} color={tokens.primary} />
                     <Text className="text-body-md font-bold text-foreground">
                       Resend available in {Math.floor(countdown / 60)}:
                       {(countdown % 60).toString().padStart(2, "0")}

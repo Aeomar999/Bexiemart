@@ -1,3 +1,4 @@
+import { tokens } from "@/theme/tokens";
 import { View, Text, ScrollView, Pressable, Switch } from "react-native";
 import { useState } from "react";
 import { useRouter } from "expo-router";
@@ -70,7 +71,7 @@ export default function DispatcherProfile() {
           </View>
           <View className="flex-1 bg-card border border-border p-3 rounded-2xl items-center">
             <View className="flex-row items-center gap-1 mb-1">
-              <Icon name="truck" size={14} color="var(--color-primary)" />
+              <Icon name="truck" size={14} color={tokens.primary} />
               <Text className="font-bold text-foreground font-heading">142</Text>
             </View>
             <Text className="text-body-sm text-muted-foreground font-body text-center">
@@ -114,7 +115,7 @@ export default function DispatcherProfile() {
           <View className="flex-row items-center justify-between p-4 border-b border-border">
             <View className="flex-row items-center gap-3">
               <View className="w-10 h-10 rounded-full bg-primary-subtle items-center justify-center">
-                <Icon name="zap" size={18} color="var(--color-primary)" />
+                <Icon name="zap" size={18} color={tokens.primary} />
               </View>
               <View>
                 <Text className="text-body-lg font-body font-semibold text-foreground">
@@ -128,7 +129,7 @@ export default function DispatcherProfile() {
             <Switch
               value={autoAccept}
               onValueChange={setAutoAccept}
-              trackColor={{ false: "#e2e8f0", true: "var(--color-primary)" }}
+              trackColor={{ false: "#e2e8f0", true: tokens.primary }}
               thumbColor={"#ffffff"}
             />
           </View>

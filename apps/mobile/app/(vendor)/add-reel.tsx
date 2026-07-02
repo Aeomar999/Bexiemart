@@ -1,3 +1,4 @@
+import { tokens } from "@/theme/tokens";
 import { BackButton } from "@/components/ui/BackButton";
 import {
   View,
@@ -189,7 +190,7 @@ export default function AddReelScreen() {
           {linkedProduct ? (
             <>
               <View className="w-14 h-14 bg-white rounded-xl items-center justify-center border border-border shadow-sm shadow-none">
-                <Icon name="shopping-bag" size={24} color="var(--color-primary)" />
+                <Icon name="shopping-bag" size={24} color={tokens.primary} />
               </View>
               <View className="ml-4 flex-1">
                 <Text
@@ -203,7 +204,7 @@ export default function AddReelScreen() {
                 </Text>
               </View>
               <View className="w-8 h-8 bg-primary-subtle rounded-full items-center justify-center">
-                <Icon name="edit-2" size={14} color="var(--color-primary)" />
+                <Icon name="edit-2" size={14} color={tokens.primary} />
               </View>
             </>
           ) : (
@@ -309,7 +310,7 @@ export default function AddReelScreen() {
                         Select an existing video
                       </Text>
                     </View>
-                    <Icon name="chevron-right" size={20} color="var(--color-primary)" />
+                    <Icon name="chevron-right" size={20} color={tokens.primary} />
                   </Pressable>
                 </View>
               </>

@@ -1,3 +1,4 @@
+import { tokens } from "@/theme/tokens";
 import { BackButton } from "@/components/ui/BackButton";
 import { View, Text, ScrollView, Pressable, Switch, Alert, Modal, FlatList } from "react-native";
 import { useRouter } from "expo-router";
@@ -135,7 +136,7 @@ export default function OperatingHoursScreen() {
                     <Switch
                       value={data.isOpen}
                       onValueChange={() => toggleDay(day.id)}
-                      trackColor={{ false: "#e2e8f0", true: "var(--color-primary)" }}
+                      trackColor={{ false: "#e2e8f0", true: tokens.primary }}
                       thumbColor={"#ffffff"}
                     />
                   </View>
@@ -244,9 +245,7 @@ export default function OperatingHoursScreen() {
                     >
                       {item}
                     </Text>
-                    {isSelected && (
-                      <Icon name="check-circle" size={20} color="var(--color-primary)" />
-                    )}
+                    {isSelected && <Icon name="check-circle" size={20} color={tokens.primary} />}
                   </Pressable>
                 );
               }}

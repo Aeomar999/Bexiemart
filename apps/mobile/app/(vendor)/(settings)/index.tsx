@@ -1,3 +1,4 @@
+import { tokens } from "@/theme/tokens";
 import { View, Text, ScrollView, Switch, Pressable } from "react-native";
 import { useRouter } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -16,7 +17,7 @@ const SETTINGS_SECTIONS = [
         icon: "store",
         label: "Store Profile",
         route: "/(vendor)/(settings)/profile",
-        color: "var(--color-primary)",
+        color: tokens.primary,
       },
       {
         id: "hours",
@@ -200,7 +201,7 @@ export default function VendorSettingsScreen() {
                         <Switch
                           value={isDarkMode}
                           onValueChange={setIsDarkMode}
-                          trackColor={{ false: "#e2e8f0", true: "var(--color-primary)" }}
+                          trackColor={{ false: "#e2e8f0", true: tokens.primary }}
                           thumbColor={"#ffffff"}
                         />
                       ) : (

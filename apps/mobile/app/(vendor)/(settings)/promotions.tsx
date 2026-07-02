@@ -1,3 +1,4 @@
+import { tokens } from "@/theme/tokens";
 import { BackButton } from "@/components/ui/BackButton";
 import { View, Text, ScrollView, Pressable, Switch, Alert, Modal } from "react-native";
 import { useRouter } from "expo-router";
@@ -103,7 +104,7 @@ export default function VendorPromotionsScreen() {
               onPress={openCreate}
               className="bg-primary-subtle px-3 py-1.5 rounded-full flex-row items-center"
             >
-              <Icon name="plus" size={14} color="var(--color-primary)" style={{ marginRight: 4 }} />
+              <Icon name="plus" size={14} color={tokens.primary} style={{ marginRight: 4 }} />
               <Text className="text-body-sm font-bold text-primary">Create New</Text>
             </Pressable>
           </View>
@@ -139,7 +140,7 @@ export default function VendorPromotionsScreen() {
                 <Switch
                   value={promo.active}
                   onValueChange={() => toggleCoupon.mutate(promo.id)}
-                  trackColor={{ false: "#e2e8f0", true: "var(--color-primary)" }}
+                  trackColor={{ false: "#e2e8f0", true: tokens.primary }}
                   thumbColor={"#ffffff"}
                 />
               </View>
