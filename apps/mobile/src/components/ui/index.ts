@@ -11,3 +11,4 @@ export { ProductCard } from "./ProductCard";
 export { CategoryCard } from "./CategoryCard";
 export { OrderCard } from "./OrderCard";
 export { Announcement } from "./Announcement";
+export { SegmentedOtpInput } from "./SegmentedOtpInput";

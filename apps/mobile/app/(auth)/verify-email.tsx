@@ -13,6 +13,7 @@ import { useEffect, useState, useRef } from "react";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Button } from "../../src/components/ui/Button";
 import { Announcement } from "../../src/components/ui/Announcement";
+import { SegmentedOtpInput } from "../../src/components/ui/SegmentedOtpInput";
 import {
   useVerifyEmail,
   useResendVerification,
@@ -179,37 +180,13 @@ export default function VerifyEmailScreen() {
               <Text className="font-bold text-foreground">{email || "your email"}</Text>
             </Text>
 
-            {/* OTP Input for Email Verification Code */}
-            <View className="flex-row justify-center gap-3 mt-8 mb-4 w-full relative">
-              {[...Array(6)].map((_, i) => (
-                <View
-                  key={i}
-                  pointerEvents="none"
-                  className={`w-12 h-14 rounded-lg items-center justify-center border-b-2 ${
-                    code.length === i
-                      ? "border-primary bg-primary-subtle"
-                      : code.length > i
-                        ? "border-foreground bg-muted"
-                        : "border-border bg-background"
-                  }`}
-                >
-                  <Text className="text-display-md font-heading font-bold text-foreground">
-                    {code[i] || ""}
-                  </Text>
-                </View>
-              ))}
-              <TextInput
-                ref={inputRef}
-                value={code}
-                onChangeText={setCode}
-                keyboardType="number-pad"
-                textContentType="oneTimeCode"
-                maxLength={6}
-                autoFocus
-                className="absolute w-full h-full opacity-0"
-                caretHidden={true}
-              />
-            </View>
+            {/* Segmented Agency-Tier OTP Bezel Input */}
+            <SegmentedOtpInput
+              code={code}
+              onChangeCode={setCode}
+              status={status === "error" ? "error" : status === "verifying" ? "verifying" : "idle"}
+              disabled={status === "verifying"}
+            />
             <Text className="text-body-sm text-muted-foreground font-body text-center mb-6">
               Enter the code from your email, or click the verification link.
             </Text>
