@@ -20,8 +20,9 @@ function makeMocks() {
   };
   const prisma: any = { $transaction: jest.fn((cb: any) => cb(tx)) };
   const chatService = new ChatService(prisma);
-  const service = new SupportService(prisma, chatService);
-  return { service, prisma, tx };
+  const adminGateway: any = { emitTicketCreated: jest.fn() };
+  const service = new SupportService(prisma, chatService, adminGateway);
+  return { service, prisma, tx, adminGateway };
 }
 
 const CUSTOMER = "user-1";
