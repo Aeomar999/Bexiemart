@@ -1,14 +1,27 @@
-import { Injectable, ForbiddenException } from "@nestjs/common";
+import {
+  Injectable,
+  ForbiddenException,
+  NotFoundException,
+  BadRequestException,
+} from "@nestjs/common";
 import { PrismaService } from "../../prisma/prisma.service";
 import { ChatService } from "../chat/chat.service";
 import { CreateTicketDto } from "./dto/create-ticket.dto";
-import { SYSTEM_USER_ID, TICKET_PRIORITY, TICKET_RECEIPT_MESSAGE } from "./support.constants";
+import { RateTicketDto } from "./dto/rate-ticket.dto";
+import {
+  SYSTEM_USER_ID,
+  TICKET_PRIORITY,
+  TICKET_RECEIPT_MESSAGE,
+  TICKET_STATUS,
+} from "./support.constants";
+import { AdminGateway } from "../admin/admin.gateway";
 
 @Injectable()
 export class SupportService {
   constructor(
     private readonly prisma: PrismaService,
-    private readonly chatService: ChatService
+    private readonly chatService: ChatService,
+    private readonly adminGateway: AdminGateway
   ) {}
 
   /**
@@ -18,7 +31,7 @@ export class SupportService {
    * message authored by the SYSTEM user is seeded so it persists in history.
    */
   async createTicket(userId: string, dto: CreateTicketDto) {
-    return this.prisma.$transaction(async (tx) => {
+    const res = await this.prisma.$transaction(async (tx) => {
       // 1. If an order is linked, it must belong to the requesting customer (REQ-005).
       let order: { status: string; paymentStatus: string } | null = null;
       if (dto.orderId) {
@@ -78,7 +91,7 @@ export class SupportService {
         });
       }
 
-      return tx.supportTicket.findUnique({
+      const created = await tx.supportTicket.findUnique({
         where: { id: ticket.id },
         include: {
           conversation: {
@@ -88,6 +101,120 @@ export class SupportService {
           },
         },
       });
+
+      return created;
+    });
+
+    if (res) {
+      this.adminGateway.emitTicketCreated({
+        ticketId: res.id,
+        category: res.category,
+        subject: res.subject,
+        priority: res.priority,
+      });
+    }
+
+    return res;
+  }
+
+  /**
+   * Returns paginated support tickets for a customer, ordered by most recently
+   * updated. Each ticket includes the conversation's last message for preview.
+   */
+  async listMyTickets(userId: string, page = 1, limit = 20) {
+    const skip = (page - 1) * limit;
+
+    const [data, total] = await Promise.all([
+      this.prisma.supportTicket.findMany({
+        where: { userId },
+        orderBy: { updatedAt: "desc" },
+        skip,
+        take: limit,
+        include: {
+          conversation: {
+            include: {
+              messages: {
+                orderBy: { createdAt: "desc" },
+                take: 1,
+              },
+            },
+          },
+        },
+      }),
+      this.prisma.supportTicket.count({ where: { userId } }),
+    ]);
+
+    return {
+      data,
+      meta: {
+        total,
+        page,
+        limit,
+        totalPages: Math.ceil(total / limit),
+      },
+    };
+  }
+
+  /**
+   * Returns a single ticket with its full conversation messages (latest 50).
+   * Access is restricted to the ticket owner or the assigned agent.
+   */
+  async getTicket(ticketId: string, userId: string) {
+    const ticket = await this.prisma.supportTicket.findUnique({
+      where: { id: ticketId },
+      include: {
+        conversation: {
+          include: {
+            messages: {
+              orderBy: { createdAt: "desc" },
+              take: 50,
+            },
+          },
+        },
+      },
+    });
+
+    if (!ticket) {
+      throw new NotFoundException("Support ticket not found");
+    }
+
+    if (ticket.userId !== userId && ticket.agentId !== userId) {
+      throw new ForbiddenException("You do not have access to this ticket");
+    }
+
+    return ticket;
+  }
+
+  /**
+   * Allows the ticket owner to rate a resolved or closed ticket (1-5 stars).
+   * Only the customer who opened the ticket may rate it, and only after it
+   * has been resolved or closed by the support agent.
+   */
+  async rateTicket(ticketId: string, userId: string, dto: RateTicketDto) {
+    const ticket = await this.prisma.supportTicket.findUnique({
+      where: { id: ticketId },
+      select: { userId: true, status: true },
+    });
+
+    if (!ticket) {
+      throw new NotFoundException("Support ticket not found");
+    }
+
+    if (ticket.userId !== userId) {
+      throw new ForbiddenException("Only the ticket owner can rate this ticket");
+    }
+
+    const ratableStatuses: string[] = [TICKET_STATUS.RESOLVED, TICKET_STATUS.CLOSED];
+    if (!ratableStatuses.includes(ticket.status)) {
+      throw new BadRequestException("Only resolved or closed tickets can be rated");
+    }
+
+    return this.prisma.supportTicket.update({
+      where: { id: ticketId },
+      data: {
+        rating: dto.rating,
+        ratingComment: dto.comment ?? null,
+      },
     });
   }
 

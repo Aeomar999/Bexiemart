@@ -41,7 +41,33 @@ export default function HelpCenterScreen() {
         </View>
       </View>
       <ScrollView className="flex-1">
-        <View className="px-5 gap-4 pb-12">
+        <View className="px-5 pt-4 gap-4 pb-12">
+          {/* Support Tickets Banner */}
+          <Pressable
+            onPress={() => router.push("/(customer)/support/tickets")}
+            className="bg-primary-subtle p-5 rounded-2xl border border-primary/20 flex-row items-center justify-between"
+          >
+            <View className="flex-1 pr-3">
+              <View className="flex-row items-center gap-2 mb-1">
+                <Icon name="message-square" size={20} color={tokens.primary} />
+                <Text className="text-heading-sm font-bold text-primary font-heading">
+                  Support Tickets
+                </Text>
+              </View>
+              <Text className="text-body-sm text-muted-foreground font-body">
+                Have an issue? View your active support tickets or open a new inquiry.
+              </Text>
+            </View>
+            <View className="bg-primary px-3.5 py-2 rounded-xl flex-row items-center gap-1">
+              <Text className="text-caption font-bold text-white">View</Text>
+              <Icon name="chevron-right" size={14} color="#ffffff" />
+            </View>
+          </Pressable>
+
+          <Text className="text-heading-sm font-bold text-foreground font-heading mt-2">
+            Frequently Asked Questions
+          </Text>
+
           {faqs.map((faq, i) => {
             const isExpanded = expandedIndex === i;
             return (
