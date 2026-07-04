@@ -24,7 +24,27 @@ export default function ContactUsScreen() {
         </View>
       </View>
       <ScrollView className="flex-1">
-        <View className="px-5 gap-4 pb-12">
+        <View className="px-5 pt-4 gap-4 pb-12">
+          {/* Live Chat Support Card */}
+          <Pressable
+            style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
+            className="bg-primary-subtle p-5 rounded-2xl border-2 border-primary items-center gap-2"
+            onPress={() => router.push("/(customer)/support/tickets")}
+          >
+            <View className="w-14 h-14 bg-primary rounded-full items-center justify-center">
+              <Icon name="message-square" size={28} color="#ffffff" />
+            </View>
+            <Text className="text-heading-md font-bold text-primary font-heading">
+              In-App Live Support
+            </Text>
+            <Text className="text-body-md text-muted-foreground font-body text-center">
+              Get faster resolution by chatting directly with our customer service team.
+            </Text>
+            <View className="mt-2 bg-primary px-4 py-2 rounded-xl">
+              <Text className="text-body-sm font-bold text-white">Open Support Chat</Text>
+            </View>
+          </Pressable>
+
           <Pressable
             style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
             className="bg-card p-5 rounded-2xl border border-border items-center gap-2"

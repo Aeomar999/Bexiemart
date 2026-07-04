@@ -858,4 +858,125 @@ export class AdminService {
 
     return { data, meta: { total, page, limit, totalPages: Math.ceil(total / limit) } };
   }
+
+  // ─── Support Tickets ────────────────────────────────────────────────────────
+
+  async listSupportTickets(
+    status?: string,
+    category?: string,
+    priority?: string,
+    page: number = 1,
+    limit: number = 20
+  ) {
+    const skip = (page - 1) * limit;
+    const where: any = {};
+    if (status) where.status = status;
+    if (category) where.category = category;
+    if (priority) where.priority = priority;
+
+    const [data, total] = await Promise.all([
+      this.prisma.supportTicket.findMany({
+        where,
+        skip,
+        take: limit,
+        orderBy: { createdAt: "asc" },
+        include: {
+          user: { select: { id: true, name: true, email: true, image: true } },
+          agent: { select: { id: true, name: true, email: true } },
+        },
+      }),
+      this.prisma.supportTicket.count({ where }),
+    ]);
+
+    return { data, meta: { total, page, limit, totalPages: Math.ceil(total / limit) } };
+  }
+
+  async getSupportTicket(ticketId: string) {
+    const ticket = await this.prisma.supportTicket.findUnique({
+      where: { id: ticketId },
+      include: {
+        user: { select: { id: true, name: true, email: true, image: true } },
+        agent: { select: { id: true, name: true, email: true } },
+        order: { select: { id: true, orderNumber: true, status: true, total: true } },
+        conversation: {
+          include: {
+            messages: {
+              take: 50,
+              orderBy: { createdAt: "desc" },
+              include: {
+                sender: { select: { id: true, name: true, image: true } },
+              },
+            },
+          },
+        },
+      },
+    });
+    if (!ticket) throw new NotFoundException("Support ticket not found");
+    return ticket;
+  }
+
+  async claimTicket(ticketId: string, agentId: string) {
+    const ticket = await this.prisma.supportTicket.findUnique({
+      where: { id: ticketId },
+    });
+    if (!ticket) throw new NotFoundException("Support ticket not found");
+    if (ticket.status === "RESOLVED" || ticket.status === "CLOSED") {
+      throw new BadRequestException("Cannot claim a ticket that is already resolved or closed");
+    }
+
+    const [updatedTicket] = await this.prisma.$transaction([
+      this.prisma.supportTicket.update({
+        where: { id: ticketId },
+        data: { agentId, status: "ASSIGNED" },
+      }),
+      this.prisma.conversationParticipant.upsert({
+        where: {
+          conversationId_userId: {
+            conversationId: ticket.conversationId,
+            userId: agentId,
+          },
+        },
+        create: {
+          conversationId: ticket.conversationId,
+          userId: agentId,
+        },
+        update: {},
+      }),
+    ]);
+
+    return updatedTicket;
+  }
+
+  async resolveTicket(ticketId: string, agentId: string, resolution: string) {
+    const ticket = await this.prisma.supportTicket.findUnique({
+      where: { id: ticketId },
+    });
+    if (!ticket) throw new NotFoundException("Support ticket not found");
+    if (ticket.status === "RESOLVED" || ticket.status === "CLOSED") {
+      throw new BadRequestException("Ticket is already resolved or closed");
+    }
+    if (ticket.agentId !== agentId) {
+      throw new ForbiddenException("Only the assigned agent can resolve this ticket");
+    }
+
+    return this.prisma.supportTicket.update({
+      where: { id: ticketId },
+      data: { status: "RESOLVED", resolution, resolvedAt: new Date() },
+    });
+  }
+
+  async closeTicket(ticketId: string) {
+    const ticket = await this.prisma.supportTicket.findUnique({
+      where: { id: ticketId },
+    });
+    if (!ticket) throw new NotFoundException("Support ticket not found");
+    if (ticket.status !== "RESOLVED") {
+      throw new BadRequestException("Only resolved tickets can be closed");
+    }
+
+    return this.prisma.supportTicket.update({
+      where: { id: ticketId },
+      data: { status: "CLOSED" },
+    });
+  }
 }

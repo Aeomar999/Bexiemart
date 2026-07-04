@@ -1,4 +1,15 @@
-import { Controller, Get, Patch, Put, Param, Query, Body, UseGuards, Post } from "@nestjs/common";
+import {
+  Controller,
+  Get,
+  Patch,
+  Put,
+  Param,
+  Query,
+  Body,
+  UseGuards,
+  Post,
+  Req,
+} from "@nestjs/common";
 import { Throttle } from "@nestjs/throttler";
 import { ApiTags, ApiOperation, ApiBody, ApiBearerAuth } from "@nestjs/swagger";
 import { AuthGuard } from "../../guards/auth.guard";
@@ -11,6 +22,8 @@ import { BanUserDto } from "./dto/ban-user.dto";
 import { UpdateConfigDto } from "./dto/update-config.dto";
 import { UpdateOrderStatusDto } from "./dto/update-order-status.dto";
 import { ResolveDisputeDto } from "./dto/resolve-dispute.dto";
+import { ClaimTicketDto } from "./dto/claim-ticket.dto";
+import { ResolveTicketDto } from "./dto/resolve-ticket.dto";
 import { UpdateDispatcherStatusDto } from "./dto/update-dispatcher-status.dto";
 import { CreateFlashSaleDto } from "./dto/create-flash-sale.dto";
 import { CreateCouponDto } from "./dto/create-coupon.dto";
@@ -330,5 +343,51 @@ export class AdminController {
   @Get("referrals")
   async listReferrals(@Query("page") page: string = "1", @Query("limit") limit: string = "20") {
     return this.adminService.listReferrals(Number(page), Number(limit));
+  }
+
+  // ─── Support Tickets ────────────────────────────────────────────────────────
+
+  @ApiOperation({ summary: "List support tickets" })
+  @Get("support/tickets")
+  listSupportTickets(
+    @Query("status") status?: string,
+    @Query("category") category?: string,
+    @Query("priority") priority?: string,
+    @Query("page") page?: string,
+    @Query("limit") limit?: string
+  ) {
+    return this.adminService.listSupportTickets(
+      status,
+      category,
+      priority,
+      Number(page) || 1,
+      Number(limit) || 20
+    );
+  }
+
+  @ApiOperation({ summary: "Get support ticket by ID" })
+  @Get("support/tickets/:id")
+  getSupportTicket(@Param("id") id: string) {
+    return this.adminService.getSupportTicket(id);
+  }
+
+  @ApiOperation({ summary: "Claim a support ticket" })
+  @ApiBody({ type: ClaimTicketDto })
+  @Patch("support/tickets/:id/claim")
+  claimTicket(@Param("id") id: string, @Req() req: any) {
+    return this.adminService.claimTicket(id, req.user.id);
+  }
+
+  @ApiOperation({ summary: "Resolve a support ticket" })
+  @ApiBody({ type: ResolveTicketDto })
+  @Post("support/tickets/:id/resolve")
+  resolveTicket(@Param("id") id: string, @Body() body: ResolveTicketDto, @Req() req: any) {
+    return this.adminService.resolveTicket(id, req.user.id, body.resolution);
+  }
+
+  @ApiOperation({ summary: "Close a resolved support ticket" })
+  @Patch("support/tickets/:id/close")
+  closeTicket(@Param("id") id: string) {
+    return this.adminService.closeTicket(id);
   }
 }
