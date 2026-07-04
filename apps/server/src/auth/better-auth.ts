@@ -124,6 +124,25 @@ export function createAuth(prisma: PrismaClient) {
     session: {
       expiresIn: 7 * 24 * 60 * 60,
     },
-    trustedOrigins: ["bexiemart://", "com.bexiemart.app://", "exp://"],
+    account: {
+      accountLinking: {
+        enabled: true,
+        trustedProviders: ["google"],
+      },
+    },
+    socialProviders: {
+      google: {
+        clientId: process.env.GOOGLE_CLIENT_ID || "",
+        clientSecret: process.env.GOOGLE_CLIENT_SECRET || "",
+      },
+    },
+    trustedOrigins: [
+      "bexiemart://",
+      "com.bexiemart.app://",
+      "exp://",
+      "http://localhost:3000",
+      "http://localhost:3001",
+      "http://localhost:8081",
+    ],
   });
 }

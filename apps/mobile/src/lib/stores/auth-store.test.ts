@@ -77,6 +77,16 @@ describe("Auth Store", () => {
     expect(SecureStore.setItemAsync).toHaveBeenCalledWith("bexiemart_onboarding", "true");
   });
 
+  it("should reset onboarding state", async () => {
+    useAuthStore.setState({ hasSeenOnboarding: true, hasLaunchedBefore: true });
+    await useAuthStore.getState().resetOnboarding();
+    const state = useAuthStore.getState();
+    expect(state.hasSeenOnboarding).toBe(false);
+    expect(state.hasLaunchedBefore).toBe(false);
+    expect(SecureStore.deleteItemAsync).toHaveBeenCalledWith("bexiemart_onboarding");
+    expect(SecureStore.deleteItemAsync).toHaveBeenCalledWith("bexiemart_launched");
+  });
+
   it("should hydrate with cached session", async () => {
     (SecureStore.getItemAsync as jest.Mock).mockImplementation((key) => {
       if (key === "bexiemart_token") return Promise.resolve("stored-token");
