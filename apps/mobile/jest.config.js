@@ -4,10 +4,13 @@ module.exports = {
   preset: "jest-expo",
   setupFilesAfterEnv: ["./jest.setup.js"],
   transform: {
-    "\\.[jt]sx?$": ["babel-jest", { configFile: path.resolve(__dirname, "babel.config.test.js") }],
+    "\\.(js|jsx|ts|tsx|mjs|cjs)$": [
+      "babel-jest",
+      { configFile: path.resolve(__dirname, "babel.config.test.js") },
+    ],
   },
   transformIgnorePatterns: [
-    "node_modules/(?!((jest-)?react-native|@react-native(-community)?)|expo(nent)?|@expo(nent)?/.*|@expo-google-fonts/.*|react-navigation|@react-navigation/.*|@unimodules/.*|unimodules|sentry-expo|@sentry/react-native|native-base|react-native-svg|react-native-reanimated)",
+    "node_modules/(?!((jest-)?react-native|@react-native(-community)?)|expo(nent)?|@expo(nent)?/.*|@expo-google-fonts/.*|react-navigation|@react-navigation/.*|@unimodules/.*|unimodules|sentry-expo|@sentry/react-native|native-base|react-native-svg|react-native-reanimated|better-auth|@better-auth|better-call|jose|@noble|rou3|defu)",
   ],
   testPathIgnorePatterns: [
     "/node_modules/",

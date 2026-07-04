@@ -30,26 +30,29 @@ describe("better-auth", () => {
   });
 
   it("should configure baseURL with /auth suffix", () => {
-    expect(createCall).toEqual(
-      expect.objectContaining({ baseURL: "http://test.com/api/v1/auth" })
-    );
+    expect(createCall).toEqual(expect.objectContaining({ baseURL: "http://test.com/api/v1/auth" }));
+  });
+
+  it("should include expoClient plugin", () => {
+    expect(createCall.plugins[0].id).toBe("expo");
   });
 
   it("should include phoneNumberClient plugin", () => {
-    expect(createCall.plugins[0]).toBe("phoneNumberClient");
+    expect(createCall.plugins[1]).toBe("phoneNumberClient");
   });
 
   it("should include dashClient plugin", () => {
-    expect(createCall.plugins[1]).toBe("dashClient");
+    expect(createCall.plugins[2]).toBe("dashClient");
   });
 
   it("should include sentinelNativeClient plugin", () => {
-    expect(createCall.plugins[2].name).toBe("sentinelNativeClient");
+    expect(createCall.plugins[3].name).toBe("sentinelNativeClient");
   });
 
   it("should use SecureStore for native storage", async () => {
     (SecureStore.getItemAsync as jest.Mock).mockResolvedValue("stored-value");
-    const sentinelOptions = jest.requireMock("@better-auth/infra/native").sentinelNativeClient.mock.calls[0][0];
+    const sentinelOptions = jest.requireMock("@better-auth/infra/native").sentinelNativeClient.mock
+      .calls[0][0];
     const result = await sentinelOptions.storage.getItem("test-key");
     expect(SecureStore.getItemAsync).toHaveBeenCalledWith("test-key");
     expect(result).toBe("stored-value");

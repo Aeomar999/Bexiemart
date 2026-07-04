@@ -64,6 +64,10 @@
             {
               "scheme": "bexiemart",
               "host": "reset-password"
+            },
+            {
+              "scheme": "bexiemart",
+              "host": "auth"
             }
           ],
           "category": [

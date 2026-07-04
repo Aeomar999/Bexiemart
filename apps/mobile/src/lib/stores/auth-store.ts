@@ -51,6 +51,7 @@ interface AuthState {
   hydrate: () => Promise<void>;
   completeLaunch: () => Promise<void>;
   completeOnboarding: () => Promise<void>;
+  resetOnboarding: () => Promise<void>;
 }
 
 export const useAuthStore = create<AuthState>((set) => ({
@@ -77,7 +78,9 @@ export const useAuthStore = create<AuthState>((set) => ({
   },
 
   setUser: (user) => {
-    set({ user });
+    const normalizedUser = { ...user, role: user.role?.toUpperCase() };
+    storage.setItem("bexiemart_user", JSON.stringify(normalizedUser));
+    set({ user: normalizedUser });
   },
 
   setAuthPromptActive: (active) => {
@@ -90,7 +93,22 @@ export const useAuthStore = create<AuthState>((set) => ({
     } catch (e) {}
     await storage.removeItem("bexiemart_token");
     await storage.removeItem("bexiemart_user");
-    set({ user: null, token: null, isAuthenticated: false, isLoading: false });
+    await storage.removeItem("bexiemart_onboarding");
+    await storage.removeItem("bexiemart_launched");
+    set({
+      user: null,
+      token: null,
+      isAuthenticated: false,
+      isLoading: false,
+      hasSeenOnboarding: false,
+      hasLaunchedBefore: false,
+    });
+  },
+
+  resetOnboarding: async () => {
+    await storage.removeItem("bexiemart_onboarding");
+    await storage.removeItem("bexiemart_launched");
+    set({ hasSeenOnboarding: false, hasLaunchedBefore: false });
   },
 
   completeLaunch: async () => {
