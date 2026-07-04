@@ -112,7 +112,7 @@ export default function RootLayout() {
           router.replace("/(customer)/(tabs)/(home)");
         }
       } else if (!isAuthenticated) {
-        if (!hasLaunchedBefore && !inOnboardingGroup) {
+        if (!hasSeenOnboarding && !inOnboardingGroup) {
           router.replace("/(onboarding)/welcome");
         } else if (!authEnabled) {
           // Auth wall flagged off: guests browse freely. Rescue them from the
@@ -128,7 +128,7 @@ export default function RootLayout() {
           if (!segments[0] || (inAuthGroup && !authPromptActive)) {
             router.replace("/(customer)/(tabs)/(home)");
           }
-        } else if (hasLaunchedBefore && !inAuthGroup && !inOnboardingGroup) {
+        } else if (hasSeenOnboarding && !inAuthGroup && !inOnboardingGroup) {
           router.replace("/(auth)/login");
         }
       }

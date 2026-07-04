@@ -1,4 +1,5 @@
 import { createAuthClient } from "better-auth/client";
+import { expoClient } from "@better-auth/expo/client";
 import { phoneNumberClient } from "better-auth/client/plugins";
 import { dashClient, sentinelNativeClient } from "@better-auth/infra/native";
 import { ENV } from "../../config";
@@ -29,6 +30,10 @@ export const authClient = createAuthClient({
     },
   },
   plugins: [
+    expoClient({
+      scheme: "bexiemart",
+      storagePrefix: "bexiemart",
+    }),
     phoneNumberClient(),
     dashClient(),
     sentinelNativeClient({
