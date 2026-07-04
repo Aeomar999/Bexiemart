@@ -17,6 +17,8 @@ export default function ChatListScreen() {
   const { data: conversations, isLoading, refetch } = useConversations();
   const onlineUsers = useSocketStore((s) => s.onlineUsers);
 
+  const directOrOrderChats = (conversations || []).filter((c: any) => c.type !== "SUPPORT");
+
   if (isLoading) {
     return (
       <View className="flex-1 bg-background justify-center items-center">
@@ -98,7 +100,7 @@ export default function ChatListScreen() {
       </View>
 
       <FlatList
-        data={conversations}
+        data={directOrOrderChats}
         keyExtractor={(item) => item.id}
         renderItem={renderConversation}
         showsVerticalScrollIndicator={false}

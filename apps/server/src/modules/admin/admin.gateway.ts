@@ -86,4 +86,13 @@ export class AdminGateway implements OnGatewayConnection, OnGatewayDisconnect {
   emitDisputeCreated(payload: { disputeId: string; reason: string }) {
     this.server.to(ADMIN_ROOM).emit("dispute.created", payload);
   }
+
+  emitTicketCreated(payload: {
+    ticketId: string;
+    category: string;
+    subject: string;
+    priority: string;
+  }) {
+    this.server.to(ADMIN_ROOM).emit("support.ticket_created", payload);
+  }
 }
