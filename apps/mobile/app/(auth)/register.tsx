@@ -351,7 +351,7 @@ export default function RegisterScreen() {
         </View>
       </View>
 
-      <SocialLogins />
+      <SocialLogins roleIntent={role} />
 
       <View className="flex-row justify-center mt-10 gap-2">
         <Text className="text-body-md text-muted-foreground font-body">

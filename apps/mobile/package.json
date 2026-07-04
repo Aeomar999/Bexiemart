@@ -17,6 +17,7 @@
     "prepare": "husky"
   },
   "dependencies": {
+    "@better-auth/expo": "^1.6.23",
     "@better-auth/infra": "^0.2.11",
     "@cloudinary/url-gen": "^1.22.0",
     "@expo-google-fonts/nunito": "^0.4.2",

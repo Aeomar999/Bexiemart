@@ -9,18 +9,16 @@ import { FontAwesome5 } from "@expo/vector-icons";
 
 export default function WelcomeScreen() {
   const router = useRouter();
-  const completeLaunch = useAuthStore((s) => s.completeLaunch);
+  const completeOnboarding = useAuthStore((s) => s.completeOnboarding);
   const { authEnabled } = useAuthEnabled();
 
-  const handleGetStarted = async () => {
-    await completeLaunch();
-    // Use push or replace? The user is already in (onboarding).
-    // The onboarding carousel is at app/(onboarding)/index.tsx
+  const handleGetStarted = () => {
+    // Navigate to the onboarding carousel
     router.push("/(onboarding)");
   };
 
   const handleLogin = async () => {
-    await completeLaunch();
+    await completeOnboarding();
     // With the auth wall flagged off there's no login to send them to, so drop
     // them straight into the app as a guest.
     router.replace(authEnabled ? "/(auth)/login" : "/(customer)/(tabs)/(home)");
