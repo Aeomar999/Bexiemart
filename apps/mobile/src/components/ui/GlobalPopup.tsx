@@ -3,6 +3,7 @@ import { View, Text, Pressable, Animated, Platform } from "react-native";
 import { usePopupStore } from "@/lib/stores/popup-store";
 import { Icon } from "./Icon";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { useReducedMotion } from "@/hooks/useReducedMotion";
 
 export function GlobalPopup() {
   const { isVisible, type, title, message, hidePopup } = usePopupStore();
@@ -10,28 +11,38 @@ export function GlobalPopup() {
   const opacity = useRef(new Animated.Value(0)).current;
   const [renderComponent, setRenderComponent] = useState(isVisible);
   const insets = useSafeAreaInsets();
+  const reducedMotion = useReducedMotion();
 
   useEffect(() => {
     if (isVisible) {
       setRenderComponent(true);
-      Animated.parallel([
-        Animated.timing(opacity, {
-          toValue: 1,
-          duration: 200,
-          useNativeDriver: true,
-        }),
-        Animated.spring(translateY, {
-          toValue: 0,
-          friction: 8,
-          tension: 65,
-          useNativeDriver: true,
-        }),
-      ]).start();
+      if (reducedMotion) {
+        opacity.setValue(1);
+        translateY.setValue(0);
+      } else {
+        Animated.parallel([
+          Animated.timing(opacity, {
+            toValue: 1,
+            duration: 200,
+            useNativeDriver: true,
+          }),
+          Animated.spring(translateY, {
+            toValue: 0,
+            friction: 8,
+            tension: 65,
+            useNativeDriver: true,
+          }),
+        ]).start();
+      }
 
       const timer = setTimeout(() => {
         closeModal();
       }, 4000);
       return () => clearTimeout(timer);
+    } else if (reducedMotion) {
+      opacity.setValue(0);
+      translateY.setValue(100);
+      setRenderComponent(false);
     } else {
       Animated.parallel([
         Animated.timing(opacity, {
@@ -49,6 +60,13 @@ export function GlobalPopup() {
   }, [isVisible]);
 
   const closeModal = () => {
+    if (reducedMotion) {
+      opacity.setValue(0);
+      translateY.setValue(100);
+      hidePopup();
+      setRenderComponent(false);
+      return;
+    }
     Animated.parallel([
       Animated.timing(opacity, {
         toValue: 0,
@@ -178,6 +196,8 @@ export function GlobalPopup() {
 
         {/* Close Button */}
         <Pressable
+          accessibilityRole="button"
+          accessibilityLabel="Close"
           onPress={closeModal}
           style={{ padding: 8, marginLeft: 4 }}
           hitSlop={{ top: 10, right: 10, bottom: 10, left: 10 }}

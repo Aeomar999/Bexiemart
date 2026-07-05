@@ -14,7 +14,12 @@ jest.mock("@better-auth/infra/native", () => ({
   sentinelNativeClient: jest.fn((opts: any) => ({ ...opts, name: "sentinelNativeClient" })),
 }));
 jest.mock("../../config", () => ({ ENV: { API_URL: "http://test.com/api/v1" } }));
-jest.mock("expo-secure-store", () => ({ getItemAsync: jest.fn(), setItemAsync: jest.fn() }));
+jest.mock("expo-secure-store", () => ({
+  getItemAsync: jest.fn(),
+  setItemAsync: jest.fn(),
+  getItem: jest.fn(),
+  setItem: jest.fn(),
+}));
 jest.mock("react-native", () => ({ Platform: { OS: "ios" } }));
 
 import { authClient } from "./better-auth";

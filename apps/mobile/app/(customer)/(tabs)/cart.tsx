@@ -220,6 +220,9 @@ export default function CartScreen() {
                     </Text>
                     <Pressable
                       style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
+                      accessibilityRole="button"
+                      accessibilityLabel={`Remove ${item.name} from cart`}
+                      hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
                       className="w-8 h-8 rounded-full bg-rose-50 items-center justify-center -mt-1 -mr-1"
                       onPress={() => handleRemoveItem(item.productId, item.name)}
                     >
@@ -250,6 +253,10 @@ export default function CartScreen() {
                     <View className="flex-row items-center bg-background rounded-full border border-border">
                       <Pressable
                         style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
+                        accessibilityRole="button"
+                        accessibilityLabel="Decrease quantity"
+                        accessibilityState={{ disabled: item.quantity <= 1 }}
+                        hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
                         className="w-8 h-8 items-center justify-center"
                         onPress={() =>
                           updateCartMutation.mutate({
@@ -271,6 +278,10 @@ export default function CartScreen() {
                       </Text>
                       <Pressable
                         style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
+                        accessibilityRole="button"
+                        accessibilityLabel="Increase quantity"
+                        accessibilityState={{ disabled: item.quantity >= item.stock }}
+                        hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
                         className="w-8 h-8 items-center justify-center"
                         onPress={() =>
                           updateCartMutation.mutate({

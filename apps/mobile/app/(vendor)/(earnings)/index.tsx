@@ -29,6 +29,9 @@ export default function EarningsDashboardScreen() {
       <View className="px-5 py-4 bg-card border-b border-border flex-row items-center justify-between">
         <Text className="text-display-md font-heading font-black text-foreground">Earnings</Text>
         <Pressable
+          accessibilityRole="button"
+          accessibilityLabel="Help"
+          hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
           className="w-10 h-10 rounded-full bg-background items-center justify-center"
           style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
           onPress={() => router.push("/(vendor)/(settings)/help")}

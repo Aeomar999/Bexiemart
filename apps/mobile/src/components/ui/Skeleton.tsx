@@ -1,5 +1,6 @@
 import React, { useEffect, useRef } from "react";
 import { Animated, ViewStyle, DimensionValue } from "react-native";
+import { useReducedMotion } from "@/hooks/useReducedMotion";
 
 interface SkeletonProps {
   width?: DimensionValue;
@@ -10,9 +11,15 @@ interface SkeletonProps {
 
 export function Skeleton({ width = "100%", height = 20, borderRadius = 4, style }: SkeletonProps) {
   const opacity = useRef(new Animated.Value(0.3)).current;
+  const reducedMotion = useReducedMotion();
 
   useEffect(() => {
-    Animated.loop(
+    if (reducedMotion) {
+      // Resting state: hold a steady mid-tone instead of pulsing.
+      opacity.setValue(0.5);
+      return;
+    }
+    const pulse = Animated.loop(
       Animated.sequence([
         Animated.timing(opacity, {
           toValue: 0.7,
@@ -25,8 +32,10 @@ export function Skeleton({ width = "100%", height = 20, borderRadius = 4, style 
           useNativeDriver: true,
         }),
       ])
-    ).start();
-  }, [opacity]);
+    );
+    pulse.start();
+    return () => pulse.stop();
+  }, [opacity, reducedMotion]);
 
   return (
     <Animated.View

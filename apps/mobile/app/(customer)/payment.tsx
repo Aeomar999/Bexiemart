@@ -130,6 +130,9 @@ export default function PaymentMethodsScreen() {
           </Text>
         </View>
         <Pressable
+          accessibilityRole="button"
+          accessibilityLabel="Add payment method"
+          hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
           style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
           className="w-10 h-10 rounded-full bg-primary-subtle items-center justify-center border border-border"
           onPress={() => {
@@ -186,6 +189,9 @@ export default function PaymentMethodsScreen() {
                     </View>
                   )}
                   <Pressable
+                    accessibilityRole="button"
+                    accessibilityLabel="Delete payment method"
+                    hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
                     onPress={(e) => {
                       e.stopPropagation();
                       removePaymentMethod.mutate(method.id, {
@@ -272,6 +278,9 @@ export default function PaymentMethodsScreen() {
                   Add Payment Method
                 </Text>
                 <Pressable
+                  accessibilityRole="button"
+                  accessibilityLabel="Close"
+                  hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
                   onPress={() => setIsModalVisible(false)}
                   className="w-8 h-8 rounded-full bg-muted items-center justify-center"
                 >

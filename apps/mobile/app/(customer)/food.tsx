@@ -81,7 +81,11 @@ export default function FoodDeliveryScreen() {
             onChangeText={setSearchQuery}
           />
           {searchQuery.length > 0 && (
-            <Pressable onPress={() => setSearchQuery("")}>
+            <Pressable
+              accessibilityRole="button"
+              accessibilityLabel="Clear search"
+              onPress={() => setSearchQuery("")}
+            >
               <Icon name="x" size={16} color="#94a3b8" />
             </Pressable>
           )}

@@ -213,6 +213,8 @@ export default function LinkAccountScreen() {
                           </View>
                         )}
                         <Pressable
+                          accessibilityRole="button"
+                          accessibilityLabel="Remove account"
                           onPress={() => handleDeleteBank(account.id, account.bankName)}
                           style={{ padding: 8, borderRadius: 999, backgroundColor: "#FEF2F2" }}
                         >
@@ -376,6 +378,8 @@ export default function LinkAccountScreen() {
                           </View>
                         </View>
                         <Pressable
+                          accessibilityRole="button"
+                          accessibilityLabel="Remove account"
                           onPress={() => handleDeleteMomo(account.id, account.phoneNumber)}
                           style={{
                             padding: 8,

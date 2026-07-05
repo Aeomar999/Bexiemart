@@ -11,6 +11,17 @@ const isWeb = Platform.OS === "web";
 // Fallback for web since SecureStore only works natively
 const webStorage = new Map<string, string>();
 
+const expoStorage = {
+  getItem: (key: string): string | null => {
+    if (isWeb) return webStorage.get(key) || null;
+    return SecureStore.getItem(key);
+  },
+  setItem: (key: string, value: string): void => {
+    if (isWeb) webStorage.set(key, value);
+    else SecureStore.setItem(key, value);
+  },
+};
+
 const storage = {
   getItem: async (key: string): Promise<string | null> => {
     if (isWeb) return webStorage.get(key) || null;
@@ -33,6 +44,7 @@ export const authClient = createAuthClient({
     expoClient({
       scheme: "bexiemart",
       storagePrefix: "bexiemart",
+      storage: expoStorage,
     }),
     phoneNumberClient(),
     dashClient(),

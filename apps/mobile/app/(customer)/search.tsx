@@ -98,6 +98,8 @@ export default function SearchScreen() {
           />
           {query.length > 0 && (
             <Pressable
+              accessibilityRole="button"
+              accessibilityLabel="Clear search"
               style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
               onPress={() => setQuery("")}
             >
@@ -107,6 +109,8 @@ export default function SearchScreen() {
         </View>
 
         <Pressable
+          accessibilityRole="button"
+          accessibilityLabel="Filters"
           style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
           className={`w-12 h-12 rounded-xl items-center justify-center ${showFilters ? "bg-primary-subtle border border-border" : "bg-background border border-border"}`}
           onPress={() => setShowFilters(!showFilters)}
@@ -247,6 +251,9 @@ export default function SearchScreen() {
               </Text>
               <Pressable
                 style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
+                accessibilityRole="button"
+                accessibilityLabel="Close filters"
+                hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
                 onPress={() => setShowFilters(false)}
                 className="w-8 h-8 rounded-full bg-muted items-center justify-center"
               >

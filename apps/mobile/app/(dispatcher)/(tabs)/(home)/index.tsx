@@ -351,10 +351,18 @@ export default function DispatcherMap() {
                 </View>
               </View>
               <View className="flex-row gap-2">
-                <Pressable className="w-10 h-10 rounded-full bg-slate-100 items-center justify-center">
+                <Pressable
+                  accessibilityRole="button"
+                  accessibilityLabel="Message customer"
+                  hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+                  className="w-10 h-10 rounded-full bg-slate-100 items-center justify-center"
+                >
                   <Icon name="message-circle" size={18} color="#0f172a" />
                 </Pressable>
                 <Pressable
+                  accessibilityRole="button"
+                  accessibilityLabel="Call customer"
+                  hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
                   onPress={handleCall}
                   className="w-10 h-10 rounded-full bg-primary-subtle items-center justify-center"
                 >
@@ -496,6 +504,8 @@ export default function DispatcherMap() {
 
       {/* Re-center Map Button */}
       <Pressable
+        accessibilityRole="button"
+        accessibilityLabel="Open navigation"
         onPress={() => {
           if (userLocation) {
             mapRef.current?.animateToRegion(

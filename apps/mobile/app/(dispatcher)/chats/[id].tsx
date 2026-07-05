@@ -162,6 +162,9 @@ export default function ChatDetailScreen() {
         style={{ paddingBottom: Math.max(insets.bottom, 12) }}
       >
         <Pressable
+          accessibilityRole="button"
+          accessibilityLabel="Attach image"
+          hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
           className="w-10 h-10 items-center justify-center bg-secondary rounded-full mb-1 active:opacity-70"
           onPress={handlePickImage}
           disabled={isUploading}
@@ -188,6 +191,9 @@ export default function ChatDetailScreen() {
         </View>
 
         <Pressable
+          accessibilityRole="button"
+          accessibilityLabel="Send message"
+          hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
           className={`w-10 h-10 items-center justify-center rounded-full mb-1 ${content.trim() ? "bg-primary" : "bg-muted"}`}
           onPress={handleSendText}
           disabled={!content.trim()}

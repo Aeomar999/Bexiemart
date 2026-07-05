@@ -64,6 +64,7 @@ export function SocialLogins({ roleIntent }: SocialLoginsProps) {
 
       <View className="flex-row justify-center gap-4">
         <TouchableOpacity
+          accessibilityLabel="Continue with Apple"
           accessibilityRole="button"
           className="w-14 h-14 rounded-2xl border border-border bg-card items-center justify-center active:bg-background"
           activeOpacity={0.7}
@@ -78,6 +79,7 @@ export function SocialLogins({ roleIntent }: SocialLoginsProps) {
         </TouchableOpacity>
 
         <TouchableOpacity
+          accessibilityLabel="Continue with Google"
           accessibilityRole="button"
           className="w-14 h-14 rounded-2xl border border-border bg-card items-center justify-center active:bg-background"
           activeOpacity={0.7}
@@ -92,6 +94,7 @@ export function SocialLogins({ roleIntent }: SocialLoginsProps) {
         </TouchableOpacity>
 
         <TouchableOpacity
+          accessibilityLabel="Continue with Facebook"
           accessibilityRole="button"
           className="w-14 h-14 rounded-2xl border border-border bg-card items-center justify-center active:bg-background"
           activeOpacity={0.7}

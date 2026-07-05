@@ -173,6 +173,9 @@ export default function AddressesScreen() {
           </Text>
         </View>
         <Pressable
+          accessibilityRole="button"
+          accessibilityLabel="Add address"
+          hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
           style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
           className="w-10 h-10 rounded-full bg-primary-subtle items-center justify-center border border-border"
           onPress={openAddModal}
@@ -214,6 +217,9 @@ export default function AddressesScreen() {
                     </View>
                   )}
                   <Pressable
+                    accessibilityRole="button"
+                    accessibilityLabel="Delete address"
+                    hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
                     onPress={() => handleDelete(address.id)}
                     className="w-6 h-6 items-center justify-center bg-rose-50 rounded-full border border-rose-100"
                   >
@@ -295,6 +301,9 @@ export default function AddressesScreen() {
                   {editingId ? "Edit Address" : "Add Address"}
                 </Text>
                 <Pressable
+                  accessibilityRole="button"
+                  accessibilityLabel="Close"
+                  hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
                   onPress={() => setIsModalVisible(false)}
                   className="w-8 h-8 rounded-full bg-muted items-center justify-center"
                 >

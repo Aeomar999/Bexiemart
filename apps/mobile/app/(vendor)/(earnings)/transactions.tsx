@@ -51,6 +51,9 @@ export default function TransactionsScreen() {
         style={{ paddingTop: (insets.top || 12) + 12 }}
       >
         <Pressable
+          accessibilityRole="button"
+          accessibilityLabel="Go back"
+          hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
           style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
           className="w-10 h-10 rounded-full bg-background items-center justify-center mr-3"
           onPress={() => router.back()}

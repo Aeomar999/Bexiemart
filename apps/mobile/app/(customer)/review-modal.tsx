@@ -109,6 +109,8 @@ export default function ReviewModalScreen() {
               const isSelected = star <= rating;
               return (
                 <Pressable
+                  accessibilityRole="button"
+                  accessibilityLabel={`Rate ${star} star${star === 1 ? "" : "s"}`}
                   style={({ pressed }) => [
                     { opacity: pressed ? 0.7 : 1, transform: [{ scale: pressed ? 0.9 : 1 }] },
                   ]}
@@ -147,6 +149,9 @@ export default function ReviewModalScreen() {
                   contentFit="cover"
                 />
                 <Pressable
+                  accessibilityRole="button"
+                  accessibilityLabel="Remove photo"
+                  hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
                   className="absolute top-1 right-1 w-6 h-6 bg-black/50 rounded-full items-center justify-center backdrop-blur-md"
                   onPress={() => handleRemovePhoto(index)}
                   disabled={createReview.isPending}
@@ -158,6 +163,8 @@ export default function ReviewModalScreen() {
             ListFooterComponent={
               photos.length < 4 ? (
                 <Pressable
+                  accessibilityRole="button"
+                  accessibilityLabel="Add photo"
                   className="w-24 h-24 rounded-xl bg-card border-2 border-dashed border-border items-center justify-center ml-3"
                   onPress={handleAddPhoto}
                   disabled={createReview.isPending}
