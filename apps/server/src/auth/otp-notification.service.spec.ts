@@ -62,7 +62,10 @@ describe("OtpNotificationService", () => {
   describe("sendOtpViaEmail", () => {
     it("should send email and return true on success", async () => {
       mockSendMail.mockResolvedValue({ messageId: "msg-123" });
-      const result = await sendOtpViaEmail("user@example.com", "123456", "Jerry", "+233501234567");
+      // Code must not be a substring of the phone number (or any other visible
+      // text), otherwise the assertion below can pass without the OTP boxes
+      // rendering at all.
+      const result = await sendOtpViaEmail("user@example.com", "902718", "Jerry", "+233501234567");
       expect(result).toBe(true);
       expect(mockSendMail).toHaveBeenCalledWith(
         expect.objectContaining({
@@ -70,11 +73,15 @@ describe("OtpNotificationService", () => {
           subject: "Your BexieMart verification code",
         })
       );
-      // The template renders each digit in its own segmented <td> cell, so
-      // assert on the visible text (tags stripped) rather than raw markup.
+      // The template renders each digit in its own segmented <td> cell with an
+      // &ndash; entity between the 3-digit groups, so strip tags, entities, and
+      // whitespace to assert on just the rendered characters.
       const { html } = mockSendMail.mock.calls[0][0];
-      const visibleText = html.replace(/<[^>]*>/g, "").replace(/\s+/g, "");
-      expect(visibleText).toContain("123456");
+      const visibleText = html
+        .replace(/<[^>]*>/g, "")
+        .replace(/&[a-z]+;/gi, "")
+        .replace(/\s+/g, "");
+      expect(visibleText).toContain("902718");
     });
 
     it("should return false on email send error", async () => {
