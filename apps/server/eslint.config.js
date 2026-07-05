@@ -1,6 +1,7 @@
 const js = require("@eslint/js");
 const tsPlugin = require("@typescript-eslint/eslint-plugin");
 const tsParser = require("@typescript-eslint/parser");
+const prettier = require("eslint-config-prettier");
 
 module.exports = [
   {
@@ -21,6 +22,8 @@ module.exports = [
     rules: {
       ...js.configs.recommended.rules,
       ...tsPlugin.configs.recommended.rules,
+      // Prettier owns formatting; disable ESLint's conflicting stylistic rules.
+      ...prettier.rules,
 
       // TypeScript already checks for undefined identifiers far better than
       // ESLint's no-undef (which can't see ambient/DOM/node globals). The
@@ -42,7 +45,7 @@ module.exports = [
       "no-useless-assignment": "warn",
 
       // Not needed with TypeScript; return types are inferred.
-      "@typescript-eslint/explicit-function-return-types": "off",
+      "@typescript-eslint/explicit-function-return-type": "off",
       "@typescript-eslint/explicit-module-boundary-types": "off",
     },
   },

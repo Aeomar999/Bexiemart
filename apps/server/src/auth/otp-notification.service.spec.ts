@@ -68,9 +68,13 @@ describe("OtpNotificationService", () => {
         expect.objectContaining({
           to: "user@example.com",
           subject: "Your BexieMart verification code",
-          html: expect.stringContaining("1 2 3 4 5 6"),
         })
       );
+      // The template renders each digit in its own segmented <td> cell, so
+      // assert on the visible text (tags stripped) rather than raw markup.
+      const { html } = mockSendMail.mock.calls[0][0];
+      const visibleText = html.replace(/<[^>]*>/g, "").replace(/\s+/g, "");
+      expect(visibleText).toContain("123456");
     });
 
     it("should return false on email send error", async () => {
