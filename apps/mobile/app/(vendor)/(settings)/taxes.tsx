@@ -205,6 +205,9 @@ export default function TaxesDocumentsScreen() {
                     </View>
 
                     <Pressable
+                      accessibilityRole="button"
+                      accessibilityLabel="Remove document"
+                      hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
                       onPress={() => removeDocument(doc.id)}
                       className="w-8 h-8 items-center justify-center rounded-full bg-rose-50"
                     >

@@ -2,6 +2,8 @@ import React from "react";
 import { render, act } from "@testing-library/react-native";
 import { AnimatedSplashScreen } from "./AnimatedSplashScreen";
 
+const mockUseReducedMotion = jest.fn(() => false);
+
 jest.mock("react-native-reanimated", () => {
   const mockAnimatedView = (props: any) => props.children ?? null;
   mockAnimatedView.displayName = "Animated.View";
@@ -9,7 +11,7 @@ jest.mock("react-native-reanimated", () => {
     __esModule: true,
     default: { View: mockAnimatedView, createAnimatedComponent: (component: any) => component },
     useSharedValue: (init: any) => ({ value: init }),
-    useAnimatedStyle: (fn: any) => fn ? {} : {},
+    useAnimatedStyle: (fn: any) => (fn ? {} : {}),
     withTiming: (val: any, _opts: any, cb: any) => {
       if (typeof cb === "function") cb();
       return val;
@@ -21,12 +23,14 @@ jest.mock("react-native-reanimated", () => {
     Easing: { out: () => {}, in: () => {}, ease: "ease" },
     interpolate: (val: any, input: any[], output: any[]) => output[0],
     Extrapolation: { CLAMP: "clamp" },
+    useReducedMotion: () => mockUseReducedMotion(),
   };
 });
 
 describe("AnimatedSplashScreen", () => {
   beforeEach(() => {
     jest.useFakeTimers();
+    mockUseReducedMotion.mockReturnValue(false);
   });
 
   afterEach(() => {
@@ -42,7 +46,19 @@ describe("AnimatedSplashScreen", () => {
   it("calls onAnimationComplete after timeout", () => {
     const onComplete = jest.fn();
     render(<AnimatedSplashScreen onAnimationComplete={onComplete} />);
-    act(() => { jest.advanceTimersByTime(2800); });
+    act(() => {
+      jest.advanceTimersByTime(2800);
+    });
+    expect(onComplete).toHaveBeenCalledTimes(1);
+  });
+
+  it("still completes (faster) when reduce motion is enabled", () => {
+    mockUseReducedMotion.mockReturnValue(true);
+    const onComplete = jest.fn();
+    render(<AnimatedSplashScreen onAnimationComplete={onComplete} />);
+    act(() => {
+      jest.advanceTimersByTime(1200);
+    });
     expect(onComplete).toHaveBeenCalledTimes(1);
   });
 });

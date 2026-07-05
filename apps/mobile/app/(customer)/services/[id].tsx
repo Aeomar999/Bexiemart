@@ -116,6 +116,9 @@ export default function ProviderDetailsScreen() {
           >
             <View className="w-10 h-10" />
             <Pressable
+              accessibilityRole="button"
+              accessibilityLabel="Toggle favorite"
+              hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
               style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
               className="w-10 h-10 rounded-full bg-muted items-center justify-center"
             >
@@ -318,6 +321,9 @@ export default function ProviderDetailsScreen() {
                 Select Address
               </Text>
               <Pressable
+                accessibilityRole="button"
+                accessibilityLabel="Close"
+                hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
                 onPress={() => setAddressModalVisible(false)}
                 className="w-8 h-8 rounded-full bg-muted items-center justify-center"
               >

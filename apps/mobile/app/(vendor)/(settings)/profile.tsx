@@ -14,6 +14,7 @@ import { useImagePicker } from "@/lib/hooks/use-image-picker";
 import { useFormValidation } from "@/lib/hooks/use-form-validation";
 import { shopSchema } from "@/lib/validation/schemas";
 import { ProfileSkeleton } from "@/components/ui/LoadingState";
+import { CoverHeader } from "@/components/ui/CoverHeader";
 
 export default function VendorProfileScreen() {
   const router = useRouter();
@@ -141,17 +142,14 @@ export default function VendorProfileScreen() {
               setPhotoTarget("banner");
               setPhotoModalVisible(true);
             }}
-            className="w-full h-32 bg-secondary rounded-2xl items-center justify-center overflow-hidden mb-[-40px]"
+            className="w-full rounded-2xl overflow-hidden mb-[-40px]"
           >
-            {bannerUrl ? (
-              <Image
-                source={{ uri: bannerUrl }}
-                style={{ width: "100%", height: "100%" }}
-                contentFit="cover"
-              />
-            ) : (
-              <Icon name="camera" size={24} color="#64748b" />
-            )}
+            <CoverHeader
+              imageUrl={bannerUrl || null}
+              height={128}
+              fallbackIcon="camera"
+              fallbackIconColor="#64748b"
+            />
           </Pressable>
 
           <Pressable

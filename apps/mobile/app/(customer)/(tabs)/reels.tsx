@@ -252,12 +252,9 @@ export default function ReelsScreen() {
         <Text className="text-heading-md font-heading font-bold text-white shadow-sm">
           Discover
         </Text>
-        <Pressable
-          style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
-          className="w-10 h-10 rounded-full bg-black/40 items-center justify-center backdrop-blur-md"
-        >
-          <Icon name="camera" size={20} color="#fff" />
-        </Pressable>
+        {/* Spacer keeps the title centered; replaces a camera button that had
+            no handler (restore as a Pressable once a create-reel flow exists). */}
+        <View className="w-10 h-10" />
       </View>
 
       {/* Comments Bottom Sheet Modal */}
@@ -281,6 +278,9 @@ export default function ReelsScreen() {
                 0 comments
               </Text>
               <Pressable
+                accessibilityRole="button"
+                accessibilityLabel="Close comments"
+                hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
                 onPress={() => setCommentModalVisible(false)}
                 className="w-8 h-8 rounded-full bg-muted items-center justify-center"
               >
@@ -334,6 +334,9 @@ export default function ReelsScreen() {
                 onSubmitEditing={handlePostComment}
               />
               <Pressable
+                accessibilityRole="button"
+                accessibilityLabel="Send comment"
+                hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
                 className={`w-10 h-10 rounded-full items-center justify-center ${newComment.trim() ? "bg-primary" : "bg-secondary"}`}
                 onPress={handlePostComment}
               >

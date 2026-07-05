@@ -313,6 +313,9 @@ export default function WithdrawFundsScreen() {
                 Add Method
               </Text>
               <Pressable
+                accessibilityRole="button"
+                accessibilityLabel="Close"
+                hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
                 onPress={() => setShowAddMethod(false)}
                 className="w-8 h-8 bg-muted rounded-full items-center justify-center"
               >
@@ -403,6 +406,9 @@ export default function WithdrawFundsScreen() {
                 Enter PIN
               </Text>
               <Pressable
+                accessibilityRole="button"
+                accessibilityLabel="Close"
+                hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
                 className="w-10 h-10 bg-muted rounded-full items-center justify-center"
                 onPress={() => {
                   setShowPinModal(false);
@@ -463,6 +469,8 @@ export default function WithdrawFundsScreen() {
                 <Text className="text-display-lg font-heading font-black text-foreground">0</Text>
               </Pressable>
               <Pressable
+                accessibilityRole="button"
+                accessibilityLabel="Delete last digit"
                 className="w-[28%] items-center justify-center rounded-full"
                 style={({ pressed }) => [{ aspectRatio: 1, opacity: pressed ? 0.5 : 1 }]}
                 onPress={handlePinDelete}

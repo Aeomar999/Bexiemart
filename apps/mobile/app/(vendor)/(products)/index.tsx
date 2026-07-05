@@ -197,6 +197,8 @@ export default function ListingsScreen() {
       {/* Flat FAB */}
       <View className="absolute bottom-6 right-6">
         <Pressable
+          accessibilityRole="button"
+          accessibilityLabel="Add product"
           style={({ pressed }) => [{ opacity: pressed ? 0.8 : 1 }]}
           className="w-14 h-14 bg-primary rounded-full items-center justify-center border-4 border-border"
           onPress={() => setAddModalVisible(true)}

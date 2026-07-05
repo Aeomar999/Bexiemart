@@ -339,6 +339,9 @@ export default function AddReelScreen() {
                 Tag Product
               </Text>
               <Pressable
+                accessibilityRole="button"
+                accessibilityLabel="Close"
+                hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
                 onPress={() => setProductModalVisible(false)}
                 className="w-10 h-10 rounded-full bg-muted items-center justify-center"
               >

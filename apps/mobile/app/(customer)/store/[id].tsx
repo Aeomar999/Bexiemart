@@ -12,6 +12,7 @@ import { useAddToCart } from "@/lib/hooks/use-cart";
 import { useFavoritesStore } from "@/lib/stores/favorites-store";
 import Toast from "@/lib/toast-polyfill";
 import { BackButton } from "@/components/ui/BackButton";
+import { CoverHeader } from "@/components/ui/CoverHeader";
 
 export default function StoreProfileScreen() {
   const router = useRouter();
@@ -118,22 +119,13 @@ export default function StoreProfileScreen() {
         ListHeaderComponent={
           <View className="mb-6">
             {/* Premium Banner */}
-            <View
-              style={{ height: 224 }}
-              className="w-full bg-primary-hover relative overflow-hidden"
-            >
-              {store.banner ? (
-                <Image
-                  source={{ uri: store.banner }}
-                  style={{ width: "100%", height: "100%", opacity: 0.8 }}
-                  contentFit="cover"
-                />
-              ) : (
-                <View className="flex-1 items-center justify-center bg-primary-hover">
-                  <Icon name="store" size={64} color="#3b82f6" />
-                </View>
-              )}
-            </View>
+            <CoverHeader
+              imageUrl={store.banner}
+              fallbackIcon="store"
+              fallbackIconColor="#3b82f6"
+              fallbackClassName="bg-primary-hover"
+              imageOpacity={0.8}
+            />
 
             {/* Profile Info Card */}
             <View className="px-5 -mt-16 relative z-10">
@@ -270,6 +262,10 @@ export default function StoreProfileScreen() {
                 )}
                 <Pressable
                   style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
+                  accessibilityRole="button"
+                  accessibilityLabel={isFav ? "Remove from favorites" : "Add to favorites"}
+                  accessibilityState={{ selected: isFav }}
+                  hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
                   className="absolute top-2 right-2 w-8 h-8 rounded-full bg-card/90 items-center justify-center shadow-sm active:opacity-70"
                   onPress={() => handleToggleFavorite(item.id)}
                 >
@@ -301,6 +297,9 @@ export default function StoreProfileScreen() {
                     )}
                   </View>
                   <Pressable
+                    accessibilityRole="button"
+                    accessibilityLabel="Add to cart"
+                    hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
                     style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
                     className="w-9 h-9 rounded-full bg-primary items-center justify-center active:scale-95"
                     onPress={() => handleAddToCart(item)}

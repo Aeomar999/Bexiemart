@@ -70,6 +70,9 @@ export function PhotoPicker({
                 contentFit="cover"
               />
               <Pressable
+                accessibilityRole="button"
+                accessibilityLabel="Remove photo"
+                hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
                 onPress={() => removeImage(idx)}
                 className="absolute top-1 right-1 w-6 h-6 bg-black/50 rounded-full items-center justify-center"
               >
@@ -79,6 +82,8 @@ export function PhotoPicker({
           ))}
           {images.length < maxSelections && (
             <Pressable
+              accessibilityRole="button"
+              accessibilityLabel="Add photo"
               onPress={pickImage}
               className="w-[30%] bg-muted rounded-xl items-center justify-center border-2 border-dashed border-border"
               style={{ aspectRatio: 1 }}

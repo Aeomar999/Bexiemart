@@ -163,7 +163,12 @@ export default function VendorChatScreen() {
 
       {/* Input Area */}
       <View className="px-5 py-3 bg-card border-t border-border flex-row items-center gap-3 pb-8">
-        <Pressable className="w-10 h-10 rounded-full bg-muted items-center justify-center">
+        <Pressable
+          accessibilityRole="button"
+          accessibilityLabel="Attach file"
+          hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+          className="w-10 h-10 rounded-full bg-muted items-center justify-center"
+        >
           <Icon name="paperclip" size={20} color="#64748b" />
         </Pressable>
         <View className="flex-1 bg-muted rounded-2xl px-4 py-3 flex-row items-center">
@@ -177,6 +182,8 @@ export default function VendorChatScreen() {
           />
         </View>
         <Pressable
+          accessibilityRole="button"
+          accessibilityLabel="Send message"
           onPress={sendMessage}
           className={`w-12 h-12 rounded-full items-center justify-center ${message.trim() ? "bg-primary" : "bg-secondary"}`}
         >

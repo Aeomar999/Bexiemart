@@ -63,6 +63,9 @@ export default function FlashSalesScreen() {
             )}
             <Pressable
               style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
+              accessibilityRole="button"
+              accessibilityLabel="Share flash sale"
+              hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
               className="w-8 h-8 rounded-full bg-rose-50 border border-rose-200 items-center justify-center"
               onPress={() => Share.share({ message: "Check out this flash sale on Bexiemart!" })}
             >

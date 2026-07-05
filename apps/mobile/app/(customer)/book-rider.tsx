@@ -326,6 +326,9 @@ export default function BookRiderScreen() {
                 Select {selectingField === "pickup" ? "Pickup" : "Drop-off"} Location
               </Text>
               <Pressable
+                accessibilityRole="button"
+                accessibilityLabel="Close"
+                hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
                 onPress={() => setSelectingField(null)}
                 className="p-2 bg-muted rounded-full"
               >

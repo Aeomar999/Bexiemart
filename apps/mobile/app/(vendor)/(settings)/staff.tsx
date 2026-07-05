@@ -167,6 +167,9 @@ export default function StaffManagementScreen() {
 
                     {staff.role !== "Owner" && (
                       <Pressable
+                        accessibilityRole="button"
+                        accessibilityLabel={`More options for ${staff.name}`}
+                        hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
                         onPress={() => openActionSheet(staff.id)}
                         className="w-8 h-8 rounded-full bg-background items-center justify-center"
                       >
