@@ -99,6 +99,8 @@ export default function ReferralsScreen() {
                 </Text>
               </View>
               <Pressable
+                accessibilityRole="button"
+                accessibilityLabel="Copy referral code"
                 style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
                 className="w-14 h-14 bg-primary-subtle rounded-xl items-center justify-center border border-border"
                 onPress={async () => {

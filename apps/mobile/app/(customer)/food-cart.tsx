@@ -272,6 +272,9 @@ export default function FoodCartScreen() {
                     </Text>
                   </View>
                   <Pressable
+                    accessibilityRole="button"
+                    accessibilityLabel="Remove item"
+                    hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
                     style={({ pressed }) => [{ opacity: pressed ? 0.5 : 1 }]}
                     onPress={() => removeItem.mutate(item.id)}
                     className="p-2"
@@ -283,6 +286,9 @@ export default function FoodCartScreen() {
                 <View className="flex-row items-center justify-between">
                   <View className="flex-row items-center bg-background rounded-full border border-border">
                     <Pressable
+                      accessibilityRole="button"
+                      accessibilityLabel="Decrease quantity"
+                      hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
                       style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
                       className="w-10 h-10 items-center justify-center"
                       onPress={() => handleUpdateQty(item.id, item.quantity - 1)}
@@ -297,6 +303,9 @@ export default function FoodCartScreen() {
                       {item.quantity}
                     </Text>
                     <Pressable
+                      accessibilityRole="button"
+                      accessibilityLabel="Increase quantity"
+                      hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
                       style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
                       className="w-10 h-10 items-center justify-center"
                       onPress={() => handleUpdateQty(item.id, item.quantity + 1)}
@@ -406,6 +415,9 @@ export default function FoodCartScreen() {
                 Delivery Location
               </Text>
               <Pressable
+                accessibilityRole="button"
+                accessibilityLabel="Close"
+                hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
                 onPress={() => setSelectingAddress(false)}
                 className="p-2 bg-muted rounded-full"
               >

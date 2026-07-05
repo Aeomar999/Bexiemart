@@ -1,14 +1,13 @@
 import { BackButton } from "@/components/ui/BackButton";
-import { View, Text, ScrollView, Pressable, Dimensions, Image } from "react-native";
+import { View, Text, ScrollView, Pressable } from "react-native";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useState } from "react";
 import { Icon } from "@/components/ui/Icon";
+import { CoverHeader } from "@/components/ui/CoverHeader";
 import { useFoodRestaurant, useAddToFoodCart, useFoodCart } from "@/lib/hooks/use-food";
 import { usePopupStore } from "@/lib/stores/popup-store";
 import { DetailSkeleton } from "@/components/ui/Skeleton";
-
-const { width } = Dimensions.get("window");
 
 export default function RestaurantScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
@@ -83,42 +82,15 @@ export default function RestaurantScreen() {
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{ paddingBottom: cartItemCount > 0 ? 100 : 40 }}
       >
-        {/* Header Image & Back Button */}
-        <View className="relative w-full justify-end bg-foreground" style={{ height: 260 }}>
-          {restaurant.banner ? (
-            <Image
-              source={{ uri: restaurant.banner }}
-              style={{ position: "absolute", width: "100%", height: "100%" }}
-              resizeMode="cover"
-            />
-          ) : (
-            <View className="absolute w-full h-full bg-secondary items-center justify-center">
-              <Icon name="image" size={48} color="#94a3b8" />
-            </View>
-          )}
-
-          <Pressable
-            className="absolute right-4 w-10 h-10 rounded-full bg-card border border-border items-center justify-center z-20"
-            style={({ pressed }) => [
-              { opacity: pressed ? 0.7 : 1 },
-              { top: Math.max(insets.top, 20) },
-            ]}
-          >
-            <Icon name="search" size={20} color="#1e293b" />
-          </Pressable>
-
-          {/* Gradient overlay for text readability */}
-          <View className="absolute bottom-0 left-0 right-0 h-40 bg-black/60 z-0" />
-
-          <View className="p-5 z-10">
-            <Text className="text-white font-heading font-black text-display-lg">
-              {restaurant.shopName}
-            </Text>
-            <Text className="text-white/90 font-body text-body-md mt-1">
-              {restaurant.description ?? "Restaurant"}
-            </Text>
-          </View>
-        </View>
+        {/* Cover Image */}
+        <CoverHeader imageUrl={restaurant.banner} overlay>
+          <Text className="text-white font-heading font-black text-display-lg">
+            {restaurant.shopName}
+          </Text>
+          <Text className="text-white/90 font-body text-body-md mt-1">
+            {restaurant.description ?? "Restaurant"}
+          </Text>
+        </CoverHeader>
 
         {/* Info Card */}
         <View className="bg-card rounded-2xl mx-5 -mt-6 p-5 border border-border mb-6 z-20">

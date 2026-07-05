@@ -159,6 +159,8 @@ export default function ShopScreen() {
             />
             {searchQuery !== "" && (
               <Pressable
+                accessibilityRole="button"
+                accessibilityLabel="Clear search"
                 style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
                 onPress={() => setSearchQuery("")}
                 className="active:opacity-70"
@@ -168,6 +170,8 @@ export default function ShopScreen() {
             )}
           </View>
           <Pressable
+            accessibilityRole="button"
+            accessibilityLabel="Filters"
             style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
             className="w-11 h-11 rounded-full bg-card border border-border items-center justify-center active:opacity-70"
             onPress={() => setShowSortModal(true)}
@@ -280,6 +284,10 @@ export default function ShopScreen() {
                 )}
                 <Pressable
                   style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
+                  accessibilityRole="button"
+                  accessibilityLabel={isFav ? "Remove from favorites" : "Add to favorites"}
+                  accessibilityState={{ selected: isFav }}
+                  hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
                   className="absolute top-2 right-2 w-8 h-8 rounded-full bg-card/90 items-center justify-center shadow-sm active:opacity-70"
                   onPress={() => handleToggleFavorite(item.id)}
                 >
@@ -311,6 +319,9 @@ export default function ShopScreen() {
                     )}
                   </View>
                   <Pressable
+                    accessibilityRole="button"
+                    accessibilityLabel="Add to cart"
+                    hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
                     style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
                     className="w-9 h-9 rounded-full bg-primary items-center justify-center active:scale-95"
                     onPress={() => handleAddToCart(item)}

@@ -5,7 +5,7 @@ import { useState, useCallback, useEffect } from "react";
 import { Image } from "expo-image";
 import { useRouter } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { Icon, SearchBar, PromoBanner } from "@/components/ui";
+import { Icon, SearchBar, PromoBanner, StatusBanner } from "@/components/ui";
 import { LoadingState } from "@/components/ui/LoadingState";
 import { ErrorState } from "@/components/ui/ErrorState";
 import { useProducts, useCategories } from "@/lib/hooks/use-products";
@@ -212,7 +212,13 @@ export default function HomeScreen() {
       {/* ===== HEADER ===== */}
       <View className="px-5 bg-card pb-3" style={{ paddingTop: (insets.top || 12) + 12 }}>
         <View className="flex-row justify-between items-center mb-5">
+          {/* NOTE: renders a hamburger but navigates to the profile tab — icon
+              and destination should be reconciled (product call). Label reflects
+              what actually happens so screen readers aren't misled. */}
           <Pressable
+            accessibilityRole="button"
+            accessibilityLabel="Open profile"
+            hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
             className="w-10 h-10 justify-center active:opacity-70"
             onPress={() => router.push("/(customer)/profile")}
           >
@@ -224,6 +230,9 @@ export default function HomeScreen() {
           </Text>
 
           <Pressable
+            accessibilityRole="button"
+            accessibilityLabel="Notifications"
+            hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
             className="w-10 h-10 items-end justify-center active:opacity-70"
             onPress={() => router.push("/(customer)/notifications")}
           >
@@ -251,33 +260,20 @@ export default function HomeScreen() {
 
         {/* ===== ACTIVE RIDE BANNER ===== */}
         {activeRide && (
-          <View className="px-5 mt-6">
-            <Pressable
-              className="bg-primary rounded-2xl p-4 flex-row items-center justify-between shadow-sm border border-primary-hover"
-              onPress={() => router.push("/(customer)/track-order")}
-            >
-              <View className="flex-row items-center gap-3">
-                <View className="w-10 h-10 bg-card/20 rounded-full items-center justify-center">
-                  <Icon name="map" size={20} color="#fff" />
-                </View>
-                <View>
-                  <Text className="text-white font-bold font-heading text-body-lg">
-                    Delivery in progress
-                  </Text>
-                  <Text className="text-white/80 font-body text-body-sm mt-0.5">
-                    {activeRide.status === "searching"
-                      ? "Locating your rider..."
-                      : activeRide.status === "on_the_way"
-                        ? "Your rider is arriving"
-                        : "Rider is outside"}
-                  </Text>
-                </View>
-              </View>
-              <View className="bg-card/20 px-3 py-1.5 rounded-full">
-                <Text className="text-white font-bold text-body-sm">Track</Text>
-              </View>
-            </Pressable>
-          </View>
+          <StatusBanner
+            className="px-5 mt-6"
+            icon="map"
+            title="Delivery in progress"
+            subtitle={
+              activeRide.status === "searching"
+                ? "Locating your rider..."
+                : activeRide.status === "on_the_way"
+                  ? "Your rider is arriving"
+                  : "Rider is outside"
+            }
+            actionLabel="Track"
+            onPress={() => router.push("/(customer)/track-order")}
+          />
         )}
 
         {/* ===== FILTER PILLS ===== */}
@@ -662,6 +658,9 @@ export default function HomeScreen() {
                   )}
                   <Pressable
                     style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
+                    accessibilityRole="button"
+                    accessibilityLabel="Toggle favorite"
+                    hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
                     className="absolute top-2 right-2 w-8 h-8 rounded-full bg-card/90 items-center justify-center shadow-sm"
                     onPress={() => {
                       toggleFavorite(item.id);

@@ -9,6 +9,7 @@ import { LoadingState } from "@/components/ui/LoadingState";
 import { ErrorState } from "@/components/ui/ErrorState";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { PromoBanner } from "@/components/ui/PromoBanner";
+import { StatusBanner } from "@/components/ui/StatusBanner";
 
 const CATEGORIES = [
   { id: "1", name: "Cleaning", icon: "wind", color: "#0ea5e9" },
@@ -95,7 +96,11 @@ export default function ServicesScreen() {
             onChangeText={setSearchQuery}
           />
           {searchQuery.length > 0 && (
-            <Pressable onPress={() => setSearchQuery("")}>
+            <Pressable
+              accessibilityRole="button"
+              accessibilityLabel="Clear search"
+              onPress={() => setSearchQuery("")}
+            >
               <Icon name="x-circle" size={18} color="#cbd5e1" />
             </Pressable>
           )}
@@ -105,26 +110,13 @@ export default function ServicesScreen() {
       <ScrollView className="flex-1" showsVerticalScrollIndicator={false}>
         {/* Active Booking Banner */}
         {activeBookings.length > 0 && (
-          <View className="px-5 mt-6">
-            <View className="bg-primary rounded-2xl p-4 flex-row items-center justify-between shadow-sm border border-primary-hover">
-              <View className="flex-row items-center gap-3">
-                <View className="w-10 h-10 bg-card/20 rounded-full items-center justify-center">
-                  <Icon name="calendar" size={20} color="#fff" />
-                </View>
-                <View>
-                  <Text className="text-white font-bold font-heading text-body-lg">
-                    Upcoming Appointment
-                  </Text>
-                  <Text className="text-white/80 font-body text-body-sm mt-0.5">
-                    {activeBookings[0].providerName} • {activeBookings[0].time}
-                  </Text>
-                </View>
-              </View>
-              <View className="bg-card/20 px-3 py-1.5 rounded-full">
-                <Text className="text-white font-bold text-body-sm">View</Text>
-              </View>
-            </View>
-          </View>
+          <StatusBanner
+            className="px-5 mt-6"
+            icon="calendar"
+            title="Upcoming Appointment"
+            subtitle={`${activeBookings[0].providerName} • ${activeBookings[0].time}`}
+            actionLabel="View"
+          />
         )}
 
         {/* Promotional Banner */}

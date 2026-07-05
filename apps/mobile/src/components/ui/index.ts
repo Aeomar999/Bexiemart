@@ -5,6 +5,8 @@ export { Badge } from "./Badge";
 export { EmptyState } from "./EmptyState";
 export { LoadingState } from "./LoadingState";
 export { PromoBanner } from "./PromoBanner";
+export { CoverHeader, COVER_HEIGHT } from "./CoverHeader";
+export { StatusBanner } from "./StatusBanner";
 export { SearchBar } from "./SearchBar";
 export { Icon } from "./Icon";
 export { ProductCard } from "./ProductCard";

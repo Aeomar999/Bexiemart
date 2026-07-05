@@ -54,6 +54,9 @@ export function CreateCollectionModal({ visible, onClose }: Props) {
                 </Text>
                 <Pressable
                   style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
+                  accessibilityRole="button"
+                  accessibilityLabel="Close"
+                  hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
                   onPress={onClose}
                   className="w-8 h-8 rounded-full bg-muted items-center justify-center"
                 >

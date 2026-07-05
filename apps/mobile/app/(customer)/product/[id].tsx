@@ -145,6 +145,9 @@ export default function ProductDetailsScreen() {
           {/* Share & Favorite */}
           <View className="absolute top-12 right-4 flex-row gap-2">
             <Pressable
+              accessibilityRole="button"
+              accessibilityLabel="Share product"
+              hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
               style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
               className="w-10 h-10 rounded-full bg-card/90 items-center justify-center shadow-md"
               onPress={() =>
@@ -156,6 +159,9 @@ export default function ProductDetailsScreen() {
               <Icon name="share-2" size={18} color="#1e293b" />
             </Pressable>
             <Pressable
+              accessibilityRole="button"
+              accessibilityLabel="Toggle favorite"
+              hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
               style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
               className="w-10 h-10 rounded-full bg-card/90 items-center justify-center shadow-md"
               onPress={() => setIsFavorited(!isFavorited)}
@@ -301,6 +307,9 @@ export default function ProductDetailsScreen() {
             </View>
             <View className="flex-row gap-2">
               <Pressable
+                accessibilityRole="button"
+                accessibilityLabel="Chat with seller"
+                hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
                 style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
                 className="w-10 h-10 rounded-full bg-background items-center justify-center border border-border"
                 onPress={() =>
@@ -422,6 +431,8 @@ export default function ProductDetailsScreen() {
           {/* Quantity Selector */}
           <View className="flex-row items-center bg-background rounded-full border border-border">
             <Pressable
+              accessibilityRole="button"
+              accessibilityLabel="Decrease quantity"
               style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
               className="w-11 h-11 items-center justify-center"
               onPress={() => setQuantity(Math.max(1, quantity - 1))}
@@ -432,6 +443,8 @@ export default function ProductDetailsScreen() {
               {quantity}
             </Text>
             <Pressable
+              accessibilityRole="button"
+              accessibilityLabel="Increase quantity"
               style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
               className="w-11 h-11 items-center justify-center"
               onPress={() => setQuantity(Math.min(product.stock, quantity + 1))}

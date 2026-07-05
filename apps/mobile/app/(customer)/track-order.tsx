@@ -281,6 +281,9 @@ export default function TrackOrderScreen() {
                 </View>
               </View>
               <Pressable
+                accessibilityRole="button"
+                accessibilityLabel="Call rider"
+                hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
                 className="w-10 h-10 rounded-full bg-emerald-50 items-center justify-center border border-emerald-100"
                 onPress={() => Linking.openURL("tel:0541234567").catch(() => {})}
               >

@@ -177,6 +177,9 @@ export default function CardsScreen() {
 
                 <View className="flex-row items-center gap-2">
                   <Pressable
+                    accessibilityRole="button"
+                    accessibilityLabel="Edit card"
+                    hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
                     onPress={() => router.push(`/(customer)/wallet/cards/edit/${item.id}`)}
                     className="p-2.5 rounded-full bg-blue-50 active:bg-blue-100 border border-blue-100"
                   >
@@ -184,6 +187,9 @@ export default function CardsScreen() {
                   </Pressable>
 
                   <Pressable
+                    accessibilityRole="button"
+                    accessibilityLabel="Delete card"
+                    hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
                     onPress={() => handleDelete(item.id)}
                     className="p-2.5 rounded-full bg-red-50 active:bg-red-100 border border-red-100"
                   >

@@ -12,6 +12,7 @@ import Animated, {
   interpolate,
   Extrapolation,
   SharedValue,
+  useReducedMotion,
 } from "react-native-reanimated";
 // @ts-expect-error
 import { FontAwesome5 } from "@expo/vector-icons";
@@ -47,7 +48,30 @@ export function AnimatedSplashScreen({ onAnimationComplete }: AnimatedSplashScre
   // Whole screen fade-out
   const screenOpacity = useSharedValue(1);
 
+  // Reanimated's hook reads the OS setting synchronously, so the reduced
+  // branch can render the resting state on the very first frame.
+  const reduceMotion = useReducedMotion();
+
   useEffect(() => {
+    if (reduceMotion) {
+      // Skip the choreography: show the finished composition, hold briefly,
+      // then crossfade out (fades are the accepted reduced-motion transition).
+      logoOpacity.value = 1;
+      logoScale.value = 1;
+      logoRotateZ.value = 0;
+      brandOpacity.value = 1;
+      brandTranslateY.value = 0;
+      taglineOpacity.value = 1;
+      taglineWidth.value = 100;
+
+      const timeout = setTimeout(() => {
+        screenOpacity.value = withTiming(0, { duration: 250 }, () => {
+          runOnJS(onAnimationComplete)();
+        });
+      }, 1200);
+      return () => clearTimeout(timeout);
+    }
+
     // Phase 1: Logo entrance — scale + rotate in with spring
     logoOpacity.value = withTiming(1, { duration: 400, easing: Easing.out(Easing.ease) });
     logoScale.value = withSpring(1, { damping: 14, stiffness: 120, mass: 0.8 });

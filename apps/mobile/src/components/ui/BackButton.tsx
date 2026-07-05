@@ -10,12 +10,13 @@ interface BackButtonProps extends TouchableOpacityProps {
   className?: string;
 }
 
-export function BackButton({ 
-  onPress, 
-  iconColor, 
+export function BackButton({
+  onPress,
+  iconColor,
   color,
-  className = "", 
-  ...props 
+  className = "",
+  accessibilityLabel = "Go back",
+  ...props
 }: BackButtonProps) {
   const finalIconColor = color || iconColor || "#475569";
   const handlePress = () => {
@@ -34,6 +35,8 @@ export function BackButton({
     <TouchableOpacity
       onPress={handlePress}
       accessibilityRole="button"
+      accessibilityLabel={accessibilityLabel}
+      hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
       className={`w-10 h-10 rounded-full bg-card border border-border items-center justify-center ${className}`}
       {...props}
     >

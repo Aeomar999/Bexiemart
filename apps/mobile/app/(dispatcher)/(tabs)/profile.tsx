@@ -44,6 +44,9 @@ export default function DispatcherProfile() {
             <Text className="text-body-sm font-body text-muted-foreground">{user?.email}</Text>
           </View>
           <Pressable
+            accessibilityRole="button"
+            accessibilityLabel="Edit profile"
+            hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
             className="w-10 h-10 rounded-full bg-background items-center justify-center"
             onPress={() => router.push("/(dispatcher)/edit-profile")}
           >

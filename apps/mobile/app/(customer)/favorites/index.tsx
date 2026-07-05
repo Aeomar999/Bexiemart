@@ -124,6 +124,9 @@ export default function FavoritesScreen() {
             </Text>
           </View>
           <Pressable
+            accessibilityRole="button"
+            accessibilityLabel="Create collection"
+            hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
             style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
             className="w-10 h-10 rounded-full bg-primary-subtle border border-border items-center justify-center"
             onPress={() => setShowCreateModal(true)}
@@ -224,6 +227,9 @@ export default function FavoritesScreen() {
                 {activeCollectionId === "all" && collections.length > 0 && (
                   <Pressable
                     style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
+                    accessibilityRole="button"
+                    accessibilityLabel="Add to collection"
+                    hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
                     className="absolute top-2 right-12 w-8 h-8 rounded-full bg-card/90 items-center justify-center shadow-sm"
                     onPress={() => handleShowAddMenu(item.id)}
                   >
@@ -231,6 +237,13 @@ export default function FavoritesScreen() {
                   </Pressable>
                 )}
                 <Pressable
+                  accessibilityRole="button"
+                  accessibilityLabel={
+                    activeCollectionId === "all"
+                      ? "Remove from favorites"
+                      : "Remove from collection"
+                  }
+                  hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
                   style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
                   className="absolute top-2 right-2 w-8 h-8 rounded-full bg-card/90 items-center justify-center shadow-sm"
                   onPress={() => handleRemove(item.id)}
@@ -265,6 +278,9 @@ export default function FavoritesScreen() {
                     </View>
                   </View>
                   <Pressable
+                    accessibilityRole="button"
+                    accessibilityLabel={wasAdded ? "Added to cart" : "Add to cart"}
+                    hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
                     style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
                     className={`w-9 h-9 rounded-full ${wasAdded ? "bg-emerald-500" : "bg-primary"} items-center justify-center active:scale-95`}
                     onPress={() => handleAddToCart(item)}
