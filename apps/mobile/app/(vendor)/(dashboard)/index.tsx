@@ -94,6 +94,9 @@ export default function DashboardScreen() {
           <Text className="text-display-sm font-heading font-black text-foreground">Dashboard</Text>
           <View className="flex-row items-center gap-2">
             <Pressable
+              accessibilityRole="button"
+              accessibilityLabel="Messages"
+              hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
               style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
               className="w-10 h-10 rounded-full bg-background border border-border items-center justify-center relative"
               onPress={() => router.push("/(vendor)/inbox")}
@@ -102,6 +105,9 @@ export default function DashboardScreen() {
               <View className="absolute top-2 right-2 w-2 h-2 bg-error rounded-full border border-card" />
             </Pressable>
             <Pressable
+              accessibilityRole="button"
+              accessibilityLabel="Notifications"
+              hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
               style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
               className="w-10 h-10 rounded-full bg-background border border-border items-center justify-center relative"
               onPress={() => router.push("/(vendor)/notifications")}

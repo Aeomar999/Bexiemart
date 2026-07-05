@@ -132,7 +132,13 @@ export default function CreateTicketScreen() {
       >
         <View className="flex-row items-center justify-between">
           <View className="flex-row items-center gap-3">
-            <Pressable onPress={handlePrevStep} className="p-2 -ml-2">
+            <Pressable
+              accessibilityRole="button"
+              accessibilityLabel="Go back"
+              hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+              onPress={handlePrevStep}
+              className="p-2 -ml-2"
+            >
               <Icon name="arrow-left" size={24} color="#0f172a" />
             </Pressable>
             <Text className="text-display-sm font-heading font-black text-foreground">

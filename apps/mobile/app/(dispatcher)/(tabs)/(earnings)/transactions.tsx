@@ -38,6 +38,9 @@ export default function TransactionsScreen() {
       <View className="px-5 py-4 bg-card border-b border-border flex-row items-center justify-between">
         <View className="flex-row items-center">
           <Pressable
+            accessibilityRole="button"
+            accessibilityLabel="Go back"
+            hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
             onPress={() => router.back()}
             className="w-10 h-10 -ml-2 items-center justify-center rounded-full active:bg-slate-100"
           >

@@ -246,12 +246,16 @@ export default function WalletScreen() {
 
                   <View className="flex-row gap-3">
                     <Pressable
+                      accessibilityRole="button"
+                      accessibilityLabel="Refresh balance"
                       className="bg-white/15 w-12 h-12 rounded-full items-center justify-center border border-white/10"
                       onPress={onRefresh}
                     >
                       <Icon name="refresh-cw" size={18} color="#fff" />
                     </Pressable>
                     <Pressable
+                      accessibilityRole="button"
+                      accessibilityLabel={showBalance ? "Hide balance" : "Show balance"}
                       className="bg-white/15 w-12 h-12 rounded-full items-center justify-center border border-white/10"
                       onPress={() => setShowBalance(!showBalance)}
                     >

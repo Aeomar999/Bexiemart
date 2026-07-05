@@ -66,6 +66,9 @@ function CustomTabBar({ state, descriptors, navigation }: any) {
           <TouchableOpacity
             key={route.key}
             onPress={onPress}
+            accessibilityRole="tab"
+            accessibilityLabel={label}
+            accessibilityState={{ selected: isFocused }}
             style={{
               flexDirection: "row",
               alignItems: "center",

@@ -209,7 +209,13 @@ export default function SupportTicketsScreen() {
             {/* Star Selector */}
             <View className="flex-row justify-center gap-3 mb-6">
               {[1, 2, 3, 4, 5].map((star) => (
-                <Pressable key={star} onPress={() => setRating(star)} className="p-2">
+                <Pressable
+                  accessibilityRole="button"
+                  accessibilityLabel={`Rate ${star} star${star === 1 ? "" : "s"}`}
+                  key={star}
+                  onPress={() => setRating(star)}
+                  className="p-2"
+                >
                   <Icon name="star" size={36} color={star <= rating ? "#f59e0b" : "#e2e8f0"} />
                 </Pressable>
               ))}

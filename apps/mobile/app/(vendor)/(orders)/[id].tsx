@@ -147,7 +147,12 @@ export default function OrderDetailsScreen() {
                 {order.customer.phone}
               </Text>
             </View>
-            <Pressable className="w-10 h-10 rounded-full bg-green-50 items-center justify-center">
+            <Pressable
+              accessibilityRole="button"
+              accessibilityLabel="Call customer"
+              hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+              className="w-10 h-10 rounded-full bg-green-50 items-center justify-center"
+            >
               <Icon name="phone" size={18} color="#16a34a" />
             </Pressable>
           </View>
