@@ -9,7 +9,7 @@
 
 ## Goals
 
-Make nine specific defects behave honestly and functionally:
+Make eight specific defects behave honestly and functionally:
 
 1. Dispatcher post-login redirect lands on a real screen.
 2. Google social login always creates a customer (no broken vendor path).
@@ -17,15 +17,14 @@ Make nine specific defects behave honestly and functionally:
 4. Vendor "Top Customers" search and count are real.
 5. Dispatcher "Help" button opens a real screen.
 6. Service "Call provider" dials the real vendor number.
-7. Paystack misconfiguration fails loudly in production.
-8. Edit Profile persists everything it shows (no silently discarded fields).
-9. "Call customer" / "Call driver" dial the real person.
+7. Edit Profile persists everything it shows (no silently discarded fields).
+8. "Call customer" / "Call driver" dial the real person.
 
 ## Non-goals (explicitly deferred)
 
 - Full Apple/Facebook OAuth (needs external developer accounts) — future spec.
 - A first-class vendor onboarding screen for social sign-up — belongs to the vendor/withdrawals sub-project.
-- Swapping the production Paystack **test key** for a live key, APK→AAB, real Apple submit IDs — deploy-config sub-project. (This spec only makes a *missing* key fail loudly.)
+- Anything Paystack-related — the payment integration stays in **test mode for now** by decision. Swapping the production test key for a live key, adding a config guard, APK→AAB, and real Apple submit IDs are all the deploy-config sub-project.
 - Any change to the vendor settings cluster, withdrawals, reels, or rewards — separate specs.
 
 ## Decisions locked during brainstorming
@@ -43,10 +42,10 @@ Make nine specific defects behave honestly and functionally:
 
 Two sequential PRs:
 
-- **PR-1 `fix/mobile-dead-routes`** — the seven client-only fixes. No migration, low risk, immediately testable on device.
+- **PR-1 `fix/mobile-dead-routes`** — the six client-only fixes. No migration, low risk, immediately testable on device.
 - **PR-2 `fix/profile-and-call-data`** — the two fixes that need server + schema changes (Edit Profile bio/location; phone exposure for Call buttons), with Jest e2e coverage.
 
-Rationale: banks seven honest fixes immediately and quarantines the single schema migration in its own reviewable change.
+Rationale: banks six honest fixes immediately and quarantines the single schema migration in its own reviewable change.
 
 ---
 
@@ -82,16 +81,11 @@ Rationale: banks seven honest fixes immediately and quarantines the single schem
 - **File:** `apps/mobile/app/(customer)/services/[id].tsx:186`
 - **Change:** `tel:+233555555555` → `service.vendor.phone` (already present in the `customer-services` detail payload, `customer-services.service.ts:49`). Disable/hide the Call button when `vendor.phone` is null.
 
-### 7. Paystack config guard
-- **File:** `apps/mobile/app/_layout.tsx:159`
-- **Change:** in production (`NODE_ENV`/`__DEV__` check), if `EXPO_PUBLIC_PAYSTACK_PUBLIC_KEY` is absent, surface a visible error state instead of silently using `"pk_test_placeholder"`. Development retains a usable fallback.
-- **Note:** does not change `eas.json`; swapping the prod test key for a live key is the deploy-config sub-project.
-
 ---
 
 ## PR-2 — Server + schema fixes
 
-### 8. Edit Profile persists real data
+### 7. Edit Profile persists real data
 
 **Schema** — `apps/server/prisma/schema.prisma`, `model User` (after the existing profile fields):
 ```prisma
@@ -116,7 +110,7 @@ Migration name: `add_user_bio_location`. Both nullable → no backfill, forward-
 - Prefill `bio`/`location` from `user` (already wired, `:47-48`).
 - Screen is shared by the customer and dispatcher `edit-profile` routes, so both are fixed together.
 
-### 9. Call buttons reach real people
+### 8. Call buttons reach real people
 
 **Server** — `apps/server/src/modules/delivery/delivery.service.ts`: add `phoneNumber: true` to the customer and dispatcher `user` selects in the delivery-job payloads:
 - Active-job selects at `:303` and `:327` (customer select).
