@@ -1,32 +1,48 @@
 import { tokens } from "@/theme/tokens";
-import { View, Text, ScrollView, Switch, Pressable } from "react-native";
+import { View, Text, ScrollView, Pressable } from "react-native";
 import { useRouter } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Icon } from "@/components/ui/Icon";
-import { useState } from "react";
 import { useCurrentUser } from "@/lib/hooks/use-auth";
 import { useAuthStore } from "@/lib/stores/auth-store";
 import { useAuthEnabled } from "@/lib/feature-flags";
 import Toast from "@/lib/toast-polyfill";
 import { Avatar } from "@/components/ui/Avatar";
+import { ThemeControl } from "@/components/ui/ThemeControl";
+import { useDarkModeEnabled } from "@/lib/feature-flags";
 
-const PROFILE_SECTIONS = [
+type ProfileItem = {
+  id: string;
+  icon: string;
+  label: string;
+  route?: string;
+  value?: string;
+  requiresAuth?: boolean;
+  comingSoon?: boolean;
+};
+
+type ProfileSection = {
+  title: string;
+  items: ProfileItem[];
+};
+
+const PROFILE_SECTIONS: ProfileSection[] = [
   {
     title: "Rewards & Wallet",
     items: [
       {
         id: "wallet",
-        icon: "credit-card",
+        icon: "banknote",
         label: "My Wallet",
         route: "/(customer)/wallet",
-        color: "#f59e0b",
+        requiresAuth: true,
       },
       {
         id: "referrals",
         icon: "gift",
         label: "Refer & Earn",
         route: "/(customer)/referrals",
-        color: "#ec4899",
+        requiresAuth: true,
       },
     ],
   },
@@ -38,35 +54,35 @@ const PROFILE_SECTIONS = [
         icon: "shopping-bag",
         label: "Order History",
         route: "/(customer)/orders",
-        color: tokens.primary,
+        requiresAuth: true,
       },
       {
         id: "favorites",
         icon: "heart",
         label: "My Collections",
         route: "/(customer)/favorites",
-        color: "#ef4444",
+        requiresAuth: true,
       },
       {
         id: "address",
         icon: "map-pin",
         label: "Delivery Addresses",
         route: "/(customer)/addresses",
-        color: "#059669",
+        requiresAuth: true,
       },
       {
         id: "payment",
         icon: "credit-card",
         label: "Payment Methods",
         route: "/(customer)/payment",
-        color: "#7c3aed",
+        requiresAuth: true,
       },
       {
         id: "drive",
         icon: "truck",
         label: "Drive for Bexiemart",
         route: "/(customer)/become-dispatcher",
-        color: "#f97316",
+        requiresAuth: true,
       },
     ],
   },
@@ -78,36 +94,17 @@ const PROFILE_SECTIONS = [
         icon: "bell",
         label: "Notifications",
         route: "/(customer)/notifications",
-        color: "#f59e0b",
+        requiresAuth: true,
       },
-      { id: "dark_mode", icon: "moon", label: "Dark Mode", type: "toggle", color: "#1e293b" },
-      {
-        id: "language",
-        icon: "globe",
-        label: "Language",
-        value: "English",
-        route: "/(customer)/settings/language",
-        color: "#0ea5e9",
-      },
+      { id: "dark_mode", icon: "moon", label: "Dark Mode", value: "Coming soon", comingSoon: true },
+      { id: "language", icon: "globe", label: "Language", value: "Coming soon", comingSoon: true },
     ],
   },
   {
     title: "Support",
     items: [
-      {
-        id: "help",
-        icon: "help-circle",
-        label: "Help Center",
-        route: "/(customer)/help",
-        color: "#3b82f6",
-      },
-      {
-        id: "contact",
-        icon: "message-circle",
-        label: "Contact Us",
-        route: "/(customer)/contact",
-        color: "#10b981",
-      },
+      { id: "help", icon: "help-circle", label: "Help Center", route: "/(customer)/help" },
+      { id: "contact", icon: "message-circle", label: "Contact Us", route: "/(customer)/contact" },
     ],
   },
 ];
@@ -115,10 +112,10 @@ const PROFILE_SECTIONS = [
 export default function ProfileScreen() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
-  const [isDarkMode, setIsDarkMode] = useState(false);
   const { data: user } = useCurrentUser();
   const { logout, isAuthenticated } = useAuthStore();
   const { authEnabled } = useAuthEnabled();
+  const { darkModeEnabled } = useDarkModeEnabled();
 
   const handleLogout = async () => {
     await logout();
@@ -140,35 +137,48 @@ export default function ProfileScreen() {
         contentContainerClassName="pb-10 pt-6 px-5"
         showsVerticalScrollIndicator={false}
       >
-        {/* User Card */}
-        <View className="bg-card rounded-2xl p-5 flex-row items-center shadow-lg border border-border mb-8">
+        {/* Identity card — sign-in CTA for guests, edit affordance for members */}
+        <Pressable
+          accessibilityRole="button"
+          accessibilityLabel={isAuthenticated ? "Edit profile" : "Sign in or create an account"}
+          style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
+          className="bg-card rounded-2xl p-4 flex-row items-center border border-border mb-6"
+          onPress={() =>
+            router.push(isAuthenticated ? "/(customer)/edit-profile" : "/(auth)/login")
+          }
+        >
           <View className="mr-4">
             <Avatar
               uri={user?.image}
-              name={user?.name || "Bexiemart"}
+              name={user?.name || "Guest"}
               size={64}
-              fallback="dicebear"
+              fallback={isAuthenticated ? "dicebear" : "icon"}
+              iconName="user"
             />
           </View>
           <View className="flex-1">
-            <Text className="text-display-sm font-heading font-bold text-foreground">
-              {user?.name || "Guest"}
+            <Text
+              className="text-display-sm font-heading font-bold text-foreground"
+              numberOfLines={1}
+            >
+              {isAuthenticated ? user?.name || "Bexiemart" : "Sign in or sign up"}
             </Text>
-            <Text className="text-body-sm font-body text-muted-foreground">
-              {user?.email || "Login to access full features"}
+            <Text className="text-body-sm font-body text-muted-foreground" numberOfLines={1}>
+              {isAuthenticated
+                ? user?.email || "Tap to edit your profile"
+                : "Access your orders, wallet & rewards"}
             </Text>
           </View>
-          <Pressable
-            accessibilityRole="button"
-            accessibilityLabel="Edit profile"
-            hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
-            style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
-            className="w-10 h-10 rounded-full bg-background items-center justify-center"
-            onPress={() => router.push("/(customer)/edit-profile")}
-          >
-            <Icon name="edit-2" size={16} color="#64748b" />
-          </Pressable>
-        </View>
+          {isAuthenticated ? (
+            <View className="w-10 h-10 rounded-full bg-background items-center justify-center">
+              <Icon name="edit-2" size={16} color={tokens.textSecondary} />
+            </View>
+          ) : (
+            <View className="rounded-full bg-primary px-4 py-2">
+              <Text className="text-body-sm font-body font-bold text-white">Sign In</Text>
+            </View>
+          )}
+        </Pressable>
 
         {/* Sections */}
         {PROFILE_SECTIONS.map((section, idx) => {
@@ -180,52 +190,79 @@ export default function ProfileScreen() {
                 id: "phone",
                 icon: "smartphone",
                 label: "Phone Number",
-                value: user?.phoneNumber
-                  ? user.phoneNumberVerified
-                    ? `${user.phoneNumber} ✓`
-                    : `${user.phoneNumber} (Unverified)`
-                  : "Not set",
+                value: isAuthenticated
+                  ? user?.phoneNumber
+                    ? user.phoneNumberVerified
+                      ? `${user.phoneNumber} ✓`
+                      : `${user.phoneNumber} (Unverified)`
+                    : "Not set"
+                  : undefined,
                 route: "/(customer)/edit-phone",
-                color: "#10b981",
+                requiresAuth: true,
               },
               ...section.items,
             ];
           }
 
           return (
-            <View key={idx} className="mb-8">
+            <View key={idx} className="mb-6">
               <Text className="text-body-lg font-heading font-bold text-foreground mb-3 px-1">
                 {section.title}
               </Text>
-              <View className="bg-card rounded-2xl border border-border overflow-hidden shadow-lg">
+              <View className="bg-card rounded-2xl border border-border overflow-hidden">
                 {items.map((item, itemIdx) => {
                   const isLast = itemIdx === items.length - 1;
+
+                  // Real Light/Dark/System control replaces the placeholder row
+                  // when the dark-mode flag is enabled; otherwise the default
+                  // "Coming soon" row renders below.
+                  if (item.id === "dark_mode" && darkModeEnabled) {
+                    return (
+                      <View key={item.id} className={!isLast ? "border-b border-border" : ""}>
+                        <ThemeControl />
+                      </View>
+                    );
+                  }
+
+                  const guestLocked = !!item.requiresAuth && !isAuthenticated;
                   return (
                     <Pressable
-                      style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
                       key={item.id}
+                      accessibilityRole="button"
+                      accessibilityLabel={item.label}
+                      accessibilityHint={
+                        guestLocked
+                          ? "Requires sign in"
+                          : item.comingSoon
+                            ? "Coming soon"
+                            : undefined
+                      }
+                      style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
                       className={`flex-row items-center justify-between p-4 ${!isLast ? "border-b border-border" : ""}`}
-                      disabled={item.type === "toggle"}
                       onPress={() => {
+                        if (item.comingSoon) {
+                          Toast.show({
+                            type: "info",
+                            text1: "Coming soon",
+                            text2: `${item.label} isn't available yet.`,
+                          });
+                          return;
+                        }
+                        if (guestLocked) {
+                          router.push("/(auth)/login");
+                          return;
+                        }
                         if (item.route && item.route !== "#") {
-                          if (item.route.includes("language")) {
-                            Toast.show({
-                              type: "info",
-                              text1: "Coming Soon",
-                              text2: "Language settings are not available yet.",
-                            });
-                          } else {
-                            router.push(item.route as any);
-                          }
+                          router.push(item.route as any);
                         }
                       }}
                     >
                       <View className="flex-row items-center gap-3">
                         <View
                           className="w-10 h-10 rounded-full items-center justify-center"
-                          style={{ backgroundColor: `${item.color}15` }}
+                          style={{ backgroundColor: `${tokens.primary}15` }}
                         >
-                          <Icon name={item.icon} size={18} color={item.color} />
+                          <Icon name={item.icon} size={18} color={tokens.primary} />
                         </View>
                         <Text className="text-body-lg font-body font-semibold text-foreground">
                           {item.label}
@@ -238,15 +275,10 @@ export default function ProfileScreen() {
                             {item.value}
                           </Text>
                         )}
-                        {item.type === "toggle" ? (
-                          <Switch
-                            value={isDarkMode}
-                            onValueChange={setIsDarkMode}
-                            trackColor={{ false: "#e2e8f0", true: tokens.primary }}
-                            thumbColor={"#ffffff"}
-                          />
+                        {guestLocked ? (
+                          <Icon name="lock" size={16} color={tokens.textMuted} />
                         ) : (
-                          <Icon name="chevron-right" size={18} color="#cbd5e1" />
+                          <Icon name="chevron-right" size={18} color={tokens.textMuted} />
                         )}
                       </View>
                     </Pressable>
@@ -260,17 +292,21 @@ export default function ProfileScreen() {
         {/* Auth action: sign out for members, sign in for guests */}
         {isAuthenticated ? (
           <Pressable
+            accessibilityRole="button"
+            accessibilityLabel="Log out"
             style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
-            className="flex-row items-center justify-center gap-2 p-4 bg-rose-50 rounded-xl mt-2 border border-rose-100 active:opacity-70"
+            className="flex-row items-center justify-center gap-2 p-4 bg-rose-50 rounded-xl mt-2 border border-rose-100"
             onPress={handleLogout}
           >
-            <Icon name="log-out" size={18} color="#ef4444" />
+            <Icon name="log-out" size={18} color={tokens.error} />
             <Text className="text-body-lg font-body font-bold text-rose-500">Log Out</Text>
           </Pressable>
         ) : (
           <Pressable
+            accessibilityRole="button"
+            accessibilityLabel="Sign in or create an account"
             style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
-            className="flex-row items-center justify-center gap-2 p-4 bg-primary rounded-xl mt-2 active:opacity-70"
+            className="flex-row items-center justify-center gap-2 p-4 bg-primary rounded-xl mt-2"
             onPress={() => router.push("/(auth)/login")}
           >
             <Icon name="log-in" size={18} color="#ffffff" />

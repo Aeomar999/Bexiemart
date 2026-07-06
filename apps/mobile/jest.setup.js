@@ -75,7 +75,11 @@ jest.mock("expo-linear-gradient", () => {
   const { View } = require("react-native");
   return {
     LinearGradient: React.forwardRef((props, ref) =>
-      React.createElement(View, { ref, style: props.style, testID: "linear-gradient" }, props.children)
+      React.createElement(
+        View,
+        { ref, style: props.style, testID: "linear-gradient" },
+        props.children
+      )
     ),
   };
 });
@@ -100,12 +104,8 @@ jest.mock("expo-clipboard", () => ({
 
 // expo-image-picker
 jest.mock("expo-image-picker", () => ({
-  launchImageLibraryAsync: jest.fn(() =>
-    Promise.resolve({ canceled: true, assets: null })
-  ),
-  launchCameraAsync: jest.fn(() =>
-    Promise.resolve({ canceled: true, assets: null })
-  ),
+  launchImageLibraryAsync: jest.fn(() => Promise.resolve({ canceled: true, assets: null })),
+  launchCameraAsync: jest.fn(() => Promise.resolve({ canceled: true, assets: null })),
   requestCameraPermissionsAsync: jest.fn(() =>
     Promise.resolve({ status: "granted", granted: true })
   ),
@@ -117,9 +117,7 @@ jest.mock("expo-image-picker", () => ({
 
 // expo-location
 jest.mock("expo-location", () => ({
-  requestForegroundPermissionsAsync: jest.fn(() =>
-    Promise.resolve({ status: "granted" })
-  ),
+  requestForegroundPermissionsAsync: jest.fn(() => Promise.resolve({ status: "granted" })),
   getCurrentPositionAsync: jest.fn(() =>
     Promise.resolve({ coords: { latitude: 0, longitude: 0 } })
   ),
@@ -411,7 +409,24 @@ jest.mock("@/lib/stores/cart-store", () => ({
 // ──────────────────────────────────────────────────
 jest.mock("nativewind", () => ({
   styled: (component) => component,
-  useColorScheme: jest.fn(() => ({ colorScheme: "light", toggleColorScheme: jest.fn() })),
+  useColorScheme: jest.fn(() => ({
+    colorScheme: "light",
+    setColorScheme: jest.fn(),
+    toggleColorScheme: jest.fn(),
+  })),
+  // Imperative scheme API used by ThemeController.
+  colorScheme: {
+    set: jest.fn(),
+    get: jest.fn(() => "light"),
+  },
+}));
+
+// react-native Appearance — default to light; tests spy on this to drive
+// system-mode changes.
+jest.mock("react-native/Libraries/Utilities/Appearance", () => ({
+  getColorScheme: jest.fn(() => "light"),
+  addChangeListener: jest.fn(() => ({ remove: jest.fn() })),
+  removeChangeListener: jest.fn(),
 }));
 
 // ──────────────────────────────────────────────────

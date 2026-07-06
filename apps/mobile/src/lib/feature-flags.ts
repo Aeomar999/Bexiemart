@@ -13,6 +13,13 @@ export const FeatureFlag = {
    * login.
    */
   MobileAuth: "mobile-auth",
+  /**
+   * Gates the dark-mode theme control. Fail-safe OFF: dark mode ships dark but
+   * stays hidden (app renders light) until this flag is explicitly enabled in
+   * PostHog, so the feature can land incrementally without exposing
+   * partially-migrated screens.
+   */
+  DarkMode: "dark-mode",
 } as const;
 
 /**
@@ -66,4 +73,43 @@ export function useAuthEnabled(): { authEnabled: boolean; ready: boolean } {
   }, []);
 
   return { authEnabled, ready };
+}
+
+/**
+ * Resolves the `dark-mode` PostHog flag from the singleton client.
+ *
+ * Fail-safe: defaults to dark mode DISABLED. Only an explicit `true` turns the
+ * theme control on, so a missing flag, an unconfigured client, or an
+ * unreachable network keeps the app in its fully-verified light appearance.
+ */
+export function useDarkModeEnabled(): { darkModeEnabled: boolean; ready: boolean } {
+  const [darkModeEnabled, setDarkModeEnabled] = useState(false);
+  const [ready, setReady] = useState(false);
+
+  useEffect(() => {
+    if (!posthog) {
+      setReady(true);
+      return;
+    }
+
+    const apply = () => {
+      // Only an explicit `true` enables — `undefined`/`false` stays disabled.
+      setDarkModeEnabled(posthog!.isFeatureEnabled(FeatureFlag.DarkMode) === true);
+      setReady(true);
+    };
+
+    if (posthog.isFeatureEnabled(FeatureFlag.DarkMode) !== undefined) {
+      apply();
+    }
+
+    const unsubscribe = posthog.onFeatureFlags(apply);
+    const timeout = setTimeout(() => setReady(true), 2000);
+
+    return () => {
+      unsubscribe?.();
+      clearTimeout(timeout);
+    };
+  }, []);
+
+  return { darkModeEnabled, ready };
 }
