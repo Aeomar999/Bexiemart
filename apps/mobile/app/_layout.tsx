@@ -15,6 +15,7 @@ import { LoadingSpinner } from "../src/components/ui/LoadingSpinner";
 import { GlobalPopup } from "../src/components/ui/GlobalPopup";
 import { ErrorBoundary } from "../src/components/ui/ErrorBoundary";
 import { AnimatedSplashScreen } from "../src/components/screens/AnimatedSplashScreen";
+import { ThemeController } from "../src/components/ThemeController";
 import * as SplashScreen from "expo-splash-screen";
 
 // Prevent the native splash screen from auto-hiding
@@ -153,12 +154,13 @@ export default function RootLayout() {
   return (
     <SafeAreaProvider>
       <PostHogProvider client={posthog} autocapture>
+        <ThemeController />
         <OfflineBanner />
         <QueryClientProvider client={queryClient}>
           <PaystackProvider
             publicKey={process.env.EXPO_PUBLIC_PAYSTACK_PUBLIC_KEY || "pk_test_placeholder"}
           >
-            <StatusBar style="dark" />
+            <StatusBar style="auto" />
             <ErrorBoundary>
               <Stack screenOptions={{ headerShown: false }}>
                 <Stack.Screen name="(auth)" />
