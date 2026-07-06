@@ -159,14 +159,14 @@ export default function DispatcherMap() {
       <>
         {/* Pickup Marker */}
         <Marker coordinate={pickupCoords} title="Pickup">
-          <View className="w-8 h-8 bg-error rounded-full items-center justify-center border-2 border-white shadow-sm">
+          <View className="w-8 h-8 bg-error rounded-full items-center justify-center border-2 border-white">
             <Icon name="package" size={16} color="white" />
           </View>
         </Marker>
 
         {/* Dropoff Marker */}
         <Marker coordinate={dropoffCoords} title="Dropoff">
-          <View className="w-8 h-8 bg-emerald-500 rounded-full items-center justify-center border-2 border-white shadow-sm">
+          <View className="w-8 h-8 bg-emerald-500 rounded-full items-center justify-center border-2 border-white">
             <Icon name="map-pin" size={16} color="white" />
           </View>
         </Marker>
@@ -196,7 +196,7 @@ export default function DispatcherMap() {
     if (!isOnline && !activeRide) {
       return (
         <View
-          className="absolute bottom-0 w-full bg-card rounded-t-3xl border-t border-border p-6 shadow-lg items-center"
+          className="absolute bottom-0 w-full bg-card rounded-t-3xl border-t border-border p-6 items-center"
           style={{ paddingBottom: Math.max(insets.bottom, 20) + 24 }}
         >
           <View className="w-16 h-16 bg-slate-100 rounded-full items-center justify-center mb-4">
@@ -215,7 +215,7 @@ export default function DispatcherMap() {
     if (taskStatus === "idle") {
       return (
         <View
-          className="absolute bottom-0 w-full bg-card rounded-t-3xl border-t border-border p-6 shadow-lg items-center"
+          className="absolute bottom-0 w-full bg-card rounded-t-3xl border-t border-border p-6 items-center"
           style={{ paddingBottom: Math.max(insets.bottom, 20) + 24 }}
         >
           {loadingAvailable ? (
@@ -238,7 +238,7 @@ export default function DispatcherMap() {
     if (taskStatus === "available" && displayRide) {
       return (
         <View
-          className="absolute bottom-0 w-full bg-card rounded-t-3xl border-t border-border shadow-lg"
+          className="absolute bottom-0 w-full bg-card rounded-t-3xl border-t border-border"
           style={{ paddingBottom: Math.max(insets.bottom, 20) }}
         >
           <View className="w-12 h-1.5 bg-slate-200 rounded-full self-center my-3" />
@@ -320,7 +320,7 @@ export default function DispatcherMap() {
     if (displayRide) {
       return (
         <View
-          className="absolute bottom-0 w-full bg-card rounded-t-3xl border-t border-border shadow-lg"
+          className="absolute bottom-0 w-full bg-card rounded-t-3xl border-t border-border"
           style={{ paddingBottom: Math.max(insets.bottom, 20) }}
         >
           <View className="w-12 h-1.5 bg-slate-200 rounded-full self-center my-3" />
@@ -473,7 +473,7 @@ export default function DispatcherMap() {
         {userLocation && (
           <Marker coordinate={userLocation} title="You" zIndex={999}>
             <View className="w-10 h-10 bg-primary-subtle rounded-full items-center justify-center border border-border">
-              <View className="w-6 h-6 bg-primary rounded-full border-2 border-white items-center justify-center shadow-lg">
+              <View className="w-6 h-6 bg-primary rounded-full border-2 border-white items-center justify-center">
                 <Icon name="truck" size={12} color="white" />
               </View>
             </View>
@@ -483,7 +483,7 @@ export default function DispatcherMap() {
 
       {/* Floating Header */}
       <View className="absolute w-full px-5 z-10" style={{ top: Math.max(insets.top, 12) + 12 }}>
-        <View className="bg-card rounded-2xl p-4 flex-row items-center justify-between border border-border shadow-sm">
+        <View className="bg-card rounded-2xl p-4 flex-row items-center justify-between border border-border">
           <View className="flex-row items-center gap-3">
             <View
               className={`w-3 h-3 rounded-full ${isOnline ? "bg-emerald-500" : "bg-slate-400"}`}
@@ -519,7 +519,7 @@ export default function DispatcherMap() {
             );
           }
         }}
-        className="absolute right-5 bg-card p-3 rounded-full shadow-md border border-border"
+        className="absolute right-5 bg-card p-3 rounded-full border border-border"
         style={{ top: Math.max(insets.top, 12) + 90 }}
       >
         <Icon name="navigation" size={20} color={tokens.primary} />

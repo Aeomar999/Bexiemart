@@ -201,7 +201,7 @@ export default function OnboardingScreen() {
             return (
               <Animated.View
                 key={slide.id}
-                className="absolute w-[280px] h-[340px] rounded-3xl overflow-hidden shadow-2xl shadow-none bg-primary-subtle"
+                className="absolute w-[280px] h-[340px] rounded-3xl overflow-hidden bg-primary-subtle"
                 style={cardStyle}
               >
                 <Image

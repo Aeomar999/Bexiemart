@@ -197,7 +197,7 @@ export default function SearchScreen() {
                   <Pressable
                     style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
                     key={item.id}
-                    className="flex-row items-center bg-card rounded-2xl p-4 border border-border shadow-lg"
+                    className="flex-row items-center bg-card rounded-2xl p-4 border border-border"
                     onPress={() => router.push(`/(customer)/product/${item.id}` as any)}
                   >
                     <View className="w-20 h-20 rounded-xl bg-muted items-center justify-center overflow-hidden">
@@ -242,7 +242,7 @@ export default function SearchScreen() {
       {showFilters && (
         <View className="absolute inset-0 bg-black/40 justify-end z-50">
           <View
-            className="bg-card rounded-t-3xl p-6 shadow-2xl"
+            className="bg-card rounded-t-3xl p-6"
             style={{ paddingBottom: Math.max(insets.bottom, 24) }}
           >
             <View className="flex-row justify-between items-center mb-6">

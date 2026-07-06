@@ -189,7 +189,7 @@ export default function CartScreen() {
               <Pressable
                 style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
                 key={item.productId}
-                className="flex-row bg-card rounded-2xl p-4 border border-border gap-3 mb-3 shadow-[0_4px_10px_rgba(0,0,0,0.02)]"
+                className="flex-row bg-card rounded-2xl p-4 border border-border gap-3 mb-3"
                 onPress={() => router.push(`/(customer)/product/${item.productId}`)}
               >
                 <View className="flex-row items-center mr-1">
@@ -312,7 +312,7 @@ export default function CartScreen() {
         <BlurView
           intensity={90}
           tint="light"
-          className="px-5 py-5 rounded-t-3xl border-t border-border/50 shadow-2xl bg-white/80"
+          className="px-5 py-5 rounded-t-3xl border-t border-border/50 bg-white/80"
         >
           {/* Coupon Section */}
           {!couponApplied ? (

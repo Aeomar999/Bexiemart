@@ -174,7 +174,7 @@ export default function AddMomoAccountScreen() {
 
         {/* Form */}
         <View className="px-5">
-          <View className="bg-white rounded-3xl p-5 border border-gray-100 shadow-sm">
+          <View className="bg-white rounded-3xl p-5 border border-gray-100">
             {/* Phone Number */}
             <View className="mb-5">
               <Text className="text-gray-500 text-xs font-bold uppercase tracking-wider mb-2 ml-1">
@@ -223,11 +223,6 @@ export default function AddMomoAccountScreen() {
                 isValid && !linkMomoAccount.isPending
                   ? {
                       backgroundColor: selectedProvider?.gradient[0] || "#2563EB",
-                      shadowColor: selectedProvider?.gradient[0] || "#2563EB",
-                      shadowOffset: { width: 0, height: 4 },
-                      shadowOpacity: 0.3,
-                      shadowRadius: 8,
-                      elevation: 5,
                     }
                   : {}
               }

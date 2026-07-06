@@ -73,7 +73,7 @@ export default function HelpCenterScreen() {
             return (
               <Pressable
                 key={i}
-                className={`bg-card p-5 rounded-2xl border ${isExpanded ? "border-border shadow-sm" : "border-border"}`}
+                className={`bg-card p-5 rounded-2xl border ${isExpanded ? "border-border" : "border-border"}`}
                 onPress={() => setExpandedIndex(isExpanded ? null : i)}
               >
                 <View className="flex-row justify-between items-center">

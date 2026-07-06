@@ -365,16 +365,7 @@ export default function HomeScreen() {
                     </View>
 
                     {/* Medallion: real category image when present, icon fallback otherwise */}
-                    <View
-                      className="w-12 h-12 rounded-2xl bg-card items-center justify-center overflow-hidden"
-                      style={{
-                        shadowColor: "#0f172a",
-                        shadowOffset: { width: 0, height: 4 },
-                        shadowOpacity: 0.1,
-                        shadowRadius: 8,
-                        elevation: 3,
-                      }}
-                    >
+                    <View className="w-12 h-12 rounded-2xl bg-card items-center justify-center overflow-hidden">
                       {cat.image ? (
                         <Image
                           source={{ uri: cat.image }}
@@ -432,7 +423,7 @@ export default function HomeScreen() {
                 className="items-center active:opacity-70"
                 onPress={() => router.push(`/(customer)/product/${item.id}`)}
               >
-                <View className="w-18 h-18 rounded-full bg-muted mb-2 items-center justify-center border-2 border-card shadow-sm overflow-hidden">
+                <View className="w-18 h-18 rounded-full bg-muted mb-2 items-center justify-center border-2 border-card overflow-hidden">
                   {item.image ? (
                     <Image
                       source={{ uri: item.image }}
@@ -661,7 +652,7 @@ export default function HomeScreen() {
                     accessibilityRole="button"
                     accessibilityLabel="Toggle favorite"
                     hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
-                    className="absolute top-2 right-2 w-8 h-8 rounded-full bg-card/90 items-center justify-center shadow-sm"
+                    className="absolute top-2 right-2 w-8 h-8 rounded-full bg-card/90 items-center justify-center"
                     onPress={() => {
                       toggleFavorite(item.id);
                     }}
@@ -706,11 +697,6 @@ export default function HomeScreen() {
             alignItems: "flex-start",
             borderWidth: 1,
             borderColor: "#f1f5f9",
-            shadowColor: "#000",
-            shadowOffset: { width: 0, height: 10 },
-            shadowOpacity: 0.08,
-            shadowRadius: 20,
-            elevation: 10,
           }}
         >
           {QUICK_ACTIONS.map((action) => (

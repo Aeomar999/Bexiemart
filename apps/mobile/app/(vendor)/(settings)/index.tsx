@@ -142,7 +142,7 @@ export default function VendorSettingsScreen() {
         showsVerticalScrollIndicator={false}
       >
         {/* Vendor Profile Card */}
-        <View className="bg-card rounded-2xl p-5 flex-row items-center shadow-lg border border-border mb-8">
+        <View className="bg-card rounded-2xl p-5 flex-row items-center border border-border mb-8">
           <View className="mr-4">
             <Avatar uri={user?.image} name={user?.name || "V"} size={64} fallback="initials" />
           </View>
@@ -172,7 +172,7 @@ export default function VendorSettingsScreen() {
             <Text className="text-body-lg font-heading font-bold text-foreground mb-3 px-1">
               {section.title}
             </Text>
-            <View className="bg-card rounded-2xl border border-border overflow-hidden shadow-lg">
+            <View className="bg-card rounded-2xl border border-border overflow-hidden">
               {section.items.map((item, itemIdx) => {
                 const isLast = itemIdx === section.items.length - 1;
                 return (

@@ -102,7 +102,7 @@ export default function FlashSalesScreen() {
             return (
               <Pressable
                 style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
-                className="bg-card rounded-2xl p-4 flex-row gap-4 mb-4 border border-border shadow-[0_4px_10px_rgba(0,0,0,0.03)]"
+                className="bg-card rounded-2xl p-4 flex-row gap-4 mb-4 border border-border"
                 onPress={() => router.push(`/(customer)/product/${item.product.id}`)}
               >
                 <View className="w-[110px] h-[110px] rounded-xl bg-background items-center justify-center overflow-hidden border border-border relative">

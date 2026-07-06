@@ -129,9 +129,9 @@ export default function StoreProfileScreen() {
 
             {/* Profile Info Card */}
             <View className="px-5 -mt-16 relative z-10">
-              <View className="bg-card rounded-3xl p-5 shadow-md border border-border">
+              <View className="bg-card rounded-3xl p-5 border border-border">
                 <View className="flex-row justify-between items-start">
-                  <View className="w-20 h-20 rounded-2xl bg-background border-2 border-border overflow-hidden items-center justify-center -mt-10 shadow-sm">
+                  <View className="w-20 h-20 rounded-2xl bg-background border-2 border-border overflow-hidden items-center justify-center -mt-10">
                     {store.logo ? (
                       <Image
                         source={{ uri: store.logo }}
@@ -266,7 +266,7 @@ export default function StoreProfileScreen() {
                   accessibilityLabel={isFav ? "Remove from favorites" : "Add to favorites"}
                   accessibilityState={{ selected: isFav }}
                   hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
-                  className="absolute top-2 right-2 w-8 h-8 rounded-full bg-card/90 items-center justify-center shadow-sm active:opacity-70"
+                  className="absolute top-2 right-2 w-8 h-8 rounded-full bg-card/90 items-center justify-center active:opacity-70"
                   onPress={() => handleToggleFavorite(item.id)}
                 >
                   <Icon name="heart" size={15} color={isFav ? "#ef4444" : "#64748b"} />

@@ -146,7 +146,7 @@ export default function AddBankAccountScreen() {
         </View>
 
         <View className="px-5">
-          <View className="bg-white rounded-3xl p-5 border border-gray-100 shadow-sm">
+          <View className="bg-white rounded-3xl p-5 border border-gray-100">
             {/* Bank Selector */}
             <View className="mb-5">
               <Text className="text-gray-500 text-xs font-bold uppercase tracking-wider mb-2 ml-1">
@@ -258,17 +258,6 @@ export default function AddBankAccountScreen() {
               className={`w-full rounded-2xl py-4 flex-row justify-center items-center ${
                 !resolvedName || linkBankAccount.isPending ? "bg-gray-300" : "bg-blue-600"
               }`}
-              style={
-                resolvedName
-                  ? {
-                      shadowColor: "#2563EB",
-                      shadowOffset: { width: 0, height: 4 },
-                      shadowOpacity: 0.3,
-                      shadowRadius: 8,
-                      elevation: 5,
-                    }
-                  : {}
-              }
             >
               {linkBankAccount.isPending ? (
                 <ActivityIndicator color="#fff" />

@@ -130,7 +130,7 @@ export default function ChatDetailScreen() {
     >
       {/* Header */}
       <View
-        className="px-5 bg-card pb-3 border-b border-border flex-row items-center shadow-sm z-10"
+        className="px-5 bg-card pb-3 border-b border-border flex-row items-center z-10"
         style={{ paddingTop: (insets.top || 12) + 12 }}
       >
         <BackButton className="w-10 h-10 items-start justify-center active:opacity-70" />

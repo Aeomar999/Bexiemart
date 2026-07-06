@@ -185,7 +185,7 @@ export default function DispatcherTasks() {
         {rides.map((ride: any) => (
           <View
             key={ride.id}
-            className="bg-card rounded-2xl p-4 border border-border border-l-4 border-l-primary shadow-sm"
+            className="bg-card rounded-2xl p-4 border border-border border-l-4 border-l-primary"
           >
             <View className="flex-row items-center justify-between mb-3">
               <View>
@@ -335,11 +335,6 @@ export default function DispatcherTasks() {
                   paddingVertical: 10,
                   borderRadius: 8,
                   backgroundColor: isActive ? "white" : "transparent",
-                  shadowColor: isActive ? "#000" : "transparent",
-                  shadowOffset: { width: 0, height: 1 },
-                  shadowOpacity: isActive ? 0.05 : 0,
-                  shadowRadius: 2,
-                  elevation: isActive ? 1 : 0,
                 }}
               >
                 <Text

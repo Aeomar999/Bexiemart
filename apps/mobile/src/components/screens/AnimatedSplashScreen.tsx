@@ -185,11 +185,6 @@ export function AnimatedSplashScreen({ onAnimationComplete }: AnimatedSplashScre
               backgroundColor: "#06406b",
               alignItems: "center",
               justifyContent: "center",
-              shadowColor: "#06406b",
-              shadowOffset: { width: 0, height: 12 },
-              shadowOpacity: 0.35,
-              shadowRadius: 24,
-              elevation: 16,
             }}
           >
             <FontAwesome5 name="store" size={42} color="#FFFFFF" solid />

@@ -158,7 +158,7 @@ export default function VendorProfileScreen() {
               setPhotoTarget("logo");
               setPhotoModalVisible(true);
             }}
-            className="w-[100px] h-[100px] rounded-full bg-card items-center justify-center border-4 border-card shadow-sm overflow-hidden z-10 relative"
+            className="w-[100px] h-[100px] rounded-full bg-card items-center justify-center border-4 border-card overflow-hidden z-10 relative"
           >
             {logoUrl ? (
               <Image

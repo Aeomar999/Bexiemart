@@ -120,7 +120,7 @@ export default function OperatingHoursScreen() {
           contentContainerClassName="pb-12 pt-6 gap-6"
           showsVerticalScrollIndicator={false}
         >
-          <View className="bg-card rounded-2xl border border-border overflow-hidden shadow-lg">
+          <View className="bg-card rounded-2xl border border-border overflow-hidden">
             {DAYS_OF_WEEK.map((day, idx) => {
               const isLast = idx === DAYS_OF_WEEK.length - 1;
               const data = hours[day.id] || { isOpen: false, open: "08:00 AM", close: "06:00 PM" };

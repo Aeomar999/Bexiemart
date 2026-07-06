@@ -288,7 +288,7 @@ export default function ShopScreen() {
                   accessibilityLabel={isFav ? "Remove from favorites" : "Add to favorites"}
                   accessibilityState={{ selected: isFav }}
                   hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
-                  className="absolute top-2 right-2 w-8 h-8 rounded-full bg-card/90 items-center justify-center shadow-sm active:opacity-70"
+                  className="absolute top-2 right-2 w-8 h-8 rounded-full bg-card/90 items-center justify-center active:opacity-70"
                   onPress={() => handleToggleFavorite(item.id)}
                 >
                   <Icon name="heart" size={15} color={isFav ? "#ef4444" : "#64748b"} />

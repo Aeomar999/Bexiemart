@@ -85,7 +85,7 @@ export default function RewardsScreen() {
       </View>
 
       <ScrollView className="flex-1 px-5 pt-6 pb-20">
-        <View className="rounded-3xl shadow-[0_20px_40px_rgba(217,119,6,0.2)] overflow-hidden mb-8">
+        <View className="rounded-3xl overflow-hidden mb-8">
           <LinearGradient
             colors={["#f59e0b", "#d97706"]}
             start={{ x: 0, y: 0 }}
@@ -121,7 +121,7 @@ export default function RewardsScreen() {
         <Text className="text-heading-md font-bold text-foreground font-heading mb-4 px-1">
           How to earn coins
         </Text>
-        <View className="bg-card rounded-2xl border border-border overflow-hidden mb-8 shadow-lg">
+        <View className="bg-card rounded-2xl border border-border overflow-hidden mb-8">
           {EARNING_METHODS.map((method, idx) => {
             const isLast = idx === EARNING_METHODS.length - 1;
             return (

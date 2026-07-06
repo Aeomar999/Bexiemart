@@ -129,7 +129,7 @@ export default function AddReelScreen() {
               { opacity: pressed ? 0.95 : 1, transform: [{ scale: pressed ? 0.98 : 1 }] },
             ]}
             onPress={() => setUploadModalVisible(true)}
-            className="w-full bg-background rounded-3xl overflow-hidden items-center justify-center relative shadow-lg shadow-black/10"
+            className="w-full bg-background rounded-3xl overflow-hidden items-center justify-center relative"
             style={{ aspectRatio: 9 / 16 }}
           >
             {videoUrl ? (
@@ -166,7 +166,7 @@ export default function AddReelScreen() {
         </View>
 
         {/* Details Section */}
-        <View className="bg-white rounded-2xl border border-border p-1 mb-6 shadow-sm shadow-sm/50">
+        <View className="bg-white rounded-2xl border border-border p-1 mb-6">
           <TextInput
             className="p-5 font-body text-body-lg text-foreground min-h-[120px]"
             placeholder="Write a catchy caption... #trending #fashion"
@@ -189,7 +189,7 @@ export default function AddReelScreen() {
         >
           {linkedProduct ? (
             <>
-              <View className="w-14 h-14 bg-white rounded-xl items-center justify-center border border-border shadow-sm shadow-none">
+              <View className="w-14 h-14 bg-white rounded-xl items-center justify-center border border-border">
                 <Icon name="shopping-bag" size={24} color={tokens.primary} />
               </View>
               <View className="ml-4 flex-1">
@@ -237,7 +237,7 @@ export default function AddReelScreen() {
           loading={isPublishing}
           disabled={!videoUrl || isPublishing}
           onPress={handlePublish}
-          className="w-full shadow-lg shadow-none"
+          className="w-full"
         />
       </View>
 
@@ -280,7 +280,7 @@ export default function AddReelScreen() {
                     className="flex-row items-center p-5 bg-background border border-border rounded-2xl"
                     onPress={handleUploadOption}
                   >
-                    <View className="w-14 h-14 bg-white rounded-full items-center justify-center shadow-sm shadow-sm">
+                    <View className="w-14 h-14 bg-white rounded-full items-center justify-center">
                       <Icon name="camera" size={24} color="#0f172a" />
                     </View>
                     <View className="ml-4 flex-1">
@@ -299,7 +299,7 @@ export default function AddReelScreen() {
                     className="flex-row items-center p-5 bg-primary-subtle border border-border rounded-2xl"
                     onPress={handleUploadOption}
                   >
-                    <View className="w-14 h-14 bg-primary rounded-full items-center justify-center shadow-md shadow-none">
+                    <View className="w-14 h-14 bg-primary rounded-full items-center justify-center">
                       <Icon name="image" size={24} color="#fff" />
                     </View>
                     <View className="ml-4 flex-1">

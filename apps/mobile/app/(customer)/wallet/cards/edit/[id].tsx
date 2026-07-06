@@ -118,11 +118,6 @@ export default function EditCardScreen() {
             style={{
               height: 200,
               width: "100%",
-              elevation: 15,
-              shadowColor: "#4f2ae8",
-              shadowOffset: { width: 0, height: 10 },
-              shadowOpacity: 0.3,
-              shadowRadius: 20,
             }}
           >
             <LinearGradient
@@ -187,7 +182,7 @@ export default function EditCardScreen() {
         </View>
 
         <View className="px-5">
-          <View className="bg-white rounded-3xl p-5 border border-gray-100 shadow-sm">
+          <View className="bg-white rounded-3xl p-5 border border-gray-100">
             <View className="mb-5">
               <Text className="text-gray-500 text-xs font-bold uppercase tracking-wider mb-2 ml-1">
                 Cardholder Name
@@ -261,13 +256,6 @@ export default function EditCardScreen() {
               onPress={handleSave}
               disabled={updateCard.isPending}
               className={`w-full rounded-2xl py-4 flex-row justify-center items-center ${updateCard.isPending ? "bg-primary-subtle" : "bg-primary"}`}
-              style={{
-                shadowColor: "#4f2ae8",
-                shadowOffset: { width: 0, height: 4 },
-                shadowOpacity: 0.3,
-                shadowRadius: 8,
-                elevation: 5,
-              }}
             >
               {updateCard.isPending ? (
                 <ActivityIndicator color="#fff" />

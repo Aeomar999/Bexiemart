@@ -23,11 +23,6 @@ function CustomTabBar({ state, descriptors, navigation }: any) {
         flexDirection: "row",
         justifyContent: "space-between",
         alignItems: "center",
-        shadowColor: "#000",
-        shadowOffset: { width: 0, height: -2 },
-        shadowOpacity: 0.05,
-        shadowRadius: 10,
-        elevation: 10,
       }}
     >
       {state.routes.map((route: any, index: number) => {

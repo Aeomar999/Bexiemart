@@ -134,14 +134,14 @@ export default function StaffManagementScreen() {
         </View>
       ) : (
         <ScrollView className="flex-1 px-5 pt-6 pb-12">
-          <View className="bg-card rounded-2xl border border-border overflow-hidden shadow-lg">
+          <View className="bg-card rounded-2xl border border-border overflow-hidden">
             {list.map((staff: any, idx: number) => {
               const isLast = idx === list.length - 1;
               return (
                 <View key={staff.id} className={`p-5 ${!isLast ? "border-b border-border" : ""}`}>
                   <View className="flex-row items-center justify-between mb-3">
                     <View className="flex-row items-center">
-                      <View className="w-12 h-12 rounded-full bg-primary-subtle items-center justify-center mr-3 border-2 border-card shadow-sm">
+                      <View className="w-12 h-12 rounded-full bg-primary-subtle items-center justify-center mr-3 border-2 border-card">
                         <Text className="text-body-lg font-heading font-black text-primary">
                           {staff.name.charAt(0)}
                         </Text>

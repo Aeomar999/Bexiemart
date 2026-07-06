@@ -100,7 +100,7 @@ export default function ReviewModalScreen() {
 
       <ScrollView className="flex-1 px-5 pt-6" contentContainerStyle={{ paddingBottom: 40 }}>
         {/* Rating Stars */}
-        <View className="bg-card p-6 rounded-2xl border border-border items-center shadow-lg mb-6">
+        <View className="bg-card p-6 rounded-2xl border border-border items-center mb-6">
           <Text className="text-body-lg font-bold text-foreground font-heading mb-4">
             How would you rate this product?
           </Text>
@@ -196,7 +196,7 @@ export default function ReviewModalScreen() {
         <Text className="text-body-lg font-bold text-foreground font-heading mb-3 px-1 mt-2">
           Your Review
         </Text>
-        <View className="bg-card border border-border rounded-2xl p-4 min-h-[150px] mb-8 shadow-sm">
+        <View className="bg-card border border-border rounded-2xl p-4 min-h-[150px] mb-8">
           <TextInput
             className="text-body-lg font-body text-foreground w-full flex-1"
             placeholder="What did you like or dislike? What did you use this product for?"
