@@ -5,8 +5,10 @@ interface CardProps extends ViewProps {
   padding?: "sm" | "md" | "lg" | "none";
 }
 
+// Flat design language — no elevation anywhere. `elevated` is kept for
+// backward-compatible call sites but renders identically to `outlined`.
 const variantStyles: Record<string, string> = {
-  elevated: "bg-card rounded-2xl shadow-lg border border-border",
+  elevated: "bg-card rounded-2xl border border-border",
   outlined: "bg-card rounded-2xl border border-border",
   flat: "bg-background rounded-2xl",
 };

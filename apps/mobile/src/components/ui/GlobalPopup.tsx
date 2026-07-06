@@ -124,7 +124,6 @@ export function GlobalPopup() {
         left: 20,
         right: 20,
         zIndex: 9999,
-        elevation: 9999,
         alignItems: "center",
       }}
       pointerEvents="box-none"
@@ -139,11 +138,6 @@ export function GlobalPopup() {
           alignItems: "center",
           opacity: opacity,
           transform: [{ translateY }],
-          shadowColor: "#000",
-          shadowOffset: { width: 0, height: 8 },
-          shadowOpacity: 0.1,
-          shadowRadius: 16,
-          elevation: 5,
           borderLeftWidth: 4,
           borderLeftColor: styleProps.color,
           borderWidth: 1,

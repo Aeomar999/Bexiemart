@@ -425,7 +425,7 @@ export default function CheckoutScreen() {
                 setUseBexieCoins(!useBexieCoins);
               }}
             >
-              <View className="w-4 h-4 bg-card rounded-full shadow-sm" />
+              <View className="w-4 h-4 bg-card rounded-full" />
             </Pressable>
           </View>
         </View>

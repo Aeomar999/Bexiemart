@@ -76,9 +76,7 @@ export function StatusBanner({
   const v = VARIANTS[variant];
 
   const content = (
-    <View
-      className={`${v.wrap} rounded-2xl p-4 flex-row items-center justify-between shadow-sm border`}
-    >
+    <View className={`${v.wrap} rounded-2xl p-4 flex-row items-center justify-between border`}>
       <View className="flex-row items-center gap-3 flex-1">
         <View className={`w-10 h-10 ${v.iconCircle} rounded-full items-center justify-center`}>
           <Icon name={icon} size={20} color={v.iconColor} />

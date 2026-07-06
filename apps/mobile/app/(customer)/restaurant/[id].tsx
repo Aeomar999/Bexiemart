@@ -210,7 +210,7 @@ export default function RestaurantScreen() {
 
       {/* Floating Cart Footer */}
       {cartItemCount > 0 && (
-        <View className="absolute bottom-0 left-0 right-0 bg-card border-t border-border p-4 pb-8 shadow-2xl">
+        <View className="absolute bottom-0 left-0 right-0 bg-card border-t border-border p-4 pb-8">
           <Pressable
             style={({ pressed }) => [{ opacity: pressed ? 0.9 : 1 }]}
             className="bg-primary rounded-2xl flex-row justify-between items-center px-5 py-4"

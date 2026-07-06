@@ -125,7 +125,7 @@ export default function LoginScreen() {
                 className="p-5"
               >
                 <View className="flex-row items-center gap-4 mb-5">
-                  <View className="w-14 h-14 bg-white rounded-full shadow-sm items-center justify-center border border-border">
+                  <View className="w-14 h-14 bg-white rounded-full items-center justify-center border border-border">
                     <FontAwesome5 name="envelope-open-text" size={22} color={tokens.primary} />
                   </View>
                   <View className="flex-1">

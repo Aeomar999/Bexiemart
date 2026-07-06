@@ -212,12 +212,7 @@ export default function AddFoodScreen() {
             <View className="flex-row bg-muted p-1 rounded-xl">
               <Pressable
                 onPress={() => setStatus("available")}
-                className={`flex-1 py-3 items-center justify-center rounded-lg ${status === "available" ? "bg-card border border-border shadow-sm" : ""}`}
-                style={
-                  status === "available"
-                    ? { elevation: 2, shadowColor: "#000", shadowOpacity: 0.05, shadowRadius: 5 }
-                    : {}
-                }
+                className={`flex-1 py-3 items-center justify-center rounded-lg ${status === "available" ? "bg-card border border-border" : ""}`}
               >
                 <Text
                   className={`text-body-md font-bold ${status === "available" ? "text-green-600" : "text-muted-foreground"}`}
@@ -227,12 +222,7 @@ export default function AddFoodScreen() {
               </Pressable>
               <Pressable
                 onPress={() => setStatus("sold_out")}
-                className={`flex-1 py-3 items-center justify-center rounded-lg ${status === "sold_out" ? "bg-card border border-border shadow-sm" : ""}`}
-                style={
-                  status === "sold_out"
-                    ? { elevation: 2, shadowColor: "#000", shadowOpacity: 0.05, shadowRadius: 5 }
-                    : {}
-                }
+                className={`flex-1 py-3 items-center justify-center rounded-lg ${status === "sold_out" ? "bg-card border border-border" : ""}`}
               >
                 <Text
                   className={`text-body-md font-bold ${status === "sold_out" ? "text-error" : "text-muted-foreground"}`}

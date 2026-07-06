@@ -33,7 +33,7 @@ export default function DispatcherProfile() {
 
       <ScrollView className="flex-1 px-5 pt-6 pb-10" showsVerticalScrollIndicator={false}>
         {/* User Card */}
-        <View className="bg-card rounded-2xl p-5 flex-row items-center shadow-lg border border-border mb-6">
+        <View className="bg-card rounded-2xl p-5 flex-row items-center border border-border mb-6">
           <View className="mr-4">
             <Avatar uri={user?.image} name={user?.name || "D"} size={64} fallback="initials" />
           </View>
@@ -87,7 +87,7 @@ export default function DispatcherProfile() {
         <Text className="text-body-lg font-heading font-bold text-foreground mb-3 px-1">
           Vehicle Details
         </Text>
-        <View className="bg-card rounded-2xl border border-border overflow-hidden mb-8 shadow-lg">
+        <View className="bg-card rounded-2xl border border-border overflow-hidden mb-8">
           <View className="flex-row items-center p-4 border-b border-border">
             <View className="w-10 h-10 rounded-full bg-slate-100 items-center justify-center mr-3">
               <Icon name="truck" size={18} color="#64748b" />
@@ -114,7 +114,7 @@ export default function DispatcherProfile() {
         <Text className="text-body-lg font-heading font-bold text-foreground mb-3 px-1">
           Preferences
         </Text>
-        <View className="bg-card rounded-2xl border border-border overflow-hidden mb-8 shadow-lg">
+        <View className="bg-card rounded-2xl border border-border overflow-hidden mb-8">
           <View className="flex-row items-center justify-between p-4 border-b border-border">
             <View className="flex-row items-center gap-3">
               <View className="w-10 h-10 rounded-full bg-primary-subtle items-center justify-center">

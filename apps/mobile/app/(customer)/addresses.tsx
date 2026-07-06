@@ -190,7 +190,7 @@ export default function AddressesScreen() {
             <Pressable
               style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
               key={address.id}
-              className={`bg-card rounded-2xl p-5 border shadow-lg ${address.isDefault ? "border-primary bg-primary-subtle/20" : "border-border"}`}
+              className={`bg-card rounded-2xl p-5 border ${address.isDefault ? "border-primary bg-primary-subtle/20" : "border-border"}`}
               onPress={() => handleSetDefault(address.id)}
             >
               <View className="flex-row justify-between items-start mb-3">
@@ -286,7 +286,7 @@ export default function AddressesScreen() {
       {isModalVisible && (
         <View
           className="absolute inset-0 z-50 flex-1 justify-end bg-black/50"
-          style={{ elevation: 100 }}
+          style={{ zIndex: 100 }}
         >
           <KeyboardAvoidingView
             behavior={Platform.OS === "ios" ? "padding" : "height"}

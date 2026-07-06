@@ -208,7 +208,7 @@ export default function FavoritesScreen() {
           return (
             <Pressable
               style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
-              className="flex-1 bg-card rounded-2xl overflow-hidden shadow-lg border border-border pb-3"
+              className="flex-1 bg-card rounded-2xl overflow-hidden border border-border pb-3"
               onPress={() => router.push(`/(customer)/product/${item.id}`)}
             >
               <View
@@ -230,7 +230,7 @@ export default function FavoritesScreen() {
                     accessibilityRole="button"
                     accessibilityLabel="Add to collection"
                     hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
-                    className="absolute top-2 right-12 w-8 h-8 rounded-full bg-card/90 items-center justify-center shadow-sm"
+                    className="absolute top-2 right-12 w-8 h-8 rounded-full bg-card/90 items-center justify-center"
                     onPress={() => handleShowAddMenu(item.id)}
                   >
                     <Icon name="folder-plus" size={15} color={tokens.primary} />
@@ -245,7 +245,7 @@ export default function FavoritesScreen() {
                   }
                   hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
                   style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
-                  className="absolute top-2 right-2 w-8 h-8 rounded-full bg-card/90 items-center justify-center shadow-sm"
+                  className="absolute top-2 right-2 w-8 h-8 rounded-full bg-card/90 items-center justify-center"
                   onPress={() => handleRemove(item.id)}
                 >
                   <Icon

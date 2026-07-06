@@ -27,7 +27,7 @@ export default function WelcomeScreen() {
   return (
     <View className="flex-1 bg-white items-center px-6">
       <View className="flex-1 w-full items-center justify-center pt-20">
-        <View className="w-24 h-24 rounded-3xl bg-primary items-center justify-center shadow-2xl shadow-none mb-8">
+        <View className="w-24 h-24 rounded-3xl bg-primary items-center justify-center mb-8">
           <FontAwesome5 name="store" size={42} color="#FFFFFF" solid />
         </View>
         <Text className="text-[40px] font-heading font-black text-foreground text-center mb-2 leading-[48px]">

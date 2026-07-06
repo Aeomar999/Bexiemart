@@ -129,7 +129,6 @@ export default function WalletScreen() {
                   width: "92%",
                   height: 130,
                   zIndex: 10,
-                  elevation: 10,
                 }}
               >
                 <LinearGradient
@@ -190,11 +189,6 @@ export default function WalletScreen() {
                 width: "100%",
                 height: 178,
                 zIndex: 20,
-                shadowColor: "#2d1b73",
-                shadowOffset: { width: 0, height: -6 },
-                shadowOpacity: 0.6,
-                shadowRadius: 20,
-                elevation: 15,
               }}
             >
               <LinearGradient
@@ -306,7 +300,7 @@ export default function WalletScreen() {
             onPress={() => router.push("/(customer)/wallet/rewards")}
             className="mb-8"
           >
-            <View className="rounded-2xl shadow-sm overflow-hidden">
+            <View className="rounded-2xl overflow-hidden">
               <LinearGradient
                 colors={["#f59e0b", "#d97706"]}
                 start={{ x: 0, y: 0 }}

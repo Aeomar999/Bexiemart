@@ -114,9 +114,7 @@ export default function ReelsScreen() {
             <View className="w-12 h-12 rounded-full bg-black/40 items-center justify-center mb-1">
               <Icon name="heart" size={24} color={isLiked ? "#ef4444" : "#fff"} />
             </View>
-            <Text className="text-white font-bold text-body-sm shadow-sm">
-              {item.likesCount ?? 0}
-            </Text>
+            <Text className="text-white font-bold text-body-sm">{item.likesCount ?? 0}</Text>
           </Pressable>
 
           <Pressable
@@ -129,14 +127,14 @@ export default function ReelsScreen() {
             <View className="w-12 h-12 rounded-full bg-black/40 items-center justify-center mb-1">
               <Icon name="message-circle" size={24} color="#fff" />
             </View>
-            <Text className="text-white font-bold text-body-sm shadow-sm">0</Text>
+            <Text className="text-white font-bold text-body-sm">0</Text>
           </Pressable>
 
           <Pressable className="items-center" onPress={() => handleShare(item)}>
             <View className="w-12 h-12 rounded-full bg-black/40 items-center justify-center mb-1">
               <Icon name="share-2" size={24} color="#fff" />
             </View>
-            <Text className="text-white font-bold text-body-sm shadow-sm">{item.shares ?? 0}</Text>
+            <Text className="text-white font-bold text-body-sm">{item.shares ?? 0}</Text>
           </Pressable>
         </View>
 
@@ -149,7 +147,7 @@ export default function ReelsScreen() {
             <View className="w-10 h-10 rounded-full bg-secondary border-2 border-card items-center justify-center overflow-hidden">
               <Icon name="user" size={20} color="#94a3b8" />
             </View>
-            <Text className="text-white font-bold text-body-lg shadow-sm">
+            <Text className="text-white font-bold text-body-lg">
               @{vendorName.replace(/\s+/g, "")}
             </Text>
             <Pressable
@@ -168,10 +166,7 @@ export default function ReelsScreen() {
             </Pressable>
           </View>
 
-          <Text
-            className="text-white font-body text-body-md mb-4 shadow-sm w-4/5"
-            numberOfLines={2}
-          >
+          <Text className="text-white font-body text-body-md mb-4 w-4/5" numberOfLines={2}>
             {item.caption}
           </Text>
 
@@ -249,9 +244,7 @@ export default function ReelsScreen() {
           className="w-10 h-10 rounded-full bg-black/40 items-center justify-center backdrop-blur-md"
           color="#fff"
         />
-        <Text className="text-heading-md font-heading font-bold text-white shadow-sm">
-          Discover
-        </Text>
+        <Text className="text-heading-md font-heading font-bold text-white">Discover</Text>
         {/* Spacer keeps the title centered; replaces a camera button that had
             no handler (restore as a Pressable once a create-reel flow exists). */}
         <View className="w-10 h-10" />

@@ -149,7 +149,7 @@ export default function ProductDetailsScreen() {
               accessibilityLabel="Share product"
               hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
               style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
-              className="w-10 h-10 rounded-full bg-card/90 items-center justify-center shadow-md"
+              className="w-10 h-10 rounded-full bg-card/90 items-center justify-center"
               onPress={() =>
                 Share.share({
                   message: `Check out ${product.name} on Bexiemart! Only GHS ${product.price.toFixed(2)}`,
@@ -163,7 +163,7 @@ export default function ProductDetailsScreen() {
               accessibilityLabel="Toggle favorite"
               hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
               style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
-              className="w-10 h-10 rounded-full bg-card/90 items-center justify-center shadow-md"
+              className="w-10 h-10 rounded-full bg-card/90 items-center justify-center"
               onPress={() => setIsFavorited(!isFavorited)}
             >
               <Icon name="heart" size={18} color={isFavorited ? "#ef4444" : "#1e293b"} />
@@ -426,7 +426,7 @@ export default function ProductDetailsScreen() {
       </ScrollView>
 
       {/* ===== STICKY BOTTOM BAR ===== */}
-      <View className="absolute bottom-0 left-0 right-0 bg-card border-t border-border px-4 pt-3 pb-8 shadow-2xl">
+      <View className="absolute bottom-0 left-0 right-0 bg-card border-t border-border px-4 pt-3 pb-8">
         <View className="flex-row items-center gap-3">
           {/* Quantity Selector */}
           <View className="flex-row items-center bg-background rounded-full border border-border">

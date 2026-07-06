@@ -109,7 +109,7 @@ export default function ProviderDetailsScreen() {
       </View>
       <ScrollView className="flex-1" showsVerticalScrollIndicator={false}>
         {/* Header / Cover */}
-        <View className="bg-card pb-6 rounded-b-3xl shadow-sm">
+        <View className="bg-card pb-6 rounded-b-3xl">
           <View
             className="px-5 flex-row items-center justify-between z-10 mb-6"
             style={{ paddingTop: 12 }}
@@ -268,7 +268,7 @@ export default function ProviderDetailsScreen() {
 
       {/* Bottom Booking Footer */}
       <View
-        className="absolute bottom-0 left-0 right-0 bg-card border-t border-border p-5 rounded-t-3xl shadow-lg"
+        className="absolute bottom-0 left-0 right-0 bg-card border-t border-border p-5 rounded-t-3xl"
         style={{ paddingBottom: Math.max(insets.bottom, 20) }}
       >
         <View className="flex-row items-center justify-between mb-4">
@@ -289,7 +289,7 @@ export default function ProviderDetailsScreen() {
         </View>
 
         <Pressable
-          className={`h-14 rounded-full flex-row items-center justify-center shadow-sm ${isFormValid ? "bg-primary" : "bg-secondary"}`}
+          className={`h-14 rounded-full flex-row items-center justify-center ${isFormValid ? "bg-primary" : "bg-secondary"}`}
           disabled={!isFormValid}
           onPress={handleBook}
         >

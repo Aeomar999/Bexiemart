@@ -198,7 +198,7 @@ export default function SupportTicketsScreen() {
       {/* Rating Modal */}
       <Modal visible={ratingModalVisible} transparent animationType="fade">
         <View className="flex-1 bg-black/50 justify-center items-center p-5">
-          <View className="bg-card w-full rounded-3xl p-6 border border-border shadow-lg">
+          <View className="bg-card w-full rounded-3xl p-6 border border-border">
             <Text className="text-heading-md font-bold text-foreground font-heading text-center">
               Rate Support Experience
             </Text>

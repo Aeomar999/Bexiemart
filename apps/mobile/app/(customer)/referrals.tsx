@@ -69,11 +69,11 @@ export default function ReferralsScreen() {
 
       <ScrollView className="flex-1" contentContainerStyle={{ padding: 20 }}>
         {/* Banner */}
-        <View className="bg-amber-100 rounded-3xl p-8 items-center border border-amber-200 mb-6 shadow-sm relative overflow-hidden">
+        <View className="bg-amber-100 rounded-3xl p-8 items-center border border-amber-200 mb-6 relative overflow-hidden">
           <View className="absolute top-[-20px] right-[-20px] opacity-10">
             <Icon name="gift" size={120} color="#d97706" />
           </View>
-          <View className="w-20 h-20 bg-amber-500 rounded-full items-center justify-center mb-4 border-4 border-card shadow-lg">
+          <View className="w-20 h-20 bg-amber-500 rounded-full items-center justify-center mb-4 border-4 border-card">
             <Icon name="gift" size={36} color="#fff" />
           </View>
           <Text className="text-display-md font-heading font-black text-amber-900 text-center mb-2">
@@ -85,7 +85,7 @@ export default function ReferralsScreen() {
         </View>
 
         {/* Code Sharing */}
-        <View className="bg-card rounded-2xl p-5 border border-border shadow-sm mb-6">
+        <View className="bg-card rounded-2xl p-5 border border-border mb-6">
           <Text className="text-body-md font-bold text-foreground font-heading mb-4">
             Your Referral Code
           </Text>

@@ -102,7 +102,7 @@ export default function OrdersScreen() {
             return (
               <Pressable
                 style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
-                className="bg-card p-5 rounded-2xl border border-border shadow-lg mb-4"
+                className="bg-card p-5 rounded-2xl border border-border mb-4"
                 onPress={() => {
                   if (item.status !== "delivered" && item.status !== "cancelled") {
                     router.push("/(customer)/track-order");

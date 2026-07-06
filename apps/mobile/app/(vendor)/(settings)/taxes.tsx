@@ -174,7 +174,7 @@ export default function TaxesDocumentsScreen() {
               onPress={() => setUploadModalVisible(true)}
               className="border-2 border-dashed border-border rounded-xl p-6 items-center justify-center bg-primary-subtle"
             >
-              <View className="w-12 h-12 rounded-full bg-card items-center justify-center mb-3 shadow-sm border border-border">
+              <View className="w-12 h-12 rounded-full bg-card items-center justify-center mb-3 border border-border">
                 <Icon name="upload-cloud" size={20} color={tokens.primary} />
               </View>
               <Text className="text-body-lg font-bold text-primary-hover mb-1">Tap to Upload</Text>
