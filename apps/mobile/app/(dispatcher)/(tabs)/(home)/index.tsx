@@ -140,7 +140,9 @@ export default function DispatcherMap() {
   }, [displayRide?.id, taskStatus, userLocation?.latitude]);
 
   const handleCall = () => {
-    Linking.openURL(`tel:0551234567`); // Mock customer phone
+    if (displayRide?.customer?.phoneNumber) {
+      Linking.openURL(`tel:${displayRide.customer.phoneNumber}`).catch(() => {});
+    }
   };
 
   const renderRoute = () => {
@@ -364,9 +366,14 @@ export default function DispatcherMap() {
                   accessibilityLabel="Call customer"
                   hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
                   onPress={handleCall}
-                  className="w-10 h-10 rounded-full bg-primary-subtle items-center justify-center"
+                  disabled={!displayRide?.customer?.phoneNumber}
+                  className={`w-10 h-10 rounded-full items-center justify-center ${displayRide?.customer?.phoneNumber ? "bg-primary-subtle" : "bg-muted opacity-50"}`}
                 >
-                  <Icon name="phone" size={18} color={tokens.primary} />
+                  <Icon
+                    name="phone"
+                    size={18}
+                    color={displayRide?.customer?.phoneNumber ? tokens.primary : "#94a3b8"}
+                  />
                 </Pressable>
               </View>
             </View>

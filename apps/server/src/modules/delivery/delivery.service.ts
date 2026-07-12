@@ -300,7 +300,7 @@ export class DeliveryService {
         where,
         skip,
         take: limit,
-        include: { customer: { select: { id: true, name: true, image: true } } },
+        include: { customer: { select: { id: true, name: true, image: true, phoneNumber: true } } },
         orderBy: { createdAt: "desc" },
       }),
       this.prisma.deliveryJob.count({ where }),
@@ -324,7 +324,7 @@ export class DeliveryService {
         where,
         skip,
         take: limit,
-        include: { customer: { select: { id: true, name: true, image: true } } },
+        include: { customer: { select: { id: true, name: true, image: true, phoneNumber: true } } },
         orderBy: { createdAt: "desc" },
       }),
       this.prisma.deliveryJob.count({ where }),
@@ -590,7 +590,7 @@ export class DeliveryService {
     return this.prisma.deliveryJob.findUnique({
       where: { id: jobId },
       include: {
-        customer: { select: { id: true, name: true, image: true } },
+        customer: { select: { id: true, name: true, image: true, phoneNumber: true } },
         dispatcher: {
           select: {
             id: true,
@@ -598,7 +598,7 @@ export class DeliveryService {
             plateNumber: true,
             lastLatitude: true,
             lastLongitude: true,
-            user: { select: { id: true, name: true, image: true } },
+            user: { select: { id: true, name: true, image: true, phoneNumber: true } },
           },
         },
       },

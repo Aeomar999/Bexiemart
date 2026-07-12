@@ -182,11 +182,20 @@ export default function ProviderDetailsScreen() {
             <Text className="text-primary-hover font-bold text-body-md">Chat</Text>
           </Pressable>
           <Pressable
-            className="flex-1 bg-primary-subtle border border-border py-3 rounded-xl flex-row items-center justify-center gap-2"
-            onPress={() => Linking.openURL("tel:+233555555555")}
+            className={`flex-1 border py-3 rounded-xl flex-row items-center justify-center gap-2 ${service.vendor?.phone ? "bg-primary-subtle border-border" : "bg-muted border-border opacity-50"}`}
+            disabled={!service.vendor?.phone}
+            onPress={() => {
+              if (service.vendor?.phone) {
+                Linking.openURL(`tel:${service.vendor.phone}`);
+              }
+            }}
           >
-            <Icon name="phone" size={18} color="#0284c7" />
-            <Text className="text-primary-hover font-bold text-body-md">Call</Text>
+            <Icon name="phone" size={18} color={service.vendor?.phone ? "#0284c7" : "#94a3b8"} />
+            <Text
+              className={`font-bold text-body-md ${service.vendor?.phone ? "text-primary-hover" : "text-muted-foreground"}`}
+            >
+              Call
+            </Text>
           </Pressable>
         </View>
 

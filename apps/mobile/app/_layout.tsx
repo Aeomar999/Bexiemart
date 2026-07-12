@@ -116,7 +116,7 @@ export default function RootLayout() {
         if (user?.role === "VENDOR") {
           router.replace("/(vendor)/(dashboard)");
         } else if (user?.role === "DISPATCHER") {
-          router.replace("/(dispatcher)/(tabs)/(dashboard)");
+          router.replace("/(dispatcher)/(tabs)/(home)");
         } else {
           router.replace("/(customer)/(tabs)/(home)");
         }

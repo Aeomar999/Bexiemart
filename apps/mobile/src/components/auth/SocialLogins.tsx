@@ -14,10 +14,10 @@ export function SocialLogins({ roleIntent }: SocialLoginsProps) {
   const [loadingProvider, setLoadingProvider] = useState<string | null>(null);
   const { setAuth } = useAuthStore();
 
-  const handleSocialLogin = async (provider: "google" | "apple" | "facebook") => {
+  const handleSocialLogin = async (provider: "google") => {
     try {
       setLoadingProvider(provider);
-      const callbackURL = `bexiemart://auth/callback${roleIntent ? `?intent=${roleIntent}` : ""}`;
+      const callbackURL = "bexiemart://auth/callback";
 
       const res = await authClient.signIn.social({
         provider,
@@ -35,17 +35,8 @@ export function SocialLogins({ roleIntent }: SocialLoginsProps) {
         const user = sessionRes.data.user as any;
         const token = sessionRes.data.session.token || sessionRes.data.session.id || "";
 
-        if (roleIntent === "vendor" && user.role !== "VENDOR") {
-          user.role = "VENDOR";
-        }
-
         await setAuth(user, token);
-
-        if (roleIntent === "vendor") {
-          router.replace("/vendor/setup" as any);
-        } else {
-          router.replace("/");
-        }
+        router.replace("/");
       }
     } catch (error: any) {
       Alert.alert("Error", error?.message || "An unexpected error occurred during social login.");
@@ -62,52 +53,23 @@ export function SocialLogins({ roleIntent }: SocialLoginsProps) {
         <View className="h-[1px] flex-1 bg-secondary" />
       </View>
 
-      <View className="flex-row justify-center gap-4">
-        <TouchableOpacity
-          accessibilityLabel="Continue with Apple"
-          accessibilityRole="button"
-          className="w-14 h-14 rounded-2xl border border-border bg-card items-center justify-center active:bg-background"
-          activeOpacity={0.7}
-          disabled={!!loadingProvider}
-          onPress={() => handleSocialLogin("apple")}
-        >
-          {loadingProvider === "apple" ? (
-            <ActivityIndicator size="small" color="#000000" />
-          ) : (
-            <FontAwesome5 name="apple" size={24} color="#000000" />
-          )}
-        </TouchableOpacity>
-
-        <TouchableOpacity
-          accessibilityLabel="Continue with Google"
-          accessibilityRole="button"
-          className="w-14 h-14 rounded-2xl border border-border bg-card items-center justify-center active:bg-background"
-          activeOpacity={0.7}
-          disabled={!!loadingProvider}
-          onPress={() => handleSocialLogin("google")}
-        >
-          {loadingProvider === "google" ? (
-            <ActivityIndicator size="small" color="#DB4437" />
-          ) : (
-            <FontAwesome5 name="google" size={22} color="#DB4437" />
-          )}
-        </TouchableOpacity>
-
-        <TouchableOpacity
-          accessibilityLabel="Continue with Facebook"
-          accessibilityRole="button"
-          className="w-14 h-14 rounded-2xl border border-border bg-card items-center justify-center active:bg-background"
-          activeOpacity={0.7}
-          disabled={!!loadingProvider}
-          onPress={() => handleSocialLogin("facebook")}
-        >
-          {loadingProvider === "facebook" ? (
-            <ActivityIndicator size="small" color="#1877F2" />
-          ) : (
-            <FontAwesome5 name="facebook" size={24} color="#1877F2" />
-          )}
-        </TouchableOpacity>
-      </View>
+      <TouchableOpacity
+        accessibilityLabel="Continue with Google"
+        accessibilityRole="button"
+        className="w-full h-14 rounded-2xl border border-border bg-card flex-row items-center justify-center gap-3 active:bg-background"
+        activeOpacity={0.7}
+        disabled={!!loadingProvider}
+        onPress={() => handleSocialLogin("google")}
+      >
+        {loadingProvider === "google" ? (
+          <ActivityIndicator size="small" color="#DB4437" />
+        ) : (
+          <>
+            <FontAwesome5 name="google" size={20} color="#DB4437" />
+            <Text className="text-body font-semibold text-foreground">Continue with Google</Text>
+          </>
+        )}
+      </TouchableOpacity>
     </View>
   );
 }

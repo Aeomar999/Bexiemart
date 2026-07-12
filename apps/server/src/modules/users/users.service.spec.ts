@@ -84,6 +84,24 @@ describe("UsersService", () => {
       });
     });
 
+    it("should update a user profile with bio and location", async () => {
+      const mockUser = { id: "1", name: "Test User" };
+      const dto = { bio: "Hello world", location: "Accra, Ghana" };
+      const updatedUser = { ...mockUser, ...dto };
+
+      mockPrismaService.user.findUnique.mockResolvedValue(mockUser);
+      mockPrismaService.user.update.mockResolvedValue(updatedUser);
+
+      const result = await service.updateProfile("1", dto);
+
+      expect(result).toEqual(updatedUser);
+      expect(prisma.user.update).toHaveBeenCalledWith({
+        where: { id: "1" },
+        data: dto,
+        select: expect.any(Object),
+      });
+    });
+
     it("should mutate the user role if included in DTO", async () => {
       const mockUser = { id: "1", role: "USER" };
       const dto = { role: "VENDOR" } as any;
