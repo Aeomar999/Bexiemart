@@ -22,6 +22,7 @@ import * as SplashScreen from "expo-splash-screen";
 SplashScreen.preventAutoHideAsync();
 import { PaystackProvider } from "react-native-paystack-webview";
 import { OfflineBanner } from "../src/components/ui/OfflineBanner";
+import { PaymentTestModeBanner } from "../src/components/ui/PaymentTestModeBanner";
 import {
   Raleway_400Regular,
   Raleway_600SemiBold,
@@ -35,6 +36,13 @@ import {
 } from "@expo-google-fonts/nunito";
 
 import { SafeAreaProvider } from "react-native-safe-area-context";
+
+const PAYSTACK_PUBLIC_KEY = process.env.EXPO_PUBLIC_PAYSTACK_PUBLIC_KEY;
+if (!PAYSTACK_PUBLIC_KEY) {
+  throw new Error(
+    "EXPO_PUBLIC_PAYSTACK_PUBLIC_KEY is not set. Configure it in eas.json / .env before running the app."
+  );
+}
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -156,10 +164,9 @@ export default function RootLayout() {
       <PostHogProvider client={posthog} autocapture>
         <ThemeController />
         <OfflineBanner />
+        <PaymentTestModeBanner />
         <QueryClientProvider client={queryClient}>
-          <PaystackProvider
-            publicKey={process.env.EXPO_PUBLIC_PAYSTACK_PUBLIC_KEY || "pk_test_placeholder"}
-          >
+          <PaystackProvider publicKey={PAYSTACK_PUBLIC_KEY}>
             <StatusBar style="auto" />
             <ErrorBoundary>
               <Stack screenOptions={{ headerShown: false }}>
