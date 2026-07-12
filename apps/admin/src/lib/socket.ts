@@ -1,14 +1,15 @@
 import { io, Socket } from "socket.io-client";
-import { useAuthStore } from "./stores/auth-store";
 
 const WS_URL = process.env.NEXT_PUBLIC_WS_URL || "http://localhost:3000";
 
 let socket: Socket | null = null;
 
-export const getSocket = () => {
+export const getSocket = async () => {
   if (!socket) {
-    const token = useAuthStore.getState().token;
-    
+    const res = await fetch("/api/session/token");
+    if (!res.ok) throw new Error("Not authenticated");
+    const { token } = await res.json();
+
     socket = io(`${WS_URL}/admin`, {
       auth: { token },
       autoConnect: false,
@@ -20,8 +21,8 @@ export const getSocket = () => {
   return socket;
 };
 
-export const connectSocket = () => {
-  const s = getSocket();
+export const connectSocket = async () => {
+  const s = await getSocket();
   if (!s.connected) {
     s.connect();
   }
