@@ -5,7 +5,7 @@ const isDev = process.env.NODE_ENV !== "production";
 if (isDev) console.log("BETTER_AUTH_URL:", process.env.BETTER_AUTH_URL);
 import { betterAuth } from "better-auth";
 import { prismaAdapter } from "better-auth/adapters/prisma";
-import { phoneNumber } from "better-auth/plugins";
+import { phoneNumber, bearer } from "better-auth/plugins";
 import type { PrismaClient } from "@prisma/client";
 import { dash, sentinel } from "@better-auth/infra";
 import * as crypto from "crypto";
@@ -20,6 +20,7 @@ export function createAuth(prisma: PrismaClient) {
     }),
     baseURL: process.env.BETTER_AUTH_URL + "/api/v1/auth",
     plugins: [
+      bearer(),
       dash({
         ...(process.env.BETTER_AUTH_API_URL ? { apiUrl: process.env.BETTER_AUTH_API_URL } : {}),
         ...(process.env.BETTER_AUTH_KV_URL ? { kvUrl: process.env.BETTER_AUTH_KV_URL } : {}),
@@ -122,7 +123,12 @@ export function createAuth(prisma: PrismaClient) {
       },
     },
     session: {
-      expiresIn: 7 * 24 * 60 * 60,
+      expiresIn: 7 * 24 * 60 * 60, // 7 days
+      updateAge: 24 * 60 * 60, // 1 day sliding window refresh
+    },
+    advanced: {
+      cookiePrefix: "bx_auth",
+      useSecureCookies: !isDev,
     },
     account: {
       accountLinking: {
@@ -143,6 +149,14 @@ export function createAuth(prisma: PrismaClient) {
       "http://localhost:3000",
       "http://localhost:3001",
       "http://localhost:8081",
+      "https://bexiemart.com",
+      "https://admin.bexiemart.com",
+      "https://api.bexiemart.com",
+      ...(process.env.BETTER_AUTH_TRUSTED_ORIGINS
+        ? process.env.BETTER_AUTH_TRUSTED_ORIGINS.split(",")
+            .map((origin) => origin.trim())
+            .filter(Boolean)
+        : []),
     ],
   });
 }
