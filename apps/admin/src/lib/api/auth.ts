@@ -1,8 +1,14 @@
 import { apiClient } from "./client";
 
 export const login = async (credentials: { email: string; password: string }) => {
-  const { data } = await apiClient.post("/auth/login", credentials);
-  return data;
+  const res = await fetch("/api/session", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(credentials),
+  });
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.message || "Login failed");
+  return data; // { user } or { requiresTwoFactor: true }
 };
 
 export const getMe = async () => {
