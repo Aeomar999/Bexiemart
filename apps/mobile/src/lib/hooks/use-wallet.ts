@@ -50,6 +50,24 @@ export function useTransfer() {
   });
 }
 
+export function useWithdraw() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (payload: {
+      amount: number;
+      accountId: string;
+      accountType: "bank" | "momo";
+      pin: string;
+    }) => walletApi.withdraw(payload).then((r) => r.data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: WALLET_KEYS.wallet });
+      queryClient.invalidateQueries({ queryKey: ["transactions"] });
+      queryClient.invalidateQueries({ queryKey: ["vendor", "earnings"] });
+      queryClient.invalidateQueries({ queryKey: ["dispatcher", "earnings"] });
+    },
+  });
+}
+
 export function usePinStatus() {
   return useQuery({
     queryKey: WALLET_KEYS.pinStatus,
@@ -119,7 +137,8 @@ export function useVerifyAndSaveCard() {
 export function useUpdateCard() {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: ({ id, data }: { id: string; data: any }) => walletApi.updateCard(id, data).then((r) => r.data),
+    mutationFn: ({ id, data }: { id: string; data: any }) =>
+      walletApi.updateCard(id, data).then((r) => r.data),
     onSuccess: () => qc.invalidateQueries({ queryKey: WALLET_KEYS.cards }),
   });
 }
@@ -152,8 +171,12 @@ export function useBankAccounts() {
 export function useLinkBankAccount() {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: (data: { bankCode: string; accountNumber: string; accountName: string; bankName?: string }) =>
-      walletApi.linkBankAccount(data).then((r) => r.data),
+    mutationFn: (data: {
+      bankCode: string;
+      accountNumber: string;
+      accountName: string;
+      bankName?: string;
+    }) => walletApi.linkBankAccount(data).then((r) => r.data),
     onSuccess: () => qc.invalidateQueries({ queryKey: WALLET_KEYS.bankAccounts }),
   });
 }
