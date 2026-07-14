@@ -8,6 +8,7 @@ export const WALLET_KEYS = {
   cards: ["wallet", "cards"] as const,
   bankAccounts: ["wallet", "bank-accounts"] as const,
   momoAccounts: ["wallet", "momo-accounts"] as const,
+  coins: ["coins"] as const,
 };
 
 export function useWallet() {
@@ -212,5 +213,25 @@ export function useDeleteMomoAccount() {
   return useMutation({
     mutationFn: (id: string) => walletApi.deleteMomoAccount(id).then((r) => r.data),
     onSuccess: () => qc.invalidateQueries({ queryKey: WALLET_KEYS.momoAccounts }),
+  });
+}
+
+/* ─── BexieCoins & Loyalty ─── */
+
+export function useCoinsSummary() {
+  return useQuery({
+    queryKey: WALLET_KEYS.coins,
+    queryFn: () => walletApi.getCoinsSummary().then((r) => r.data),
+  });
+}
+
+export function useConvertCoins() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: (coins: number) => walletApi.convertCoins(coins).then((r) => r.data),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: WALLET_KEYS.coins });
+      qc.invalidateQueries({ queryKey: WALLET_KEYS.wallet });
+    },
   });
 }

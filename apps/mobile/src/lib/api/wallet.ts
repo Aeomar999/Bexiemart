@@ -58,4 +58,8 @@ export const walletApi = {
   linkMomoAccount: (data: { provider: string; phoneNumber: string; accountName: string }) =>
     apiClient.post("/wallet/momo-accounts", data),
   deleteMomoAccount: (id: string) => apiClient.delete(`/wallet/momo-accounts/${id}`),
+
+  // BexieCoins & Loyalty
+  getCoinsSummary: () => apiClient.get("/wallet/coins"),
+  convertCoins: (coins: number) => apiClient.post("/wallet/coins/convert", { coins }),
 };

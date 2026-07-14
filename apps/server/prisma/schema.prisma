@@ -706,6 +706,7 @@ model Wallet {
   pinHash        String?
   pinFailures    Int          @default(0)
   pinLockedUntil DateTime?
+  bexieCoins     Int          @default(0)
   createdAt      DateTime     @default(now())
   updatedAt      DateTime     @updatedAt
 

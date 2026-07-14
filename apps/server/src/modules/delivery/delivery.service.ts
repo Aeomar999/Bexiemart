@@ -12,6 +12,7 @@ import { DeliveryJobStatus } from "@prisma/client";
 import { PricingService, PricingQuote, VehicleType } from "./pricing.service";
 import { DeliveryGateway } from "./delivery.gateway";
 import { LatLng, RoutesService } from "../maps/routes.service";
+import { LoyaltyService } from "../loyalty/loyalty.service";
 import { CreateParcelJobDto } from "./dto/delivery.dto";
 
 const ALL_VEHICLES: VehicleType[] = ["bike", "car", "van"];
@@ -42,6 +43,7 @@ export class DeliveryService {
     private readonly prisma: PrismaService,
     private readonly pricing: PricingService,
     private readonly routes: RoutesService,
+    private readonly loyalty: LoyaltyService,
     @Inject(forwardRef(() => DeliveryGateway))
     private readonly gateway: DeliveryGateway
   ) {}
@@ -483,15 +485,20 @@ export class DeliveryService {
 
   private async markDeliveredWithPayout(job: {
     id: string;
+    customerId: string;
     dispatcherId: string | null;
     customerFee: any;
     platformCommission: any;
     driverPayout: any;
   }) {
     if (!job.dispatcherId) {
-      await this.prisma.deliveryJob.update({
-        where: { id: job.id },
-        data: { status: "DELIVERED", deliveredAt: new Date() },
+      const customerWallet = await this.ensureWallet(job.customerId);
+      await this.prisma.$transaction(async (tx) => {
+        await tx.deliveryJob.update({
+          where: { id: job.id },
+          data: { status: "DELIVERED", deliveredAt: new Date() },
+        });
+        await this.loyalty.grantCoins(tx, customerWallet.id, 50, "order_delivered");
       });
       return;
     }
@@ -501,6 +508,7 @@ export class DeliveryService {
     });
     if (!dispatcher) throw new NotFoundException("Dispatcher not found");
     const wallet = await this.ensureWallet(dispatcher.userId);
+    const customerWallet = await this.ensureWallet(job.customerId);
 
     const payout = Number(job.driverPayout);
     const commission = Number(job.platformCommission);
@@ -509,19 +517,19 @@ export class DeliveryService {
     // Payout is HELD in pendingPayout (not spendable) until the customer
     // confirms receipt — see confirmDelivery. This fixes the previous bug where
     // earnings landed in both pendingPayout AND the withdrawable balance.
-    await this.prisma.$transaction([
-      this.prisma.deliveryJob.update({
+    await this.prisma.$transaction(async (tx) => {
+      await tx.deliveryJob.update({
         where: { id: job.id },
         data: { status: "DELIVERED", deliveredAt: new Date() },
-      }),
-      this.prisma.dispatcherProfile.update({
+      });
+      await tx.dispatcherProfile.update({
         where: { id: dispatcher.id },
         data: {
           totalEarnings: { increment: payout },
           pendingPayout: { increment: payout },
         },
-      }),
-      this.prisma.transaction.create({
+      });
+      await tx.transaction.create({
         data: {
           walletId: wallet.id,
           type: "EARNINGS",
@@ -534,8 +542,9 @@ export class DeliveryService {
           description: `Delivery payout for job ${job.id.slice(-6)}`,
           metadata: { jobId: job.id, commission },
         },
-      }),
-    ]);
+      });
+      await this.loyalty.grantCoins(tx, customerWallet.id, 50, "order_delivered");
+    });
   }
 
   /** Find nearby online drivers and push them the offer over the socket. */

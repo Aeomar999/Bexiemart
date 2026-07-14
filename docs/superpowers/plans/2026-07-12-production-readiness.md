@@ -961,7 +961,7 @@ git commit -m "refactor(payments)!: remove insecure vendor/dispatcher withdraw e
   - `LoyaltyService.grantCoins(tx, walletId, coins, reason)` — callable inside an existing `$transaction`.
   - Mobile: `walletApi.getCoins()`, `walletApi.convertCoins(coins)`, `useCoins()`, `useConvertCoins()`.
 
-- [ ] **Step 1: Schema — add the coins column**
+- [x] **Step 1: Schema — add the coins column**
 
 In `apps/server/prisma/schema.prisma`, `model Wallet`, add:
 
@@ -975,7 +975,7 @@ cd apps/server; npx prisma migrate dev --name add_wallet_bexie_coins
 ```
 Expected: migration applies; `WalletStatus`/other models untouched.
 
-- [ ] **Step 2: Write the failing service test**
+- [x] **Step 2: Write the failing service test**
 
 Create `apps/server/src/modules/loyalty/loyalty.service.spec.ts`:
 
@@ -1015,14 +1015,14 @@ describe("LoyaltyService.convert", () => {
 });
 ```
 
-- [ ] **Step 3: Run it, watch it fail**
+- [x] **Step 3: Run it, watch it fail**
 
 ```powershell
 cd apps/server; npx jest loyalty.service --verbose
 ```
 Expected: FAIL ("Cannot find module './loyalty.service'").
 
-- [ ] **Step 4: Implement the service, controller, module, and the grant hook**
+- [x] **Step 4: Implement the service, controller, module, and the grant hook**
 
 Create `apps/server/src/modules/loyalty/loyalty.service.ts`:
 
@@ -1110,23 +1110,23 @@ class ConvertCoinsDto {
   @IsInt() @Min(1) coins: number;
 }
 
-@ApiTags("Loyalty")
+@ApiTags("Wallet")
 @ApiBearerAuth()
-@Controller("wallet/coins")
 @UseGuards(AuthGuard)
+@Controller("wallet/coins")
 export class LoyaltyController {
   constructor(private readonly loyalty: LoyaltyService) {}
 
   @Get()
-  @ApiOperation({ summary: "Get BexieCoins balance and earn state" })
+  @ApiOperation({ summary: "Get loyalty summary and balance" })
   getSummary(@Req() req: any) {
     return this.loyalty.getSummary(req.user.id);
   }
 
   @Post("convert")
-  @ApiOperation({ summary: "Convert BexieCoins to wallet balance" })
-  convert(@Req() req: any, @Body() body: ConvertCoinsDto) {
-    return this.loyalty.convertCoinsToBalance(req.user.id, body.coins);
+  @ApiOperation({ summary: "Convert BexieCoins to wallet cash balance" })
+  convert(@Req() req: any, @Body() dto: ConvertCoinsDto) {
+    return this.loyalty.convertCoinsToBalance(req.user.id, dto.coins);
   }
 }
 ```
@@ -1135,8 +1135,8 @@ Create `apps/server/src/modules/loyalty/loyalty.module.ts`:
 
 ```ts
 import { Module } from "@nestjs/common";
-import { LoyaltyController } from "./loyalty.controller";
 import { LoyaltyService } from "./loyalty.service";
+import { LoyaltyController } from "./loyalty.controller";
 
 @Module({ controllers: [LoyaltyController], providers: [LoyaltyService], exports: [LoyaltyService] })
 export class LoyaltyModule {}
@@ -1150,14 +1150,14 @@ cd apps/server; rg "DELIVERED" src/modules/delivery src/modules/orders -l
 ```
 In that `$transaction`, inject `LoyaltyService` into the owning service's constructor (add `LoyaltyModule` to that module's `imports`) and call `await this.loyalty.grantCoins(tx, customerWalletId, 50, "order_delivered")` (50 coins per order — matches the mock's "Make a Purchase" reward).
 
-- [ ] **Step 5: Run the test — green**
+- [x] **Step 5: Run the test — green**
 
 ```powershell
 cd apps/server; npx jest loyalty.service --verbose
 ```
 Expected: PASS.
 
-- [ ] **Step 6: Mobile — api, hooks, and the real rewards screen**
+- [x] **Step 6: Mobile — api, hooks, and the real rewards screen**
 
 In `apps/mobile/src/lib/api/wallet.ts`:
 
@@ -1212,7 +1212,7 @@ const handleConvert = () => {
 ```
 - Remove the hardcoded "Gold Tier Member" line. Drive `EARNING_METHODS[].completed` from `coins.earn` (`completeProfile`, `firstTopup`; "Make a Purchase"/"Refer a Friend" are repeatable — show the real count `coins.earn.orders`/`referrals` instead of a Done badge).
 
-- [ ] **Step 7: Typecheck both apps and manual-verify**
+- [x] **Step 7: Typecheck both apps and manual-verify**
 
 ```powershell
 cd apps/server; npx tsc --noEmit
@@ -1220,7 +1220,7 @@ cd ../mobile; npx tsc --noEmit
 ```
 Expected: both exit 0. Manual: complete a test order end-to-end (delivered) → coin balance increases by 50; Convert moves coins→balance and both figures update; converting <100 is refused.
 
-- [ ] **Step 8: Commit**
+- [x] **Step 8: Commit**
 
 ```powershell
 git add apps/server apps/mobile
