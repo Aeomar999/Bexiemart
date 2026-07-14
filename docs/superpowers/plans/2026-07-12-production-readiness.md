@@ -710,7 +710,7 @@ Branch: `git checkout main; git checkout -b feat/real-money-paths`
   - `walletApi.withdraw(payload: { amount: number; accountId: string; accountType: "bank" | "momo"; pin: string })`
   - `useWithdraw()` → mutation invalidating `WALLET_KEYS.wallet` + `["transactions"]`.
 
-- [ ] **Step 1: Add the api method**
+- [x] **Step 1: Add the api method**
 
 In `apps/mobile/src/lib/api/wallet.ts`, alongside the other methods (mirror the `transfer` shape):
 
@@ -719,7 +719,7 @@ withdraw: (payload: { amount: number; accountId: string; accountType: "bank" | "
   apiClient.post("/wallet/withdraw", payload),
 ```
 
-- [ ] **Step 2: Add the hook**
+- [x] **Step 2: Add the hook**
 
 In `apps/mobile/src/lib/hooks/use-wallet.ts`, after `useTransfer` (line ~51):
 
@@ -743,14 +743,14 @@ export function useWithdraw() {
 }
 ```
 
-- [ ] **Step 3: Typecheck**
+- [x] **Step 3: Typecheck**
 
 ```powershell
 cd apps/mobile; npx tsc --noEmit
 ```
 Expected: exit 0.
 
-- [ ] **Step 4: Commit**
+- [x] **Step 4: Commit**
 
 ```powershell
 git add apps/mobile/src/lib/api/wallet.ts apps/mobile/src/lib/hooks/use-wallet.ts
@@ -882,18 +882,18 @@ git commit -m "fix(vendor): real withdraw — live balance, linked payout accoun
 - Consumes: the dispatcher earnings hook (the query behind `dispatcherApi.getEarnings()` → `{ availableBalance, pendingClearance }`; if no hook exists yet, add `useDispatcherEarnings()` in `apps/mobile/src/lib/hooks/use-dispatcher.ts` mirroring `useVendorEarnings`), plus `useBankAccounts`, `useMomoAccounts`, `usePinStatus`, `useWithdraw`.
 - Produces: nothing downstream.
 
-- [ ] **Step 1: Apply the Task-14 rewrite pattern**
+- [x] **Step 1: Apply the Task-14 rewrite pattern**
 
 Make the identical changes as Task 14 Steps 1–2 in the dispatcher file: remove the hardcoded methods, source `availableBalance` from `Number(earnings?.availableBalance ?? 0)`, build `methods` from linked bank+momo accounts, gate on `methods.length` and `pinStatus.hasPin`, and send `{ amount, accountId, accountType, pin }` through `useWithdraw()`. The set-PIN CTA routes to `/(vendor)/(settings)/change-pin` only if a dispatcher can reach it; if not, route to the wallet PIN setup at `/(customer)/wallet` (the PIN is a wallet-level credential shared across roles). Confirm the dispatcher's actual settings route and use it.
 
-- [ ] **Step 2: Typecheck and manual-verify**
+- [x] **Step 2: Typecheck and manual-verify**
 
 ```powershell
 cd apps/mobile; npx tsc --noEmit
 ```
 Expected: exit 0. Manual: same checks as Task 14 against a seeded dispatcher.
 
-- [ ] **Step 3: Commit**
+- [x] **Step 3: Commit**
 
 ```powershell
 git add "apps/mobile/app/(dispatcher)/(tabs)/(earnings)/withdraw.tsx" apps/mobile/src/lib/hooks/use-dispatcher.ts
