@@ -9,6 +9,8 @@ import { Button } from "@/components/ui/Button";
 import Toast from "@/lib/toast-polyfill";
 import { useWallet } from "@/lib/hooks/use-wallet";
 import { useTopUp } from "@/lib/hooks/use-wallet";
+import { MoneyInput } from "@/components/ui/MoneyInput";
+import { formatMoney } from "@/lib/money";
 
 const AMOUNTS = [50, 100, 200, 500, 1000];
 const PAYMENT_METHODS = [
@@ -20,7 +22,7 @@ const PAYMENT_METHODS = [
 export default function TopUpScreen() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
-  const [amount, setAmount] = useState("");
+  const [amount, setAmount] = useState(0);
   const [selectedMethod, setSelectedMethod] = useState<string>("momo");
   const [isProcessing, setIsProcessing] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
@@ -31,7 +33,7 @@ export default function TopUpScreen() {
 
   const handleTopUp = async () => {
     Keyboard.dismiss();
-    const numAmount = parseFloat(amount);
+    const numAmount = amount;
     if (!numAmount || !selectedMethod) return;
 
     setIsProcessing(true);
@@ -49,11 +51,6 @@ export default function TopUpScreen() {
     } finally {
       setIsProcessing(false);
     }
-  };
-
-  const handleAmountSelect = (val: number) => {
-    Keyboard.dismiss();
-    setAmount(val.toString());
   };
 
   const handleMethodSelect = (methodId: string) => {
@@ -74,7 +71,7 @@ export default function TopUpScreen() {
           Top-Up Initiated!
         </Text>
         <Text className="text-body-lg text-white/80 font-body text-center mb-10 px-4">
-          GHS {parseFloat(amount || "0").toFixed(2)} - Complete payment to add funds.
+          {formatMoney(amount)} - Complete payment to add funds.
         </Text>
         {payUrl ? (
           <Button
@@ -96,7 +93,7 @@ export default function TopUpScreen() {
     );
   }
 
-  const isValidAmount = parseFloat(amount || "0") > 0;
+  const isValidAmount = amount > 0;
 
   return (
     <View className="flex-1 bg-background">
@@ -119,59 +116,16 @@ export default function TopUpScreen() {
         keyboardShouldPersistTaps="always"
         keyboardDismissMode="on-drag"
       >
-        <Text className="text-body-md font-bold text-muted-foreground font-heading mb-2 ml-1 mt-2">
-          Amount to Add
-        </Text>
-        <View className="bg-background p-4 rounded-2xl mb-6 flex-row items-center">
-          <Text className="text-display-sm font-bold text-foreground mr-2">GHS</Text>
-          <TextInput
-            value={amount}
-            onChangeText={setAmount}
-            keyboardType="numeric"
-            placeholder="0.00"
-            placeholderTextColor="#cbd5e1"
-            maxLength={6}
-            style={{
-              flex: 1,
-              fontSize: 32,
-              fontWeight: "900",
-              color: "#0f172a",
-              padding: 0,
-              margin: 0,
-            }}
-          />
-        </View>
+        <MoneyInput
+          label="Amount to Add"
+          value={amount}
+          onChangeValue={setAmount}
+          quickAmounts={AMOUNTS}
+          min={5}
+          size="lg"
+        />
 
-        <View className="flex-row flex-wrap gap-3 mb-8">
-          {AMOUNTS.map((amt) => {
-            const isActive = amount === amt.toString();
-            return (
-              <Pressable
-                key={amt}
-                onPress={() => handleAmountSelect(amt)}
-                style={{
-                  paddingHorizontal: 16,
-                  paddingVertical: 12,
-                  borderRadius: 16,
-                  borderWidth: 1,
-                  borderColor: isActive ? "#bfdbfe" : "#e2e8f0",
-                  backgroundColor: isActive ? "#eff6ff" : "#ffffff",
-                }}
-              >
-                <Text
-                  style={{
-                    fontSize: 14,
-                    fontWeight: "700",
-                    color: isActive ? "#1d4ed8" : "#475569",
-                    textAlign: "center",
-                  }}
-                >
-                  +{amt}
-                </Text>
-              </Pressable>
-            );
-          })}
-        </View>
+        <View className="mb-6" />
 
         <Text className="text-body-lg font-bold text-foreground font-heading mb-4 px-1">
           Payment Method
@@ -257,7 +211,7 @@ export default function TopUpScreen() {
         }}
       >
         <Button
-          title={isProcessing ? "Processing..." : `Top Up GHS ${amount || "0"}`}
+          title={isProcessing ? "Processing..." : `Top up ${formatMoney(amount)}`}
           size="lg"
           disabled={!isValidAmount || isProcessing}
           className="w-full rounded-xl"
