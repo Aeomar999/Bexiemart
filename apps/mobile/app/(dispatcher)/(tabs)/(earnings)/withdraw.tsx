@@ -18,6 +18,8 @@ import { Button } from "@/components/ui/Button";
 import { useState } from "react";
 import { usePopupStore } from "@/lib/stores/popup-store";
 import { useDispatcherEarnings, useWithdrawEarnings } from "@/lib/hooks/use-dispatcher";
+import { MoneyInput } from "@/components/ui/MoneyInput";
+import { formatMoney } from "@/lib/money";
 
 const WITHDRAWAL_METHODS = [
   { id: "momo", title: "Mobile Money", account: "024 **** 567", icon: "smartphone" },
@@ -32,7 +34,7 @@ export default function WithdrawFundsScreen() {
   const { data: earnings } = useDispatcherEarnings();
   const withdrawMutation = useWithdrawEarnings();
 
-  const [amount, setAmount] = useState("");
+  const [amount, setAmount] = useState(0);
   const [methods, setMethods] = useState(WITHDRAWAL_METHODS);
   const [selectedMethod, setSelectedMethod] = useState("momo");
 
@@ -45,12 +47,12 @@ export default function WithdrawFundsScreen() {
   const [pin, setPin] = useState("");
 
   const availableBalance = earnings?.pendingClearance ?? 0;
-  const numAmount = parseFloat(amount) || 0;
+  const numAmount = amount;
   const fee = numAmount > 0 ? 5.0 : 0; // Flat fee of 5 GHS
   const totalDeduction = numAmount + fee;
 
   const handleWithdrawRequest = () => {
-    if (!amount || numAmount <= 0) {
+    if (numAmount <= 0) {
       showPopup({
         type: "error",
         title: "Invalid Amount",
@@ -99,7 +101,7 @@ export default function WithdrawFundsScreen() {
           showPopup({
             type: "success",
             title: "Withdrawal Successful",
-            message: `GHS ${numAmount.toFixed(2)} is on its way to your account.`,
+            message: `${formatMoney(numAmount)} is on its way to your account.`,
           });
           router.back();
         },
@@ -140,7 +142,7 @@ export default function WithdrawFundsScreen() {
 
   const handleMaxAmount = () => {
     const maxAmount = Math.max(0, availableBalance - 5.0);
-    setAmount(maxAmount.toFixed(2));
+    setAmount(maxAmount);
   };
 
   return (
@@ -178,21 +180,14 @@ export default function WithdrawFundsScreen() {
             </Pressable>
           </View>
 
-          <View className="items-center justify-center py-4">
-            <View className="flex-row items-center justify-center">
-              <Text className="text-display-md font-black text-muted-foreground mr-2 mt-1">
-                GHS
-              </Text>
-              <TextInput
-                placeholder="0.00"
-                keyboardType="decimal-pad"
-                value={amount}
-                onChangeText={setAmount}
-                className="text-[56px] font-heading font-black text-foreground min-w-[120px] text-center"
-                placeholderTextColor="#cbd5e1"
-                autoFocus
-              />
-            </View>
+          <View className="py-2">
+            <MoneyInput
+              value={amount}
+              onChangeValue={setAmount}
+              size="lg"
+              align="center"
+              autoFocus
+            />
           </View>
         </View>
 
@@ -288,7 +283,7 @@ export default function WithdrawFundsScreen() {
         style={{ paddingBottom: Math.max(insets.bottom, 20) }}
       >
         <Button
-          title={`Withdraw GHS ${numAmount.toFixed(2)}`}
+          title={`Withdraw ${formatMoney(numAmount)}`}
           size="lg"
           loading={withdrawMutation.isPending}
           onPress={handleWithdrawRequest}
