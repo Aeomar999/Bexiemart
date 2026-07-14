@@ -768,7 +768,7 @@ Replace the fakes in `apps/mobile/app/(vendor)/(earnings)/withdraw.tsx`: `availa
 - Consumes: `useVendorEarnings()` (`{ availableBalance }`), `useBankAccounts()`, `useMomoAccounts()`, `usePinStatus()` (`{ hasPin }`), `useWithdraw()` (Task 13). Link routes: `/(customer)/wallet/link-account/bank`, `/(customer)/wallet/link-account/momo` (existing). Set-PIN route: reuse the vendor `(settings)/change-pin` flow (Task 21 makes it real) — until then a vendor with `hasPin === false` sees a "Set up your PIN" CTA.
 - Produces: nothing consumed downstream.
 
-- [ ] **Step 1: Replace data sources and the withdrawal handler**
+- [x] **Step 1: Replace data sources and the withdrawal handler**
 
 In `apps/mobile/app/(vendor)/(earnings)/withdraw.tsx`:
 
@@ -828,7 +828,7 @@ const executeWithdrawal = () => {
 };
 ```
 
-- [ ] **Step 2: Add empty-state and set-PIN guards**
+- [x] **Step 2: Add empty-state and set-PIN guards**
 
 Before the amount form renders, guard the two "can't withdraw yet" states (place near the top of the returned JSX, after the header):
 
@@ -857,14 +857,14 @@ Before the amount form renders, guard the two "can't withdraw yet" states (place
 ```
 Delete the "Add method" local-state modal (`handleAddMethod`, `showAddMethod`) — payout accounts are managed through the real link-account screens, not fabricated in local state.
 
-- [ ] **Step 3: Typecheck and manual-verify**
+- [x] **Step 3: Typecheck and manual-verify**
 
 ```powershell
 cd apps/mobile; npx tsc --noEmit
 ```
 Expected: exit 0. Manual (device, against a seeded vendor with a linked momo account and a set PIN): balance matches the earnings screen; entering the wrong PIN shows "Withdrawal Failed"; the correct PIN books a real PENDING `WITHDRAWAL` transaction (verify in DB / transactions list); a vendor with no linked account sees the "No payout account" CTA.
 
-- [ ] **Step 4: Commit**
+- [x] **Step 4: Commit**
 
 ```powershell
 git add "apps/mobile/app/(vendor)/(earnings)/withdraw.tsx"
