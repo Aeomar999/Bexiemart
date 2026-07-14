@@ -18,6 +18,8 @@ import { Button } from "@/components/ui/Button";
 import { useWallet, useTransfer } from "@/lib/hooks/use-wallet";
 import { useFormValidation } from "@/lib/hooks/use-form-validation";
 import { transferSchema } from "@/lib/validation/schemas";
+import { MoneyInput } from "@/components/ui/MoneyInput";
+import { formatMoney } from "@/lib/money";
 
 const RECENT_CONTACTS = [
   { id: "1", name: "Abena O.", phone: "024 123 4567", initial: "A" },
@@ -28,7 +30,7 @@ const RECENT_CONTACTS = [
 export default function TransferScreen() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
-  const [amount, setAmount] = useState("");
+  const [amount, setAmount] = useState(0);
   const [recipient, setRecipient] = useState("");
   const [pin, setPin] = useState("");
   const [showPinModal, setShowPinModal] = useState(false);
@@ -41,7 +43,7 @@ export default function TransferScreen() {
   const balance = walletData?.balance ?? 0;
 
   const handleTransfer = async () => {
-    const numAmount = parseFloat(amount);
+    const numAmount = amount;
     if (!numAmount || !recipient) return;
 
     if (numAmount > balance) {
@@ -53,14 +55,14 @@ export default function TransferScreen() {
   };
 
   const confirmTransfer = async () => {
-    if (!validate({ recipient, amount: parseFloat(amount), pin })) {
+    if (!validate({ recipient, amount, pin })) {
       Alert.alert("Validation Error", "Please check your inputs.");
       return;
     }
     setIsProcessing(true);
     setShowPinModal(false);
     try {
-      await transferMutation.mutateAsync({ email: recipient, amount: parseFloat(amount), pin });
+      await transferMutation.mutateAsync({ email: recipient, amount, pin });
       setIsSuccess(true);
     } catch (error: any) {
       Alert.alert(
@@ -86,7 +88,7 @@ export default function TransferScreen() {
           Transfer Sent!
         </Text>
         <Text className="text-body-lg text-white/80 font-body text-center mb-10 px-4">
-          GHS {parseFloat(amount || "0").toFixed(2)} has been successfully sent to {recipient}.
+          {formatMoney(amount)} has been successfully sent to {recipient}.
         </Text>
         <Button
           title="Back to Wallet"
@@ -98,7 +100,7 @@ export default function TransferScreen() {
     );
   }
 
-  const numAmount = parseFloat(amount || "0") || 0;
+  const numAmount = amount;
   const isInsufficient = numAmount > balance;
   const isValidAmount = numAmount > 0 && !isInsufficient;
 
@@ -126,28 +128,14 @@ export default function TransferScreen() {
         keyboardShouldPersistTaps="always"
         keyboardDismissMode="on-drag"
       >
-        <Text className="text-body-md font-bold text-muted-foreground font-heading mb-2 ml-1 mt-4">
-          Send Amount
-        </Text>
-        <View
-          className={`bg-background p-4 rounded-2xl mb-2 flex-row items-center border ${isInsufficient ? "border-red-500" : "border-border"}`}
-        >
-          <Text className="text-display-sm font-bold text-foreground mr-2">GHS</Text>
-          <TextInput
-            value={amount}
-            onChangeText={setAmount}
-            keyboardType="numeric"
-            placeholder="0.00"
-            placeholderTextColor="#cbd5e1"
-            maxLength={6}
-            className="flex-1 text-display-lg font-black text-foreground font-heading p-0 m-0"
-          />
-        </View>
-        {isInsufficient ? (
-          <Text className="text-red-500 font-bold text-sm ml-2 mb-6">Insufficient balance</Text>
-        ) : (
-          <View className="mb-6" />
-        )}
+        <MoneyInput
+          label="Send Amount"
+          value={amount}
+          onChangeValue={setAmount}
+          balance={balance}
+          size="lg"
+        />
+        <View className="mb-6" />
 
         <Text className="text-body-md font-bold text-muted-foreground font-heading mb-2 ml-1">
           Send To
@@ -203,7 +191,7 @@ export default function TransferScreen() {
 
       <View className="px-5 py-4 bg-card border-t border-border">
         <Button
-          title={isProcessing ? "Processing..." : `Send GHS ${amount || "0"}`}
+          title={isProcessing ? "Processing..." : `Send ${formatMoney(amount)}`}
           size="lg"
           disabled={!isValidAmount || !recipient || isProcessing}
           className="w-full rounded-xl"
