@@ -35,6 +35,8 @@ export function ErrorState({
       {onRetry && (
         <Pressable
           onPress={onRetry}
+          accessibilityRole="button"
+          accessibilityLabel="Try Again"
           style={({ pressed }) => [{ opacity: pressed ? 0.8 : 1 }]}
           className="bg-error px-8 py-4 rounded-full flex-row items-center justify-center shadow-md"
         >

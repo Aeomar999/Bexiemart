@@ -27,7 +27,12 @@ export function AddToCollectionModal({ visible, productId, onClose }: Props) {
   return (
     <Modal visible={visible} transparent animationType="slide">
       <View className="flex-1 bg-black/50 justify-end">
-        <Pressable className="absolute inset-0" onPress={onClose} />
+        <Pressable
+          className="absolute inset-0"
+          onPress={onClose}
+          accessibilityRole="button"
+          accessibilityLabel="Dismiss modal"
+        />
         <View className="bg-card rounded-t-3xl p-6 pb-10 max-h-[70%]">
           <View className="flex-row justify-between items-center mb-6">
             <Text className="text-display-sm font-heading font-black text-foreground">
@@ -60,6 +65,8 @@ export function AddToCollectionModal({ visible, productId, onClose }: Props) {
                   className="flex-row items-center justify-between py-4 border-b border-border"
                   onPress={() => handleSelect(item.id)}
                   disabled={addItem.isPending}
+                  accessibilityRole="button"
+                  accessibilityLabel={`Save to ${item.name}`}
                 >
                   <View className="flex-row items-center gap-3">
                     <Icon name="folder" size={20} color={tokens.primary} />

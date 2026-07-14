@@ -58,6 +58,24 @@ export class DispatcherService {
   }
 
   async updateLocation(userId: string, lat: number, lng: number) {
+    if (
+      typeof lat !== "number" ||
+      typeof lng !== "number" ||
+      Number.isNaN(lat) ||
+      Number.isNaN(lng) ||
+      lat < -90 ||
+      lat > 90 ||
+      lng < -180 ||
+      lng > 180
+    ) {
+      throw new BadRequestException("Invalid latitude or longitude coordinates");
+    }
+
+    // Reject implausible coordinates (e.g., (0,0) null island or out of campus/regional range if configured)
+    if (lat === 0 && lng === 0) {
+      throw new BadRequestException("Implausible dispatcher location (0, 0) rejected");
+    }
+
     const profile = await this.getProfile(userId);
     return this.prisma.dispatcherProfile.update({
       where: { id: profile.id },
@@ -211,41 +229,5 @@ export class DispatcherService {
         [] as { date: string; amount: number }[]
       ),
     };
-  }
-
-  async withdrawEarnings(userId: string, amount: number, destination: string) {
-    const profile = await this.getProfile(userId);
-    const wallet = await this.prisma.wallet.findUnique({ where: { userId } });
-    if (!wallet) throw new NotFoundException("Wallet not found");
-
-    // Withdrawals draw from cleared, spendable balance only. Held earnings sit
-    // in pendingPayout until the customer confirms delivery (see
-    // DeliveryService.confirmDelivery), so they are intentionally not available.
-    if (Number(wallet.balance) < amount) {
-      throw new BadRequestException("Insufficient available balance");
-    }
-
-    await this.prisma.$transaction([
-      this.prisma.wallet.update({
-        where: { id: wallet.id },
-        data: { balance: { decrement: amount } },
-      }),
-      this.prisma.transaction.create({
-        data: {
-          walletId: wallet.id,
-          type: "WITHDRAWAL",
-          status: "COMPLETED",
-          amount,
-          fee: 0,
-          netAmount: amount,
-          currency: wallet.currency,
-          reference: `DSP-WD-${profile.id}-${Date.now()}`,
-          description: `Withdrawal to ${destination}`,
-          metadata: { destination },
-        },
-      }),
-    ]);
-
-    return { success: true, reference: `WD-${Date.now()}` };
   }
 }

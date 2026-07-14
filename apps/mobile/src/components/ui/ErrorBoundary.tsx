@@ -1,3 +1,4 @@
+import * as Sentry from "@sentry/react-native";
 import { tokens } from "@/theme/tokens";
 import { logger } from "@/lib/logger";
 import React from "react";
@@ -26,8 +27,8 @@ export class ErrorBoundary extends React.Component<ErrorBoundaryProps, State> {
   }
 
   componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
-    // In a production app, log this to Sentry, Crashlytics, etc.
     logger.error("ErrorBoundary caught an error:", error, errorInfo as any);
+    Sentry.captureException(error, { extra: errorInfo as any });
   }
 
   handleRestart = async () => {
@@ -71,6 +72,8 @@ export class ErrorBoundary extends React.Component<ErrorBoundaryProps, State> {
 
             <Pressable
               onPress={this.handleRestart}
+              accessibilityRole="button"
+              accessibilityLabel="Restart App"
               className="bg-primary px-10 py-4 rounded-full active:opacity-80 flex-row items-center w-full justify-center"
               style={({ pressed }) => [
                 { opacity: pressed ? 0.7 : 1 },

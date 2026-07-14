@@ -25,6 +25,8 @@ export function CategoryCard({
       style={({ pressed }) => ({ opacity: pressed ? 0.7 : 1, width: width as any })}
       className="mb-4"
       onPress={onPress}
+      accessibilityRole="button"
+      accessibilityLabel={`${title}, ${itemCount} items`}
     >
       <Card variant="outlined" padding="sm">
         <View

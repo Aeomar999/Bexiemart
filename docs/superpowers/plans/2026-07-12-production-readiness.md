@@ -914,11 +914,11 @@ With the mobile clients repointed at `/wallet/withdraw`, the bespoke `POST /vend
 - Consumes: nothing.
 - Produces: removes public routes `POST /vendor/earnings/withdraw`, `POST /dispatcher/earnings/withdraw`.
 
-- [ ] **Step 1: Delete server routes, service methods, DTOs**
+- [x] **Step 1: Delete server routes, service methods, DTOs**
 
 Remove the `withdrawEarnings` controller handlers and service methods and the `WithdrawEarningsDto` imports/usages in both modules. Leave the `getEarnings` / `getTransactions` / `getAnalytics` handlers untouched.
 
-- [ ] **Step 2: Delete the mobile clients and dead hook**
+- [x] **Step 2: Delete the mobile clients and dead hook**
 
 Remove `withdraw` from `vendorApi`, `withdrawEarnings` from `dispatcherApi`, and the `useWithdrawEarnings` export. Grep to confirm no remaining references:
 
@@ -927,7 +927,7 @@ cd apps/mobile; npx tsc --noEmit
 ```
 Expected: exit 0 (the compiler flags any leftover reference — the withdraw screens no longer use these after Tasks 14–15).
 
-- [ ] **Step 3: Update/trim server specs and run the suite**
+- [x] **Step 3: Update/trim server specs and run the suite**
 
 Delete the test cases that exercised the removed endpoints, then:
 
@@ -936,7 +936,7 @@ cd apps/server; npx jest dispatcher vendor wallet --verbose
 ```
 Expected: PASS (no references to the removed methods remain).
 
-- [ ] **Step 4: Commit**
+- [x] **Step 4: Commit**
 
 ```powershell
 git add apps/server apps/mobile

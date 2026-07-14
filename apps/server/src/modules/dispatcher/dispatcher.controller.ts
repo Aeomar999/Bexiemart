@@ -9,7 +9,6 @@ import {
   ToggleStatusDto,
   UpdateLocationDto,
   UpdateTaskStatusDto,
-  WithdrawEarningsDto,
 } from "./dto/dispatcher.dto";
 
 @ApiBearerAuth()
@@ -113,12 +112,5 @@ export class DispatcherController {
   @UseGuards(DispatcherGuard)
   getAnalytics(@Req() req: any) {
     return this.dispatcherService.getAnalytics(req.user.id);
-  }
-
-  @ApiOperation({ summary: "Withdraw dispatcher earnings" })
-  @Post("earnings/withdraw")
-  @UseGuards(DispatcherGuard)
-  withdrawEarnings(@Req() req: any, @Body() data: WithdrawEarningsDto) {
-    return this.dispatcherService.withdrawEarnings(req.user.id, data.amount, data.destination);
   }
 }

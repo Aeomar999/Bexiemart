@@ -45,6 +45,8 @@ export function OrderCard({
       style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
       className="mb-4"
       onPress={onPress}
+      accessibilityRole="button"
+      accessibilityLabel={`Order #${id}, Status: ${statusDetails.label}, Total: GHS ${total.toFixed(2)}`}
     >
       <Card variant="outlined" padding="md">
         {/* Order Header */}
@@ -100,6 +102,8 @@ export function OrderCard({
               style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
               className="bg-primary-subtle px-5 py-2.5 rounded-full"
               onPress={onActionPress}
+              accessibilityRole="button"
+              accessibilityLabel={actionLabel}
             >
               <Text className="text-body-md font-bold text-primary">{actionLabel}</Text>
             </Pressable>

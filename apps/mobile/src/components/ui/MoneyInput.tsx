@@ -122,6 +122,7 @@ export function MoneyInput({
                 key={amt}
                 onPress={() => onChangeValue(amt)}
                 accessibilityRole="button"
+                accessibilityLabel={`Add ${amt} ${currency}`}
                 accessibilityState={{ selected: active }}
                 hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
                 className={`rounded-2xl border px-4 py-3 ${active ? "border-primary bg-primary-subtle" : "border-border bg-card"}`}

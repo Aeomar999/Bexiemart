@@ -20,6 +20,12 @@ export const FeatureFlag = {
    * partially-migrated screens.
    */
   DarkMode: "dark-mode",
+  /**
+   * Controls the flash sales feature across the application. Fail-safe ON:
+   * flash sales remain active by default unless explicitly toggled OFF via
+   * PostHog remote configuration.
+   */
+  FlashSalesActive: "flash-sales-active",
 } as const;
 
 /**
@@ -112,4 +118,42 @@ export function useDarkModeEnabled(): { darkModeEnabled: boolean; ready: boolean
   }, []);
 
   return { darkModeEnabled, ready };
+}
+
+/**
+ * Resolves the `flash-sales-active` PostHog flag from the singleton client.
+ *
+ * Fail-safe: defaults to flash sales ENABLED (`true`). Only an explicit `false`
+ * from PostHog turns off flash sales on the mobile client.
+ */
+export function useFlashSalesEnabled(): { flashSalesEnabled: boolean; ready: boolean } {
+  const [flashSalesEnabled, setFlashSalesEnabled] = useState(true);
+  const [ready, setReady] = useState(false);
+
+  useEffect(() => {
+    if (!posthog) {
+      setReady(true);
+      return;
+    }
+
+    const apply = () => {
+      // `undefined` keeps the default (`true`) — only explicit `false` disables.
+      setFlashSalesEnabled(posthog!.isFeatureEnabled(FeatureFlag.FlashSalesActive) !== false);
+      setReady(true);
+    };
+
+    if (posthog.isFeatureEnabled(FeatureFlag.FlashSalesActive) !== undefined) {
+      apply();
+    }
+
+    const unsubscribe = posthog.onFeatureFlags(apply);
+    const timeout = setTimeout(() => setReady(true), 2000);
+
+    return () => {
+      unsubscribe?.();
+      clearTimeout(timeout);
+    };
+  }, []);
+
+  return { flashSalesEnabled, ready };
 }

@@ -10,13 +10,14 @@ import {
 import { UserRole } from "@prisma/client";
 import { PrismaService } from "../prisma/prisma.service";
 
-interface ProfileCheck {
-  model: string; // Prisma model name (e.g. "vendorProfile")
-  findByField: string; // field to find by (e.g. "userId")
+interface RoleGuardOptions {
+  model?: string; // Prisma model name (e.g. "vendorProfile")
+  findByField?: string; // field to find by (e.g. "userId")
   checkActive?: boolean; // whether to check isActive
+  requireEmailVerified?: boolean; // whether to check emailVerified
 }
 
-export function createRoleGuard(role: UserRole, profileCheck?: ProfileCheck): Type<CanActivate> {
+export function createRoleGuard(role: UserRole, options?: RoleGuardOptions): Type<CanActivate> {
   @Injectable()
   class RoleGuard implements CanActivate {
     constructor(private prisma: PrismaService) {}
@@ -28,14 +29,18 @@ export function createRoleGuard(role: UserRole, profileCheck?: ProfileCheck): Ty
       if (!user) throw new UnauthorizedException("Authentication required");
       if (user.role !== role) throw new ForbiddenException("Access required");
 
-      if (profileCheck) {
+      if (options?.requireEmailVerified && !user.emailVerified) {
+        throw new ForbiddenException("Email verification required");
+      }
+
+      if (options?.model && options?.findByField) {
         // @ts-ignore - Dynamic prisma model access
-        const profile = await this.prisma[profileCheck.model].findUnique({
-          where: { [profileCheck.findByField]: user.id },
+        const profile = await this.prisma[options.model].findUnique({
+          where: { [options.findByField]: user.id },
         });
 
         if (!profile) throw new ForbiddenException("Profile required");
-        if (profileCheck.checkActive && !profile.isActive) {
+        if (options.checkActive && !profile.isActive) {
           throw new ForbiddenException("Active profile required");
         }
       }

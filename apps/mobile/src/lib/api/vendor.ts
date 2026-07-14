@@ -12,12 +12,12 @@ export const vendorApi = {
 
   getOrders: (status?: string) => apiClient.get("/vendor/orders", { params: { status } }),
   getOrder: (id: string) => apiClient.get(`/vendor/orders/${id}`),
-  updateOrderStatus: (id: string, status: string) => apiClient.patch(`/vendor/orders/${id}/status`, { status }),
+  updateOrderStatus: (id: string, status: string) =>
+    apiClient.patch(`/vendor/orders/${id}/status`, { status }),
 
   getEarnings: () => apiClient.get("/vendor/earnings"),
   getTransactions: () => apiClient.get("/vendor/earnings/transactions"),
   getAnalytics: () => apiClient.get("/vendor/earnings/analytics"),
-  withdraw: (amount: number, destination: string) => apiClient.post("/vendor/earnings/withdraw", { amount, destination }),
 
   updateShop: (data: any) => apiClient.patch("/vendor/shop", data),
 };

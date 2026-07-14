@@ -23,7 +23,6 @@ import {
   useDispatcherEarnings,
   useDispatcherTransactions,
   useDispatcherAnalytics,
-  useWithdrawEarnings,
 } from "../use-dispatcher";
 import { dispatcherApi } from "../../api/dispatcher";
 import { createWrapper } from "./test-utils";

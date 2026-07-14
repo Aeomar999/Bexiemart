@@ -1,6 +1,7 @@
 import "react-native-get-random-values";
 import "../global.css";
 import "../src/lib/sentry";
+import * as Sentry from "@sentry/react-native";
 import { posthog } from "../src/lib/posthog";
 import { PostHogProvider } from "posthog-react-native";
 import { Stack, useRouter, useRootNavigationState, useSegments, usePathname } from "expo-router";
@@ -57,7 +58,7 @@ const queryClient = new QueryClient({
   },
 });
 
-export default function RootLayout() {
+function RootLayout() {
   const hydrate = useAuthStore((s) => s.hydrate);
   const isLoading = useAuthStore((s) => s.isLoading);
   const user = useAuthStore((s) => s.user);
@@ -203,3 +204,5 @@ export default function RootLayout() {
     </SafeAreaProvider>
   );
 }
+
+export default Sentry.wrap(RootLayout);

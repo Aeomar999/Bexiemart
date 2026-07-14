@@ -59,8 +59,8 @@ describe("EditProfileScreen", () => {
     const { getByText, getByPlaceholderText } = render(<EditProfileScreen />);
     expect(getByText("Edit Profile")).toBeTruthy();
     expect(getByPlaceholderText("Enter your full name")).toBeTruthy();
-    expect(getByPlaceholderText("Enter your email")).toBeTruthy();
-    expect(getByPlaceholderText("e.g. +233 50 123 4567")).toBeTruthy();
+    expect(getByText("Email Address (Verified)")).toBeTruthy();
+    expect(getByPlaceholderText("No phone number verified")).toBeTruthy();
     expect(getByPlaceholderText("e.g. Accra, Ghana")).toBeTruthy();
     expect(getByPlaceholderText("Tell us a bit about yourself...")).toBeTruthy();
   });
@@ -90,7 +90,11 @@ describe("EditProfileScreen", () => {
   });
 
   it("handles photo change", async () => {
-    mockPickImage.mockResolvedValue({ uri: "file://photo.jpg", type: "image/jpeg", name: "photo.jpg" });
+    mockPickImage.mockResolvedValue({
+      uri: "file://photo.jpg",
+      type: "image/jpeg",
+      name: "photo.jpg",
+    });
     mockUploadMutateAsync.mockResolvedValue({ url: "https://example.com/uploaded.jpg" });
 
     const { getByText } = render(<EditProfileScreen />);

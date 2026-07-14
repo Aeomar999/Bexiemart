@@ -100,6 +100,17 @@ export const SwipeButton: React.FC<SwipeButtonProps> = ({
           styles.slider,
           { backgroundColor: sliderColor, transform: [{ translateX: pan.x }] },
         ]}
+        accessibilityRole="button"
+        accessibilityLabel={text}
+        accessibilityHint="Double tap to complete"
+        accessibilityState={{ disabled: isCompleted }}
+        accessibilityActions={[{ name: "activate", label: text }]}
+        onAccessibilityAction={(e) => {
+          if (e.nativeEvent.actionName === "activate" && !isCompleted) {
+            setIsCompleted(true);
+            onComplete();
+          }
+        }}
       >
         <Icon name={isCompleted ? "check" : iconName} size={24} color={buttonColor} />
       </Animated.View>

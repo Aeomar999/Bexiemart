@@ -46,6 +46,7 @@ import { DeliveryModule } from "./modules/delivery/delivery.module";
 import { StoryModule } from "./modules/story/story.module";
 import { MetricsModule } from "./modules/metrics/metrics.module";
 import { CollectionsModule } from "./modules/collections/collections.module";
+import { PostHogModule } from "./modules/posthog/posthog.module";
 
 import { WinstonModule } from "nest-winston";
 import * as winston from "winston";
@@ -66,6 +67,7 @@ import * as winston from "winston";
     }),
     ThrottlerModule.forRoot([{ ttl: 60000, limit: 60 }]),
     PrismaModule,
+    PostHogModule,
     AuthModule,
     UsersModule,
     ProductsModule,

@@ -51,14 +51,3 @@ export class UpdateTaskStatusDto {
   @IsIn(["EN_ROUTE_PICKUP", "ARRIVED_PICKUP", "PICKED_UP", "EN_ROUTE_DROPOFF", "DELIVERED"])
   status: string;
 }
-
-export class WithdrawEarningsDto {
-  @ApiProperty()
-  @IsNumber()
-  amount: number;
-
-  @ApiProperty()
-  @IsString()
-  @IsNotEmpty()
-  destination: string;
-}

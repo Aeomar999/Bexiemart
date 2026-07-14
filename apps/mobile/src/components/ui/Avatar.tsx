@@ -70,6 +70,9 @@ export function Avatar({
       <Pressable
         onPress={onPress}
         accessibilityRole="button"
+        accessibilityLabel={
+          editable ? `Change profile photo for ${name}` : `Profile photo for ${name}`
+        }
         style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
       >
         {content}

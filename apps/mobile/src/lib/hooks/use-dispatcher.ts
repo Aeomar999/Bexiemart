@@ -90,15 +90,3 @@ export function useDispatcherAnalytics() {
     },
   });
 }
-
-export function useWithdrawEarnings() {
-  const queryClient = useQueryClient();
-  return useMutation({
-    mutationFn: ({ amount, destination }: { amount: number; destination: string }) =>
-      dispatcherApi.withdrawEarnings(amount, destination),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["dispatcher", "earnings"] });
-      queryClient.invalidateQueries({ queryKey: ["dispatcher", "transactions"] });
-    },
-  });
-}

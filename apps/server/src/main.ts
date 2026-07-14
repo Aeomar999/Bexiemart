@@ -10,6 +10,8 @@ import { join } from "path";
 import { existsSync, mkdirSync } from "fs";
 import { DocumentBuilder, SwaggerModule } from "@nestjs/swagger";
 
+import { Request, Response, NextFunction } from "express";
+
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule, {
     logger: ["log", "error", "warn", "debug", "verbose"],
@@ -20,6 +22,17 @@ async function bootstrap() {
 
   app.set("trust proxy", 1);
   app.use(helmet());
+
+  // Enforce HTTPS redirect in production environments (Audit C5)
+  if (process.env.NODE_ENV === "production" && process.env.ENFORCE_HTTPS !== "false") {
+    app.use((req: Request, res: Response, next: NextFunction) => {
+      const proto = req.headers["x-forwarded-proto"] || (req.secure ? "https" : "http");
+      if (proto !== "https") {
+        return res.redirect(301, `https://${req.headers.host}${req.originalUrl}`);
+      }
+      next();
+    });
+  }
 
   app.enableCors({
     origin: process.env.CORS_ORIGIN

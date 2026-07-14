@@ -180,6 +180,8 @@ export function EditProfileScreen() {
                   value={bio}
                   onChangeText={setBio}
                   editable={!isSaving}
+                  accessibilityLabel="Bio (Optional)"
+                  accessibilityRole="text"
                 />
               </View>
             </View>

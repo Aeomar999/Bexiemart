@@ -32,7 +32,4 @@ export const dispatcherApi = {
   getTransactions: () => apiClient.get("/dispatcher/earnings/transactions"),
 
   getAnalytics: () => apiClient.get("/dispatcher/earnings/analytics"),
-
-  withdrawEarnings: (amount: number, destination: string) =>
-    apiClient.post("/dispatcher/earnings/withdraw", { amount, destination }),
 };

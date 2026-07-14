@@ -8,12 +8,14 @@ import { LinearGradient } from "expo-linear-gradient";
 import { useState, useEffect } from "react";
 import { Image } from "expo-image";
 import { useActiveFlashSales } from "@/lib/hooks/use-flash-sales";
+import { useFlashSalesEnabled } from "@/lib/feature-flags";
 
 const { width } = Dimensions.get("window");
 
 export default function FlashSalesScreen() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
+  const { flashSalesEnabled } = useFlashSalesEnabled();
   const { data: activeSales, isLoading } = useActiveFlashSales();
   const sale = activeSales?.[0];
   const items = sale?.items ?? [];
@@ -80,7 +82,7 @@ export default function FlashSalesScreen() {
         <View className="flex-1 items-center justify-center p-10">
           <ListSkeleton />
         </View>
-      ) : !sale ? (
+      ) : !flashSalesEnabled || !sale ? (
         <View className="flex-1 items-center justify-center p-10">
           <Icon name="clock" size={48} color="#cbd5e1" />
           <Text className="text-body-lg font-bold text-muted-foreground mt-4">

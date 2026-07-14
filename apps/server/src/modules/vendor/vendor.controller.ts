@@ -1,12 +1,24 @@
-import { Controller, Get, Post, Put, Delete, Patch, Param, Body, Req, UseGuards, Query } from "@nestjs/common";
+import {
+  Controller,
+  Get,
+  Post,
+  Put,
+  Delete,
+  Patch,
+  Param,
+  Body,
+  Req,
+  UseGuards,
+  Query,
+} from "@nestjs/common";
 import { AuthGuard } from "../../guards/auth.guard";
 import { VendorGuard } from "../../guards/vendor.guard";
+import { EmailVerifiedGuard } from "../../guards/email-verified.guard";
 import { VendorService } from "./vendor.service";
 import { OnboardVendorDto } from "./dto/onboard-vendor.dto";
 import { CreateProductDto } from "./dto/create-product.dto";
 import { UpdateProductDto } from "./dto/update-product.dto";
 import { UpdateOrderStatusDto } from "./dto/update-order-status.dto";
-import { WithdrawEarningsDto } from "./dto/withdraw-earnings.dto";
 import { UpdateShopDto } from "./dto/update-shop.dto";
 import { ApiTags, ApiOperation, ApiBearerAuth } from "@nestjs/swagger";
 
@@ -26,6 +38,7 @@ export class VendorController {
 
   @ApiOperation({ summary: "Complete vendor onboarding" })
   @Post("onboarding")
+  @UseGuards(EmailVerifiedGuard)
   onboard(@Req() req: any, @Body() body: OnboardVendorDto) {
     return this.vendorService.onboard(req.user.id, body);
   }
@@ -105,13 +118,6 @@ export class VendorController {
   @UseGuards(VendorGuard)
   getAnalytics(@Req() req: any) {
     return this.vendorService.getAnalytics(req.user.id);
-  }
-
-  @ApiOperation({ summary: "Withdraw vendor earnings" })
-  @Post("earnings/withdraw")
-  @UseGuards(VendorGuard)
-  withdraw(@Req() req: any, @Body() body: WithdrawEarningsDto) {
-    return this.vendorService.withdrawEarnings(req.user.id, body.amount, body.destination);
   }
 
   @ApiOperation({ summary: "Update shop details" })

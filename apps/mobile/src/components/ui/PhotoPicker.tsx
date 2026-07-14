@@ -95,6 +95,8 @@ export function PhotoPicker({
       ) : (
         <Pressable
           onPress={pickImage}
+          accessibilityRole="button"
+          accessibilityLabel={`Add photos, upload up to ${maxSelections} images`}
           style={({ pressed }) => [{ opacity: pressed ? 0.8 : 1 }]}
           className="w-full h-48 bg-muted rounded-2xl items-center justify-center border-2 border-dashed border-border mb-8"
         >

@@ -91,18 +91,6 @@ export function useVendorEarnings() {
   });
 }
 
-export function useWithdrawEarnings() {
-  const qc = useQueryClient();
-  return useMutation({
-    mutationFn: ({ amount, destination }: { amount: number; destination: string }) =>
-      vendorApi.withdraw(amount, destination),
-    onSuccess: () => {
-      qc.invalidateQueries({ queryKey: VENDOR_KEYS.earnings });
-      qc.invalidateQueries({ queryKey: VENDOR_KEYS.transactions });
-    },
-  });
-}
-
 export function useUpdateShop() {
   const qc = useQueryClient();
   return useMutation({
