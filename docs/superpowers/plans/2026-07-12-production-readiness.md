@@ -2505,7 +2505,7 @@ git commit -m "chore(ci): add admin lint/typecheck/build job; wire admin Sentry"
 - Consumes: nothing.
 - Produces: a single source-of-truth schema; documented env for all three apps.
 
-- [ ] **Step 1: Confirm the root schema is unreferenced, then delete**
+- [x] **Step 1: Confirm the root schema is unreferenced, then delete**
 
 ```powershell
 rg -n "schema.prisma" --glob "!apps/server/**" --glob "!**/node_modules/**"
@@ -2516,18 +2516,18 @@ Confirm nothing references the root copy (Prisma config points at `apps/server/p
 git rm schema.prisma
 ```
 
-- [ ] **Step 2: Env examples**
+- [x] **Step 2: Env examples**
 
 Ensure each app has a committed `.env.example` enumerating every var it reads (no secrets — placeholder values). Server must include at least: `DATABASE_URL`, `BETTER_AUTH_URL`, `BETTER_AUTH_API_KEY`, `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`, `PAYSTACK_SECRET_KEY`, `CLOUDINARY_CLOUD_NAME`, `CLOUDINARY_API_KEY`, `CLOUDINARY_API_SECRET`, `ADMIN_EMAIL`, `ADMIN_PASSWORD`, `ADMIN_ORIGIN`, `EXTRA_TRUSTED_ORIGINS`, email/SMTP vars. Admin: `NEXT_PUBLIC_API_URL`, `API_URL`, `NEXT_PUBLIC_SENTRY_DSN`. Mobile: the `EXPO_PUBLIC_*` set from `eas.json`.
 
-- [ ] **Step 3: Verify server still boots from the real schema**
+- [x] **Step 3: Verify server still boots from the real schema**
 
 ```powershell
 cd apps/server; npx prisma validate; npx tsc --noEmit
 ```
 Expected: schema valid, typecheck clean.
 
-- [ ] **Step 4: Commit**
+- [x] **Step 4: Commit**
 
 ```powershell
 git add -A
