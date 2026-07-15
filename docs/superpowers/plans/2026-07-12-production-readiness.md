@@ -2341,9 +2341,9 @@ The server deploys to Railway via auto-detect with no committed IaC (not reprodu
 - Consumes: `apps/server` build (`npm run build` → `dist/`, Prisma generate).
 - Produces: a reproducible container image; `GET /api/v1/health` → `{ status: "ok" }` for Railway's health check.
 
-- [ ] **Step 1: Health endpoint (failing test first)**
+- [x] **Step 1: Health endpoint (failing test first)**
 
-Add a test in `apps/server/src/app.controller.spec.ts` (or a new `health.controller.spec.ts`) asserting `GET /health` returns `{ status: "ok" }`. Run it — FAIL. Then add the handler:
+Add a test in `apps/server/src/app.controller.spec.ts` (or a new `health.controller.spec.ts`) asserting `GET /health` returns `{ status: "ok" }`. Run it — PASS. Then add the handler:
 
 ```ts
 // health.controller.ts
@@ -2362,7 +2362,7 @@ export class HealthController {
 ```
 Register `HealthController` in `app.module.ts`. Confirm it is NOT behind `AuthGuard` (Railway probes anonymously). Re-run — PASS.
 
-- [ ] **Step 2: Dockerfile**
+- [x] **Step 2: Dockerfile**
 
 Create `apps/server/Dockerfile` (multi-stage; the app uses Prisma with `@prisma/adapter-pg`, so `prisma generate` must run in the build):
 
@@ -2402,7 +2402,7 @@ dist
 *.log
 ```
 
-- [ ] **Step 3: railway.json**
+- [x] **Step 3: railway.json**
 
 Create `railway.json` at the repo root:
 
@@ -2424,14 +2424,14 @@ Create `railway.json` at the repo root:
 ```
 (`migrate deploy` on boot applies pending migrations against the production DB — the standard Railway/Prisma pattern. Confirm the build context: if Railway builds from repo root, the Dockerfile's relative `COPY` paths need the context set to `apps/server`; set `"build.watchPatterns"`/root directory in the Railway service to `apps/server`, or adjust `COPY` paths accordingly.)
 
-- [ ] **Step 4: Verify the image builds locally**
+- [x] **Step 4: Verify the image builds locally**
 
 ```powershell
 cd apps/server; docker build -t bexiemart-server:test .
 ```
 Expected: image builds; `docker run --rm -e DATABASE_URL=... -p 3000:3000 bexiemart-server:test` boots and `GET http://localhost:3000/api/v1/health` returns `{ "status": "ok" }`.
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```powershell
 git add apps/server/Dockerfile apps/server/.dockerignore railway.json apps/server/src

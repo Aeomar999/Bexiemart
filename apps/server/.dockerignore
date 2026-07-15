@@ -1,13 +1,4 @@
 node_modules
 dist
-coverage
-uploads
+.env
 *.log
-.env*
-!.env.example
-.git
-.idea
-.vscode
-*.spec.ts
-*.test.ts
-test/
