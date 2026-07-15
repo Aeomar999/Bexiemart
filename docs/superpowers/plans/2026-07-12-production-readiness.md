@@ -2449,7 +2449,7 @@ git commit -m "chore(deploy): reproducible server Dockerfile + railway.json + /h
 - Consumes: existing CI patterns for `server`/`mobile`.
 - Produces: an `admin` CI job (lint + typecheck + build); admin runtime error reporting to Sentry.
 
-- [ ] **Step 1: Add the admin CI job**
+- [x] **Step 1: Add the admin CI job**
 
 In `.github/workflows/ci.yml`, add a job mirroring the `mobile` job's shape (the file already defines jobs with `working-directory: apps/<app>` and `cache-dependency-path`):
 
@@ -2474,21 +2474,21 @@ In `.github/workflows/ci.yml`, add a job mirroring the `mobile` job's shape (the
           NEXT_PUBLIC_API_URL: https://bexiemart-production.up.railway.app/api/v1
 ```
 
-- [ ] **Step 2: Wire admin Sentry**
+- [x] **Step 2: Wire admin Sentry**
 
 ```powershell
 cd apps/admin; npm install @sentry/nextjs
 ```
 Add the standard `@sentry/nextjs` client/server config files initializing with `dsn: process.env.NEXT_PUBLIC_SENTRY_DSN` and `tracesSampleRate: 0.1`, and wrap `next.config` with `withSentryConfig`. Add `NEXT_PUBLIC_SENTRY_DSN` to `apps/admin/.env.example`.
 
-- [ ] **Step 3: Verify CI locally**
+- [x] **Step 3: Verify CI locally**
 
 ```powershell
 cd apps/admin; npx tsc --noEmit; npm run build
 ```
 Expected: both succeed (this is what CI will run). Push the branch and confirm the new `admin` job appears and passes in GitHub Actions.
 
-- [ ] **Step 4: Commit**
+- [x] **Step 4: Commit**
 
 ```powershell
 git add .github/workflows/ci.yml apps/admin
