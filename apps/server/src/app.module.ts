@@ -48,6 +48,7 @@ import { StoryModule } from "./modules/story/story.module";
 import { MetricsModule } from "./modules/metrics/metrics.module";
 import { CollectionsModule } from "./modules/collections/collections.module";
 import { LoyaltyModule } from "./modules/loyalty/loyalty.module";
+import { NotificationPreferencesModule } from "./modules/notification-preferences/notification-preferences.module";
 import { PostHogModule } from "./modules/posthog/posthog.module";
 
 import { WinstonModule } from "nest-winston";
@@ -111,6 +112,7 @@ import * as winston from "winston";
     MetricsModule,
     CollectionsModule,
     LoyaltyModule,
+    NotificationPreferencesModule,
   ],
   providers: [{ provide: APP_GUARD, useClass: ThrottlerGuard }],
 })

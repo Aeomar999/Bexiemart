@@ -1246,7 +1246,7 @@ This phase turns the entire fake vendor settings cluster real. Two capabilities 
 - Consumes: `req.user.id`.
 - Produces: `GET /notification-preferences` → the row (auto-created with defaults on first read); `PUT /notification-preferences` `{ newOrder?, orderCancel?, payout?, chat?, promo?, email?, sms? }` (all optional booleans) → updated row.
 
-- [ ] **Step 1: Schema**
+- [x] **Step 1: Schema**
 
 Add to `apps/server/prisma/schema.prisma`:
 
@@ -1272,7 +1272,7 @@ Add `notificationPreference NotificationPreference?` to `model User`. Migrate:
 cd apps/server; npx prisma migrate dev --name add_notification_preferences
 ```
 
-- [ ] **Step 2: DTO**
+- [x] **Step 2: DTO**
 
 Create `apps/server/src/modules/notification-preferences/dto/update-preferences.dto.ts`:
 
@@ -1290,7 +1290,7 @@ export class UpdatePreferencesDto {
 }
 ```
 
-- [ ] **Step 3: Failing service test**
+- [x] **Step 3: Failing service test**
 
 Create `apps/server/src/modules/notification-preferences/notification-preferences.service.spec.ts`:
 
@@ -1329,14 +1329,14 @@ describe("NotificationPreferencesService", () => {
 });
 ```
 
-- [ ] **Step 4: Run — fail**
+- [x] **Step 4: Run — fail**
 
 ```powershell
 cd apps/server; npx jest notification-preferences.service --verbose
 ```
 Expected: FAIL (module not found).
 
-- [ ] **Step 5: Implement service, controller, module**
+- [x] **Step 5: Implement service, controller, module**
 
 Create `apps/server/src/modules/notification-preferences/notification-preferences.service.ts`:
 
@@ -1411,14 +1411,14 @@ export class NotificationPreferencesModule {}
 ```
 Register `NotificationPreferencesModule` in `app.module.ts`.
 
-- [ ] **Step 6: Run — green**
+- [x] **Step 6: Run — green**
 
 ```powershell
 cd apps/server; npx jest notification-preferences.service --verbose
 ```
 Expected: PASS.
 
-- [ ] **Step 7: Commit**
+- [x] **Step 7: Commit**
 
 ```powershell
 git add apps/server
