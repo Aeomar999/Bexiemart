@@ -5,7 +5,7 @@ const isDev = process.env.NODE_ENV !== "production";
 if (isDev) console.log("BETTER_AUTH_URL:", process.env.BETTER_AUTH_URL);
 import { betterAuth } from "better-auth";
 import { prismaAdapter } from "better-auth/adapters/prisma";
-import { phoneNumber, bearer } from "better-auth/plugins";
+import { phoneNumber, bearer, twoFactor } from "better-auth/plugins";
 import type { PrismaClient } from "@prisma/client";
 import { dash, sentinel } from "@better-auth/infra";
 import * as crypto from "crypto";
@@ -21,6 +21,7 @@ export function createAuth(prisma: PrismaClient) {
     baseURL: process.env.BETTER_AUTH_URL + "/api/v1/auth",
     plugins: [
       bearer(),
+      twoFactor({ issuer: "BexieMart" }),
       dash({
         ...(process.env.BETTER_AUTH_API_URL ? { apiUrl: process.env.BETTER_AUTH_API_URL } : {}),
         ...(process.env.BETTER_AUTH_KV_URL ? { kvUrl: process.env.BETTER_AUTH_KV_URL } : {}),

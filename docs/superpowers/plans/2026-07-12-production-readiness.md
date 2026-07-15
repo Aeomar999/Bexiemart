@@ -1725,7 +1725,7 @@ git commit -m "fix(vendor): real device sessions list + revoke via better-auth (
 - Consumes: existing `createAuth`.
 - Produces: better-auth routes `/auth/two-factor/enable`, `/auth/two-factor/verify-totp`, `/auth/two-factor/disable`, `/auth/two-factor/generate-backup-codes` (Bearer); `login` returns `{ requiresTwoFactor: true }` (no session token) when the user has 2FA on.
 
-- [ ] **Step 1: Add the plugin + schema**
+- [x] **Step 1: Add the plugin + schema**
 
 In `better-auth.ts`, import and register:
 
@@ -1753,7 +1753,7 @@ cd apps/server; npx @better-auth/cli generate   # confirms exact columns for you
 npx prisma migrate dev --name add_two_factor
 ```
 
-- [ ] **Step 2: Surface the login challenge**
+- [x] **Step 2: Surface the login challenge**
 
 In `auth.controller.ts` `login()`, after the better-auth `signInEmail` call, detect the 2FA-required response. better-auth returns a `twoFactorRedirect`/challenge signal rather than a session when 2FA is on — inspect `data` for it (the Step 1 CLI/docs confirm the exact field) and short-circuit:
 
@@ -1764,21 +1764,21 @@ if (data.twoFactorRedirect || data.twoFactor) {
 ```
 The client then calls `/auth/two-factor/verify-totp` with the code to complete sign-in and obtain the session.
 
-- [ ] **Step 3: Verify with a probe / e2e test**
+- [x] **Step 3: Verify with a probe / e2e test**
 
 ```powershell
 cd apps/server; npm run start:dev
 ```
 Probe: log in as a user, enable 2FA (`/auth/two-factor/enable` with password, returns `totpURI` + backup codes), verify a TOTP with an authenticator, then confirm a fresh `login` for that user returns `{ requiresTwoFactor: true }`. Encode this as an e2e test if the existing auth e2e harness supports TOTP (generate codes with `otplib` in the test).
 
-- [ ] **Step 4: Run auth tests**
+- [x] **Step 4: Run auth tests**
 
 ```powershell
 cd apps/server; npx jest auth two-factor --verbose
 ```
 Expected: PASS.
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```powershell
 git add apps/server

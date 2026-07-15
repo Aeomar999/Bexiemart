@@ -169,6 +169,21 @@ describe("AuthController", () => {
       const body = { email: "bad@test.com", password: "wrong" };
       await expect(controller.login(body)).rejects.toThrow("Invalid credentials");
     });
+
+    it("should return requiresTwoFactor when twoFactorRedirect is returned by better-auth", async () => {
+      const signInRes = {
+        ok: true,
+        json: jest.fn().mockResolvedValue({
+          twoFactorRedirect: true,
+        }),
+      };
+      mockAuth.api.signInEmail.mockResolvedValue(signInRes);
+
+      const body = { email: "2fa@test.com", password: "Pass123!" };
+      const result = await controller.login(body);
+
+      expect(result).toEqual({ requiresTwoFactor: true });
+    });
   });
 
   describe("getCurrentUser", () => {
