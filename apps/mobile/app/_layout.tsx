@@ -23,6 +23,7 @@ import * as SplashScreen from "expo-splash-screen";
 SplashScreen.preventAutoHideAsync();
 import { PaystackProvider } from "react-native-paystack-webview";
 import { OfflineBanner } from "../src/components/ui/OfflineBanner";
+import { useOTAUpdate } from "../src/hooks/useOTAUpdate";
 import { PaymentTestModeBanner } from "../src/components/ui/PaymentTestModeBanner";
 import {
   Raleway_400Regular,
@@ -59,6 +60,7 @@ const queryClient = new QueryClient({
 });
 
 function RootLayout() {
+  useOTAUpdate();
   const hydrate = useAuthStore((s) => s.hydrate);
   const isLoading = useAuthStore((s) => s.isLoading);
   const user = useAuthStore((s) => s.user);
@@ -67,9 +69,11 @@ function RootLayout() {
   const [splashDone, setSplashDone] = useState(false);
 
   const [fontsLoaded] = useFonts({
+    Raleway: Raleway_700Bold,
     Raleway_400Regular,
     Raleway_600SemiBold,
     Raleway_700Bold,
+    Nunito: Nunito_400Regular,
     Nunito_400Regular,
     Nunito_500Medium,
     Nunito_600SemiBold,

@@ -242,7 +242,7 @@ export interface MoneyInputProps {
 }
 ```
 
-- [ ] **Step 1: Write the failing tests**
+- [x] **Step 1: Write the failing tests**
 
 ```tsx
 import React from "react";
@@ -332,12 +332,12 @@ describe("MoneyInput", () => {
 });
 ```
 
-- [ ] **Step 2: Run tests to verify they fail**
+- [x] **Step 2: Run tests to verify they fail**
 
 Run: `cd apps/mobile && npx jest src/components/ui/MoneyInput.test.tsx --watchAll=false`
 Expected: FAIL — `Cannot find module './MoneyInput'`.
 
-- [ ] **Step 3: Implement `MoneyInput.tsx`**
+- [x] **Step 3: Implement `MoneyInput.tsx`**
 
 ```tsx
 import { View, Text, TextInput, Pressable } from "react-native";
@@ -493,12 +493,12 @@ function renderBreakdown(amount: number, fee: number) {
 }
 ```
 
-- [ ] **Step 4: Run tests to verify they pass**
+- [x] **Step 4: Run tests to verify they pass**
 
 Run: `cd apps/mobile && npx jest src/components/ui/MoneyInput.test.tsx --watchAll=false`
 Expected: PASS (all cases).
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add apps/mobile/src/components/ui/MoneyInput.tsx apps/mobile/src/components/ui/MoneyInput.test.tsx
@@ -515,7 +515,7 @@ git commit -m "feat(ui): reusable MoneyInput amount field"
 **Interfaces:**
 - Consumes: `MoneyInput` from `@/components/ui/MoneyInput`; `formatMoney` from `@/lib/money`.
 
-- [ ] **Step 1: Convert state + imports**
+- [x] **Step 1: Convert state + imports**
 
 Add imports near the other `ui` imports:
 ```tsx
@@ -531,7 +531,7 @@ In `handleAmountSelect`, change to `const handleAmountSelect = (val: number) => 
 Replace `const isValidAmount = parseFloat(amount || "0") > 0;` with `const isValidAmount = amount > 0;`.
 In the success screen, replace `GHS {parseFloat(amount || "0").toFixed(2)}` with `{formatMoney(amount)}`.
 
-- [ ] **Step 2: Replace the amount block + standalone chips**
+- [x] **Step 2: Replace the amount block + standalone chips**
 
 Replace the label + amount `View` **and** the separate quick-amount chips `View` (the `AMOUNTS.map(...)` block) with a single `MoneyInput`:
 ```tsx
@@ -546,21 +546,21 @@ Replace the label + amount `View` **and** the separate quick-amount chips `View`
 ```
 Delete the now-unused `handleAmountSelect` and the old `AMOUNTS.map` chip block.
 
-- [ ] **Step 3: Update the CTA label**
+- [x] **Step 3: Update the CTA label**
 
 Replace the button title:
 ```tsx
 title={isProcessing ? "Processing..." : `Top up ${formatMoney(amount)}`}
 ```
 
-- [ ] **Step 4: Run the screen's tests + typecheck the file**
+- [x] **Step 4: Run the screen's tests + typecheck the file**
 
 Run: `cd apps/mobile && npx jest app/\(customer\)/wallet --watchAll=false`
 Expected: PASS or "no tests" for this screen; no new failures.
 Run: `cd apps/mobile && npx tsc --noEmit -p tsconfig.json 2>&1 | grep topup.tsx || echo "no topup errors"`
 Expected: `no topup errors`.
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add apps/mobile/app/\(customer\)/wallet/topup.tsx
@@ -574,7 +574,7 @@ git commit -m "refactor(wallet): adopt MoneyInput in Top Up"
 **Files:**
 - Modify: `apps/mobile/app/(customer)/wallet/transfer.tsx`
 
-- [ ] **Step 1: Convert state + imports**
+- [x] **Step 1: Convert state + imports**
 
 Add:
 ```tsx
@@ -589,7 +589,7 @@ Replace every `parseFloat(amount)` / `parseFloat(amount || "0")` with `amount`:
 - Derived block: `const numAmount = amount; const isInsufficient = numAmount > balance; const isValidAmount = numAmount > 0 && !isInsufficient;`
 - Success screen: replace `GHS {parseFloat(amount || "0").toFixed(2)}` with `{formatMoney(amount)}`.
 
-- [ ] **Step 2: Replace the amount block**
+- [x] **Step 2: Replace the amount block**
 
 Replace the label + bordered amount `View` + the manual `isInsufficient` message block with:
 ```tsx
@@ -602,20 +602,20 @@ Replace the label + bordered amount `View` + the manual `isInsufficient` message
 />
 ```
 
-- [ ] **Step 3: Update the CTA label**
+- [x] **Step 3: Update the CTA label**
 
 ```tsx
 title={isProcessing ? "Processing..." : `Send ${formatMoney(amount)}`}
 ```
 
-- [ ] **Step 4: Run + typecheck**
+- [x] **Step 4: Run + typecheck**
 
 Run: `cd apps/mobile && npx jest app/\(customer\)/wallet --watchAll=false`
 Expected: no new failures.
 Run: `cd apps/mobile && npx tsc --noEmit -p tsconfig.json 2>&1 | grep transfer.tsx || echo "no transfer errors"`
 Expected: `no transfer errors`.
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add apps/mobile/app/\(customer\)/wallet/transfer.tsx
@@ -629,7 +629,7 @@ git commit -m "refactor(wallet): adopt MoneyInput in Send Money"
 **Files:**
 - Modify: `apps/mobile/app/(customer)/wallet/request.tsx`
 
-- [ ] **Step 1: Convert state + imports**
+- [x] **Step 1: Convert state + imports**
 
 Add:
 ```tsx
@@ -640,7 +640,7 @@ Change `const [amount, setAmount] = useState("");` → `const [amount, setAmount
 `handleRequest`: `const numAmount = amount;` and success toast `You requested ${formatMoney(numAmount)} from ${contact}.`.
 Derived: `const numAmount = amount; const isValidAmount = numAmount > 0;`.
 
-- [ ] **Step 2: Replace the amount block**
+- [x] **Step 2: Replace the amount block**
 
 Replace the "Request Amount" label + amount `View` (lines with `GHS` + `TextInput`) with:
 ```tsx
@@ -653,20 +653,20 @@ Replace the "Request Amount" label + amount `View` (lines with `GHS` + `TextInpu
 ```
 (No balance cap — a request is what you ask for, so "insufficient" never applies.)
 
-- [ ] **Step 3: Update the CTA label**
+- [x] **Step 3: Update the CTA label**
 
 ```tsx
 title={`Request ${formatMoney(amount)}`}
 ```
 
-- [ ] **Step 4: Run + typecheck**
+- [x] **Step 4: Run + typecheck**
 
 Run: `cd apps/mobile && npx jest app/\(customer\)/wallet --watchAll=false`
 Expected: no new failures.
 Run: `cd apps/mobile && npx tsc --noEmit -p tsconfig.json 2>&1 | grep request.tsx || echo "no request errors"`
 Expected: `no request errors`.
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add apps/mobile/app/\(customer\)/wallet/request.tsx
@@ -682,7 +682,7 @@ git commit -m "refactor(wallet): adopt MoneyInput in Request Money"
 
 **Note:** This screen keeps its own bespoke "Summary" receipt card, "Available" chip, and "Withdraw Max" button. Only the inner amount input changes — do **not** add `feeCalc` here (the screen already renders its own summary).
 
-- [ ] **Step 1: Convert state + imports**
+- [x] **Step 1: Convert state + imports**
 
 Add:
 ```tsx
@@ -695,7 +695,7 @@ Replace `const numAmount = parseFloat(amount) || 0;` with `const numAmount = amo
 `handleMaxAmount`: `setAmount(Math.max(0, availableBalance - 5));`.
 CTA `disabled={numAmount <= 0}` stays valid (numAmount is now `amount`).
 
-- [ ] **Step 2: Replace the inner amount input**
+- [x] **Step 2: Replace the inner amount input**
 
 Replace the inner centered input block:
 ```tsx
@@ -713,20 +713,20 @@ with:
 </View>
 ```
 
-- [ ] **Step 3: Update the CTA label**
+- [x] **Step 3: Update the CTA label**
 
 ```tsx
 title={`Withdraw ${formatMoney(numAmount)}`}
 ```
 
-- [ ] **Step 4: Run + typecheck**
+- [x] **Step 4: Run + typecheck**
 
 Run: `cd apps/mobile && npx jest app/\(vendor\) --watchAll=false`
 Expected: no new failures.
 Run: `cd apps/mobile && npx tsc --noEmit -p tsconfig.json 2>&1 | grep "(earnings)/withdraw.tsx" || echo "no vendor withdraw errors"`
 Expected: `no vendor withdraw errors`.
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add "apps/mobile/app/(vendor)/(earnings)/withdraw.tsx"
@@ -742,7 +742,7 @@ git commit -m "refactor(vendor): adopt MoneyInput in withdraw"
 
 **Note:** Same structure as vendor withdraw; `availableBalance = earnings?.pendingClearance ?? 0`. Keep the Summary card; do not add `feeCalc`.
 
-- [ ] **Step 1: Convert state + imports**
+- [x] **Step 1: Convert state + imports**
 
 Add:
 ```tsx
@@ -754,7 +754,7 @@ Replace `const numAmount = parseFloat(amount) || 0;` with `const numAmount = amo
 `handleWithdrawRequest`: `if (!amount || numAmount <= 0)` → `if (numAmount <= 0)`.
 `handleMaxAmount`: `setAmount(Math.max(0, availableBalance - 5));`.
 
-- [ ] **Step 2: Replace the inner amount input**
+- [x] **Step 2: Replace the inner amount input**
 
 Replace the inner centered input block (the `GHS` `Text` + `TextInput value={amount}`) with:
 ```tsx
@@ -763,20 +763,20 @@ Replace the inner centered input block (the `GHS` `Text` + `TextInput value={amo
 </View>
 ```
 
-- [ ] **Step 3: Update the CTA label**
+- [x] **Step 3: Update the CTA label**
 
 ```tsx
 title={`Withdraw ${formatMoney(numAmount)}`}
 ```
 
-- [ ] **Step 4: Run + typecheck**
+- [x] **Step 4: Run + typecheck**
 
 Run: `cd apps/mobile && npx jest app/\(dispatcher\) --watchAll=false`
 Expected: no new failures.
 Run: `cd apps/mobile && npx tsc --noEmit -p tsconfig.json 2>&1 | grep "(earnings)/withdraw.tsx" || echo "no dispatcher withdraw errors"`
 Expected: `no dispatcher withdraw errors`.
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add "apps/mobile/app/(dispatcher)/(tabs)/(earnings)/withdraw.tsx"
@@ -789,17 +789,17 @@ git commit -m "refactor(dispatcher): adopt MoneyInput in withdraw"
 
 **Files:** none (verification only).
 
-- [ ] **Step 1: Run the full mobile test suite**
+- [x] **Step 1: Run the full mobile test suite**
 
 Run: `cd apps/mobile && yarn test`
 Expected: PASS, including `money.test.ts` and `MoneyInput.test.tsx`; no regressions in existing suites.
 
-- [ ] **Step 2: Confirm no new design-system violations**
+- [x] **Step 2: Confirm no new design-system violations**
 
 Run: `node scripts/check-design-system.mjs`
 Expected: violation count unchanged from the 977-line baseline (no new hex/shadow/off-scale entries in the touched files).
 
-- [ ] **Step 3: Grep for leftover float parsing in the migrated screens**
+- [x] **Step 3: Grep for leftover float parsing in the migrated screens**
 
 Run: `cd apps/mobile && grep -rn "parseFloat" app/\(customer\)/wallet app/\(vendor\)/\(earnings\)/withdraw.tsx "app/(dispatcher)/(tabs)/(earnings)/withdraw.tsx"`
 Expected: no matches in the five migrated screens.

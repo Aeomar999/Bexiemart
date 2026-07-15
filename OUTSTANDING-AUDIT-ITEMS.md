@@ -12,12 +12,11 @@ Remaining work from `AUDIT-CHECKLIST.md` after Phase 1–3 remediation.
 
 ---
 
-## CRITICAL — 1 remaining [🔴]
+## CRITICAL — All addressed [🟢]
 
-### C5 — Enforce HTTPS (`main.ts`)
+### C5 — Enforce HTTPS (`main.ts`) [🟢]
 - `app.set("trust proxy", 1)` is set
-- **Missing**: No HTTP→HTTPS redirect guard or middleware
-- **Fix**: Add a middleware that checks `req.secure`/`req.headers["x-forwarded-proto"]` and redirects HTTP to HTTPS, or enforce at reverse-proxy level (nginx/Caddy)
+- **Fixed**: Added HTTP→HTTPS redirect middleware checking `x-forwarded-proto` and `req.secure` in `main.ts:24-38`.
 
 ---
 
@@ -40,58 +39,48 @@ Remaining work from `AUDIT-CHECKLIST.md` after Phase 1–3 remediation.
 
 ---
 
-## MEDIUM — 5 remaining, 1 partial [🔴🟡]
+## MEDIUM — All addressed [🟢]
 
-### M3 — Email verification enforcement [🔴]
-- `emailVerified` field exists in Prisma schema
-- **Missing**: No verification email on signup, no enforcement gating vendoring/withdrawals/admin actions
-- **Fix**: Implement email verification flow (send email with token, verify endpoint), gate sensitive operations behind `emailVerified === true`
+### M3 — Email verification enforcement [🟢]
+- `emailVerified` field exists in Prisma schema and email verification endpoints exist in `BetterAuth` / `AuthController`
+- **Fixed**: Created `EmailVerifiedGuard` (`email-verified.guard.ts`) and configured `createRoleGuard` (`VendorGuard`, `AdminGuard`, `DispatcherGuard`) and `SuperAdminGuard` to enforce `user.emailVerified === true` before allowing access. Also gated sensitive wallet mutations (`withdraw` and `transfer`) and vendor onboarding behind `EmailVerifiedGuard`. Added comprehensive unit tests (`guards.spec.ts`).
 
-### M4 — Migrate wallet PIN to argon2 [🔴]
-- `wallet.service.ts:4` imports `bcryptjs` instead of `argon2`
-- **Fix**: Replace bcryptjs → argon2id; keep existing brute-force freeze logic (5-failure lockout, PIN attempt tracking)
+### M4 — Migrate wallet PIN to argon2 [🟢]
+- **Fixed**: Upgraded PIN hashing to `argon2id` in `wallet.service.ts`, maintaining 5-attempt lockout logic and automatic backward-compatible migration for legacy `bcrypt` hashes.
 
-### M5 — Validate dispatcher coordinates [🔴]
-- `dispatcher.service.ts:56` accepts raw `lat: number, lng: number`
-- **Missing**: No bounds validation (e.g., ±500m from campus center) or plausibility check
-- **Fix**: Add validation for realistic lat/lng ranges, optionally constrain to operating area
+### M5 — Validate dispatcher coordinates [🟢]
+- **Fixed**: Added bounds validation (-90/90 lat, -180/180 lng) and implausibility checks in `dispatcher.service.ts`.
 
-### M6 — Prisma connection pool config [🔴]
-- **Missing**: No custom `PrismaClient` constructor with pool size, statement timeout, connection retry, or slow-query logging
-- **Fix**: Configure `PrismaClient({ log, datasources: { db: { url } } })` with connection pool parameters
+### M6 — Prisma connection pool config [🟢]
+- **Fixed**: Configured connection pooling (`Pool` with max/timeout parameters) + query duration logging and slow query detection (`>200ms` warning) in `PrismaService`.
 
-### M7 — Environment-specific API URL [🟡]
-- `eas.json` has per-channel `EXPO_PUBLIC_API_URL` for `preview` and `device` profiles, but:
-  - `production` build profile has **no env vars** defined (`"autoIncrement": true` only)
-  - `.env` still has a hardcoded local IP (`http://172.20.10.4:3000/api/v1`)
-- **Fix**: Add `EXPO_PUBLIC_API_URL` to production build profile with production URL; ensure all channels covered
+### M7 — Environment-specific API URL [🟢]
+- **Fixed**: Confirmed and explicit `EXPO_PUBLIC_API_URL` and `EXPO_PUBLIC_SOCKET_URL` variables configured for `development`, `preview`, `device`, and `production` channels in `eas.json`.
 
-### M9 — Error monitoring (Sentry) [🔴]
-- **Missing**: No `@sentry/node` or `@sentry/react-native` found anywhere
-- **Fix**: Integrate Sentry for both server (source maps) and mobile; configure error tracking + performance monitoring
+### M9 — Error monitoring (Sentry) [🟢]
+- **Fixed**: Integrated Sentry across the full stack. On the mobile app, wrapped `RootLayout` with `Sentry.wrap` and instrumented `ErrorBoundary` with `Sentry.captureException`. On the server, initialized Sentry in `instrument.ts` (imported first in `main.ts`) and instrumented `GlobalExceptionFilter` to capture and report all unhandled server exceptions (5xx errors) along with correlation IDs.
 
 ---
 
-## LOW — 6 remaining [🔴]
+## LOW — All addressed [🟢]
 
-### L1 — Feature flags [🔴]
-- **Fix**: Add LaunchDarkly / PostHog for gradual rollouts, A/B testing, kill switches
+### L1 — Feature flags [🟢]
+- **Fixed**: Integrated PostHog across full stack for remote flags, kill switches, and telemetry (`flash-sales-active`, `mobile-auth`, `dark-mode`). Created global `PostHogModule` and `PostHogService` with local fail-safe caching on backend (`apps/server`), gated `FlashSalesService.findActive()` behind remote feature checks, and connected mobile (`apps/mobile`) via `useFlashSalesEnabled` hook to dynamically hide or reveal flash sales components.
 
-### L2 — Docker & deployment config [🔴]
-- **Fix**: Add `Dockerfile`, `docker-compose.yml`, `nginx.conf`, deployment scripts
+### L2 — Docker & deployment config [🟢]
+- **Fixed**: Created multi-stage production `Dockerfile`s and `.dockerignore` for both `apps/server` and `apps/admin` (using Next.js standalone output). Created `nginx/nginx.conf` with reverse proxy, rate limiting (`api_limit`, `auth_limit`), `X-Forwarded-Proto` handling, and Socket.io WebSocket proxying. Created full production `docker-compose.yml` (`postgres`, `redis`, `server`, `admin`, `nginx`) with health checks, `docker-compose.override.yml.example` for local dev, and automated deployment scripts (`scripts/deploy.sh` and `scripts/deploy.ps1`).
 
-### L4 — Flash sales scheduler [🔴]
-- **Fix**: Add Bull/RabbitMQ queue or cron job to activate/deactivate flash sales instead of query-time checks
+### L4 — Flash sales scheduler [🟢]
+- **Fixed**: Implemented `@nestjs/schedule` cron task (`FlashSalesSchedulerService`) running every minute to automatically deactivate expired flash sales. Updated `OrdersService` checkout transactions to fetch active flash sales, verify expiration and quantity bounds, apply discounted prices atomically, and increment `soldCount`.
 
-### L5 — Accessibility labels (mobile) [🔴]
-- **Fix**: Add `accessibilityLabel`, `accessibilityRole`, `aria-*` to all interactive elements
+### L5 — Accessibility labels (mobile) [🟢]
+- **Fixed**: Conducted complete accessibility audit across mobile UI components (`Button`, `Input`, `CategoryCard`, `ProductCard`, `OrderCard`, `Avatar`, `Badge`, `MoneyInput`, `PhotoPicker`, etc.) and screens. Added `accessibilityRole`, `accessibilityState`, and descriptive `accessibilityLabel` attributes to all interactive elements and buttons. Fixed `captureAppLifecycleEvents` null-checking in `RootLayout`.
 
-### L6 — OTA updates [🔴]
-- `eas.json` has `"appVersionSource": "remote"` but no `"update"` section or channel config
-- **Fix**: Configure EAS Update for over-the-air mobile patches
+### L6 — OTA updates [🟢]
+- **Fixed**: Configured EAS Update across `eas.json` and `app.json` (`checkAutomatically: "ON_LOAD"`, `runtimeVersion: { policy: "appVersion" }`, channel definitions for `development`, `preview`, `device`, `production`). Created `useOTAUpdate` hook monitoring foreground transitions (`AppState`) to check for, download, and apply updates cleanly without app store resubmission.
 
-### L10 — Consolidate fonts (mobile) [🔴]
-- **Fix**: Reduce from 4 font families to 2 (heading + body) for visual consistency and smaller bundle size
+### L10 — Consolidate fonts (mobile) [🟢]
+- **Fixed**: Verified and standardized mobile typography architecture across `tailwind.config.js`, `global.css`, `theme/typography.ts`, and `RootLayout` (`app/_layout.tsx`). Consolidated to exactly 2 core font families: **Raleway** (`heading`) and **Nunito** (`body`), mapped and aliased cleanly across `@expo-google-fonts` and native style objects.
 
 ---
 
@@ -99,10 +88,10 @@ Remaining work from `AUDIT-CHECKLIST.md` after Phase 1–3 remediation.
 
 | Priority | Total | Fixed 🟢 | Partial 🟡 | Remaining 🔴 |
 |----------|-------|----------|------------|-------------|
-| Critical | 5 | 4 | 0 | **1** |
+| Critical | 5 | 5 | 0 | **0** |
 | High | 8 | 8 | 0 | **0** |
-| Medium | 9 | 3 | 1 | **5** |
-| Low | 10 | 4 | 0 | **6** |
-| **Total** | **32** | **19** | **1** | **12** |
+| Medium | 9 | 9 | 0 | **0** |
+| Low | 10 | 10 | 0 | **0** |
+| **Total** | **32** | **32** | **0** | **0** |
 
-**Overall completion: ~59%** (19/32 fixed, 59% — or 60% counting partial as half)
+**Overall completion: 100%** (32/32 audit items fixed)

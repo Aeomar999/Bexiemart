@@ -22,9 +22,11 @@ export const updateProfile = async (payload: { name?: string; image?: string }) 
 };
 
 export const updatePassword = async (payload: { currentPassword?: string; newPassword?: string }) => {
-  // Assuming standard better-auth or custom endpoint. 
-  // If better-auth, it might be /auth/change-password or similar. We'll use a placeholder or /auth/password
-  const { data } = await apiClient.post("/auth/change-password", payload);
+  const { data } = await apiClient.post("/auth/change-password", {
+    currentPassword: payload.currentPassword,
+    newPassword: payload.newPassword,
+    revokeOtherSessions: true,
+  });
   return data;
 };
 

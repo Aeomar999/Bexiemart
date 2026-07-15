@@ -26,7 +26,7 @@ export function CategoryCard({
       className="mb-4"
       onPress={onPress}
       accessibilityRole="button"
-      accessibilityLabel={`${title}, ${itemCount} items`}
+      accessibilityLabel={`${name}, ${count ?? 0} items`}
     >
       <Card variant="outlined" padding="sm">
         <View

@@ -6,10 +6,15 @@ import { Icon } from "@/components/ui/Icon";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import { useState } from "react";
+import { authApi } from "@/lib/api/auth";
+import { usePopupStore } from "@/lib/stores/popup-store";
 
 export default function ChangePasswordScreen() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
+
+  const [loading, setLoading] = useState(false);
+  const { showPopup } = usePopupStore();
 
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
@@ -41,6 +46,27 @@ export default function ChangePasswordScreen() {
     newPassword.length > 0 &&
     newPassword === confirmPassword &&
     strength > 1;
+
+  const handleSubmit = async () => {
+    try {
+      setLoading(true);
+      await authApi.changePassword(currentPassword, newPassword);
+      showPopup({
+        type: "success",
+        title: "Password changed",
+        message: "Use your new password next time you sign in.",
+      });
+      router.back();
+    } catch (e: any) {
+      showPopup({
+        type: "error",
+        title: "Couldn't change password",
+        message: e?.response?.data?.message || e?.message || "Check your current password.",
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <View className="flex-1 bg-background">
@@ -126,13 +152,14 @@ export default function ChangePasswordScreen() {
         <Button
           title="Update Password"
           variant="primary"
-          disabled={!isFormValid}
-          onPress={() => {
-            // Mock successful save
-            router.back();
-          }}
+          disabled={!isFormValid || loading}
+          loading={loading}
+          onPress={handleSubmit}
         />
-        <Pressable className="mt-6 self-center" onPress={() => {}}>
+        <Pressable
+          className="mt-6 self-center"
+          onPress={() => router.push("/(auth)/forgot-password")}
+        >
           <Text className="text-body-md font-bold text-primary">Forgot Current Password?</Text>
         </Pressable>
       </ScrollView>
