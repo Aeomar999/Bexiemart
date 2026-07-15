@@ -55,7 +55,7 @@ export default function DispatcherHelpScreen() {
     createTicketMutation.mutate(
       {
         subject: subject.trim(),
-        message: message.trim(),
+        content: message.trim(),
         category: "DELIVERY",
       },
       {

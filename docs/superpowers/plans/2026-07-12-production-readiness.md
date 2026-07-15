@@ -1797,25 +1797,25 @@ Make `apps/mobile/app/(vendor)/(settings)/two-factor.tsx` real: reflect the true
 - Consumes: Task 23 routes; `authClient` already wraps better-auth — prefer `authClient.twoFactor.*` if the expo client exposes it, else hit the REST routes via `apiClient`.
 - Produces: `useTwoFactorStatus()`, `useEnableTwoFactor()`, `useVerifyTotp()`, `useDisableTwoFactor()`.
 
-- [ ] **Step 1: API + hooks**
+- [x] **Step 1: API + hooks**
 
 Create `apps/mobile/src/lib/api/two-factor.ts` wrapping the routes (`enable` `{ password }` → `{ totpURI, backupCodes }`; `verify-totp` `{ code }`; `disable` `{ password }`). Create `use-two-factor.ts` with the four hooks (queries/mutations, invalidating a `["auth","2fa"]` key). Read enabled state from `authClient.getSession()` `user.twoFactorEnabled`.
 
-- [ ] **Step 2: Rewrite the screen**
+- [x] **Step 2: Rewrite the screen**
 
 Replace `useState(true)` with the real enabled flag. The Authenticator-App switch:
 - OFF→ON: prompt for the account password → call enable → show the `totpURI` as a QR (use an existing QR lib if present, else display the secret) → collect the 6-digit code → `verify-totp` → on success flip to enabled and display the returned backup codes once.
 - ON→OFF: prompt for password → `disable`.
 Delete the fake "SMS Recovery `+233 ** *** *492`" row entirely (no SMS 2FA backend). Keep a real "Recovery Codes" row showing the actual remaining count from the enable response (persist count locally or re-fetch); regenerating calls `generate-backup-codes`.
 
-- [ ] **Step 3: Typecheck and manual-verify**
+- [x] **Step 3: Typecheck and manual-verify**
 
 ```powershell
 cd apps/mobile; npx tsc --noEmit
 ```
 Expected: exit 0. Manual: enable 2FA, scan the QR into Google Authenticator, verify; sign out and back in → the app now requires the TOTP code (Task 23 challenge); disable turns it off.
 
-- [ ] **Step 4: Commit**
+- [x] **Step 4: Commit**
 
 ```powershell
 git add apps/mobile
@@ -1835,7 +1835,7 @@ Two loose ends that make the settings/auth surfaces honest. (a) `apps/mobile/app
 - Consumes: `POST /support/tickets` `{ category, subject, content?, orderId? }`; admin `/api/session` returning `{ requiresTwoFactor }`.
 - Produces: `useCreateSupportTicket()`.
 
-- [ ] **Step 1: Support api + hook**
+- [x] **Step 1: Support api + hook**
 
 Create `apps/mobile/src/lib/api/support.ts`:
 
@@ -1871,7 +1871,7 @@ export function useCreateSupportTicket() {
 }
 ```
 
-- [ ] **Step 2: Wire `contact.tsx`**
+- [x] **Step 2: Wire `contact.tsx`**
 
 Replace the `setTimeout` mock with a real submit. Make the category Pressable open a picker bound to `SUPPORT_CATEGORIES` (state-backed), require a `subject` (a short title field — add one; the server requires `subject` min length 3), send `content` from the description, and pass `orderId` when the optional field is filled:
 
@@ -1902,11 +1902,11 @@ const handleSubmit = async () => {
 ```
 The "Attach Screenshot" affordance: either wire it to a real Cloudinary image upload feeding `mediaUrl` (the ticket DTO accepts `mediaUrl`), or remove it. Do not leave it decorative.
 
-- [ ] **Step 3: Admin 2FA login handling**
+- [x] **Step 3: Admin 2FA login handling**
 
 In the admin login page, when `useLogin`'s result is `{ requiresTwoFactor: true }`, render a TOTP code field and complete sign-in against the better-auth verify route through the proxy (`POST /api/proxy/auth/two-factor/verify-totp`), then re-issue the session cookie. If admin 2FA is out of scope for launch, at minimum the page must show a clear "2FA required — complete on a device that supports it" state rather than silently failing. Pick one and implement it fully.
 
-- [ ] **Step 4: Typecheck and manual-verify**
+- [x] **Step 4: Typecheck and manual-verify**
 
 ```powershell
 cd apps/mobile; npx tsc --noEmit
