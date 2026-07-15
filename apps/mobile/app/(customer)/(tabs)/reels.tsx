@@ -16,9 +16,16 @@ import { Image } from "expo-image";
 import { useRouter } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Icon } from "@/components/ui/Icon";
-import { useState, useRef, useCallback } from "react";
+import { useState, useRef, useCallback, useEffect } from "react";
 import { usePopupStore } from "@/lib/stores/popup-store";
-import { useReels, useToggleReelLike, useIncrementReelView } from "@/lib/hooks/use-reels";
+import {
+  useReels,
+  useToggleReelLike,
+  useIncrementReelView,
+  useReelComments,
+  useAddReelComment,
+} from "@/lib/hooks/use-reels";
+import { useVideoPlayer, VideoView } from "expo-video";
 
 const { height, width } = Dimensions.get("window");
 
@@ -27,6 +34,161 @@ const formatNumber = (num: number) => {
   if (num >= 1000000) return (num / 1000000).toFixed(1) + "M";
   if (num >= 1000) return (num / 1000).toFixed(1) + "K";
   return num.toString();
+};
+
+const ReelItem = ({
+  item,
+  isActive,
+  onToggleLike,
+  onOpenComments,
+  onShare,
+  insetsBottom,
+}: {
+  item: any;
+  isActive: boolean;
+  onToggleLike: (id: string) => void;
+  onOpenComments: (reel: any) => void;
+  onShare: (reel: any) => void;
+  insetsBottom: number;
+}) => {
+  const router = useRouter();
+  const showPopup = usePopupStore((s) => s.showPopup);
+  const player = useVideoPlayer(item.videoUrl, (p) => {
+    p.loop = true;
+    p.muted = false;
+  });
+
+  useEffect(() => {
+    if (isActive) {
+      player.play();
+    } else {
+      player.pause();
+    }
+  }, [isActive, player]);
+
+  const vendorName = item.user?.name ?? "Vendor";
+  const productName = item.product?.name ?? "Product";
+  const productPrice = item.product?.price ?? 0;
+  const productId = item.product?.id;
+  const isLiked = item.liked ?? false;
+  const isFollowing = item.isFollowing ?? false;
+
+  return (
+    <View
+      style={{ width, height: height - (Platform.OS === "android" ? 0 : 0) }}
+      className="bg-black relative"
+    >
+      {item.thumbnailUrl ? (
+        <Image
+          source={{ uri: item.thumbnailUrl }}
+          style={{ width: "100%", height: "100%", position: "absolute" }}
+          contentFit="cover"
+        />
+      ) : null}
+      <VideoView
+        style={{ width: "100%", height: "100%" }}
+        player={player}
+        contentFit="cover"
+        nativeControls={false}
+      />
+      <View className="absolute inset-0 bg-black/30" pointerEvents="none" />
+
+      {/* Right Side Actions */}
+      <View className="absolute right-4 bottom-32 items-center gap-6 z-20">
+        <Pressable className="items-center" onPress={() => onToggleLike(item.id)}>
+          <View className="w-12 h-12 rounded-full bg-black/40 items-center justify-center mb-1">
+            <Icon name="heart" size={24} color={isLiked ? "#ef4444" : "#fff"} />
+          </View>
+          <Text className="text-white font-bold text-body-sm shadow-sm">
+            {formatNumber(item.likesCount ?? 0)}
+          </Text>
+        </Pressable>
+
+        <Pressable className="items-center" onPress={() => onOpenComments(item)}>
+          <View className="w-12 h-12 rounded-full bg-black/40 items-center justify-center mb-1">
+            <Icon name="message-circle" size={24} color="#fff" />
+          </View>
+          <Text className="text-white font-bold text-body-sm shadow-sm">
+            {formatNumber(item.commentsCount ?? 0)}
+          </Text>
+        </Pressable>
+
+        <Pressable className="items-center" onPress={() => onShare(item)}>
+          <View className="w-12 h-12 rounded-full bg-black/40 items-center justify-center mb-1">
+            <Icon name="share-2" size={24} color="#fff" />
+          </View>
+          <Text className="text-white font-bold text-body-sm shadow-sm">
+            {formatNumber(item.shares ?? 0)}
+          </Text>
+        </Pressable>
+      </View>
+
+      {/* Bottom Info & Product Card */}
+      <View
+        className="absolute left-0 right-0 bottom-0 p-5 bg-gradient-to-t from-black/90 via-black/50 to-transparent pt-20 z-10"
+        style={{ paddingBottom: Math.max(insetsBottom, 20) }}
+      >
+        <View className="flex-row items-center gap-3 mb-3">
+          <View className="w-10 h-10 rounded-full bg-secondary border-2 border-card items-center justify-center overflow-hidden">
+            <Icon name="user" size={20} color="#94a3b8" />
+          </View>
+          <Text className="text-white font-bold text-body-lg shadow-sm">
+            @{vendorName.replace(/\s+/g, "")}
+          </Text>
+          <Pressable
+            className={`border px-3 py-1 rounded-full ${isFollowing ? "border-transparent bg-card/20" : "border-card/40"}`}
+            onPress={() =>
+              showPopup({
+                type: "info",
+                title: "Coming Soon",
+                message: "Follow feature coming soon!",
+              })
+            }
+          >
+            <Text className="text-white font-bold text-caption">
+              {isFollowing ? "Following" : "Follow"}
+            </Text>
+          </Pressable>
+        </View>
+
+        <Text className="text-white font-body text-body-md mb-4 shadow-sm w-4/5" numberOfLines={2}>
+          {item.caption}
+        </Text>
+
+        {/* Linked Product Card */}
+        <Pressable
+          className="bg-card/10 backdrop-blur-md border border-card/20 rounded-2xl p-3 flex-row items-center justify-between"
+          onPress={() => productId && router.push(`/(customer)/product/${productId}`)}
+        >
+          <View className="flex-row items-center gap-3 flex-1">
+            <View className="w-12 h-12 bg-card rounded-xl items-center justify-center">
+              <Icon name="shopping-bag" size={20} color="#0f172a" />
+            </View>
+            <View className="flex-1 pr-2">
+              <Text className="text-white font-bold text-body-md" numberOfLines={1}>
+                {productName}
+              </Text>
+              <Text className="text-white/80 font-body text-body-sm">
+                GHS {Number(productPrice).toFixed(2)}
+              </Text>
+            </View>
+          </View>
+          <Pressable
+            className="bg-primary px-5 py-2.5 rounded-full"
+            onPress={() => {
+              showPopup({
+                type: "success",
+                title: "Added to Cart",
+                message: `${productName} added to your cart.`,
+              });
+            }}
+          >
+            <Text className="text-white font-bold text-sm">Buy</Text>
+          </Pressable>
+        </Pressable>
+      </View>
+    </View>
+  );
 };
 
 export default function ReelsScreen() {
@@ -44,12 +206,26 @@ export default function ReelsScreen() {
   const [activeReelForComments, setActiveReelForComments] = useState<any | null>(null);
   const [newComment, setNewComment] = useState("");
 
+  const { data: comments = [], isLoading: commentsLoading } = useReelComments(
+    activeReelForComments?.id ?? null
+  );
+  const addComment = useAddReelComment();
+
   // Track which reel is currently in view
   const viewabilityConfig = useRef({ itemVisiblePercentThreshold: 70 }).current;
   const onViewableItemsChanged = useRef(
     ({ viewableItems }: { viewableItems: Array<{ index: number | null }> }) => {
-      if (viewableItems.length > 0) {
-        setActiveReelIndex(viewableItems[0].index ?? 0);
+      if (
+        viewableItems.length > 0 &&
+        viewableItems[0].index !== null &&
+        viewableItems[0].index !== undefined
+      ) {
+        const newIndex = viewableItems[0].index;
+        setActiveReelIndex(newIndex);
+        const item = reels[newIndex];
+        if (item?.id) {
+          incrementView.mutate(item.id);
+        }
       }
     }
   ).current;
@@ -65,13 +241,16 @@ export default function ReelsScreen() {
   };
 
   const handlePostComment = () => {
-    if (!newComment.trim() || !activeReelForComments) return;
-    showPopup({
-      type: "success",
-      title: "Comment Added",
-      message: "Your comment has been posted.",
-    });
-    setNewComment("");
+    const content = newComment.trim();
+    if (!content || !activeReelForComments) return;
+    addComment.mutate(
+      { reelId: activeReelForComments.id, content },
+      {
+        onSuccess: () => setNewComment(""),
+        onError: (e: any) =>
+          showPopup({ type: "error", title: "Couldn't post", message: e?.message ?? "Try again." }),
+      }
+    );
   };
 
   const handleToggleLike = (reelId: string) => {
@@ -86,136 +265,25 @@ export default function ReelsScreen() {
     );
   }
 
-  const renderReel = ({ item, index }: { item: any; index: number }) => {
-    const isActive = index === activeReelIndex;
-    const vendorName = item.user?.name ?? "Vendor";
-    const productName = item.product?.name ?? "Product";
-    const productPrice = item.product?.price ?? 0;
-    const productId = item.product?.id;
-    const isLiked = item.isLiked ?? false;
-    const isFollowing = item.isFollowing ?? false;
-
-    return (
-      <View
-        style={{ width, height: height - (Platform.OS === "android" ? 0 : 0) }}
-        className="bg-black relative"
-      >
-        {/* Background Video/Image Simulator */}
-        <Image
-          source={{ uri: item.videoUrl }}
-          style={{ width: "100%", height: "100%", opacity: isActive ? 1 : 0.4 }}
-          contentFit="cover"
-        />
-        <View className="absolute inset-0 bg-black/30" />
-
-        {/* Right Side Actions */}
-        <View className="absolute right-4 bottom-32 items-center gap-6 z-20">
-          <Pressable className="items-center" onPress={() => handleToggleLike(item.id)}>
-            <View className="w-12 h-12 rounded-full bg-black/40 items-center justify-center mb-1">
-              <Icon name="heart" size={24} color={isLiked ? "#ef4444" : "#fff"} />
-            </View>
-            <Text className="text-white font-bold text-body-sm shadow-sm">
-              {item.likesCount ?? 0}
-            </Text>
-          </Pressable>
-
-          <Pressable
-            className="items-center"
-            onPress={() => {
-              setActiveReelForComments(item);
-              setCommentModalVisible(true);
-            }}
-          >
-            <View className="w-12 h-12 rounded-full bg-black/40 items-center justify-center mb-1">
-              <Icon name="message-circle" size={24} color="#fff" />
-            </View>
-            <Text className="text-white font-bold text-body-sm shadow-sm">0</Text>
-          </Pressable>
-
-          <Pressable className="items-center" onPress={() => handleShare(item)}>
-            <View className="w-12 h-12 rounded-full bg-black/40 items-center justify-center mb-1">
-              <Icon name="share-2" size={24} color="#fff" />
-            </View>
-            <Text className="text-white font-bold text-body-sm shadow-sm">{item.shares ?? 0}</Text>
-          </Pressable>
-        </View>
-
-        {/* Bottom Info & Product Card */}
-        <View
-          className="absolute left-0 right-0 bottom-0 p-5 bg-gradient-to-t from-black/90 via-black/50 to-transparent pt-20 z-10"
-          style={{ paddingBottom: Math.max(insets.bottom, 20) }}
-        >
-          <View className="flex-row items-center gap-3 mb-3">
-            <View className="w-10 h-10 rounded-full bg-secondary border-2 border-card items-center justify-center overflow-hidden">
-              <Icon name="user" size={20} color="#94a3b8" />
-            </View>
-            <Text className="text-white font-bold text-body-lg shadow-sm">
-              @{vendorName.replace(/\s+/g, "")}
-            </Text>
-            <Pressable
-              className={`border px-3 py-1 rounded-full ${isFollowing ? "border-transparent bg-card/20" : "border-card/40"}`}
-              onPress={() =>
-                showPopup({
-                  type: "info",
-                  title: "Coming Soon",
-                  message: "Follow feature coming soon!",
-                })
-              }
-            >
-              <Text className="text-white font-bold text-caption">
-                {isFollowing ? "Following" : "Follow"}
-              </Text>
-            </Pressable>
-          </View>
-
-          <Text
-            className="text-white font-body text-body-md mb-4 shadow-sm w-4/5"
-            numberOfLines={2}
-          >
-            {item.caption}
-          </Text>
-
-          {/* Linked Product Card */}
-          <Pressable
-            className="bg-card/10 backdrop-blur-md border border-card/20 rounded-2xl p-3 flex-row items-center justify-between"
-            onPress={() => productId && router.push(`/(customer)/product/${productId}`)}
-          >
-            <View className="flex-row items-center gap-3 flex-1">
-              <View className="w-12 h-12 bg-card rounded-xl items-center justify-center">
-                <Icon name="shopping-bag" size={20} color="#0f172a" />
-              </View>
-              <View className="flex-1 pr-2">
-                <Text className="text-white font-bold text-body-md" numberOfLines={1}>
-                  {productName}
-                </Text>
-                <Text className="text-white/80 font-body text-body-sm">
-                  GHS {Number(productPrice).toFixed(2)}
-                </Text>
-              </View>
-            </View>
-            <Pressable
-              className="bg-primary px-5 py-2.5 rounded-full"
-              onPress={() => {
-                showPopup({
-                  type: "success",
-                  title: "Added to Cart",
-                  message: `${productName} added to your cart.`,
-                });
-              }}
-            >
-              <Text className="text-white font-bold text-sm">Buy</Text>
-            </Pressable>
-          </Pressable>
-        </View>
-      </View>
-    );
-  };
+  const renderItem = ({ item, index }: { item: any; index: number }) => (
+    <ReelItem
+      item={item}
+      isActive={index === activeReelIndex}
+      onToggleLike={handleToggleLike}
+      onOpenComments={(reel) => {
+        setActiveReelForComments(reel);
+        setCommentModalVisible(true);
+      }}
+      onShare={handleShare}
+      insetsBottom={insets.bottom}
+    />
+  );
 
   return (
     <View className="flex-1 bg-black relative">
       <FlashList
         data={reels}
-        renderItem={renderReel}
+        renderItem={renderItem}
         keyExtractor={(item) => item.id}
         pagingEnabled
         showsVerticalScrollIndicator={false}
@@ -252,8 +320,6 @@ export default function ReelsScreen() {
         <Text className="text-heading-md font-heading font-bold text-white shadow-sm">
           Discover
         </Text>
-        {/* Spacer keeps the title centered; replaces a camera button that had
-            no handler (restore as a Pressable once a create-reel flow exists). */}
         <View className="w-10 h-10" />
       </View>
 
@@ -275,7 +341,9 @@ export default function ReelsScreen() {
             {/* Modal Header */}
             <View className="flex-row justify-between items-center p-5 border-b border-border">
               <Text className="text-body-lg font-bold font-heading text-foreground">
-                0 comments
+                {activeReelForComments
+                  ? `${activeReelForComments.commentsCount ?? comments.length} comments`
+                  : "0 comments"}
               </Text>
               <Pressable
                 accessibilityRole="button"
@@ -290,35 +358,41 @@ export default function ReelsScreen() {
 
             {/* Comments List */}
             <FlashList
-              data={[]}
+              data={comments}
               keyExtractor={(item: any) => item.id}
               className="flex-1 px-5 pt-4"
               estimatedItemSize={60}
               ListEmptyComponent={
-                <View className="items-center justify-center py-10">
-                  <Text className="text-muted-foreground text-body-md">
-                    No comments yet. Be the first!
-                  </Text>
-                </View>
+                commentsLoading ? (
+                  <View className="items-center justify-center py-10">
+                    <ActivityIndicator color="#64748b" />
+                  </View>
+                ) : (
+                  <View className="items-center justify-center py-10">
+                    <Text className="text-muted-foreground text-body-md">
+                      No comments yet. Be the first!
+                    </Text>
+                  </View>
+                )
               }
               renderItem={({ item }: { item: any }) => (
                 <View className="flex-row gap-3 mb-6">
-                  <View className="w-8 h-8 rounded-full bg-secondary items-center justify-center">
-                    <Text className="text-muted-foreground font-bold text-body-sm">
-                      {item.username.charAt(0).toUpperCase()}
-                    </Text>
+                  <View className="w-8 h-8 rounded-full bg-secondary items-center justify-center overflow-hidden">
+                    {item.user?.image ? (
+                      <Image source={{ uri: item.user.image }} style={{ width: 32, height: 32 }} />
+                    ) : (
+                      <Text className="text-muted-foreground font-bold text-body-sm">
+                        {(item.user?.name || "U").charAt(0).toUpperCase()}
+                      </Text>
+                    )}
                   </View>
                   <View className="flex-1">
                     <Text className="text-body-sm text-muted-foreground font-bold mb-1">
-                      {item.username}
+                      {item.user?.name || "Customer"}
                     </Text>
                     <Text className="text-body-md text-foreground font-body leading-tight">
-                      {item.text}
+                      {item.content}
                     </Text>
-                  </View>
-                  <View className="items-center">
-                    <Icon name="heart" size={14} color="#94a3b8" />
-                    <Text className="text-caption text-muted-foreground mt-1">{item.likes}</Text>
                   </View>
                 </View>
               )}

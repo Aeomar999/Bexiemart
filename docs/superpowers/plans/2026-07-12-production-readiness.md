@@ -2227,7 +2227,7 @@ Replace the `<Image>` simulator with `expo-video` playback and wire the comment 
 - Consumes: `GET /reels/:id/comments`, `POST /reels/:id/comments` (Task 27).
 - Produces: `useReelComments(reelId)`, `useAddReelComment()`.
 
-- [ ] **Step 1: Comment hooks**
+- [x] **Step 1: Comment hooks**
 
 Add to the reels api module (`apps/mobile/src/lib/api/reels.ts` or equivalent used by `use-reels.ts`):
 
@@ -2261,7 +2261,7 @@ export function useAddReelComment() {
 }
 ```
 
-- [ ] **Step 2: Real playback**
+- [x] **Step 2: Real playback**
 
 In `reels.tsx`, replace the `<Image source={{ uri: item.videoUrl }}>` block (lines 103–108) with an `expo-video` player that plays only the active reel:
 
@@ -2287,7 +2287,7 @@ useEffect(() => {
 ```
 Show `item.thumbnailUrl` as a poster `<Image>` underneath while the video buffers. (Because `renderReel` is a function component invoked by FlashList, hooks inside it are valid only if it's rendered as a component — if the linter flags the hook, extract `renderReel`'s body into a `ReelItem` component and render `<ReelItem item={item} isActive={...} />`.)
 
-- [ ] **Step 3: Real comments**
+- [x] **Step 3: Real comments**
 
 Replace `handlePostComment` (lines 67–75). In the comment modal, load real comments with `useReelComments(activeReelForComments?.id)` and render them; the send button calls:
 
@@ -2307,14 +2307,14 @@ const handlePostComment = () => {
 ```
 Replace the hardcoded "0 comments" / "No comments yet" with the real list + `item.commentsCount`.
 
-- [ ] **Step 4: Typecheck and manual-verify**
+- [x] **Step 4: Typecheck and manual-verify**
 
 ```powershell
 cd apps/mobile; npx tsc --noEmit
 ```
 Expected: exit 0. Manual: the feed plays real video (only the visible reel plays audio); posting a comment persists (reopen the modal / another device shows it); the comment count increments.
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```powershell
 git add apps/mobile

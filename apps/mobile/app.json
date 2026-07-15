@@ -127,7 +127,8 @@
           "organization": "kreddible",
           "project": "bexiemart-mobile"
         }
-      ]
+      ],
+      "expo-video"
     ],
     "experiments": {
       "typedRoutes": true
