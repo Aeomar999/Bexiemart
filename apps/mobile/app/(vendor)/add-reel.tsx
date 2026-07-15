@@ -21,6 +21,8 @@ import { useAuthStore } from "@/lib/stores/auth-store";
 import { useProductStore } from "@/lib/stores/product-store";
 import { usePopupStore } from "@/lib/stores/popup-store";
 import { useCreateReel } from "@/lib/hooks/use-vendor-reels";
+import * as ImagePicker from "expo-image-picker";
+import { uploadVideoToCloudinary } from "@/lib/upload/upload-video";
 
 export default function AddReelScreen() {
   const router = useRouter();
@@ -31,6 +33,7 @@ export default function AddReelScreen() {
   const showPopup = usePopupStore((s) => s.showPopup);
 
   const [videoUrl, setVideoUrl] = useState<string | null>(null);
+  const [thumbnailUrl, setThumbnailUrl] = useState<string | null>(null);
   const [description, setDescription] = useState("");
   const [selectedProductId, setSelectedProductId] = useState<string | null>(null);
 
@@ -39,17 +42,32 @@ export default function AddReelScreen() {
   const [isUploading, setIsUploading] = useState(false);
   const [isPublishing, setIsPublishing] = useState(false);
 
-  // Since we simulate video, we'll pick a random high-res image
-  const handleUploadOption = () => {
-    setIsUploading(true);
-    setTimeout(() => {
-      setIsUploading(false);
-      setUploadModalVisible(false);
-      // Dummy high-res vertical image to simulate video thumbnail/content
-      setVideoUrl(
-        "https://images.unsplash.com/photo-1616423640778-28d1b53229bd?q=80&w=1000&auto=format&fit=crop"
+  const handleUploadOption = async (source: "camera" | "library") => {
+    try {
+      const picker =
+        source === "camera" ? ImagePicker.launchCameraAsync : ImagePicker.launchImageLibraryAsync;
+      const result = await picker({
+        mediaTypes: ImagePicker.MediaTypeOptions.Videos,
+        videoMaxDuration: 60,
+        quality: 1,
+      });
+      if (result.canceled) return;
+      setIsUploading(true);
+      const { videoUrl: url, thumbnailUrl: thumb } = await uploadVideoToCloudinary(
+        result.assets[0].uri
       );
-    }, 1500);
+      setVideoUrl(url);
+      setThumbnailUrl(thumb);
+      setUploadModalVisible(false);
+    } catch (e: any) {
+      showPopup({
+        type: "error",
+        title: "Upload failed",
+        message: e?.message ?? "Try a shorter clip.",
+      });
+    } finally {
+      setIsUploading(false);
+    }
   };
 
   const handlePublish = () => {
@@ -77,6 +95,8 @@ export default function AddReelScreen() {
 
     const payload = {
       videoUrl,
+      thumbnailUrl: thumbnailUrl ?? undefined,
+      caption: description || "Check out this amazing product! 🛍️✨",
       description: description || "Check out this amazing product! 🛍️✨",
       productId: linkedProduct.id,
       productName: linkedProduct.name,
@@ -278,7 +298,7 @@ export default function AddReelScreen() {
                   <Pressable
                     style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
                     className="flex-row items-center p-5 bg-background border border-border rounded-2xl"
-                    onPress={handleUploadOption}
+                    onPress={() => handleUploadOption("camera")}
                   >
                     <View className="w-14 h-14 bg-white rounded-full items-center justify-center shadow-sm shadow-sm">
                       <Icon name="camera" size={24} color="#0f172a" />
@@ -297,7 +317,7 @@ export default function AddReelScreen() {
                   <Pressable
                     style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
                     className="flex-row items-center p-5 bg-primary-subtle border border-border rounded-2xl"
-                    onPress={handleUploadOption}
+                    onPress={() => handleUploadOption("library")}
                   >
                     <View className="w-14 h-14 bg-primary rounded-full items-center justify-center shadow-md shadow-none">
                       <Icon name="image" size={24} color="#fff" />

@@ -2131,7 +2131,7 @@ Replace the Unsplash simulation in `apps/mobile/app/(vendor)/add-reel.tsx` (`han
 - Consumes: `GET /upload/signature/video` (Task 26); `useCreateReel()` (existing).
 - Produces: `uploadVideoToCloudinary(localUri): Promise<{ videoUrl: string; thumbnailUrl: string }>`.
 
-- [ ] **Step 1: Upload helper**
+- [x] **Step 1: Upload helper**
 
 Create `apps/mobile/src/lib/upload/upload-video.ts`:
 
@@ -2164,7 +2164,7 @@ export async function uploadVideoToCloudinary(localUri: string) {
 }
 ```
 
-- [ ] **Step 2: Replace the fake upload**
+- [x] **Step 2: Replace the fake upload**
 
 In `add-reel.tsx`, replace `handleUploadOption` (lines 43–53) with a real gallery/camera pick + upload:
 
@@ -2200,14 +2200,14 @@ const handleUploadOption = async (source: "camera" | "library") => {
 ```
 Wire the two source Pressables to `handleUploadOption("camera")` / `handleUploadOption("library")`. Include `thumbnailUrl` in the `createReel.mutate` payload. Delete the "simulate video" comment and the Unsplash URL.
 
-- [ ] **Step 3: Typecheck and manual-verify**
+- [x] **Step 3: Typecheck and manual-verify**
 
 ```powershell
 cd apps/mobile; npx tsc --noEmit
 ```
 Expected: exit 0. Manual: pick a real short video → it uploads (network shows the Cloudinary POST) and publishes with a real `videoUrl` (mp4) + poster; the reel appears in the DB with a real video URL, not an image.
 
-- [ ] **Step 4: Commit**
+- [x] **Step 4: Commit**
 
 ```powershell
 git add apps/mobile
