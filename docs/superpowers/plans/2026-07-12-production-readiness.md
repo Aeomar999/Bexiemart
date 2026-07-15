@@ -1942,7 +1942,7 @@ Today "reels" are a simulation: the customer feed renders an `<Image source={{ u
 - Consumes: `ConfigService` Cloudinary creds (already wired).
 - Produces: `GET /upload/signature/video?folder=reels` → `{ timestamp, signature, api_key, cloud_name, folder, resource_type: "video", eager }` for a direct client upload to Cloudinary's video endpoint.
 
-- [ ] **Step 1: Add a video-signature method**
+- [x] **Step 1: Add a video-signature method**
 
 In `upload.service.ts`, add:
 
@@ -1975,7 +1975,7 @@ getVideoSignature(folder = "reels") {
 }
 ```
 
-- [ ] **Step 2: Expose the route**
+- [x] **Step 2: Expose the route**
 
 In `upload.controller.ts`, add:
 
@@ -1988,7 +1988,7 @@ getVideoSignature(@Query("folder") folder?: string) {
 }
 ```
 
-- [ ] **Step 3: Test the signature is well-formed**
+- [x] **Step 3: Test the signature is well-formed**
 
 Add to `upload.service.spec.ts` a test asserting `getVideoSignature()` returns `resource_type: "video"` and a non-empty `signature`/`timestamp` (mock `ConfigService` as the existing spec does).
 
@@ -1997,7 +1997,7 @@ cd apps/server; npx jest upload.service --verbose
 ```
 Expected: PASS.
 
-- [ ] **Step 4: Commit**
+- [x] **Step 4: Commit**
 
 ```powershell
 git add apps/server/src/modules/upload
