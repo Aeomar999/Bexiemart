@@ -2554,18 +2554,18 @@ The last honesty gaps: hardcoded dispatcher metrics, simulated review photos, th
 - Consumes: dispatcher profile (`vehicleType`, `plateNumber` are real columns) + `getAnalytics()` (`trips30Days` is real).
 - Produces: nothing downstream.
 
-- [ ] **Step 1: Drive real fields; drop the fakes**
+- [x] **Step 1: Drive real fields; drop the fakes**
 
 Bind vehicle to the real `profile.vehicleType`/`plateNumber`. Bind trips to `getAnalytics().trips30Days` (real). For rating/acceptance: if the server computes them, surface them; if it does not (verify — no rating aggregate exists for dispatchers today), **remove those stat tiles** rather than show 4.9/98%. If `autoAccept` has no backend, either add a real `dispatcherProfile.autoAccept` column + a PATCH endpoint and wire it, or remove the toggle. No local-only illusion of a saved setting.
 
-- [ ] **Step 2: Typecheck and manual-verify**
+- [x] **Step 2: Typecheck and manual-verify**
 
 ```powershell
 cd apps/mobile; npx tsc --noEmit
 ```
 Expected: exit 0. Manual: profile shows the dispatcher's real vehicle + real trip count; no stat is fabricated.
 
-- [ ] **Step 3: Commit**
+- [x] **Step 3: Commit**
 
 ```powershell
 git add apps/mobile apps/server

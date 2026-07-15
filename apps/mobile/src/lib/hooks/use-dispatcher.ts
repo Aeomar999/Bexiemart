@@ -6,6 +6,27 @@ export const DISPATCHER_KEYS = {
   myTasks: (status: string) => ["dispatcher", "tasks", "my", status],
 };
 
+export interface DispatcherProfile {
+  id: string;
+  userId: string;
+  vehicleType: string;
+  plateNumber: string;
+  drivingLicense?: string;
+  status: string;
+  totalEarnings: string | number;
+  pendingPayout: string | number;
+}
+
+export function useDispatcherProfile() {
+  return useQuery({
+    queryKey: ["dispatcher", "profile"],
+    queryFn: async () => {
+      const { data } = await dispatcherApi.getProfile();
+      return data as DispatcherProfile;
+    },
+  });
+}
+
 export function useCreateDispatcherProfile() {
   return useMutation({
     mutationFn: (data: CreateDispatcherProfileDto) => dispatcherApi.createProfile(data),

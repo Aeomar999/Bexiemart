@@ -1,12 +1,13 @@
 import { tokens } from "@/theme/tokens";
-import { View, Text, ScrollView, Pressable, Switch } from "react-native";
-import { useState } from "react";
+import { View, Text, ScrollView, Pressable } from "react-native";
 import { useRouter } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Icon } from "@/components/ui/Icon";
 import { useAuthStore } from "@/lib/stores/auth-store";
 import { useAuthEnabled } from "@/lib/feature-flags";
 import { Avatar } from "@/components/ui/Avatar";
+import { useDispatcherProfile, useDispatcherAnalytics } from "@/lib/hooks/use-dispatcher";
+import { formatMoney } from "@/lib/money";
 
 export default function DispatcherProfile() {
   const router = useRouter();
@@ -14,12 +15,18 @@ export default function DispatcherProfile() {
   const user = useAuthStore((s) => s.user);
   const logout = useAuthStore((s) => s.logout);
   const { authEnabled } = useAuthEnabled();
-  const [autoAccept, setAutoAccept] = useState(false);
+
+  const { data: profile } = useDispatcherProfile();
+  const { data: analytics } = useDispatcherAnalytics();
 
   const handleLogout = async () => {
     await logout();
     router.replace(authEnabled ? "/(auth)/login" : "/(customer)/(tabs)/(home)");
   };
+
+  const formattedVehicleType = profile?.vehicleType
+    ? profile.vehicleType.charAt(0).toUpperCase() + profile.vehicleType.slice(1).toLowerCase()
+    : "Not set";
 
   return (
     <View className="flex-1 bg-background">
@@ -58,27 +65,24 @@ export default function DispatcherProfile() {
         <View className="flex-row gap-3 mb-8">
           <View className="flex-1 bg-card border border-border p-3 rounded-2xl items-center">
             <View className="flex-row items-center gap-1 mb-1">
-              <Icon name="star" size={14} color="#f59e0b" />
-              <Text className="font-bold text-foreground font-heading">4.9</Text>
-            </View>
-            <Text className="text-body-sm text-muted-foreground font-body text-center">Rating</Text>
-          </View>
-          <View className="flex-1 bg-card border border-border p-3 rounded-2xl items-center">
-            <View className="flex-row items-center gap-1 mb-1">
-              <Icon name="check-circle" size={14} color="#10b981" />
-              <Text className="font-bold text-foreground font-heading">98%</Text>
+              <Icon name="truck" size={14} color={tokens.primary} />
+              <Text className="font-bold text-foreground font-heading">
+                {analytics?.trips30Days ?? 0}
+              </Text>
             </View>
             <Text className="text-body-sm text-muted-foreground font-body text-center">
-              Acceptance
+              30d Trips
             </Text>
           </View>
           <View className="flex-1 bg-card border border-border p-3 rounded-2xl items-center">
             <View className="flex-row items-center gap-1 mb-1">
-              <Icon name="truck" size={14} color={tokens.primary} />
-              <Text className="font-bold text-foreground font-heading">142</Text>
+              <Icon name="dollar-sign" size={14} color="#10b981" />
+              <Text className="font-bold text-foreground font-heading">
+                {formatMoney(Number(analytics?.revenue30Days || 0), "GH₵")}
+              </Text>
             </View>
             <Text className="text-body-sm text-muted-foreground font-body text-center">
-              Total Trips
+              30d Revenue
             </Text>
           </View>
         </View>
@@ -94,7 +98,9 @@ export default function DispatcherProfile() {
             </View>
             <View className="flex-1">
               <Text className="text-body-lg font-body font-semibold text-foreground">Type</Text>
-              <Text className="text-body-sm font-body text-muted-foreground">Motorbike</Text>
+              <Text className="text-body-sm font-body text-muted-foreground">
+                {formattedVehicleType}
+              </Text>
             </View>
           </View>
           <View className="flex-row items-center p-4 border-b border-border">
@@ -105,7 +111,9 @@ export default function DispatcherProfile() {
               <Text className="text-body-lg font-body font-semibold text-foreground">
                 License Plate
               </Text>
-              <Text className="text-body-sm font-body text-muted-foreground">AS-1234-21</Text>
+              <Text className="text-body-sm font-body text-muted-foreground">
+                {profile?.plateNumber || "Not set"}
+              </Text>
             </View>
           </View>
         </View>
@@ -115,27 +123,6 @@ export default function DispatcherProfile() {
           Preferences
         </Text>
         <View className="bg-card rounded-2xl border border-border overflow-hidden mb-8 shadow-lg">
-          <View className="flex-row items-center justify-between p-4 border-b border-border">
-            <View className="flex-row items-center gap-3">
-              <View className="w-10 h-10 rounded-full bg-primary-subtle items-center justify-center">
-                <Icon name="zap" size={18} color={tokens.primary} />
-              </View>
-              <View>
-                <Text className="text-body-lg font-body font-semibold text-foreground">
-                  Auto-Accept Trips
-                </Text>
-                <Text className="text-body-sm font-body text-muted-foreground mt-0.5">
-                  Automatically accept nearby requests
-                </Text>
-              </View>
-            </View>
-            <Switch
-              value={autoAccept}
-              onValueChange={setAutoAccept}
-              trackColor={{ false: "#e2e8f0", true: tokens.primary }}
-              thumbColor={"#ffffff"}
-            />
-          </View>
           <Pressable className="flex-row items-center justify-between p-4 border-b border-border">
             <View className="flex-row items-center gap-3">
               <View className="w-10 h-10 rounded-full bg-emerald-50 items-center justify-center">
@@ -150,7 +137,10 @@ export default function DispatcherProfile() {
               <Icon name="chevron-right" size={18} color="#cbd5e1" />
             </View>
           </Pressable>
-          <Pressable className="flex-row items-center justify-between p-4">
+          <Pressable
+            className="flex-row items-center justify-between p-4"
+            onPress={() => router.push("/(dispatcher)/help")}
+          >
             <View className="flex-row items-center gap-3">
               <View className="w-10 h-10 rounded-full bg-rose-50 items-center justify-center">
                 <Icon name="help-circle" size={18} color="#e11d48" />
