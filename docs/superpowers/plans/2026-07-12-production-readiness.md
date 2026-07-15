@@ -2584,11 +2584,11 @@ git commit -m "fix(dispatcher): real profile metrics (vehicle, trips); remove un
 - Consumes: existing image upload (`POST /upload` or the signed image-signature flow already used elsewhere) → `{ url }`.
 - Produces: nothing downstream.
 
-- [ ] **Step 1: Decide and implement (real or removed)**
+- [x] **Step 1: Decide and implement (real or removed)**
 
 Preferred: add `imageUrl String?` to `model Review` (migration `add_review_image`), thread it through the review DTO + service, and make "Add photo" pick + upload a real image, attaching the returned URL to the submission. If review photos are out of scope, delete the "Add photo" control entirely — do not keep the "Simulated photo upload" toast.
 
-- [ ] **Step 2: Typecheck and manual-verify**
+- [x] **Step 2: Typecheck and manual-verify**
 
 ```powershell
 cd apps/server; npx tsc --noEmit
@@ -2596,7 +2596,7 @@ cd ../mobile; npx tsc --noEmit
 ```
 Expected: both exit 0. Manual: attach a photo to a review → it uploads and the review persists with the image (or the control is gone).
 
-- [ ] **Step 3: Commit**
+- [x] **Step 3: Commit**
 
 ```powershell
 git add apps/mobile apps/server
