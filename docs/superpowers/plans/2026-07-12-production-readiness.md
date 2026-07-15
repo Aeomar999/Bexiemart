@@ -2015,7 +2015,7 @@ git commit -m "feat(upload): signed Cloudinary video-upload signature endpoint"
 - Consumes: `req.user.id`.
 - Produces: `POST /reels/:id/comments` `{ content }` (AuthGuard) → the created comment with `user`; `GET /reels/:id/comments?cursor=` (public) → `{ data, nextCursor }`.
 
-- [ ] **Step 1: Schema**
+- [x] **Step 1: Schema**
 
 Add to `apps/server/prisma/schema.prisma`:
 
@@ -2038,7 +2038,7 @@ Add to `model Reel`: `comments ReelComment[]` and `commentsCount Int @default(0)
 cd apps/server; npx prisma migrate dev --name add_reel_comments
 ```
 
-- [ ] **Step 2: DTO + failing service test**
+- [x] **Step 2: DTO + failing service test**
 
 Create `create-comment.dto.ts`:
 
@@ -2056,7 +2056,7 @@ cd apps/server; npx jest customer-reels.service --verbose
 ```
 Expected: FAIL (methods missing).
 
-- [ ] **Step 3: Implement service methods + routes**
+- [x] **Step 3: Implement service methods + routes**
 
 In `customer-reels.service.ts`:
 
@@ -2104,14 +2104,14 @@ addComment(@Req() req: any, @Param("id") id: string, @Body() body: CreateComment
 }
 ```
 
-- [ ] **Step 4: Green**
+- [x] **Step 4: Green**
 
 ```powershell
 cd apps/server; npx jest customer-reels --verbose
 ```
 Expected: PASS.
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```powershell
 git add apps/server

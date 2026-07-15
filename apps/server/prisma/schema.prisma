@@ -51,6 +51,7 @@ model User {
   wallet            Wallet?
   reelLikes         ReelLike[]
   reels             Reel[]
+  reelComments      ReelComment[]
   serviceBookings   ServiceBooking[]
   referral          Referral?
   referredUsers     ReferredUser[]
@@ -887,13 +888,15 @@ model Reel {
   caption      String?
   productId    String? // Optional linked product
   product      Product? @relation(fields: [productId], references: [id], onDelete: SetNull)
-  likesCount   Int      @default(0)
-  viewsCount   Int      @default(0)
-  isActive     Boolean  @default(true)
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
+  likesCount    Int      @default(0)
+  viewsCount    Int      @default(0)
+  commentsCount Int      @default(0)
+  isActive      Boolean  @default(true)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
 
-  likes ReelLike[]
+  likes    ReelLike[]
+  comments ReelComment[]
 
   @@index([userId])
   @@index([productId])
@@ -910,6 +913,18 @@ model ReelLike {
 
   @@unique([userId, reelId])
   @@index([reelId])
+}
+
+model ReelComment {
+  id        String   @id @default(cuid())
+  reelId    String
+  reel      Reel     @relation(fields: [reelId], references: [id], onDelete: Cascade)
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  content   String
+  createdAt DateTime @default(now())
+
+  @@index([reelId, createdAt])
 }
 
 // ─── Service Model ─────────────────────────────────────────────────────────────

@@ -68,4 +68,22 @@ describe("CustomerReelsService", () => {
     const result = await service.findFollowing("user-1");
     expect(result.data).toHaveLength(1);
   });
+
+  it("should add a comment and increment commentsCount inside a transaction", async () => {
+    prisma.reel.findUnique.mockResolvedValue({ id: "r1" } as any);
+    const createdComment = { id: "c1", content: "Nice video!" };
+    prisma.$transaction.mockResolvedValue([createdComment, { commentsCount: 1 }] as any);
+    const result = await (service as any).addComment("user-1", "r1", "Nice video!");
+    expect(result).toEqual(createdComment);
+  });
+
+  it("should list comments returning newest first", async () => {
+    const comments = [{ id: "c1", content: "Comment 1" }];
+    (prisma as any).reelComment = {
+      findMany: jest.fn().mockResolvedValue(comments),
+    };
+    const result = await (service as any).listComments("r1");
+    expect(result.data).toEqual(comments);
+    expect(result.nextCursor).toBeNull();
+  });
 });
