@@ -2686,7 +2686,7 @@ git commit -m "chore: replace stray console.* with Nest logger / remove debug lo
 - Consumes: everything above.
 - Produces: the human runbook for the actual go-live — the steps that require real secrets/accounts and must not be automated by an agent.
 
-- [ ] **Step 1: Write the checklist**
+- [x] **Step 1: Write the checklist**
 
 Create `docs/LAUNCH-CHECKLIST.md` capturing every manual gate:
 
@@ -2719,7 +2719,7 @@ Create `docs/LAUNCH-CHECKLIST.md` capturing every manual gate:
 - [ ] Reels: upload a real video → plays → comment.
 ```
 
-- [ ] **Step 2: Commit**
+- [x] **Step 2: Commit**
 
 ```powershell
 git add docs/LAUNCH-CHECKLIST.md
