@@ -1,6 +1,7 @@
 import { io, Socket } from "socket.io-client";
 import { ENV } from "../config";
 import { useAuthStore } from "./stores/auth-store";
+import { logger } from "./logger";
 
 class SocketService {
   public socket: Socket | null = null;
@@ -22,7 +23,7 @@ class SocketService {
 
     // Add any global connection logging/monitoring here (e.g. Sentry breadcrumbs)
     this.socket.on("connect_error", (error) => {
-      console.log("Socket connect_error", error);
+      logger.error("Socket connect_error", error);
     });
   }
 

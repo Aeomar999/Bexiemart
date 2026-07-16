@@ -2616,15 +2616,15 @@ git commit -m "fix(reviews): real review photo upload (or remove the simulated c
 - Consumes: `req.user.id` → vendor profile.
 - Produces: `POST /vendor/tax-info` `{ taxId, documentUrl? }` → sets `taxStatus = "PENDING"`; `GET /vendor/tax-info` returns current status.
 
-- [ ] **Step 1: Schema + endpoint**
+- [x] **Step 1: Schema + endpoint**
 
 Add to `model VendorProfile`: `taxId String?` and `taxStatus String @default("NONE")` (values `NONE | PENDING | VERIFIED | REJECTED`; admin verification flips it — reuse the existing admin vendor moderation surface if present, else leave admin verification as a follow-up but persist the submission honestly). Migrate `add_vendor_tax_info`. Add a controller handler + service method on the vendor module that upserts the tax fields and sets `taxStatus = "PENDING"`.
 
-- [ ] **Step 2: Wire the screen**
+- [x] **Step 2: Wire the screen**
 
 Replace the `setTimeout` submit with a real call sending the entered TIN (+ the already-uploaded document URL). On success, reflect the real `taxStatus` returned by the server ("Verification Pending" only when the server actually recorded PENDING).
 
-- [ ] **Step 3: Typecheck and manual-verify**
+- [x] **Step 3: Typecheck and manual-verify**
 
 ```powershell
 cd apps/server; npx tsc --noEmit
@@ -2632,7 +2632,7 @@ cd ../mobile; npx tsc --noEmit
 ```
 Expected: both exit 0. Manual: submit a TIN → it persists on the vendor profile and status is PENDING on reload.
 
-- [ ] **Step 4: Commit**
+- [x] **Step 4: Commit**
 
 ```powershell
 git add apps/server apps/mobile
@@ -2648,21 +2648,21 @@ git commit -m "fix(vendor): real tax-verification submission (persist TIN + stat
 - Consumes: nothing.
 - Produces: cleaner logs; no behavior change.
 
-- [ ] **Step 1: Replace stray console.* in the server with the Nest logger**
+- [x] **Step 1: Replace stray console.* in the server with the Nest logger**
 
 ```powershell
 cd apps/server; rg -n "console\.(log|error|warn)" src
 ```
 Replace each with the module's `Logger` (the codebase already uses `private readonly logger = new Logger(X.name)`), or delete debug noise. Do NOT touch intentional startup logs.
 
-- [ ] **Step 2: Remove stray console.* in mobile screens**
+- [x] **Step 2: Remove stray console.* in mobile screens**
 
 ```powershell
 cd apps/mobile; rg -n "console\.(log)" app src
 ```
 Delete debug `console.log`s (keep deliberate error reporting that routes to Sentry).
 
-- [ ] **Step 3: Typecheck + full suites**
+- [x] **Step 3: Typecheck + full suites**
 
 ```powershell
 cd apps/server; npx tsc --noEmit; npx jest --silent
@@ -2670,7 +2670,7 @@ cd ../mobile; npx tsc --noEmit; npx jest --silent
 ```
 Expected: all green (this is a no-behavior-change cleanup).
 
-- [ ] **Step 4: Commit**
+- [x] **Step 4: Commit**
 
 ```powershell
 git add apps/server apps/mobile

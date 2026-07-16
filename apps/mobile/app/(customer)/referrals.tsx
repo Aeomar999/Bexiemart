@@ -13,6 +13,7 @@ import {
   useGenerateReferralCode,
 } from "@/lib/hooks/use-referrals";
 import { useState } from "react";
+import { logger } from "@/lib/logger";
 
 export default function ReferralsScreen() {
   const router = useRouter();
@@ -48,7 +49,7 @@ export default function ReferralsScreen() {
         message: `Join Bexiemart and get 50 BexieCoins! Use my referral code: ${referralCode} when signing up.`,
       });
     } catch (error) {
-      console.log(error);
+      logger.error("Failed to share referral code:", error);
     }
   };
 

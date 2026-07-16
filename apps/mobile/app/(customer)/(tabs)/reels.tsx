@@ -236,7 +236,7 @@ export default function ReelsScreen() {
         message: `Check out this reel from ${reel.user?.name || "vendor"} on Bexiemart!`,
       });
     } catch (error) {
-      console.log(error);
+      logger.error(error);
     }
   };
 
