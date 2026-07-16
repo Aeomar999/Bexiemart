@@ -65,4 +65,13 @@ export const authApi = {
     const res = await apiClient.post("/auth/verify-email-otp", data);
     return res;
   },
+
+  changePassword: async (currentPassword: string, newPassword: string) => {
+    const res = await apiClient.post("/auth/change-password", {
+      currentPassword,
+      newPassword,
+      revokeOtherSessions: true,
+    });
+    return res;
+  },
 };

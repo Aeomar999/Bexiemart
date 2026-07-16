@@ -168,6 +168,11 @@ export class AuthController {
       throw new UnauthorizedException(data.message || data.error?.message || "Invalid credentials");
     }
 
+    if (data.twoFactorRedirect || data.twoFactor) {
+      this.logger.log(`2FA challenge required for login: ${email}`);
+      return { requiresTwoFactor: true };
+    }
+
     const rawToken = data.token;
 
     if (!rawToken) {

@@ -8,17 +8,18 @@ export function useLogin() {
   return useMutation({
     mutationFn: login,
     onSuccess: (data) => {
-      setAuth(data.user, data.token);
+      if (data.user) setAuth(data.user);
+      // requiresTwoFactor is handled by the login page (Task 19)
     },
   });
 }
 
 export function useUser() {
-  const token = useAuthStore((state) => state.token);
+  const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
 
   return useQuery({
     queryKey: ["auth", "me"],
     queryFn: getMe,
-    enabled: !!token,
+    enabled: isAuthenticated,
   });
 }

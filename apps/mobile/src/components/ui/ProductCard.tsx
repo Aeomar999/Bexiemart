@@ -34,11 +34,14 @@ export function ProductCard({
   const numericOldPrice = oldPrice ? Number(oldPrice) : undefined;
 
   if (variant === "compact") {
+    const label = `${name}, price GHS ${numericPrice.toFixed(0)}${rating ? `, rating ${rating}` : ""}`;
     return (
       <Pressable
         style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
         className="w-[110px] active:opacity-70 mb-2"
         onPress={onPress}
+        accessibilityRole="button"
+        accessibilityLabel={label}
       >
         <Card variant="flat" padding="none">
           <View className="w-full h-[150px] rounded-xl bg-muted mb-2 items-center justify-center overflow-hidden">
@@ -67,11 +70,14 @@ export function ProductCard({
   }
 
   if (variant === "horizontal") {
+    const label = `${name}, price GHS ${numericPrice.toFixed(2)}${rating ? `, rating ${rating}` : ""}`;
     return (
       <Pressable
         style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
         className="w-full active:opacity-70 mb-3"
         onPress={onPress}
+        accessibilityRole="button"
+        accessibilityLabel={label}
       >
         <Card variant="outlined" padding="sm" className="flex-row">
           <View className="w-[80px] h-[80px] rounded-lg bg-muted items-center justify-center overflow-hidden mr-4">
@@ -139,11 +145,14 @@ export function ProductCard({
   }
 
   // Vertical Variant
+  const label = `${name}, price GHS ${numericPrice.toFixed(2)}${rating ? `, rating ${rating}` : ""}`;
   return (
     <Pressable
       style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
       className="w-[140px] active:opacity-70 mb-2"
       onPress={onPress}
+      accessibilityRole="button"
+      accessibilityLabel={label}
     >
       <Card variant="flat" padding="none">
         <View

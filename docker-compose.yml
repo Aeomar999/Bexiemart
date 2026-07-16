@@ -1,0 +1,130 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: bexiemart-postgres
+    restart: always
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-bexiemart}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-bexiemart_secret_pg}
+      POSTGRES_DB: ${POSTGRES_DB:-bexiemart}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-bexiemart} -d ${POSTGRES_DB:-bexiemart}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    networks:
+      - bexiemart_net
+
+  redis:
+    image: redis:7-alpine
+    container_name: bexiemart-redis
+    restart: always
+    command: redis-server --requirepass ${REDIS_PASSWORD:-bexiemart_secret_redis}
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "-a", "${REDIS_PASSWORD:-bexiemart_secret_redis}", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    networks:
+      - bexiemart_net
+
+  server:
+    build:
+      context: .
+      dockerfile: apps/server/Dockerfile
+    container_name: bexiemart-server
+    restart: always
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    environment:
+      NODE_ENV: production
+      PORT: 3000
+      DATABASE_URL: postgresql://${POSTGRES_USER:-bexiemart}:${POSTGRES_PASSWORD:-bexiemart_secret_pg}@postgres:5432/${POSTGRES_DB:-bexiemart}?schema=public
+      REDIS_URL: redis://:${REDIS_PASSWORD:-bexiemart_secret_redis}@redis:6379
+      BETTER_AUTH_SECRET: ${BETTER_AUTH_SECRET:-default_auth_secret_for_production}
+      BETTER_AUTH_URL: ${BETTER_AUTH_URL:-http://localhost}
+      JWT_SECRET: ${JWT_SECRET:-default_jwt_secret}
+      CORS_ORIGIN: ${CORS_ORIGIN:-http://localhost,https://admin.bexiemart.com}
+      ENFORCE_HTTPS: ${ENFORCE_HTTPS:-false}
+      CLOUDINARY_CLOUD_NAME: ${CLOUDINARY_CLOUD_NAME:-}
+      CLOUDINARY_API_KEY: ${CLOUDINARY_API_KEY:-}
+      CLOUDINARY_API_SECRET: ${CLOUDINARY_API_SECRET:-}
+      PAYSTACK_SECRET_KEY: ${PAYSTACK_SECRET_KEY:-}
+      PAYSTACK_PUBLIC_KEY: ${PAYSTACK_PUBLIC_KEY:-}
+      PAYSTACK_WEBHOOK_SECRET: ${PAYSTACK_WEBHOOK_SECRET:-}
+      RESEND_API_KEY: ${RESEND_API_KEY:-}
+      EMAIL_FROM: ${EMAIL_FROM:-onboarding@resend.dev}
+      SENTRY_DSN: ${SENTRY_DSN:-}
+      POSTHOG_API_KEY: ${POSTHOG_API_KEY:-}
+      POSTHOG_HOST: ${POSTHOG_HOST:-https://us.i.posthog.com}
+    volumes:
+      - server_uploads:/app/uploads
+    healthcheck:
+      test: ["CMD-SHELL", "wget --no-verbose --tries=1 --spider http://127.0.0.1:3000/api/v1/health || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+    networks:
+      - bexiemart_net
+
+  admin:
+    build:
+      context: apps/admin
+      dockerfile: Dockerfile
+    container_name: bexiemart-admin
+    restart: always
+    depends_on:
+      server:
+        condition: service_healthy
+    environment:
+      NODE_ENV: production
+      PORT: 3001
+      INTERNAL_API_URL: http://server:3000
+      NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-/api/v1}
+    healthcheck:
+      test: ["CMD-SHELL", "wget --no-verbose --tries=1 --spider http://127.0.0.1:3001 || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
+    networks:
+      - bexiemart_net
+
+  nginx:
+    image: nginx:alpine
+    container_name: bexiemart-nginx
+    restart: always
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+    depends_on:
+      server:
+        condition: service_healthy
+      admin:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "wget --no-verbose --tries=1 --spider http://127.0.0.1/api/v1/health || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+    networks:
+      - bexiemart_net
+
+volumes:
+  postgres_data:
+  redis_data:
+  server_uploads:
+
+networks:
+  bexiemart_net:
+    driver: bridge

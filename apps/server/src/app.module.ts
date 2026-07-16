@@ -1,5 +1,6 @@
 import { Module, MiddlewareConsumer } from "@nestjs/common";
 import { ConfigModule } from "@nestjs/config";
+import { ScheduleModule } from "@nestjs/schedule";
 import { ThrottlerModule, ThrottlerGuard } from "@nestjs/throttler";
 import { APP_GUARD } from "@nestjs/core";
 import { CorrelationIdMiddleware } from "./middleware/correlation-id.middleware";
@@ -46,6 +47,9 @@ import { DeliveryModule } from "./modules/delivery/delivery.module";
 import { StoryModule } from "./modules/story/story.module";
 import { MetricsModule } from "./modules/metrics/metrics.module";
 import { CollectionsModule } from "./modules/collections/collections.module";
+import { LoyaltyModule } from "./modules/loyalty/loyalty.module";
+import { NotificationPreferencesModule } from "./modules/notification-preferences/notification-preferences.module";
+import { PostHogModule } from "./modules/posthog/posthog.module";
 
 import { WinstonModule } from "nest-winston";
 import * as winston from "winston";
@@ -53,6 +57,7 @@ import * as winston from "winston";
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
+    ScheduleModule.forRoot(),
     WinstonModule.forRoot({
       transports: [
         new winston.transports.Console({
@@ -66,6 +71,7 @@ import * as winston from "winston";
     }),
     ThrottlerModule.forRoot([{ ttl: 60000, limit: 60 }]),
     PrismaModule,
+    PostHogModule,
     AuthModule,
     UsersModule,
     ProductsModule,
@@ -105,6 +111,8 @@ import * as winston from "winston";
     StoryModule,
     MetricsModule,
     CollectionsModule,
+    LoyaltyModule,
+    NotificationPreferencesModule,
   ],
   providers: [{ provide: APP_GUARD, useClass: ThrottlerGuard }],
 })

@@ -37,7 +37,10 @@ export default function SecuritySettingsPage() {
           setCurrentPassword("");
           setNewPassword("");
           setConfirmPassword("");
-        }
+        },
+        onError: (err: any) => {
+          setError(err?.response?.data?.message || err?.message || "Failed to update password");
+        },
       }
     );
   };

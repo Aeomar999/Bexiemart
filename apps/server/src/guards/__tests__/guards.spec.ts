@@ -5,6 +5,7 @@ import { AdminGuard } from "../admin.guard";
 import { DispatcherGuard } from "../dispatcher.guard";
 import { VendorGuard } from "../vendor.guard";
 import { SuperAdminGuard } from "../super-admin.guard";
+import { EmailVerifiedGuard } from "../email-verified.guard";
 import { PrismaService } from "../../prisma/prisma.service";
 import { UserRole } from "@prisma/client";
 
@@ -112,14 +113,19 @@ describe("Guards", () => {
         adminGuard = new AdminGuard(prismaService);
       });
 
-      it("should return true for admin user", async () => {
-        const context = mockExecutionContext({}, { role: UserRole.ADMIN });
+      it("should return true for admin user with verified email", async () => {
+        const context = mockExecutionContext({}, { role: UserRole.ADMIN, emailVerified: true });
         const result = await adminGuard.canActivate(context);
         expect(result).toBe(true);
       });
 
+      it("should throw ForbiddenException for admin user without verified email", async () => {
+        const context = mockExecutionContext({}, { role: UserRole.ADMIN, emailVerified: false });
+        await expect(adminGuard.canActivate(context)).rejects.toThrow(ForbiddenException);
+      });
+
       it("should throw ForbiddenException for non-admin user", async () => {
-        const context = mockExecutionContext({}, { role: UserRole.CUSTOMER });
+        const context = mockExecutionContext({}, { role: UserRole.CUSTOMER, emailVerified: true });
         await expect(adminGuard.canActivate(context)).rejects.toThrow(ForbiddenException);
       });
     });
@@ -131,22 +137,39 @@ describe("Guards", () => {
         vendorGuard = new VendorGuard(prismaService);
       });
 
+      it("should throw ForbiddenException if user email is not verified", async () => {
+        const context = mockExecutionContext(
+          {},
+          { id: "vendor_1", role: UserRole.VENDOR, emailVerified: false }
+        );
+        await expect(vendorGuard.canActivate(context)).rejects.toThrow(ForbiddenException);
+      });
+
       it("should throw ForbiddenException if profile is not found", async () => {
-        const context = mockExecutionContext({}, { id: "vendor_1", role: UserRole.VENDOR });
+        const context = mockExecutionContext(
+          {},
+          { id: "vendor_1", role: UserRole.VENDOR, emailVerified: true }
+        );
         (prismaService.vendorProfile.findUnique as jest.Mock).mockResolvedValue(null);
         await expect(vendorGuard.canActivate(context)).rejects.toThrow(ForbiddenException);
       });
 
       it("should throw ForbiddenException if profile is inactive", async () => {
-        const context = mockExecutionContext({}, { id: "vendor_1", role: UserRole.VENDOR });
+        const context = mockExecutionContext(
+          {},
+          { id: "vendor_1", role: UserRole.VENDOR, emailVerified: true }
+        );
         (prismaService.vendorProfile.findUnique as jest.Mock).mockResolvedValue({
           isActive: false,
         });
         await expect(vendorGuard.canActivate(context)).rejects.toThrow(ForbiddenException);
       });
 
-      it("should return true if active profile is found", async () => {
-        const context = mockExecutionContext({}, { id: "vendor_1", role: UserRole.VENDOR });
+      it("should return true if active profile is found and email is verified", async () => {
+        const context = mockExecutionContext(
+          {},
+          { id: "vendor_1", role: UserRole.VENDOR, emailVerified: true }
+        );
         (prismaService.vendorProfile.findUnique as jest.Mock).mockResolvedValue({ isActive: true });
         const result = await vendorGuard.canActivate(context);
         expect(result).toBe(true);
@@ -181,17 +204,44 @@ describe("Guards", () => {
       it("throws ForbiddenException for a regular admin (no super flag)", () => {
         const context = mockExecutionContext(
           {},
-          { id: "a1", role: UserRole.ADMIN, isSuperAdmin: false }
+          { id: "a1", role: UserRole.ADMIN, isSuperAdmin: false, emailVerified: true }
         );
         expect(() => superAdminGuard.canActivate(context)).toThrow(ForbiddenException);
       });
 
-      it("returns true for a super admin", () => {
+      it("throws ForbiddenException if email is unverified", () => {
         const context = mockExecutionContext(
           {},
-          { id: "a1", role: UserRole.ADMIN, isSuperAdmin: true }
+          { id: "a1", role: UserRole.ADMIN, isSuperAdmin: true, emailVerified: false }
+        );
+        expect(() => superAdminGuard.canActivate(context)).toThrow(ForbiddenException);
+      });
+
+      it("returns true for a super admin with verified email", () => {
+        const context = mockExecutionContext(
+          {},
+          { id: "a1", role: UserRole.ADMIN, isSuperAdmin: true, emailVerified: true }
         );
         expect(superAdminGuard.canActivate(context)).toBe(true);
+      });
+    });
+
+    describe("EmailVerifiedGuard", () => {
+      const emailVerifiedGuard = new EmailVerifiedGuard();
+
+      it("throws UnauthorizedException if no user on request", () => {
+        const context = mockExecutionContext({}, undefined);
+        expect(() => emailVerifiedGuard.canActivate(context)).toThrow(UnauthorizedException);
+      });
+
+      it("throws ForbiddenException if email is not verified", () => {
+        const context = mockExecutionContext({}, { id: "u1", emailVerified: false });
+        expect(() => emailVerifiedGuard.canActivate(context)).toThrow(ForbiddenException);
+      });
+
+      it("returns true if email is verified", () => {
+        const context = mockExecutionContext({}, { id: "u1", emailVerified: true });
+        expect(emailVerifiedGuard.canActivate(context)).toBe(true);
       });
     });
   });

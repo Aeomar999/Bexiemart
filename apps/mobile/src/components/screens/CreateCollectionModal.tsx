@@ -44,7 +44,12 @@ export function CreateCollectionModal({ visible, onClose }: Props) {
 
   return (
     <Modal visible={visible} transparent animationType="fade">
-      <Pressable className="flex-1 bg-black/50 justify-end" onPress={onClose}>
+      <Pressable
+        className="flex-1 bg-black/50 justify-end"
+        onPress={onClose}
+        accessibilityRole="button"
+        accessibilityLabel="Dismiss modal"
+      >
         <Pressable onStartShouldSetResponder={() => true} onResponderRelease={() => {}}>
           <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "height"}>
             <View className="bg-card rounded-t-3xl p-6 pb-10">
@@ -77,6 +82,8 @@ export function CreateCollectionModal({ visible, onClose }: Props) {
                     value={name}
                     onChangeText={setName}
                     autoFocus
+                    accessibilityLabel="Collection Name"
+                    accessibilityRole="text"
                   />
                 </View>
               </View>

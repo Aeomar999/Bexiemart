@@ -6,28 +6,36 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Icon } from "@/components/ui/Icon";
 import { Input } from "@/components/ui/Input";
 import { Button } from "@/components/ui/Button";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   useVendorDocuments,
   useUploadDocument,
   useDeleteDocument,
 } from "@/lib/hooks/use-vendor-documents";
+import { useVendorProfile, useUpdateTaxInfo } from "@/lib/hooks/use-vendor";
 import { DetailSkeleton } from "@/components/ui/Skeleton";
 
 export default function TaxesDocumentsScreen() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
 
-  const { data: documents, isLoading } = useVendorDocuments();
+  const { data: profile, isLoading: isProfileLoading } = useVendorProfile();
+  const { data: documents, isLoading: isDocsLoading } = useVendorDocuments();
   const uploadDocument = useUploadDocument();
   const deleteDocument = useDeleteDocument();
+  const updateTaxInfo = useUpdateTaxInfo();
 
   const [tin, setTin] = useState("");
   const [vatRegistered, setVatRegistered] = useState(false);
 
   const [isUploadModalVisible, setUploadModalVisible] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
-  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  useEffect(() => {
+    if (profile?.taxId) {
+      setTin(profile.taxId);
+    }
+  }, [profile?.taxId]);
 
   const handleUploadOption = (type: string) => {
     setIsUploading(true);
@@ -66,18 +74,22 @@ export default function TaxesDocumentsScreen() {
       return;
     }
 
-    setIsSubmitting(true);
-    setTimeout(() => {
-      setIsSubmitting(false);
-      Alert.alert(
-        "Verification Pending",
-        "Your details and documents have been submitted for review. We will notify you once verified.",
-        [{ text: "OK", onPress: () => router.back() }]
-      );
-    }, 1500);
+    updateTaxInfo.mutate(tin, {
+      onSuccess: () => {
+        Alert.alert(
+          "Verification Pending",
+          "Your details and documents have been submitted for review. We will notify you once verified.",
+          [{ text: "OK", onPress: () => router.back() }]
+        );
+      },
+      onError: () => {
+        Alert.alert("Error", "Failed to submit tax information. Please try again.");
+      },
+    });
   };
 
   const docList = documents ?? [];
+  const isLoading = isProfileLoading || isDocsLoading;
 
   return (
     <View className="flex-1 bg-background">
@@ -96,23 +108,42 @@ export default function TaxesDocumentsScreen() {
         </View>
       ) : (
         <ScrollView className="flex-1 px-5 pt-6 pb-12">
-          <View className="bg-amber-50 border border-amber-200 rounded-xl p-4 mb-6 flex-row items-start">
-            <Icon
-              name="alert-circle"
-              size={20}
-              color="#d97706"
-              style={{ marginRight: 12, marginTop: 2 }}
-            />
-            <View className="flex-1">
-              <Text className="text-body-lg font-bold text-amber-800 mb-1">
-                Verification Required
-              </Text>
-              <Text className="text-sm text-amber-700 leading-relaxed">
-                Please complete your KYC to increase your withdrawal limits and get the "Verified
-                Vendor" badge.
-              </Text>
+          {profile?.taxStatus && profile.taxStatus !== "NONE" ? (
+            <View className="bg-blue-50 border border-blue-200 rounded-xl p-4 mb-6 flex-row items-start">
+              <Icon
+                name="shield"
+                size={20}
+                color="#2563eb"
+                style={{ marginRight: 12, marginTop: 2 }}
+              />
+              <View className="flex-1">
+                <Text className="text-body-lg font-bold text-blue-800 mb-1">
+                  Status: {profile.taxStatus}
+                </Text>
+                <Text className="text-sm text-blue-700 leading-relaxed">
+                  Your tax details and business documents have been submitted for review.
+                </Text>
+              </View>
             </View>
-          </View>
+          ) : (
+            <View className="bg-amber-50 border border-amber-200 rounded-xl p-4 mb-6 flex-row items-start">
+              <Icon
+                name="alert-circle"
+                size={20}
+                color="#d97706"
+                style={{ marginRight: 12, marginTop: 2 }}
+              />
+              <View className="flex-1">
+                <Text className="text-body-lg font-bold text-amber-800 mb-1">
+                  Verification Required
+                </Text>
+                <Text className="text-sm text-amber-700 leading-relaxed">
+                  Please complete your KYC to increase your withdrawal limits and get the "Verified
+                  Vendor" badge.
+                </Text>
+              </View>
+            </View>
+          )}
 
           <View className="bg-card rounded-2xl border border-border p-5 mb-6">
             <Text className="text-body-lg font-bold text-foreground mb-4">Tax Information</Text>
@@ -222,7 +253,7 @@ export default function TaxesDocumentsScreen() {
           <Button
             title="Submit for Verification"
             size="lg"
-            loading={isSubmitting}
+            loading={updateTaxInfo.isPending}
             onPress={handleSubmit}
             className="w-full mb-8"
           />

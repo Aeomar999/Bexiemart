@@ -1,6 +1,6 @@
 import { createAuthClient } from "better-auth/client";
 import { expoClient } from "@better-auth/expo/client";
-import { phoneNumberClient } from "better-auth/client/plugins";
+import { phoneNumberClient, twoFactorClient } from "better-auth/client/plugins";
 import { dashClient, sentinelNativeClient } from "@better-auth/infra/native";
 import { ENV } from "../../config";
 import * as SecureStore from "expo-secure-store";
@@ -47,6 +47,7 @@ export const authClient = createAuthClient({
       storage: expoStorage,
     }),
     phoneNumberClient(),
+    twoFactorClient(),
     dashClient(),
     sentinelNativeClient({
       identifyUrl: process.env.EXPO_PUBLIC_BETTER_AUTH_KV_URL || "https://kv.better-auth.com",

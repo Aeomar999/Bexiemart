@@ -284,10 +284,19 @@ export default function TrackOrderScreen() {
                 accessibilityRole="button"
                 accessibilityLabel="Call rider"
                 hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
-                className="w-10 h-10 rounded-full bg-emerald-50 items-center justify-center border border-emerald-100"
-                onPress={() => Linking.openURL("tel:0541234567").catch(() => {})}
+                className={`w-10 h-10 rounded-full items-center justify-center border ${job.dispatcher.user?.phoneNumber ? "bg-emerald-50 border-emerald-100" : "bg-muted border-border opacity-50"}`}
+                disabled={!job.dispatcher.user?.phoneNumber}
+                onPress={() => {
+                  if (job.dispatcher.user?.phoneNumber) {
+                    Linking.openURL(`tel:${job.dispatcher.user.phoneNumber}`).catch(() => {});
+                  }
+                }}
               >
-                <Icon name="phone" size={18} color="#059669" />
+                <Icon
+                  name="phone"
+                  size={18}
+                  color={job.dispatcher.user?.phoneNumber ? "#059669" : "#94a3b8"}
+                />
               </Pressable>
             </View>
           ) : (

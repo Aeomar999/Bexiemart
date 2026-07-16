@@ -91,24 +91,22 @@ export function useVendorEarnings() {
   });
 }
 
-export function useWithdrawEarnings() {
-  const qc = useQueryClient();
-  return useMutation({
-    mutationFn: ({ amount, destination }: { amount: number; destination: string }) =>
-      vendorApi.withdraw(amount, destination),
-    onSuccess: () => {
-      qc.invalidateQueries({ queryKey: VENDOR_KEYS.earnings });
-      qc.invalidateQueries({ queryKey: VENDOR_KEYS.transactions });
-    },
-  });
-}
-
 export function useUpdateShop() {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: (data) => vendorApi.updateShop(data),
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: VENDOR_KEYS.stats });
+      qc.invalidateQueries({ queryKey: VENDOR_KEYS.profile });
+    },
+  });
+}
+
+export function useUpdateTaxInfo() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: (tin: string) => vendorApi.updateTaxInfo(tin),
+    onSuccess: () => {
       qc.invalidateQueries({ queryKey: VENDOR_KEYS.profile });
     },
   });

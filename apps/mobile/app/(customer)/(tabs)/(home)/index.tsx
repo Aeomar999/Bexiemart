@@ -13,6 +13,7 @@ import { useFavoritesStore } from "@/lib/stores/favorites-store";
 import { Product, Category } from "@/lib/stores/product-store";
 import { useRiderStore } from "@/lib/stores/rider-store";
 import { useCountdown } from "@/hooks/useCountdown";
+import { useFlashSalesEnabled } from "@/lib/feature-flags";
 
 const FILTER_PILLS = [
   { id: "1", label: "Instant Delivery", icon: "clock", iconColor: "#10b981", bgColor: "#f0fdf4" },
@@ -179,6 +180,7 @@ export default function HomeScreen() {
 
   const { toggleFavorite, isFavorite } = useFavoritesStore();
   const activeRide = useRiderStore((s) => s.activeRide);
+  const { flashSalesEnabled } = useFlashSalesEnabled();
 
   const allProducts = productsData?.pages?.flatMap((page: any) => page.data) ?? [];
   const categories = categoriesData ?? [];
@@ -517,7 +519,7 @@ export default function HomeScreen() {
         )}
 
         {/* ===== FLASH SALE ===== */}
-        {flashSale.length > 0 && (
+        {flashSalesEnabled && flashSale.length > 0 && (
           <View className="px-5 mt-10">
             <View className="flex-row justify-between items-center mb-4">
               <Text className="text-heading-md font-heading font-bold text-foreground">

@@ -34,22 +34,22 @@ describe("SocialLogins", () => {
     expect(getByText("Or continue with")).toBeTruthy();
   });
 
-  it("renders three social buttons", () => {
-    const { getAllByRole } = render(<SocialLogins />);
-    expect(getAllByRole("button")).toHaveLength(3);
+  it("renders the Google social button", () => {
+    const { getByRole, getByText } = render(<SocialLogins />);
+    expect(getByRole("button")).toBeTruthy();
+    expect(getByText("Continue with Google")).toBeTruthy();
   });
 
   it("calls authClient.signIn.social when Google button is pressed", async () => {
-    const { getAllByRole } = render(<SocialLogins roleIntent="vendor" />);
-    const buttons = getAllByRole("button");
-    // Buttons: Apple (0), Google (1), Facebook (2)
-    fireEvent.press(buttons[1]);
+    const { getByRole } = render(<SocialLogins />);
+    const button = getByRole("button");
+    fireEvent.press(button);
 
     await waitFor(
       () => {
         expect(authClient.signIn.social).toHaveBeenCalledWith({
           provider: "google",
-          callbackURL: "bexiemart://auth/callback?intent=vendor",
+          callbackURL: "bexiemart://auth/callback",
         });
       },
       { timeout: 8000 }

@@ -5,4 +5,5 @@ export const VendorGuard = createRoleGuard(UserRole.VENDOR, {
   model: "vendorProfile",
   findByField: "userId",
   checkActive: true,
+  requireEmailVerified: true,
 });

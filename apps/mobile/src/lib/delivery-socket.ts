@@ -1,6 +1,7 @@
 import { io, Socket } from "socket.io-client";
 import { ENV } from "../config";
 import { useAuthStore } from "./stores/auth-store";
+import { logger } from "./logger";
 
 /**
  * Real-time channel for delivery dispatch + live tracking (server `/delivery`
@@ -25,7 +26,7 @@ class DeliverySocketService {
     });
 
     this.socket.on("connect_error", (error) => {
-      console.log("Delivery socket connect_error", error);
+      logger.error("Delivery socket connect_error", error);
     });
 
     return this.socket;

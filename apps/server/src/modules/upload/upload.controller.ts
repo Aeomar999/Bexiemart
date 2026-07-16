@@ -1,4 +1,15 @@
-import { Controller, Post, Get, UseInterceptors, UploadedFile, UseGuards, Query, ParseFilePipe, MaxFileSizeValidator, FileTypeValidator } from "@nestjs/common";
+import {
+  Controller,
+  Post,
+  Get,
+  UseInterceptors,
+  UploadedFile,
+  UseGuards,
+  Query,
+  ParseFilePipe,
+  MaxFileSizeValidator,
+  FileTypeValidator,
+} from "@nestjs/common";
 import { FileInterceptor } from "@nestjs/platform-express";
 import { AuthGuard } from "../../guards/auth.guard";
 import { ApiTags, ApiOperation, ApiQuery, ApiBearerAuth } from "@nestjs/swagger";
@@ -18,6 +29,13 @@ export class UploadController {
     return this.uploadService.getSignature(folder);
   }
 
+  @Get("signature/video")
+  @ApiOperation({ summary: "Get a Cloudinary signature for direct video upload" })
+  @ApiQuery({ name: "folder", required: false, type: String })
+  getVideoSignature(@Query("folder") folder?: string) {
+    return this.uploadService.getVideoSignature(folder);
+  }
+
   @Post()
   @UseInterceptors(FileInterceptor("file"))
   @ApiOperation({ summary: "Upload a single file to Cloudinary" })
@@ -28,9 +46,9 @@ export class UploadController {
           new MaxFileSizeValidator({ maxSize: 5 * 1024 * 1024 }), // 5MB
           new FileTypeValidator({ fileType: /(jpg|jpeg|png|webp)$/ }),
         ],
-      }),
+      })
     )
-    file: Express.Multer.File,
+    file: Express.Multer.File
   ) {
     return this.uploadService.uploadFile(file);
   }

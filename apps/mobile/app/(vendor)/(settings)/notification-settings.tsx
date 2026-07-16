@@ -4,24 +4,30 @@ import { View, Text, ScrollView, Pressable, Switch } from "react-native";
 import { useRouter } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Icon } from "@/components/ui/Icon";
-import { useState } from "react";
+import {
+  useNotificationPreferences,
+  useUpdateNotificationPreferences,
+} from "@/lib/hooks/use-notification-preferences";
 
 export default function NotificationSettingsScreen() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
 
-  const [toggles, setToggles] = useState({
-    newOrder: true,
-    orderCancel: true,
-    payout: true,
-    chat: true,
-    promo: false,
-    email: true,
-    sms: false,
-  });
+  const { data: prefs } = useNotificationPreferences();
+  const updatePrefs = useUpdateNotificationPreferences();
+
+  const toggles = {
+    newOrder: prefs?.newOrder ?? true,
+    orderCancel: prefs?.orderCancel ?? true,
+    payout: prefs?.payout ?? true,
+    chat: prefs?.chat ?? true,
+    promo: prefs?.promo ?? false,
+    email: prefs?.email ?? true,
+    sms: prefs?.sms ?? false,
+  };
 
   const toggle = (key: keyof typeof toggles) => {
-    setToggles((prev) => ({ ...prev, [key]: !prev[key] }));
+    updatePrefs.mutate({ [key]: !toggles[key] });
   };
 
   return (

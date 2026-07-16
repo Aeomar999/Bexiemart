@@ -99,17 +99,25 @@ export function StatusBanner({
     </View>
   );
 
+  const bannerLabel = `${title}${subtitle ? `, ${subtitle}` : ""}${actionLabel ? `, action: ${actionLabel}` : ""}`;
+
   if (onPress) {
     return (
       <Pressable
         className={className}
         style={({ pressed }) => [{ opacity: pressed ? 0.85 : 1 }]}
         onPress={onPress}
+        accessibilityRole="button"
+        accessibilityLabel={bannerLabel}
       >
         {content}
       </Pressable>
     );
   }
 
-  return <View className={className}>{content}</View>;
+  return (
+    <View className={className} accessibilityRole="alert" accessibilityLabel={bannerLabel}>
+      {content}
+    </View>
+  );
 }

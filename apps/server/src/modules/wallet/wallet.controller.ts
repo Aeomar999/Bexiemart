@@ -11,6 +11,7 @@ import {
   Req,
 } from "@nestjs/common";
 import { AuthGuard } from "../../guards/auth.guard";
+import { EmailVerifiedGuard } from "../../guards/email-verified.guard";
 import { WalletService } from "./wallet.service";
 import { TopupDto } from "./dto/topup.dto";
 import { TransferDto } from "./dto/transfer.dto";
@@ -59,6 +60,7 @@ export class WalletController {
   }
 
   @Post("withdraw")
+  @UseGuards(EmailVerifiedGuard)
   @Throttle({ default: { limit: 5, ttl: 60000 } })
   @ApiOperation({ summary: "Withdraw funds to a bank or momo account" })
   @ApiBody({ type: WithdrawDto })
@@ -73,6 +75,7 @@ export class WalletController {
   }
 
   @Post("transfer")
+  @UseGuards(EmailVerifiedGuard)
   @Throttle({ default: { limit: 5, ttl: 60000 } })
   @ApiOperation({ summary: "Transfer funds to another user" })
   @ApiBody({ type: TransferDto })

@@ -20,7 +20,6 @@ describe("DispatcherController", () => {
     getEarnings: jest.fn(),
     getTransactions: jest.fn(),
     getAnalytics: jest.fn(),
-    withdrawEarnings: jest.fn(),
   };
 
   const mockPrisma = {
@@ -174,19 +173,6 @@ describe("DispatcherController", () => {
 
       expect(await controller.getAnalytics(req)).toEqual(result);
       expect(mockService.getAnalytics).toHaveBeenCalledWith("user-1");
-    });
-  });
-
-  describe("withdrawEarnings", () => {
-    it("should call service.withdrawEarnings and return result", async () => {
-      const result = { success: true };
-      mockService.withdrawEarnings.mockResolvedValue(result);
-      const req = { user: { id: "user-1" } };
-
-      expect(await controller.withdrawEarnings(req, { amount: 100, destination: "bank" })).toEqual(
-        result
-      );
-      expect(mockService.withdrawEarnings).toHaveBeenCalledWith("user-1", 100, "bank");
     });
   });
 });

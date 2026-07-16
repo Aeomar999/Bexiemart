@@ -1,6 +1,7 @@
 import "react-native-get-random-values";
 import "../global.css";
 import "../src/lib/sentry";
+import * as Sentry from "@sentry/react-native";
 import { posthog } from "../src/lib/posthog";
 import { PostHogProvider } from "posthog-react-native";
 import { Stack, useRouter, useRootNavigationState, useSegments, usePathname } from "expo-router";
@@ -22,6 +23,8 @@ import * as SplashScreen from "expo-splash-screen";
 SplashScreen.preventAutoHideAsync();
 import { PaystackProvider } from "react-native-paystack-webview";
 import { OfflineBanner } from "../src/components/ui/OfflineBanner";
+import { useOTAUpdate } from "../src/hooks/useOTAUpdate";
+import { PaymentTestModeBanner } from "../src/components/ui/PaymentTestModeBanner";
 import {
   Raleway_400Regular,
   Raleway_600SemiBold,
@@ -36,6 +39,13 @@ import {
 
 import { SafeAreaProvider } from "react-native-safe-area-context";
 
+const PAYSTACK_PUBLIC_KEY = process.env.EXPO_PUBLIC_PAYSTACK_PUBLIC_KEY;
+if (!PAYSTACK_PUBLIC_KEY) {
+  throw new Error(
+    "EXPO_PUBLIC_PAYSTACK_PUBLIC_KEY is not set. Configure it in eas.json / .env before running the app."
+  );
+}
+
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
@@ -49,7 +59,8 @@ const queryClient = new QueryClient({
   },
 });
 
-export default function RootLayout() {
+function RootLayout() {
+  useOTAUpdate();
   const hydrate = useAuthStore((s) => s.hydrate);
   const isLoading = useAuthStore((s) => s.isLoading);
   const user = useAuthStore((s) => s.user);
@@ -58,9 +69,11 @@ export default function RootLayout() {
   const [splashDone, setSplashDone] = useState(false);
 
   const [fontsLoaded] = useFonts({
+    Raleway: Raleway_700Bold,
     Raleway_400Regular,
     Raleway_600SemiBold,
     Raleway_700Bold,
+    Nunito: Nunito_400Regular,
     Nunito_400Regular,
     Nunito_500Medium,
     Nunito_600SemiBold,
@@ -108,7 +121,7 @@ export default function RootLayout() {
         if (user?.role === "VENDOR") {
           router.replace("/(vendor)/(dashboard)");
         } else if (user?.role === "DISPATCHER") {
-          router.replace("/(dispatcher)/(tabs)/(dashboard)");
+          router.replace("/(dispatcher)/(tabs)/(home)");
         } else {
           router.replace("/(customer)/(tabs)/(home)");
         }
@@ -156,10 +169,9 @@ export default function RootLayout() {
       <PostHogProvider client={posthog} autocapture>
         <ThemeController />
         <OfflineBanner />
+        <PaymentTestModeBanner />
         <QueryClientProvider client={queryClient}>
-          <PaystackProvider
-            publicKey={process.env.EXPO_PUBLIC_PAYSTACK_PUBLIC_KEY || "pk_test_placeholder"}
-          >
+          <PaystackProvider publicKey={PAYSTACK_PUBLIC_KEY}>
             <StatusBar style="auto" />
             <ErrorBoundary>
               <Stack screenOptions={{ headerShown: false }}>
@@ -196,3 +208,5 @@ export default function RootLayout() {
     </SafeAreaProvider>
   );
 }
+
+export default Sentry.wrap(RootLayout);

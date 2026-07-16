@@ -22,7 +22,6 @@ describe("VendorController", () => {
     getEarnings: jest.fn(),
     getTransactions: jest.fn(),
     getAnalytics: jest.fn(),
-    withdrawEarnings: jest.fn(),
     updateShop: jest.fn(),
     getDisputes: jest.fn(),
   };
@@ -30,9 +29,7 @@ describe("VendorController", () => {
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       controllers: [VendorController],
-      providers: [
-        { provide: VendorService, useValue: mockService },
-      ],
+      providers: [{ provide: VendorService, useValue: mockService }],
     })
       .overrideGuard(AuthGuard)
       .useValue({ canActivate: jest.fn(() => true) })
@@ -213,18 +210,6 @@ describe("VendorController", () => {
 
       expect(await controller.getAnalytics(req)).toEqual(result);
       expect(mockService.getAnalytics).toHaveBeenCalledWith("user-1");
-    });
-  });
-
-  describe("withdraw", () => {
-    it("should call service.withdrawEarnings with user id, amount, and destination", async () => {
-      const result = { success: true };
-      mockService.withdrawEarnings.mockResolvedValue(result);
-      const req = { user: { id: "user-1" } };
-      const body = { amount: 5000, destination: "bank-account-id" };
-
-      expect(await controller.withdraw(req, body)).toEqual(result);
-      expect(mockService.withdrawEarnings).toHaveBeenCalledWith("user-1", 5000, "bank-account-id");
     });
   });
 

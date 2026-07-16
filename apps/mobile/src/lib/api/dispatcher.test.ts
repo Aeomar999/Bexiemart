@@ -10,8 +10,23 @@ describe("dispatcherApi", () => {
 
   it("should create profile", async () => {
     (apiClient.post as jest.Mock).mockResolvedValue({ data: { id: "disp-1" } });
-    const result = await dispatcherApi.createProfile({ vehicleType: "car", licensePlate: "GH-1234", licenseNumber: "LIC-001" });
-    expect(apiClient.post).toHaveBeenCalledWith("/dispatcher/profile", { vehicleType: "car", plateNumber: "GH-1234", drivingLicense: "LIC-001" });
+    const result = await dispatcherApi.createProfile({
+      vehicleType: "car",
+      licensePlate: "GH-1234",
+      licenseNumber: "LIC-001",
+    });
+    expect(apiClient.post).toHaveBeenCalledWith("/dispatcher/profile", {
+      vehicleType: "car",
+      plateNumber: "GH-1234",
+      drivingLicense: "LIC-001",
+    });
+    expect(result.data.id).toBe("disp-1");
+  });
+
+  it("should get profile", async () => {
+    (apiClient.get as jest.Mock).mockResolvedValue({ data: { id: "disp-1", vehicleType: "car" } });
+    const result = await dispatcherApi.getProfile();
+    expect(apiClient.get).toHaveBeenCalledWith("/dispatcher/profile");
     expect(result.data.id).toBe("disp-1");
   });
 
@@ -23,7 +38,9 @@ describe("dispatcherApi", () => {
   });
 
   it("should get my tasks", async () => {
-    (apiClient.get as jest.Mock).mockResolvedValue({ data: { data: [{ id: "task-1", status: "active" }] } });
+    (apiClient.get as jest.Mock).mockResolvedValue({
+      data: { data: [{ id: "task-1", status: "active" }] },
+    });
     const result = await dispatcherApi.getMyTasks("active");
     expect(apiClient.get).toHaveBeenCalledWith("/dispatcher/tasks?status=active");
     expect(result.data.data).toHaveLength(1);

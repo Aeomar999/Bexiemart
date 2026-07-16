@@ -8,6 +8,7 @@ export const WALLET_KEYS = {
   cards: ["wallet", "cards"] as const,
   bankAccounts: ["wallet", "bank-accounts"] as const,
   momoAccounts: ["wallet", "momo-accounts"] as const,
+  coins: ["coins"] as const,
 };
 
 export function useWallet() {
@@ -46,6 +47,24 @@ export function useTransfer() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: WALLET_KEYS.wallet });
       queryClient.invalidateQueries({ queryKey: ["transactions"] });
+    },
+  });
+}
+
+export function useWithdraw() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (payload: {
+      amount: number;
+      accountId: string;
+      accountType: "bank" | "momo";
+      pin: string;
+    }) => walletApi.withdraw(payload).then((r) => r.data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: WALLET_KEYS.wallet });
+      queryClient.invalidateQueries({ queryKey: ["transactions"] });
+      queryClient.invalidateQueries({ queryKey: ["vendor", "earnings"] });
+      queryClient.invalidateQueries({ queryKey: ["dispatcher", "earnings"] });
     },
   });
 }
@@ -119,7 +138,8 @@ export function useVerifyAndSaveCard() {
 export function useUpdateCard() {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: ({ id, data }: { id: string; data: any }) => walletApi.updateCard(id, data).then((r) => r.data),
+    mutationFn: ({ id, data }: { id: string; data: any }) =>
+      walletApi.updateCard(id, data).then((r) => r.data),
     onSuccess: () => qc.invalidateQueries({ queryKey: WALLET_KEYS.cards }),
   });
 }
@@ -152,8 +172,12 @@ export function useBankAccounts() {
 export function useLinkBankAccount() {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: (data: { bankCode: string; accountNumber: string; accountName: string; bankName?: string }) =>
-      walletApi.linkBankAccount(data).then((r) => r.data),
+    mutationFn: (data: {
+      bankCode: string;
+      accountNumber: string;
+      accountName: string;
+      bankName?: string;
+    }) => walletApi.linkBankAccount(data).then((r) => r.data),
     onSuccess: () => qc.invalidateQueries({ queryKey: WALLET_KEYS.bankAccounts }),
   });
 }
@@ -189,5 +213,25 @@ export function useDeleteMomoAccount() {
   return useMutation({
     mutationFn: (id: string) => walletApi.deleteMomoAccount(id).then((r) => r.data),
     onSuccess: () => qc.invalidateQueries({ queryKey: WALLET_KEYS.momoAccounts }),
+  });
+}
+
+/* ─── BexieCoins & Loyalty ─── */
+
+export function useCoinsSummary() {
+  return useQuery({
+    queryKey: WALLET_KEYS.coins,
+    queryFn: () => walletApi.getCoinsSummary().then((r) => r.data),
+  });
+}
+
+export function useConvertCoins() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: (coins: number) => walletApi.convertCoins(coins).then((r) => r.data),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: WALLET_KEYS.coins });
+      qc.invalidateQueries({ queryKey: WALLET_KEYS.wallet });
+    },
   });
 }

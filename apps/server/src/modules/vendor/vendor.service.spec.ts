@@ -336,48 +336,4 @@ describe("VendorService", () => {
       expect(result.recentTransactions[0].id).toBe("t1");
     });
   });
-
-  describe("withdrawEarnings", () => {
-    it("throws Error if insufficient pending payout", async () => {
-      prisma.vendorProfile.findUnique.mockResolvedValue({
-        id: "vp1",
-        userId: "u1",
-        pendingPayout: 100,
-      });
-      await expect(service.withdrawEarnings("u1", 200, "bank")).rejects.toThrow(
-        "Insufficient pending payout"
-      );
-    });
-
-    it("creates withdrawal transaction via $transaction", async () => {
-      prisma.vendorProfile.findUnique.mockResolvedValue({
-        id: "vp1",
-        userId: "u1",
-        pendingPayout: 5000,
-      });
-      prisma.wallet.findUnique.mockResolvedValue({ id: "w1", userId: "u1", currency: "NGN" });
-      prisma.wallet.update.mockResolvedValue({});
-      prisma.transaction.create.mockResolvedValue({ id: "tx1" });
-      prisma.vendorProfile.update.mockResolvedValue({});
-      prisma.$transaction.mockImplementation((arg: any) => {
-        if (Array.isArray(arg)) return Promise.resolve(arg);
-        return arg(prisma);
-      });
-
-      const result = await service.withdrawEarnings("u1", 2000, "bank-account");
-      expect(result.success).toBe(true);
-      expect(result.reference).toBeDefined();
-      expect(prisma.wallet.update).toHaveBeenCalledWith(
-        expect.objectContaining({
-          where: { id: "w1" },
-          data: { balance: { decrement: 2000 } },
-        })
-      );
-      expect(prisma.transaction.create).toHaveBeenCalledWith(
-        expect.objectContaining({
-          data: expect.objectContaining({ type: "WITHDRAWAL", amount: 2000 }),
-        })
-      );
-    });
-  });
 });

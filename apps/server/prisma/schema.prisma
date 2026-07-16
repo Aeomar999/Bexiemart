@@ -1,3 +1,4 @@
+
 generator client {
   provider = "prisma-client-js"
 }
@@ -9,25 +10,27 @@ datasource db {
 // ─── Better Auth Models ────────────────────────────────────────────────────────
 
 model User {
-  id                  String   @id
+  id                  String    @id
   name                String
-  email               String   @unique
-  emailVerified       Boolean  @default(false)
+  email               String    @unique
+  emailVerified       Boolean   @default(false)
   image               String?
-  role                UserRole @default(CUSTOMER)
+  bio                 String?
+  location            String?
+  role                UserRole  @default(CUSTOMER)
   // Super admins are ADMINs with the extra privilege of managing the admin team
   // (creating new admin accounts). Gated by SuperAdminGuard, not the role enum.
-  isSuperAdmin        Boolean  @default(false)
-  onboardingCompleted Boolean  @default(false)
-  phoneNumber         String?  @unique
-  phoneNumberVerified Boolean  @default(false)
-  isActive            Boolean  @default(true)
+  isSuperAdmin        Boolean   @default(false)
+  onboardingCompleted Boolean   @default(false)
+  phoneNumber         String?   @unique
+  phoneNumberVerified Boolean   @default(false)
+  isActive            Boolean   @default(true)
   bannedAt            DateTime?
   banReason           String?
   pushToken           String?
   pushTokenUpdatedAt  DateTime?
-  createdAt           DateTime @default(now())
-  updatedAt           DateTime @updatedAt
+  createdAt           DateTime  @default(now())
+  updatedAt           DateTime  @updatedAt
 
   sessions Session[]
   accounts Account[]
@@ -48,6 +51,7 @@ model User {
   wallet            Wallet?
   reelLikes         ReelLike[]
   reels             Reel[]
+  reelComments      ReelComment[]
   serviceBookings   ServiceBooking[]
   referral          Referral?
   referredUsers     ReferredUser[]
@@ -59,8 +63,11 @@ model User {
   deliveryJobs      DeliveryJob[]      @relation("CustomerDeliveryJobs")
   Collection        Collection[]
 
-  supportTickets  SupportTicket[] @relation("TicketOwner")
-  assignedTickets SupportTicket[] @relation("AssignedAgent")
+  supportTickets         SupportTicket[]         @relation("TicketOwner")
+  assignedTickets        SupportTicket[]         @relation("AssignedAgent")
+  notificationPreference NotificationPreference?
+  twoFactorEnabled       Boolean?                @default(false)
+  twofactors             TwoFactor[]
 }
 
 model Session {
@@ -74,6 +81,8 @@ model Session {
   updatedAt DateTime @updatedAt
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
 }
 
 model Account {
@@ -94,6 +103,8 @@ model Account {
   updatedAt             DateTime  @updatedAt
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
 }
 
 model Verification {
@@ -103,6 +114,8 @@ model Verification {
   expiresAt  DateTime
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
+
+  @@index([identifier])
 }
 
 // ─── Vendor Models ──────────────────────────────────────────────────────────────
@@ -124,6 +137,8 @@ model VendorProfile {
   latitude    Float?
   longitude   Float?
   isActive    Boolean @default(true)
+  taxId       String?
+  taxStatus   String  @default("NONE") // NONE, PENDING, VERIFIED, REJECTED
 
   totalEarnings Decimal @default(0)
   pendingPayout Decimal @default(0)
@@ -458,6 +473,21 @@ model Notification {
   @@index([type])
 }
 
+model NotificationPreference {
+  id          String   @id @default(cuid())
+  userId      String   @unique
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  newOrder    Boolean  @default(true)
+  orderCancel Boolean  @default(true)
+  payout      Boolean  @default(true)
+  chat        Boolean  @default(true)
+  promo       Boolean  @default(false)
+  email       Boolean  @default(true)
+  sms         Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
 // ─── Review Model ────────────────────────────────────────────────────────────────
 
 model Review {
@@ -704,6 +734,7 @@ model Wallet {
   pinHash        String?
   pinFailures    Int          @default(0)
   pinLockedUntil DateTime?
+  bexieCoins     Int          @default(0)
   createdAt      DateTime     @default(now())
   updatedAt      DateTime     @updatedAt
 
@@ -825,25 +856,25 @@ model Escrow {
 }
 
 model PlatformConfig {
-  id                   String   @id @default(uuid())
-  commissionRate       Decimal  @default(0.05)
-  taxRate              Decimal  @default(0.075)
-  withdrawalFeeFlat    Decimal  @default(2.00)
-  minTopup             Decimal  @default(5.00)
-  maxTopup             Decimal  @default(5000.00)
-  minWithdrawal        Decimal  @default(10.00)
-  dailyWithdrawalLimit Decimal  @default(5000.00)
+  id                   String  @id @default(uuid())
+  commissionRate       Decimal @default(0.05)
+  taxRate              Decimal @default(0.075)
+  withdrawalFeeFlat    Decimal @default(2.00)
+  minTopup             Decimal @default(5.00)
+  maxTopup             Decimal @default(5000.00)
+  minWithdrawal        Decimal @default(10.00)
+  dailyWithdrawalLimit Decimal @default(5000.00)
 
   // Delivery pricing knobs (GHS). customerFee = max(minFee, (base + perKm*km + perMin*min) * vehicleMult * surge)
-  deliveryBaseFare         Decimal @default(5.00)
-  deliveryPerKm            Decimal @default(1.50)
-  deliveryPerMin           Decimal @default(0.20)
-  deliveryMinFee           Decimal @default(6.00)
-  deliveryCommissionRate   Decimal @default(0.20) // platform's cut of the delivery fee
-  deliverySurgeMultiplier  Decimal @default(1.00)
-  deliveryBikeMultiplier   Decimal @default(1.00)
-  deliveryCarMultiplier    Decimal @default(1.60)
-  deliveryVanMultiplier    Decimal @default(2.20)
+  deliveryBaseFare        Decimal @default(5.00)
+  deliveryPerKm           Decimal @default(1.50)
+  deliveryPerMin          Decimal @default(0.20)
+  deliveryMinFee          Decimal @default(6.00)
+  deliveryCommissionRate  Decimal @default(0.20) // platform's cut of the delivery fee
+  deliverySurgeMultiplier Decimal @default(1.00)
+  deliveryBikeMultiplier  Decimal @default(1.00)
+  deliveryCarMultiplier   Decimal @default(1.60)
+  deliveryVanMultiplier   Decimal @default(2.20)
 
   updatedAt DateTime @updatedAt
 }
@@ -859,13 +890,15 @@ model Reel {
   caption      String?
   productId    String? // Optional linked product
   product      Product? @relation(fields: [productId], references: [id], onDelete: SetNull)
-  likesCount   Int      @default(0)
-  viewsCount   Int      @default(0)
-  isActive     Boolean  @default(true)
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
+  likesCount    Int      @default(0)
+  viewsCount    Int      @default(0)
+  commentsCount Int      @default(0)
+  isActive      Boolean  @default(true)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
 
-  likes ReelLike[]
+  likes    ReelLike[]
+  comments ReelComment[]
 
   @@index([userId])
   @@index([productId])
@@ -882,6 +915,18 @@ model ReelLike {
 
   @@unique([userId, reelId])
   @@index([reelId])
+}
+
+model ReelComment {
+  id        String   @id @default(cuid())
+  reelId    String
+  reel      Reel     @relation(fields: [reelId], references: [id], onDelete: Cascade)
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  content   String
+  createdAt DateTime @default(now())
+
+  @@index([reelId, createdAt])
 }
 
 // ─── Service Model ─────────────────────────────────────────────────────────────
@@ -958,6 +1003,7 @@ model DispatcherProfile {
 
 // Unified delivery/dispatch job. Powers passenger/parcel trips (PARCEL),
 // marketplace product orders (ORDER), and restaurant food orders (FOOD).
+
 model DeliveryJob {
   id        String @id @default(cuid())
   jobNumber String @unique
@@ -971,9 +1017,9 @@ model DeliveryJob {
   dispatcher   DispatcherProfile? @relation("DispatcherJobs", fields: [dispatcherId], references: [id])
 
   // Polymorphic links to the underlying order (null for PARCEL).
-  orderId     String? @unique
-  order       Order?  @relation(fields: [orderId], references: [id], onDelete: Cascade)
-  foodOrderId String? @unique
+  orderId     String?    @unique
+  order       Order?     @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  foodOrderId String?    @unique
   foodOrder   FoodOrder? @relation(fields: [foodOrderId], references: [id], onDelete: Cascade)
 
   vehicleType String // bike | car | van
@@ -1054,6 +1100,7 @@ enum BannerPlacement {
 
 /// Marketing carousel banners rendered on customer screens. Managed by admins
 /// and served publicly (guests included) via GET /banners/active.
+
 model Banner {
   id        String          @id @default(cuid())
   placement BannerPlacement
@@ -1233,4 +1280,16 @@ model CollectionItem {
   createdAt    DateTime   @default(now())
 
   @@unique([collectionId, productId])
+}
+
+model TwoFactor {
+  id          String   @id
+  secret      String
+  backupCodes String
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  verified    Boolean? @default(true)
+
+  @@index([secret])
+  @@index([userId])
 }

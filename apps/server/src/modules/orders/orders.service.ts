@@ -79,6 +79,7 @@ export class OrdersService {
       quantity: number;
       lineTotal: number;
       imageUrl: string | null;
+      flashSaleItemId?: string;
     }[] = [];
     // Fetch every requested product in a single query (no N+1), then build the
     // line items in the requested order from these authoritative rows.
@@ -88,6 +89,19 @@ export class OrdersService {
       include: { images: { take: 1, orderBy: { order: "asc" } } },
     });
     const productById = new Map(products.map((p) => [p.id, p]));
+
+    const now = new Date();
+    const activeFlashSaleItems = await this.prisma.flashSaleItem.findMany({
+      where: {
+        productId: { in: productIds },
+        flashSale: {
+          isActive: true,
+          startDate: { lte: now },
+          endDate: { gte: now },
+        },
+      },
+    });
+    const flashItemByProductId = new Map((activeFlashSaleItems || []).map((f) => [f.productId, f]));
 
     let primaryVendorId: string | null = null;
     for (const { productId, quantity } of requested) {
@@ -100,14 +114,25 @@ export class OrdersService {
         throw new BadRequestException(`Insufficient stock for "${product.name}"`);
       }
       if (!primaryVendorId && product.vendorId) primaryVendorId = product.vendorId;
+
+      const flashSaleItem = flashItemByProductId.get(productId);
+      const isFlashSaleActiveForQty =
+        flashSaleItem &&
+        (flashSaleItem.quantity === 0 ||
+          flashSaleItem.soldCount + quantity <= flashSaleItem.quantity);
+      const unitPrice = isFlashSaleActiveForQty
+        ? Number(flashSaleItem.discountedPrice)
+        : Number(product.price);
+
       lineItems.push({
         productId: product.id,
         productName: product.name,
         productSlug: product.slug,
-        price: Number(product.price),
+        price: unitPrice,
         quantity,
-        lineTotal: Number(product.price) * quantity,
+        lineTotal: unitPrice * quantity,
         imageUrl: product.images?.[0]?.url ?? null,
+        flashSaleItemId: isFlashSaleActiveForQty ? flashSaleItem.id : undefined,
       });
     }
 
@@ -164,6 +189,12 @@ export class OrdersService {
         });
         if (result.count === 0) {
           throw new BadRequestException(`Insufficient stock for "${item.productName}"`);
+        }
+        if (item.flashSaleItemId) {
+          await tx.flashSaleItem.update({
+            where: { id: item.flashSaleItemId },
+            data: { soldCount: { increment: item.quantity } },
+          });
         }
       }
 

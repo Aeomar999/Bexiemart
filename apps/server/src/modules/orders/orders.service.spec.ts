@@ -196,12 +196,49 @@ describe("OrdersService", () => {
       // not an unconditional update, to prevent overselling.
       expect(prisma.product.updateMany).toHaveBeenCalledTimes(2);
 
-      // The order must be priced from the database, not the tampered DTO prices.
       const orderArgs = prisma.order.create.mock.calls[0][0];
       expect(orderArgs.data.subtotal).toBe(5500);
       const createdItems = orderArgs.data.items.create;
       expect(createdItems[0].price).toBe(2000);
       expect(createdItems[1].price).toBe(1500);
+    });
+
+    it("should apply discountedPrice from active flash sale item and increment soldCount", async () => {
+      const dto = {
+        items: [{ productId: "p1", quantity: 1 }],
+        shippingAddress: { street: "123 Main St", city: "Accra", phone: "0240000000" },
+      };
+
+      prisma.product.findMany.mockResolvedValue([
+        {
+          id: "p1",
+          name: "Laptop",
+          slug: "laptop",
+          price: 2000,
+          stock: 10,
+          isActive: true,
+          isDeleted: false,
+          vendorId: "v1",
+        },
+      ] as any);
+      prisma.flashSaleItem.findMany.mockResolvedValue([
+        { id: "fsi-1", productId: "p1", discountedPrice: 1200, quantity: 10, soldCount: 0 },
+      ] as any);
+      prisma.product.updateMany.mockResolvedValue({ count: 1 });
+      prisma.$transaction.mockImplementation(async (cb: any) => cb(prisma));
+      prisma.flashSaleItem.update.mockResolvedValue({ id: "fsi-1", soldCount: 1 });
+      prisma.shippingAddress.create.mockResolvedValue({ id: "addr1" } as any);
+      prisma.order.create.mockResolvedValue({ id: "o1", subtotal: 1200, total: 1290 } as any);
+
+      await service.create("u1", dto as any);
+
+      const orderArgs = prisma.order.create.mock.calls[0][0];
+      expect(orderArgs.data.subtotal).toBe(1200);
+      expect(orderArgs.data.items.create[0].price).toBe(1200);
+      expect(prisma.flashSaleItem.update).toHaveBeenCalledWith({
+        where: { id: "fsi-1" },
+        data: { soldCount: { increment: 1 } },
+      });
     });
   });
 

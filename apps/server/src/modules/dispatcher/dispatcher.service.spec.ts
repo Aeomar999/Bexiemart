@@ -80,20 +80,4 @@ describe("DispatcherService", () => {
     const result = await service.getEarnings("user-1");
     expect(result.availableBalance).toBe(0);
   });
-
-  it("should withdraw from cleared balance", async () => {
-    prisma.dispatcherProfile.findUnique.mockResolvedValue({ id: "dp-1", pendingPayout: 0 } as any);
-    prisma.wallet.findUnique.mockResolvedValue({ id: "w-1", currency: "GHS", balance: 500 } as any);
-    prisma.$transaction.mockImplementation(async (args: any) => args);
-    const result = await service.withdrawEarnings("user-1", 100, "bank");
-    expect(result.success).toBe(true);
-  });
-
-  it("should reject withdrawal above available balance", async () => {
-    prisma.dispatcherProfile.findUnique.mockResolvedValue({ id: "dp-1", pendingPayout: 0 } as any);
-    prisma.wallet.findUnique.mockResolvedValue({ id: "w-1", currency: "GHS", balance: 50 } as any);
-    await expect(service.withdrawEarnings("user-1", 100, "bank")).rejects.toThrow(
-      "Insufficient available balance"
-    );
-  });
 });

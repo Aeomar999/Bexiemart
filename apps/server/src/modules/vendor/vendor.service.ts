@@ -487,43 +487,6 @@ export class VendorService {
     };
   }
 
-  async withdrawEarnings(userId: string, amount: number, destination: string) {
-    const profile = await this.getVendorProfile(userId);
-    if (Number(profile.pendingPayout) < amount) {
-      throw new Error("Insufficient pending payout");
-    }
-
-    const wallet = await this.prisma.wallet.findUnique({ where: { userId } });
-    if (!wallet) throw new NotFoundException("Wallet not found");
-
-    await this.prisma.$transaction([
-      this.prisma.wallet.update({
-        where: { id: wallet.id },
-        data: { balance: { decrement: amount } },
-      }),
-      this.prisma.transaction.create({
-        data: {
-          walletId: wallet.id,
-          type: "WITHDRAWAL",
-          status: "COMPLETED",
-          amount,
-          fee: 0,
-          netAmount: amount,
-          currency: wallet.currency,
-          reference: `WD-${profile.id}-${Date.now()}`,
-          description: `Withdrawal to ${destination}`,
-          metadata: { destination },
-        },
-      }),
-      this.prisma.vendorProfile.update({
-        where: { id: profile.id },
-        data: { pendingPayout: { decrement: amount } },
-      }),
-    ]);
-
-    return { success: true, reference: `WD-${Date.now()}` };
-  }
-
   async updateShop(userId: string, data: UpdateShopDto) {
     const profile = await this.getVendorProfile(userId);
 
@@ -536,6 +499,18 @@ export class VendorService {
     if (data.address !== undefined || data.city !== undefined || data.state !== undefined) {
       await this.geocodeShop(updated.id, updated.address, updated.city, updated.state);
     }
+    return updated;
+  }
+
+  async updateTaxInfo(userId: string, tin: string) {
+    const profile = await this.getVendorProfile(userId);
+    const updated = await this.prisma.vendorProfile.update({
+      where: { id: profile.id },
+      data: {
+        taxId: tin,
+        taxStatus: "PENDING",
+      },
+    });
     return updated;
   }
 

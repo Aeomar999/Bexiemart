@@ -62,7 +62,7 @@ export function EditProfileScreen() {
     setIsSaving(true);
 
     updateProfile
-      .mutateAsync({ name, image: avatarUrl })
+      .mutateAsync({ name, image: avatarUrl, bio, location })
       .then((res) => {
         setUser(res.data);
         Toast.show({
@@ -144,25 +144,15 @@ export function EditProfileScreen() {
             </View>
 
             <View className="mb-4">
-              <Input
-                label="Email Address"
-                placeholder="Enter your email"
-                keyboardType="email-address"
-                autoCapitalize="none"
-                value={email}
-                onChangeText={setEmail}
-                editable={!isSaving}
-              />
+              <Input label="Email Address (Verified)" value={email} editable={false} />
             </View>
 
             <View className="mb-4">
               <Input
-                label="Phone Number (Optional)"
-                placeholder="e.g. +233 50 123 4567"
-                keyboardType="phone-pad"
+                label="Phone Number"
+                placeholder="No phone number verified"
                 value={phone}
-                onChangeText={setPhone}
-                editable={!isSaving}
+                editable={false}
               />
             </View>
 
@@ -190,6 +180,8 @@ export function EditProfileScreen() {
                   value={bio}
                   onChangeText={setBio}
                   editable={!isSaving}
+                  accessibilityLabel="Bio (Optional)"
+                  accessibilityRole="text"
                 />
               </View>
             </View>

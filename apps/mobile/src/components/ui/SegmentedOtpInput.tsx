@@ -48,6 +48,8 @@ export const SegmentedOtpInput: React.FC<SegmentedOtpInputProps> = ({
     <TouchableOpacity
       activeOpacity={1}
       onPress={handleContainerPress}
+      accessibilityRole="button"
+      accessibilityLabel="One time verification code input"
       className="w-full items-center justify-center my-6"
     >
       <View className="flex-row items-center justify-center w-full relative">
@@ -105,6 +107,11 @@ export const SegmentedOtpInput: React.FC<SegmentedOtpInputProps> = ({
           maxLength={6}
           autoFocus={!disabled}
           editable={!disabled && status !== "verifying" && status !== "sending"}
+          accessibilityLabel="Enter 6 digit verification code"
+          accessibilityRole="text"
+          accessibilityState={{
+            disabled: disabled || status === "verifying" || status === "sending",
+          }}
           className="absolute w-full h-full opacity-0"
           caretHidden={true}
         />

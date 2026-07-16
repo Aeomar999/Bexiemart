@@ -158,6 +158,12 @@ export function Sidebar() {
     }
   };
 
+  const handleLogout = async () => {
+    logout();
+    await fetch("/api/session", { method: "DELETE" }).catch(() => {});
+    window.location.href = "/login";
+  };
+
   return (
     <div
       className={cn(
@@ -292,7 +298,7 @@ export function Sidebar() {
 
       <div className="border-t border-[var(--color-border)] p-3 bg-[var(--color-card)]">
         <button
-          onClick={logout}
+          onClick={handleLogout}
           className={cn(
             "group flex w-full items-center rounded-md px-3 py-2 text-sm font-medium text-[var(--color-text-secondary)] hover:bg-[var(--color-error)]/10 hover:text-[var(--color-error)] transition-colors",
             !isSidebarOpen && "justify-center px-0"

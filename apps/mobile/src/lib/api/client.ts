@@ -5,6 +5,7 @@ import { z } from "zod";
 import * as Sentry from "@sentry/react-native";
 import { ENV } from "../../config";
 import { useAuthStore } from "../stores/auth-store";
+import { logger } from "../logger";
 
 const isWeb = Platform.OS === "web";
 
@@ -47,7 +48,7 @@ apiClient.interceptors.response.use(
     if (schema) {
       const parsed = schema.safeParse(response.data);
       if (!parsed.success) {
-        console.error("API Contract Violation:", parsed.error);
+        logger.error("API Contract Violation:", parsed.error);
         Sentry.captureException(new Error("API Contract Violation"), {
           extra: { issues: parsed.error.issues, url: response.config.url },
         });

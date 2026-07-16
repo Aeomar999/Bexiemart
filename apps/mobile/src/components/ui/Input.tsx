@@ -47,12 +47,16 @@ export const Input = forwardRef<TextInput, InputProps>(
             onBlur={() => setIsFocused(false)}
             secureTextEntry={secureTextEntry && !isSecureVisible}
             editable={editable}
+            accessibilityLabel={props.accessibilityLabel || label || props.placeholder}
+            accessibilityRole={props.accessibilityRole || "text"}
+            accessibilityState={{ disabled: !editable, ...props.accessibilityState }}
             {...props}
           />
           {secureTextEntry && (
             <TouchableOpacity
               onPress={() => setIsSecureVisible(!isSecureVisible)}
               hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+              accessibilityRole="button"
               accessibilityLabel={isSecureVisible ? "Hide password" : "Show password"}
             >
               <Text className="text-body-sm text-muted-foreground font-body">

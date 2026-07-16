@@ -6,11 +6,19 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useVendorCustomers } from "@/lib/hooks/use-vendor-customers";
 import { Icon } from "@/components/ui/Icon";
 import { ListSkeleton } from "@/components/ui/Skeleton";
+import { useState, useMemo } from "react";
 
 export default function VendorCustomersScreen() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
   const { data: customers = [], isLoading } = useVendorCustomers();
+  const [searchQuery, setSearchQuery] = useState("");
+
+  const filteredCustomers = useMemo(() => {
+    if (!searchQuery.trim()) return customers;
+    const q = searchQuery.toLowerCase().trim();
+    return customers.filter((customer: any) => customer.name?.toLowerCase().includes(q));
+  }, [customers, searchQuery]);
 
   return (
     <View className="flex-1 bg-background">
@@ -26,7 +34,9 @@ export default function VendorCustomersScreen() {
           </Text>
         </View>
         <View className="bg-muted px-3 py-1.5 rounded-full">
-          <Text className="text-body-sm font-bold text-muted-foreground">89 Total</Text>
+          <Text className="text-body-sm font-bold text-muted-foreground">
+            {filteredCustomers.length} Total
+          </Text>
         </View>
       </View>
 
@@ -39,7 +49,12 @@ export default function VendorCustomersScreen() {
             color="#94a3b8"
             style={{ marginLeft: 12, marginRight: 8 }}
           />
-          <TextInput placeholder="Search customers..." className="flex-1 h-10 text-body-lg" />
+          <TextInput
+            placeholder="Search customers..."
+            value={searchQuery}
+            onChangeText={setSearchQuery}
+            className="flex-1 h-10 text-body-lg"
+          />
         </View>
 
         {isLoading ? (
@@ -48,7 +63,7 @@ export default function VendorCustomersScreen() {
           </View>
         ) : (
           <View className="gap-3">
-            {customers.map((customer: any) => (
+            {filteredCustomers.map((customer: any) => (
               <View key={customer.id} className="bg-card rounded-2xl border border-border p-4">
                 <View className="flex-row items-start justify-between mb-4">
                   <View className="flex-row items-center">
@@ -100,18 +115,20 @@ export default function VendorCustomersScreen() {
                     />
                     <Text className="text-sm font-bold text-muted-foreground">View Orders</Text>
                   </Pressable>
-                  <Pressable
-                    className="flex-1 py-2.5 rounded-lg bg-primary-subtle items-center justify-center flex-row"
-                    onPress={() => router.push(`/(vendor)/inbox/msg_${customer.id}`)}
-                  >
-                    <Icon
-                      name="message-circle"
-                      size={16}
-                      color={tokens.primary}
-                      style={{ marginRight: 6 }}
-                    />
-                    <Text className="text-sm font-bold text-primary">Message</Text>
-                  </Pressable>
+                  {customer.conversationId ? (
+                    <Pressable
+                      className="flex-1 py-2.5 rounded-lg bg-primary-subtle items-center justify-center flex-row"
+                      onPress={() => router.push(`/(vendor)/inbox/${customer.conversationId}`)}
+                    >
+                      <Icon
+                        name="message-circle"
+                        size={16}
+                        color={tokens.primary}
+                        style={{ marginRight: 6 }}
+                      />
+                      <Text className="text-sm font-bold text-primary">Message</Text>
+                    </Pressable>
+                  ) : null}
                 </View>
               </View>
             ))}

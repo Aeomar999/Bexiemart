@@ -25,7 +25,6 @@ export default function ProfileSettingsPage() {
 
 function ProfileSettingsForm({ user }: { user: any }) {
   const setAuth = useAuthStore((state) => state.setAuth);
-  const token = useAuthStore((state) => state.token);
 
   const { mutate: updateProfile, isPending: isUpdating } = useUpdateProfile();
   const { mutateAsync: uploadAvatar, isPending: isUploading } = useUploadAvatar();
@@ -40,8 +39,8 @@ function ProfileSettingsForm({ user }: { user: any }) {
       {
         onSuccess: () => {
           // Update the local auth store so the header reflects changes immediately
-          if (user && token) {
-            setAuth({ ...user, name, image } as any, token);
+          if (user) {
+            setAuth({ ...user, name, image } as any);
           }
         },
       }

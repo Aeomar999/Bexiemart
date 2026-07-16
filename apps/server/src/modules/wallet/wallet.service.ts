@@ -9,6 +9,7 @@ import {
 import { ConfigService } from "@nestjs/config";
 import { PrismaService } from "../../prisma/prisma.service";
 import * as bcrypt from "bcryptjs";
+import * as argon2 from "argon2";
 import { CreateCardDto, UpdateCardDto } from "./dto/card.dto";
 
 @Injectable()
@@ -230,7 +231,7 @@ export class WalletService {
 
   async setPin(userId: string, pin: string) {
     const wallet = await this.getWallet(userId);
-    const pinHash = await bcrypt.hash(pin, 10);
+    const pinHash = await argon2.hash(pin, { type: argon2.argon2id });
     return this.prisma.wallet.update({
       where: { id: wallet.id },
       data: { pinHash, pinFailures: 0, pinLockedUntil: null },
@@ -246,14 +247,28 @@ export class WalletService {
       throw new ForbiddenException(`PIN locked. Try again in ${remaining} minute(s)`);
     }
 
-    const isValid = await bcrypt.compare(pin, wallet.pinHash);
+    let isValid = false;
+    let upgradedHash: string | undefined;
+
+    if (wallet.pinHash.startsWith("$argon2")) {
+      isValid = await argon2.verify(wallet.pinHash, pin);
+    } else {
+      isValid = await bcrypt.compare(pin, wallet.pinHash);
+      if (isValid) {
+        upgradedHash = await argon2.hash(pin, { type: argon2.argon2id });
+      }
+    }
+
     if (!isValid) {
       const failures = wallet.pinFailures + 1;
       const update: any = { pinFailures: failures };
       if (failures >= 5) {
         update.pinLockedUntil = new Date(Date.now() + 30 * 60 * 1000);
       }
-      await this.prisma.wallet.update({ where: { id: wallet.id }, data: update });
+      await this.prisma.wallet.update({
+        where: { id: wallet.id },
+        data: update,
+      });
       const remaining = 5 - failures;
       if (remaining <= 0) throw new ForbiddenException("PIN locked for 30 minutes");
       throw new BadRequestException(`Invalid PIN. ${remaining} attempt(s) remaining`);
@@ -261,7 +276,11 @@ export class WalletService {
 
     await this.prisma.wallet.update({
       where: { id: wallet.id },
-      data: { pinFailures: 0, pinLockedUntil: null },
+      data: {
+        pinFailures: 0,
+        pinLockedUntil: null,
+        ...(upgradedHash ? { pinHash: upgradedHash } : {}),
+      },
     });
     return { valid: true };
   }

@@ -120,4 +120,30 @@ export class CustomerReelsService {
     const nextCursor = data.length === 20 ? data[19].id : null;
     return { data, meta: { nextCursor } };
   }
+
+  async addComment(userId: string, reelId: string, content: string) {
+    const reel = await this.prisma.reel.findUnique({ where: { id: reelId } });
+    if (!reel) throw new NotFoundException("Reel not found");
+    const [comment] = await this.prisma.$transaction([
+      this.prisma.reelComment.create({
+        data: { reelId, userId, content },
+        include: { user: { select: { id: true, name: true, image: true } } },
+      }),
+      this.prisma.reel.update({ where: { id: reelId }, data: { commentsCount: { increment: 1 } } }),
+    ]);
+    return comment;
+  }
+
+  async listComments(reelId: string, cursor?: string) {
+    const take = 20;
+    const comments = await this.prisma.reelComment.findMany({
+      where: { reelId },
+      include: { user: { select: { id: true, name: true, image: true } } },
+      orderBy: { createdAt: "desc" },
+      take: take + 1,
+      ...(cursor ? { cursor: { id: cursor }, skip: 1 } : {}),
+    });
+    const nextCursor = comments.length > take ? comments.pop()!.id : null;
+    return { data: comments, nextCursor };
+  }
 }

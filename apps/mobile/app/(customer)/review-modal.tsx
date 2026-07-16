@@ -1,21 +1,12 @@
 import { tokens } from "@/theme/tokens";
 import { BackButton } from "@/components/ui/BackButton";
-import {
-  View,
-  Text,
-  TextInput,
-  ScrollView,
-  Pressable,
-  FlatList,
-  ActivityIndicator,
-} from "react-native";
+import { View, Text, TextInput, ScrollView, Pressable, ActivityIndicator } from "react-native";
 import { useState } from "react";
 import Toast from "@/lib/toast-polyfill";
 import { useRouter, useLocalSearchParams } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Icon } from "@/components/ui/Icon";
 import { Button } from "@/components/ui/Button";
-import { Image } from "expo-image";
 import { useCreateReview } from "@/lib/hooks/use-reviews";
 
 export default function ReviewModalScreen() {
@@ -25,34 +16,6 @@ export default function ReviewModalScreen() {
   const createReview = useCreateReview();
   const [rating, setRating] = useState(0);
   const [comment, setComment] = useState("");
-  const [photos, setPhotos] = useState<string[]>([]);
-
-  const MOCK_PHOTOS = [
-    "https://images.unsplash.com/photo-1542291026-7eec264c27ff?q=80&w=200&auto=format&fit=crop",
-    "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?q=80&w=200&auto=format&fit=crop",
-    "https://images.unsplash.com/photo-1523275335684-37898b6baf30?q=80&w=200&auto=format&fit=crop",
-  ];
-
-  const handleAddPhoto = () => {
-    if (photos.length < 4) {
-      setPhotos([...photos, MOCK_PHOTOS[photos.length % MOCK_PHOTOS.length]]);
-      Toast.show({
-        type: "info",
-        text1: "Photo Added",
-        text2: "Simulated photo upload from camera roll.",
-      });
-    } else {
-      Toast.show({
-        type: "error",
-        text1: "Maximum Photos",
-        text2: "You can only upload up to 4 photos.",
-      });
-    }
-  };
-
-  const handleRemovePhoto = (index: number) => {
-    setPhotos(photos.filter((_, i) => i !== index));
-  };
 
   const handleSubmit = () => {
     if (!productId) {
@@ -124,73 +87,6 @@ export default function ReviewModalScreen() {
             })}
           </View>
         </View>
-
-        {/* Photo Upload */}
-        <View className="flex-row justify-between items-end mb-3 px-1">
-          <Text className="text-body-lg font-bold text-foreground font-heading">
-            Add Photos (Optional)
-          </Text>
-          <Text className="text-body-sm font-body text-muted-foreground">{photos.length}/4</Text>
-        </View>
-
-        {photos.length > 0 && (
-          <FlatList
-            data={photos}
-            horizontal
-            showsHorizontalScrollIndicator={false}
-            className="mb-4"
-            contentContainerStyle={{ gap: 12 }}
-            keyExtractor={(_, index) => index.toString()}
-            renderItem={({ item, index }) => (
-              <View className="w-24 h-24 rounded-xl overflow-hidden relative border border-border">
-                <Image
-                  source={{ uri: item }}
-                  style={{ width: "100%", height: "100%" }}
-                  contentFit="cover"
-                />
-                <Pressable
-                  accessibilityRole="button"
-                  accessibilityLabel="Remove photo"
-                  hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
-                  className="absolute top-1 right-1 w-6 h-6 bg-black/50 rounded-full items-center justify-center backdrop-blur-md"
-                  onPress={() => handleRemovePhoto(index)}
-                  disabled={createReview.isPending}
-                >
-                  <Icon name="x" size={14} color="#ffffff" />
-                </Pressable>
-              </View>
-            )}
-            ListFooterComponent={
-              photos.length < 4 ? (
-                <Pressable
-                  accessibilityRole="button"
-                  accessibilityLabel="Add photo"
-                  className="w-24 h-24 rounded-xl bg-card border-2 border-dashed border-border items-center justify-center ml-3"
-                  onPress={handleAddPhoto}
-                  disabled={createReview.isPending}
-                >
-                  <Icon name="plus" size={24} color="#94a3b8" />
-                </Pressable>
-              ) : null
-            }
-          />
-        )}
-
-        {photos.length === 0 && (
-          <Pressable
-            style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
-            className="bg-card border-2 border-dashed border-border rounded-2xl h-32 items-center justify-center mb-6"
-            onPress={handleAddPhoto}
-            disabled={createReview.isPending}
-          >
-            <View className="w-12 h-12 rounded-full bg-background items-center justify-center mb-2">
-              <Icon name="camera" size={20} color="#64748b" />
-            </View>
-            <Text className="text-body-md font-bold text-muted-foreground font-body">
-              Tap to upload photos
-            </Text>
-          </Pressable>
-        )}
 
         {/* Text Input */}
         <Text className="text-body-lg font-bold text-foreground font-heading mb-3 px-1 mt-2">

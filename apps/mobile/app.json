@@ -127,7 +127,8 @@
           "organization": "kreddible",
           "project": "bexiemart-mobile"
         }
-      ]
+      ],
+      "expo-video"
     ],
     "experiments": {
       "typedRoutes": true
@@ -140,6 +141,7 @@
     },
     "updates": {
       "enabled": true,
+      "checkAutomatically": "ON_LOAD",
       "fallbackToCacheTimeout": 10000,
       "url": "https://u.expo.dev/a830e794-6932-47fd-9779-9b1317c59f3f"
     },

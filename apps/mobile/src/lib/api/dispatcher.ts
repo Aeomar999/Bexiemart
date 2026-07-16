@@ -7,6 +7,7 @@ export interface CreateDispatcherProfileDto {
 }
 
 export const dispatcherApi = {
+  getProfile: () => apiClient.get("/dispatcher/profile"),
   createProfile: (data: CreateDispatcherProfileDto) =>
     apiClient.post("/dispatcher/profile", {
       vehicleType: data.vehicleType,
@@ -32,7 +33,4 @@ export const dispatcherApi = {
   getTransactions: () => apiClient.get("/dispatcher/earnings/transactions"),
 
   getAnalytics: () => apiClient.get("/dispatcher/earnings/analytics"),
-
-  withdrawEarnings: (amount: number, destination: string) =>
-    apiClient.post("/dispatcher/earnings/withdraw", { amount, destination }),
 };

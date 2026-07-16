@@ -8,7 +8,11 @@
     "development": {
       "developmentClient": true,
       "distribution": "internal",
-      "channel": "development"
+      "channel": "development",
+      "env": {
+        "EXPO_PUBLIC_API_URL": "http://localhost:3000/api/v1",
+        "EXPO_PUBLIC_SOCKET_URL": "ws://localhost:3000"
+      }
     },
     "preview": {
       "distribution": "internal",
@@ -26,6 +30,7 @@
     },
     "device": {
       "distribution": "internal",
+      "channel": "preview",
       "android": {
         "buildType": "apk"
       },
@@ -41,7 +46,7 @@
       "autoIncrement": true,
       "channel": "production",
       "android": {
-        "buildType": "apk"
+        "buildType": "app-bundle"
       },
       "env": {
         "EXPO_PUBLIC_API_URL": "https://bexiemart-production.up.railway.app/api/v1",
@@ -49,7 +54,8 @@
         "EXPO_PUBLIC_SENTRY_DSN": "https://0c4866316a83164b10cafea12af5a195@o4511490466119680.ingest.de.sentry.io/4511490530148432",
         "EXPO_PUBLIC_POSTHOG_API_KEY": "phc_nQvLXaLZDchbn2RLbeBkZhtpFbDyPfU7jcSMYYnh8Dkx",
         "EXPO_PUBLIC_POSTHOG_HOST": "https://us.i.posthog.com",
-        "EXPO_PUBLIC_PAYSTACK_PUBLIC_KEY": "pk_test_8cd3b286f7b46cf8700f982bb1c8bb0f41afca0c"
+        "EXPO_PUBLIC_PAYSTACK_PUBLIC_KEY": "pk_test_8cd3b286f7b46cf8700f982bb1c8bb0f41afca0c",
+        "EXPO_PUBLIC_CLOUDINARY_CLOUD_NAME": "duirkgqop"
       }
     }
   },
@@ -58,7 +64,8 @@
       "ios": {
         "appleId": "developer@bexiemart.com",
         "ascAppId": "1234567890",
-        "appleTeamId": "TEAMID1234"
+        "appleTeamId": "TEAMID1234",
+        "_TODO": "ascAppId and appleTeamId are PLACEHOLDERS — replace with real App Store Connect values before `eas submit` (see Task 36 launch checklist)"
       },
       "android": {
         "serviceAccountKeyPath": "./google-api-key.json",

@@ -20,6 +20,7 @@ export class SuperAdminGuard implements CanActivate {
     const user = request.user;
 
     if (!user) throw new UnauthorizedException("Authentication required");
+    if (!user.emailVerified) throw new ForbiddenException("Email verification required");
     if (!user.isSuperAdmin) throw new ForbiddenException("Super admin access required");
 
     return true;

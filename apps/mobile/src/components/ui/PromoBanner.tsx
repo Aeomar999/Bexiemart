@@ -90,7 +90,13 @@ function BannerCard({ banner, onPress }: { banner: Banner; onPress?: () => void 
 
   return (
     <View style={{ width: SCREEN_WIDTH, paddingHorizontal: 20 }}>
-      <Pressable className={cardClass} onPress={onPress} disabled={!onPress}>
+      <Pressable
+        className={cardClass}
+        onPress={onPress}
+        disabled={!onPress}
+        accessibilityRole={onPress ? "button" : "none"}
+        accessibilityLabel={`${banner.title}, ${banner.subtitle}`}
+      >
         <Image
           source={{ uri: banner.imageUrl }}
           style={{ width: "100%", height: "100%", position: "absolute" }}

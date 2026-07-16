@@ -2,6 +2,7 @@ import { renderHook, waitFor } from "@testing-library/react-native";
 
 jest.mock("../../api/dispatcher", () => ({
   dispatcherApi: {
+    getProfile: jest.fn(),
     createProfile: jest.fn(),
     getAvailableTasks: jest.fn(),
     getMyTasks: jest.fn(),
@@ -15,6 +16,7 @@ jest.mock("../../api/dispatcher", () => ({
 }));
 
 import {
+  useDispatcherProfile,
   useCreateDispatcherProfile,
   useAvailableTasks,
   useMyTasks,
@@ -23,10 +25,22 @@ import {
   useDispatcherEarnings,
   useDispatcherTransactions,
   useDispatcherAnalytics,
-  useWithdrawEarnings,
 } from "../use-dispatcher";
 import { dispatcherApi } from "../../api/dispatcher";
 import { createWrapper } from "./test-utils";
+
+describe("useDispatcherProfile", () => {
+  beforeEach(() => jest.clearAllMocks());
+
+  it("should fetch profile data", async () => {
+    (dispatcherApi.getProfile as jest.Mock).mockResolvedValue({
+      data: { id: "disp-1", vehicleType: "car" },
+    });
+    const { result } = renderHook(() => useDispatcherProfile(), { wrapper: createWrapper() });
+    await waitFor(() => expect(result.current.isPending).toBeFalsy());
+    expect(result.current.data).toEqual({ id: "disp-1", vehicleType: "car" });
+  });
+});
 
 describe("useCreateDispatcherProfile", () => {
   beforeEach(() => jest.clearAllMocks());
