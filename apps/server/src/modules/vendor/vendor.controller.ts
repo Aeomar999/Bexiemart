@@ -20,6 +20,7 @@ import { CreateProductDto } from "./dto/create-product.dto";
 import { UpdateProductDto } from "./dto/update-product.dto";
 import { UpdateOrderStatusDto } from "./dto/update-order-status.dto";
 import { UpdateShopDto } from "./dto/update-shop.dto";
+import { UpdateTaxInfoDto } from "./dto/update-tax-info.dto";
 import { ApiTags, ApiOperation, ApiBearerAuth } from "@nestjs/swagger";
 
 @ApiTags("Vendor")
@@ -125,6 +126,13 @@ export class VendorController {
   @UseGuards(VendorGuard)
   updateShop(@Req() req: any, @Body() body: UpdateShopDto) {
     return this.vendorService.updateShop(req.user.id, body);
+  }
+
+  @ApiOperation({ summary: "Update tax information and submit for verification" })
+  @Post("tax-info")
+  @UseGuards(VendorGuard)
+  updateTaxInfo(@Req() req: any, @Body() body: UpdateTaxInfoDto) {
+    return this.vendorService.updateTaxInfo(req.user.id, body.tin);
   }
 
   @ApiOperation({ summary: "Get vendor disputes" })

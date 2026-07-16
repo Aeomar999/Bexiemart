@@ -137,6 +137,8 @@ model VendorProfile {
   latitude    Float?
   longitude   Float?
   isActive    Boolean @default(true)
+  taxId       String?
+  taxStatus   String  @default("NONE") // NONE, PENDING, VERIFIED, REJECTED
 
   totalEarnings Decimal @default(0)
   pendingPayout Decimal @default(0)

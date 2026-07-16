@@ -101,3 +101,13 @@ export function useUpdateShop() {
     },
   });
 }
+
+export function useUpdateTaxInfo() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: (tin: string) => vendorApi.updateTaxInfo(tin),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: VENDOR_KEYS.profile });
+    },
+  });
+}

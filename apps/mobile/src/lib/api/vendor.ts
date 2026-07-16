@@ -20,4 +20,5 @@ export const vendorApi = {
   getAnalytics: () => apiClient.get("/vendor/earnings/analytics"),
 
   updateShop: (data: any) => apiClient.patch("/vendor/shop", data),
+  updateTaxInfo: (tin: string) => apiClient.post("/vendor/tax-info", { tin }),
 };

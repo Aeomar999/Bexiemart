@@ -502,6 +502,18 @@ export class VendorService {
     return updated;
   }
 
+  async updateTaxInfo(userId: string, tin: string) {
+    const profile = await this.getVendorProfile(userId);
+    const updated = await this.prisma.vendorProfile.update({
+      where: { id: profile.id },
+      data: {
+        taxId: tin,
+        taxStatus: "PENDING",
+      },
+    });
+    return updated;
+  }
+
   async getDisputes(userId: string, page: number = 1, limit: number = 20) {
     const profile = await this.getVendorProfile(userId);
     const skip = (page - 1) * limit;
