@@ -1437,7 +1437,7 @@ git commit -m "feat(notifications): notification-preferences model + GET/PUT end
 - Consumes: `GET/PUT /notification-preferences` (Task 18).
 - Produces: `useNotificationPreferences()`, `useUpdateNotificationPreferences()`.
 
-- [ ] **Step 1: API + hooks**
+- [x] **Step 1: API + hooks**
 
 Create `apps/mobile/src/lib/api/notification-preferences.ts`:
 
@@ -1480,7 +1480,7 @@ export function useUpdateNotificationPreferences() {
 }
 ```
 
-- [ ] **Step 2: Wire the screen**
+- [x] **Step 2: Wire the screen**
 
 In `notification-settings.tsx`, replace the local `useState` toggles with server data and persist each flip:
 
@@ -1500,14 +1500,14 @@ const toggle = (key: keyof typeof toggles) => updatePrefs.mutate({ [key]: !toggl
 ```
 Every `<Switch onValueChange={() => toggle("...")}/>` now persists.
 
-- [ ] **Step 3: Typecheck and manual-verify**
+- [x] **Step 3: Typecheck and manual-verify**
 
 ```powershell
 cd apps/mobile; npx tsc --noEmit
 ```
 Expected: exit 0. Manual: flip a toggle, kill and reopen the app — the state persists (proves it round-tripped, not local).
 
-- [ ] **Step 4: Commit**
+- [x] **Step 4: Commit**
 
 ```powershell
 git add apps/mobile
@@ -1527,7 +1527,7 @@ Task 5's `bearer()` plugin makes `POST /auth/change-password` usable with the Be
 - Consumes: better-auth `POST /auth/change-password` `{ currentPassword, newPassword, revokeOtherSessions? }` (Bearer). Returns 200 on success, 400 on wrong current password.
 - Produces: nothing downstream.
 
-- [ ] **Step 1: Fix the admin client**
+- [x] **Step 1: Fix the admin client**
 
 In `apps/admin/src/lib/api/auth.ts`, replace `updatePassword`:
 
@@ -1543,7 +1543,7 @@ export const updatePassword = async (payload: { currentPassword: string; newPass
 ```
 (`apiClient` now targets `/api/proxy`, so this reaches `/auth/change-password` with the Bearer token attached server-side — Task 4.) In `settings/security/page.tsx`, ensure the submit handler surfaces the error (toast) on rejection instead of assuming success.
 
-- [ ] **Step 2: Wire the vendor screen**
+- [x] **Step 2: Wire the vendor screen**
 
 In `apps/mobile/app/(vendor)/(settings)/change-password.tsx`, replace the mock submit (`// Mock successful save; router.back()`) with a real call. Add an auth-api method if none exists — in `apps/mobile/src/lib/api/*`, add `changePassword`:
 
@@ -1568,7 +1568,7 @@ try {
 ```
 Remove the dead "Forgot Current Password?" `onPress={() => {}}` — either route it to the existing forgot-password flow (`/auth/forgot-password`) or delete the link. Do not leave a no-op.
 
-- [ ] **Step 3: Typecheck both and manual-verify**
+- [x] **Step 3: Typecheck both and manual-verify**
 
 ```powershell
 cd apps/admin; npx tsc --noEmit
@@ -1576,7 +1576,7 @@ cd ../mobile; npx tsc --noEmit
 ```
 Expected: both exit 0. Manual: change password with the correct current password → success and you can log in with the new one; a wrong current password shows an error (no false success).
 
-- [ ] **Step 4: Commit**
+- [x] **Step 4: Commit**
 
 ```powershell
 git add apps/admin apps/mobile
@@ -1594,7 +1594,7 @@ git commit -m "fix(auth): wire real change-password for admin and vendor (better
 - Consumes: `usePinStatus()` (`{ hasPin }`), `useChangePin()`, `useSetPin()`.
 - Produces: nothing downstream.
 
-- [ ] **Step 1: Wire the submit**
+- [x] **Step 1: Wire the submit**
 
 In `change-pin.tsx`, add hooks and a real handler:
 
@@ -1623,14 +1623,14 @@ const onSubmit = async () => {
 ```
 Change the "Update PIN" button's `onPress={() => { /* Mock */ router.back(); }}` to `onPress={onSubmit}`. When `pinStatus?.hasPin === false`, hide the "Current PIN" input and the label reads "Set PIN". Remove or wire the dead "Forgot PIN?" link — since there is no forgot-PIN backend, replace it with copy directing the user to contact support (route to the contact screen from Task 25), not a no-op.
 
-- [ ] **Step 2: Typecheck and manual-verify**
+- [x] **Step 2: Typecheck and manual-verify**
 
 ```powershell
 cd apps/mobile; npx tsc --noEmit
 ```
 Expected: exit 0. Manual: set a PIN (fresh wallet), then change it; a wrong current PIN is rejected with the server's "Invalid PIN. N attempt(s) remaining"; the new PIN authorizes a withdrawal (Task 14).
 
-- [ ] **Step 3: Commit**
+- [x] **Step 3: Commit**
 
 ```powershell
 git add "apps/mobile/app/(vendor)/(settings)/change-pin.tsx"
@@ -1649,7 +1649,7 @@ git commit -m "fix(vendor): wire change-PIN to /wallet/pin/change (set-or-change
 - Consumes: better-auth session routes (Bearer).
 - Produces: `useSessions()`, `useRevokeSession()`, `useRevokeOtherSessions()`.
 
-- [ ] **Step 1: API + hooks**
+- [x] **Step 1: API + hooks**
 
 Create `apps/mobile/src/lib/api/sessions.ts`:
 
@@ -1693,18 +1693,18 @@ export function useRevokeOtherSessions() {
 ```
 Note: `list-sessions` returns raw fields; confirm the exact response shape via the Task 5 Step 3 probe and map `userAgent` → a friendly device label client-side (a tiny parser: contains "iPhone"/"Android"/"Mac"/"Windows").
 
-- [ ] **Step 2: Wire `security.tsx`**
+- [x] **Step 2: Wire `security.tsx`**
 
 Replace the hardcoded device array with `useSessions()` data; render each session's parsed device label + `ipAddress` + relative `createdAt`. Mark the current session (match its token against the stored `bexiemart_token`). "Log out of this device" calls `useRevokeSession().mutate(session.token)`; add a "Log out all other devices" action calling `useRevokeOtherSessions()`. On revoking the current session, run the store `logout()`.
 
-- [ ] **Step 3: Typecheck and manual-verify**
+- [x] **Step 3: Typecheck and manual-verify**
 
 ```powershell
 cd apps/mobile; npx tsc --noEmit
 ```
 Expected: exit 0. Manual: sign in on two devices/emulators → both appear; revoking one invalidates that token (its next API call 401s and logs it out).
 
-- [ ] **Step 4: Commit**
+- [x] **Step 4: Commit**
 
 ```powershell
 git add apps/mobile
@@ -1914,7 +1914,7 @@ cd ../admin; npx tsc --noEmit
 ```
 Expected: both exit 0. Manual: submit a vendor support ticket → it appears in the admin support queue / customer's ticket list (real row); the category picker changes the submitted category.
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```powershell
 git add apps/mobile apps/admin
