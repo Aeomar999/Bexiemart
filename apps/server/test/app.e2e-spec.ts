@@ -1,9 +1,10 @@
 import { Test, TestingModule } from "@nestjs/testing";
-import { INestApplication, ValidationPipe, VersioningType } from "@nestjs/common";
+import { INestApplication, ValidationPipe, VersioningType, RequestMethod } from "@nestjs/common";
 import * as request from "supertest";
 import { AppModule } from "../src/app.module";
 import { PrismaService } from "../src/prisma/prisma.service";
 import { GlobalExceptionFilter } from "../src/filters/global-exception.filter";
+import { AUTH } from "../src/auth/auth.constants";
 
 describe("App (e2e)", () => {
   let app: INestApplication;
@@ -13,70 +14,43 @@ describe("App (e2e)", () => {
     prismaMock = {
       $queryRaw: jest.fn().mockResolvedValue([{ 1: 1 }]),
       $transaction: jest.fn((cb: any) => cb(prismaMock)),
-      wallet: {
-        findUnique: jest.fn().mockResolvedValue(null),
-        create: jest.fn().mockImplementation((d) => ({ id: "w1", ...d.data })),
-        update: jest.fn().mockImplementation((d) => d.data),
-      },
-      transaction: {
-        findUnique: jest.fn(),
-        findMany: jest.fn().mockResolvedValue([]),
-        create: jest.fn(),
-        count: jest.fn().mockResolvedValue(0),
-        update: jest.fn(),
-      },
-      product: {
-        findUnique: jest.fn(),
-        findMany: jest.fn().mockResolvedValue([]),
-        findFirst: jest.fn(),
-        create: jest.fn(),
-        update: jest.fn(),
-        count: jest.fn().mockResolvedValue(0),
-      },
+      product: { findMany: jest.fn().mockResolvedValue([]), count: jest.fn().mockResolvedValue(0) },
+      user: { findUnique: jest.fn(), create: jest.fn() },
+      session: { findUnique: jest.fn(), create: jest.fn() },
       cart: { findUnique: jest.fn(), create: jest.fn() },
-      cartItem: {
-        findMany: jest.fn(),
-        create: jest.fn(),
-        update: jest.fn(),
-        delete: jest.fn(),
-        deleteMany: jest.fn(),
-      },
-      order: {
-        findUnique: jest.fn(),
-        findFirst: jest.fn(),
-        findMany: jest.fn().mockResolvedValue([]),
-        create: jest.fn(),
-        update: jest.fn(),
-        count: jest.fn().mockResolvedValue(0),
-      },
-      orderItem: { findMany: jest.fn().mockResolvedValue([]), create: jest.fn() },
-      shippingAddress: { create: jest.fn() },
-      escrow: {
-        findUnique: jest.fn(),
-        findMany: jest.fn().mockResolvedValue([]),
-        create: jest.fn(),
-        update: jest.fn(),
-      },
-      user: {
-        findUnique: jest.fn(),
-        findMany: jest.fn().mockResolvedValue([]),
-        update: jest.fn(),
-        count: jest.fn().mockResolvedValue(0),
-      },
-      vendorProfile: {
-        findUnique: jest.fn(),
-        findMany: jest.fn().mockResolvedValue([]),
-        update: jest.fn(),
-        create: jest.fn(),
-      },
-      referral: { findUnique: jest.fn(), findMany: jest.fn(), create: jest.fn() },
-      referredUser: { findUnique: jest.fn(), create: jest.fn(), findMany: jest.fn() },
-      conversation: {
-        findUnique: jest.fn(),
-        findFirst: jest.fn(),
-        create: jest.fn(),
-        update: jest.fn(),
-      },
+      order: { findMany: jest.fn(), create: jest.fn() },
+      payment: { create: jest.fn() },
+      vendorProfile: { findUnique: jest.fn(), findFirst: jest.fn() },
+      wallet: { findUnique: jest.fn() },
+      wishlist: { findUnique: jest.fn() },
+      address: { findMany: jest.fn() },
+      review: { findMany: jest.fn() },
+      coupon: { findMany: jest.fn() },
+      vendorCoupon: { findMany: jest.fn() },
+      service: { findMany: jest.fn() },
+      reel: { findMany: jest.fn() },
+      booking: { findMany: jest.fn() },
+      staffMember: { findMany: jest.fn() },
+      vendorCustomer: { findMany: jest.fn() },
+      vendorPaymentMethod: { findMany: jest.fn() },
+      businessHours: { findMany: jest.fn() },
+      vendorDocument: { findMany: jest.fn() },
+      flashSale: { findMany: jest.fn() },
+      banner: { findMany: jest.fn() },
+      referral: { findMany: jest.fn() },
+      customerReel: { findMany: jest.fn() },
+      customerService: { findMany: jest.fn() },
+      restaurant: { findMany: jest.fn() },
+      foodItem: { findMany: jest.fn() },
+      escrowTransaction: { findMany: jest.fn() },
+      conversation: { findMany: jest.fn() },
+      supportTicket: { findMany: jest.fn() },
+      deliveryPerson: { findUnique: jest.fn(), findMany: jest.fn() },
+      deliveryTask: { findMany: jest.fn(), findUnique: jest.fn() },
+      story: { findMany: jest.fn() },
+      collection: { findMany: jest.fn() },
+      loyaltyAccount: { findUnique: jest.fn() },
+      notificationPreference: { findUnique: jest.fn() },
       conversationParticipant: { findMany: jest.fn(), updateMany: jest.fn() },
       message: { findMany: jest.fn(), create: jest.fn(), count: jest.fn() },
       platformConfig: { findFirst: jest.fn(), update: jest.fn(), create: jest.fn() },
@@ -88,6 +62,8 @@ describe("App (e2e)", () => {
     })
       .overrideProvider(PrismaService)
       .useValue(prismaMock)
+      .overrideProvider(AUTH)
+      .useValue({ api: {}, handler: jest.fn() })
       .compile();
 
     app = moduleFixture.createNestApplication();
@@ -95,7 +71,13 @@ describe("App (e2e)", () => {
       new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true, transform: true })
     );
     app.useGlobalFilters(new GlobalExceptionFilter());
-    app.setGlobalPrefix("api");
+    app.setGlobalPrefix("api", {
+      exclude: [
+        { path: "health", method: RequestMethod.GET },
+        { path: "api/health", method: RequestMethod.GET },
+        { path: "api/v1/health", method: RequestMethod.GET },
+      ],
+    });
     app.enableVersioning({ type: VersioningType.URI, defaultVersion: "1" });
     await app.init();
   });
@@ -107,6 +89,13 @@ describe("App (e2e)", () => {
   describe("Health", () => {
     it("GET /api/v1/health should return ok", async () => {
       const res = await request(app.getHttpServer()).get("/api/v1/health");
+      expect(res.status).toBe(200);
+      expect(res.body.status).toBe("ok");
+      expect(res.body.database.status).toBe("healthy");
+    });
+
+    it("GET /health should return ok", async () => {
+      const res = await request(app.getHttpServer()).get("/health");
       expect(res.status).toBe(200);
       expect(res.body.status).toBe("ok");
       expect(res.body.database.status).toBe("healthy");

@@ -20,10 +20,13 @@ export const mailTransporter = nodemailer.createTransport({
 });
 
 const isDev = process.env.NODE_ENV !== "production";
+const isTest = process.env.NODE_ENV === "test" || Boolean(process.env.JEST_WORKER_ID);
 
-mailTransporter.verify().then(
-  () => {
-    if (isDev) console.log("SMTP transporter verified and ready");
-  },
-  (error) => console.error("SMTP transporter verification failed:", error?.message || error)
-);
+if (!isTest && process.env.SMTP_USER && process.env.SMTP_PASS) {
+  mailTransporter.verify().then(
+    () => {
+      if (isDev) console.log("SMTP transporter verified and ready");
+    },
+    (error) => console.error("SMTP transporter verification failed:", error?.message || error)
+  );
+}

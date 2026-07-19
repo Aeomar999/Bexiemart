@@ -3,7 +3,7 @@ import "./instrument";
 import { NestFactory } from "@nestjs/core";
 import { NestExpressApplication } from "@nestjs/platform-express";
 import { AppModule } from "./app.module";
-import { ValidationPipe, VersioningType } from "@nestjs/common";
+import { ValidationPipe, VersioningType, RequestMethod } from "@nestjs/common";
 import { GlobalExceptionFilter } from "./filters/global-exception.filter";
 import helmet from "helmet";
 import { join } from "path";
@@ -60,7 +60,13 @@ async function bootstrap() {
 
   app.useGlobalFilters(new GlobalExceptionFilter());
 
-  app.setGlobalPrefix("api");
+  app.setGlobalPrefix("api", {
+    exclude: [
+      { path: "health", method: RequestMethod.GET },
+      { path: "api/health", method: RequestMethod.GET },
+      { path: "api/v1/health", method: RequestMethod.GET },
+    ],
+  });
   app.enableVersioning({
     type: VersioningType.URI,
     defaultVersion: "1",
