@@ -8,6 +8,7 @@ jest.mock("better-auth/client", () => ({
 }));
 jest.mock("better-auth/client/plugins", () => ({
   phoneNumberClient: jest.fn(() => "phoneNumberClient"),
+  twoFactorClient: jest.fn(() => "twoFactorClient"),
 }));
 jest.mock("@better-auth/infra/native", () => ({
   dashClient: jest.fn(() => "dashClient"),
@@ -46,12 +47,16 @@ describe("better-auth", () => {
     expect(createCall.plugins[1]).toBe("phoneNumberClient");
   });
 
+  it("should include twoFactorClient plugin", () => {
+    expect(createCall.plugins[2]).toBe("twoFactorClient");
+  });
+
   it("should include dashClient plugin", () => {
-    expect(createCall.plugins[2]).toBe("dashClient");
+    expect(createCall.plugins[3]).toBe("dashClient");
   });
 
   it("should include sentinelNativeClient plugin", () => {
-    expect(createCall.plugins[3].name).toBe("sentinelNativeClient");
+    expect(createCall.plugins[4].name).toBe("sentinelNativeClient");
   });
 
   it("should use SecureStore for native storage", async () => {
