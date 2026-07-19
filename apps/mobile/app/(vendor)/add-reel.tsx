@@ -17,7 +17,6 @@ import { Icon } from "@/components/ui/Icon";
 import { ListSkeleton } from "@/components/ui/Skeleton";
 import { Button } from "@/components/ui/Button";
 import { useState } from "react";
-import { useAuthStore } from "@/lib/stores/auth-store";
 import { useProductStore } from "@/lib/stores/product-store";
 import { usePopupStore } from "@/lib/stores/popup-store";
 import { useCreateReel } from "@/lib/hooks/use-vendor-reels";
@@ -27,7 +26,6 @@ import { uploadVideoToCloudinary } from "@/lib/upload/upload-video";
 export default function AddReelScreen() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
-  const { user } = useAuthStore();
   const createReel = useCreateReel();
   const products = useProductStore((s) => s.products);
   const showPopup = usePopupStore((s) => s.showPopup);
@@ -97,10 +95,7 @@ export default function AddReelScreen() {
       videoUrl,
       thumbnailUrl: thumbnailUrl ?? undefined,
       caption: description || "Check out this amazing product! 🛍️✨",
-      description: description || "Check out this amazing product! 🛍️✨",
       productId: linkedProduct.id,
-      productName: linkedProduct.name,
-      productPrice: linkedProduct.price,
     };
 
     createReel.mutate(payload, {
@@ -147,15 +142,15 @@ export default function AddReelScreen() {
           <Pressable
             style={({ pressed }) => [
               { opacity: pressed ? 0.95 : 1, transform: [{ scale: pressed ? 0.98 : 1 }] },
+              { aspectRatio: 9 / 16 },
             ]}
             onPress={() => setUploadModalVisible(true)}
-            className="w-full bg-background rounded-3xl overflow-hidden items-center justify-center relative shadow-lg shadow-black/10"
-            style={{ aspectRatio: 9 / 16 }}
+            className="w-full bg-background rounded-3xl overflow-hidden items-center justify-center relative shadow-lg"
           >
             {videoUrl ? (
               <>
                 <Image
-                  source={{ uri: videoUrl }}
+                  source={{ uri: thumbnailUrl || videoUrl }}
                   style={{ width: "100%", height: "100%", opacity: 0.9 }}
                   contentFit="cover"
                 />
@@ -186,7 +181,7 @@ export default function AddReelScreen() {
         </View>
 
         {/* Details Section */}
-        <View className="bg-white rounded-2xl border border-border p-1 mb-6 shadow-sm shadow-sm/50">
+        <View className="bg-white rounded-2xl border border-border p-1 mb-6 shadow-sm">
           <TextInput
             className="p-5 font-body text-body-lg text-foreground min-h-[120px]"
             placeholder="Write a catchy caption... #trending #fashion"
@@ -209,7 +204,7 @@ export default function AddReelScreen() {
         >
           {linkedProduct ? (
             <>
-              <View className="w-14 h-14 bg-white rounded-xl items-center justify-center border border-border shadow-sm shadow-none">
+              <View className="w-14 h-14 bg-white rounded-xl items-center justify-center border border-border shadow-sm">
                 <Icon name="shopping-bag" size={24} color={tokens.primary} />
               </View>
               <View className="ml-4 flex-1">
@@ -257,7 +252,7 @@ export default function AddReelScreen() {
           loading={isPublishing}
           disabled={!videoUrl || isPublishing}
           onPress={handlePublish}
-          className="w-full shadow-lg shadow-none"
+          className="w-full shadow-lg"
         />
       </View>
 
@@ -300,7 +295,7 @@ export default function AddReelScreen() {
                     className="flex-row items-center p-5 bg-background border border-border rounded-2xl"
                     onPress={() => handleUploadOption("camera")}
                   >
-                    <View className="w-14 h-14 bg-white rounded-full items-center justify-center shadow-sm shadow-sm">
+                    <View className="w-14 h-14 bg-white rounded-full items-center justify-center shadow-sm">
                       <Icon name="camera" size={24} color="#0f172a" />
                     </View>
                     <View className="ml-4 flex-1">
@@ -319,7 +314,7 @@ export default function AddReelScreen() {
                     className="flex-row items-center p-5 bg-primary-subtle border border-border rounded-2xl"
                     onPress={() => handleUploadOption("library")}
                   >
-                    <View className="w-14 h-14 bg-primary rounded-full items-center justify-center shadow-md shadow-none">
+                    <View className="w-14 h-14 bg-primary rounded-full items-center justify-center shadow-md">
                       <Icon name="image" size={24} color="#fff" />
                     </View>
                     <View className="ml-4 flex-1">
