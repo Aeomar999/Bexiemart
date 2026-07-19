@@ -8,6 +8,10 @@ const config: Config = {
   collectCoverageFrom: ["**/*.(t|j)s"],
   coverageDirectory: "../coverage",
   testEnvironment: "node",
+  // Limit memory usage & concurrency for CI/CD stability
+  maxWorkers: process.env.CI ? 2 : "50%",
+  workerIdleMemoryLimit: "512MB",
+  testTimeout: 10000,
   coverageThreshold: {
     global: {
       lines: 60,
