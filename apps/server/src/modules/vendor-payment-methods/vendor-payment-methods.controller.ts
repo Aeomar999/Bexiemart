@@ -4,6 +4,7 @@ import { AuthGuard } from "../../guards/auth.guard";
 import { VendorPaymentMethodsService } from "./vendor-payment-methods.service";
 import { AddBankAccountDto } from "./dto/add-bank-account.dto";
 import { AddMomoAccountDto } from "./dto/add-momo-account.dto";
+import { AuthenticatedRequest } from "../../types/request.types";
 
 @ApiTags("Vendor Payment Methods")
 @ApiBearerAuth()
@@ -13,15 +14,34 @@ export class VendorPaymentMethodsController {
   constructor(private readonly service: VendorPaymentMethodsService) {}
 
   @ApiOperation({ summary: "List all payment methods" })
-  @Get() findAll(@Req() req: any) { return this.service.findAll(req.user.id); }
+  @Get()
+  findAll(@Req() req: AuthenticatedRequest) {
+    return this.service.findAll(req.user.id);
+  }
   @ApiOperation({ summary: "Add a bank account" })
   @ApiBody({ type: AddBankAccountDto })
-  @Post("bank") addBank(@Req() req: any, @Body() body: AddBankAccountDto) { return this.service.addBank(req.user.id, body); }
+  @Post("bank")
+  addBank(@Req() req: AuthenticatedRequest, @Body() body: AddBankAccountDto) {
+    return this.service.addBank(req.user.id, body);
+  }
   @ApiOperation({ summary: "Add a MoMo account" })
   @ApiBody({ type: AddMomoAccountDto })
-  @Post("momo") addMomo(@Req() req: any, @Body() body: AddMomoAccountDto) { return this.service.addMomo(req.user.id, body); }
+  @Post("momo")
+  addMomo(@Req() req: AuthenticatedRequest, @Body() body: AddMomoAccountDto) {
+    return this.service.addMomo(req.user.id, body);
+  }
   @ApiOperation({ summary: "Remove a payment method" })
-  @Delete(":type/:id") remove(@Req() req: any, @Param("type") type: string, @Param("id") id: string) { return this.service.remove(req.user.id, type, id); }
+  @Delete(":type/:id")
+  remove(@Req() req: AuthenticatedRequest, @Param("type") type: string, @Param("id") id: string) {
+    return this.service.remove(req.user.id, type, id);
+  }
   @ApiOperation({ summary: "Set default payment method" })
-  @Patch(":type/:id/default") setDefault(@Req() req: any, @Param("type") type: string, @Param("id") id: string) { return this.service.setDefault(req.user.id, type, id); }
+  @Patch(":type/:id/default")
+  setDefault(
+    @Req() req: AuthenticatedRequest,
+    @Param("type") type: string,
+    @Param("id") id: string
+  ) {
+    return this.service.setDefault(req.user.id, type, id);
+  }
 }

@@ -29,6 +29,7 @@ import { ResetPasswordDto } from "./dto/reset-password.dto";
 import { ResendVerificationDto } from "./dto/resend-verification.dto";
 import { CheckAvailabilityDto } from "./dto/check-availability.dto";
 import { VerifyEmailOtpDto } from "./dto/verify-email-otp.dto";
+import { AuthenticatedRequest } from "../types/request.types";
 
 @ApiTags("Auth")
 @ApiBearerAuth()
@@ -200,7 +201,7 @@ export class AuthController {
   @ApiOperation({ summary: "Get current user" })
   @Get("me")
   @UseGuards(AuthGuard)
-  async getCurrentUser(@Req() req: any) {
+  async getCurrentUser(@Req() req: AuthenticatedRequest) {
     if (!req.user) {
       throw new UnauthorizedException("User not found");
     }
@@ -246,7 +247,7 @@ export class AuthController {
         headers: new Headers({ origin: "bexiemart://" }),
       });
     } catch (e) {
-      console.error("Forget password error:", e);
+      this.logger.error("Forget password error:", e);
     }
     return { message: "If an account exists, a reset link has been sent." };
   }

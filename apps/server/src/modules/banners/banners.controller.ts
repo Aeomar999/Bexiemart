@@ -2,6 +2,7 @@ import { Controller, Get, Query, ParseEnumPipe } from "@nestjs/common";
 import { ApiTags, ApiOperation, ApiQuery } from "@nestjs/swagger";
 import { BannerPlacement } from "@prisma/client";
 import { BannersService } from "./banners.service";
+import { AuthenticatedRequest } from "../../types/request.types";
 
 @ApiTags("Banners")
 @Controller("banners")

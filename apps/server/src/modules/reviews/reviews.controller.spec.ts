@@ -2,6 +2,7 @@ import { Test, TestingModule } from "@nestjs/testing";
 import { ReviewsController } from "./reviews.controller";
 import { ReviewsService } from "./reviews.service";
 import { AuthGuard } from "../../guards/auth.guard";
+import { AuthenticatedRequest } from "../../types/request.types";
 
 describe("ReviewsController", () => {
   let controller: ReviewsController;
@@ -17,9 +18,7 @@ describe("ReviewsController", () => {
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       controllers: [ReviewsController],
-      providers: [
-        { provide: ReviewsService, useValue: mockService },
-      ],
+      providers: [{ provide: ReviewsService, useValue: mockService }],
     })
       .overrideGuard(AuthGuard)
       .useValue({ canActivate: jest.fn(() => true) })
@@ -41,7 +40,7 @@ describe("ReviewsController", () => {
     it("should call service.create with user id and dto", async () => {
       const result = { id: "rev-1" };
       mockService.create.mockResolvedValue(result);
-      const req = { user: { id: "user-1" } };
+      const req = { user: { id: "user-1" } } as AuthenticatedRequest;
       const dto = { productId: "prod-1", rating: 5, comment: "Great!" };
 
       expect(await controller.create(req, dto)).toEqual(result);
@@ -73,7 +72,7 @@ describe("ReviewsController", () => {
     it("should call service.remove with user id and param id", async () => {
       const result = { deleted: true };
       mockService.remove.mockResolvedValue(result);
-      const req = { user: { id: "user-1" } };
+      const req = { user: { id: "user-1" } } as AuthenticatedRequest;
 
       expect(await controller.remove(req, "rev-1")).toEqual(result);
       expect(mockService.remove).toHaveBeenCalledWith("user-1", "rev-1");

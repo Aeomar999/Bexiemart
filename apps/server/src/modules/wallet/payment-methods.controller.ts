@@ -14,6 +14,7 @@ import { AuthGuard } from "../../guards/auth.guard";
 import { WalletService } from "./wallet.service";
 import { ApiTags, ApiOperation, ApiBearerAuth } from "@nestjs/swagger";
 import { AddCardPaymentMethodDto, AddMomoPaymentMethodDto } from "./dto/payment-method.dto";
+import { AuthenticatedRequest } from "../../types/request.types";
 
 @ApiTags("Payment Methods")
 @ApiBearerAuth()
@@ -24,7 +25,7 @@ export class PaymentMethodsController {
 
   @Get()
   @ApiOperation({ summary: "Get all payment methods" })
-  async getAll(@Req() req: any) {
+  async getAll(@Req() req: AuthenticatedRequest) {
     const [cards, momoAccounts, bankAccounts] = await Promise.all([
       this.walletService.getCards(req.user.id),
       this.walletService.getMomoAccounts(req.user.id),
@@ -58,7 +59,7 @@ export class PaymentMethodsController {
 
   @Post("card")
   @ApiOperation({ summary: "Add a card" })
-  async addCard(@Req() req: any, @Body() body: AddCardPaymentMethodDto) {
+  async addCard(@Req() req: AuthenticatedRequest, @Body() body: AddCardPaymentMethodDto) {
     const [month, year] = body.expiry.split("/");
 
     const newCard = await this.walletService.addCard(req.user.id, {
@@ -75,7 +76,7 @@ export class PaymentMethodsController {
 
   @Post("momo")
   @ApiOperation({ summary: "Add a momo account" })
-  async addMomo(@Req() req: any, @Body() body: AddMomoPaymentMethodDto) {
+  async addMomo(@Req() req: AuthenticatedRequest, @Body() body: AddMomoPaymentMethodDto) {
     const newMomo = await this.walletService.linkMomoAccount(req.user.id, {
       provider: body.provider.toUpperCase(),
       phoneNumber: body.details,
@@ -88,7 +89,7 @@ export class PaymentMethodsController {
 
   @Delete(":id")
   @ApiOperation({ summary: "Remove a payment method" })
-  async remove(@Req() req: any, @Param("id") id: string) {
+  async remove(@Req() req: AuthenticatedRequest, @Param("id") id: string) {
     try {
       await this.walletService.deleteCard(req.user.id, id);
       return { success: true };
@@ -104,7 +105,7 @@ export class PaymentMethodsController {
 
   @Patch(":id/default")
   @ApiOperation({ summary: "Set a payment method as default" })
-  async setDefault(@Req() req: any, @Param("id") id: string) {
+  async setDefault(@Req() req: AuthenticatedRequest, @Param("id") id: string) {
     try {
       await this.walletService.setDefaultCard(req.user.id, id);
       return { success: true };

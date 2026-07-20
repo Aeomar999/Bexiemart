@@ -11,7 +11,12 @@ export class HealthService {
 
     try {
       const start = Date.now();
-      await this.prisma.$queryRaw`SELECT 1`;
+      await Promise.race([
+        this.prisma.$queryRaw`SELECT 1`,
+        new Promise((_, reject) =>
+          setTimeout(() => reject(new Error("Database check timeout")), 3000)
+        ),
+      ]);
       latency = Date.now() - start;
     } catch {
       status = "unhealthy";

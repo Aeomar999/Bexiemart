@@ -2,6 +2,7 @@ import { Test, TestingModule } from "@nestjs/testing";
 import { StoryController } from "./story.controller";
 import { StoryService } from "./story.service";
 import { AuthGuard } from "../../guards/auth.guard";
+import { AuthenticatedRequest } from "../../types/request.types";
 
 describe("StoryController", () => {
   let controller: StoryController;
@@ -17,9 +18,7 @@ describe("StoryController", () => {
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       controllers: [StoryController],
-      providers: [
-        { provide: StoryService, useValue: mockService },
-      ],
+      providers: [{ provide: StoryService, useValue: mockService }],
     })
       .overrideGuard(AuthGuard)
       .useValue({ canActivate: jest.fn(() => true) })
@@ -41,7 +40,7 @@ describe("StoryController", () => {
     it("should call service.getActiveStories with vendorId and return result", async () => {
       const result = [{ id: "story-1" }];
       mockService.getActiveStories.mockResolvedValue(result);
-      const req = { user: { id: "user-1" } };
+      const req = { user: { id: "user-1" } } as AuthenticatedRequest;
 
       expect(await controller.getActiveStories(req, "vendor-1")).toEqual(result);
       expect(mockService.getActiveStories).toHaveBeenCalledWith("user-1", "vendor-1");
@@ -50,7 +49,7 @@ describe("StoryController", () => {
     it("should call service.getActiveStories without vendorId", async () => {
       const result = [{ id: "story-1" }];
       mockService.getActiveStories.mockResolvedValue(result);
-      const req = { user: { id: "user-1" } };
+      const req = { user: { id: "user-1" } } as AuthenticatedRequest;
 
       expect(await controller.getActiveStories(req, undefined)).toEqual(result);
       expect(mockService.getActiveStories).toHaveBeenCalledWith("user-1", undefined);
@@ -62,7 +61,7 @@ describe("StoryController", () => {
       const result = { id: "story-1" };
       const body = { imageUrl: "https://...", caption: "New story" } as any;
       mockService.createStory.mockResolvedValue(result);
-      const req = { user: { id: "user-1" } };
+      const req = { user: { id: "user-1" } } as AuthenticatedRequest;
 
       expect(await controller.createStory(req, body)).toEqual(result);
       expect(mockService.createStory).toHaveBeenCalledWith("user-1", body);
@@ -73,7 +72,7 @@ describe("StoryController", () => {
     it("should call service.deleteStory and return result", async () => {
       const result = { deleted: true };
       mockService.deleteStory.mockResolvedValue(result);
-      const req = { user: { id: "user-1" } };
+      const req = { user: { id: "user-1" } } as AuthenticatedRequest;
 
       expect(await controller.deleteStory(req, "story-1")).toEqual(result);
       expect(mockService.deleteStory).toHaveBeenCalledWith("user-1", "story-1");
@@ -84,7 +83,7 @@ describe("StoryController", () => {
     it("should call service.recordView and return result", async () => {
       const result = { viewed: true };
       mockService.recordView.mockResolvedValue(result);
-      const req = { user: { id: "user-1" } };
+      const req = { user: { id: "user-1" } } as AuthenticatedRequest;
 
       expect(await controller.recordView(req, "story-1")).toEqual(result);
       expect(mockService.recordView).toHaveBeenCalledWith("user-1", "story-1");

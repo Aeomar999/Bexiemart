@@ -37,7 +37,9 @@ export default function DispatcherMap() {
 
   // Sync online status with backend + connect the live dispatch socket.
   useEffect(() => {
-    dispatcherApi.updateStatus(isOnline ? "ONLINE" : "OFFLINE").catch(() => {});
+    dispatcherApi.updateStatus(isOnline ? "ONLINE" : "OFFLINE").catch(() => {
+      Toast.show({ type: "error", text1: "Failed to update online status" });
+    });
     if (isOnline) deliverySocketService.connect();
   }, [isOnline]);
 
@@ -116,7 +118,9 @@ export default function DispatcherMap() {
       userLocation.longitude,
       activeRide?.id
     );
-    dispatcherApi.updateLocation(userLocation.latitude, userLocation.longitude).catch(() => {});
+    dispatcherApi.updateLocation(userLocation.latitude, userLocation.longitude).catch(() => {
+      Toast.show({ type: "error", text1: "Failed to update location" });
+    });
   }, [isOnline, userLocation?.latitude, userLocation?.longitude, activeRide?.id]);
 
   // Frame the route when a task is displayed
@@ -141,7 +145,9 @@ export default function DispatcherMap() {
 
   const handleCall = () => {
     if (displayRide?.customer?.phoneNumber) {
-      Linking.openURL(`tel:${displayRide.customer.phoneNumber}`).catch(() => {});
+      Linking.openURL(`tel:${displayRide.customer.phoneNumber}`).catch(() => {
+        Toast.show({ type: "error", text1: "Unable to open phone app" });
+      });
     }
   };
 

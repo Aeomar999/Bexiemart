@@ -3,6 +3,7 @@ import { ApiTags, ApiOperation, ApiBody, ApiBearerAuth } from "@nestjs/swagger";
 import { AuthGuard } from "../../guards/auth.guard";
 import { VendorDocumentsService } from "./vendor-documents.service";
 import { CreateDocumentDto } from "./dto/create-document.dto";
+import { AuthenticatedRequest } from "../../types/request.types";
 
 @ApiTags("Vendor Documents")
 @ApiBearerAuth()
@@ -12,10 +13,19 @@ export class VendorDocumentsController {
   constructor(private readonly service: VendorDocumentsService) {}
 
   @ApiOperation({ summary: "List all documents" })
-  @Get() findAll(@Req() req: any) { return this.service.findAll(req.user.id); }
+  @Get()
+  findAll(@Req() req: AuthenticatedRequest) {
+    return this.service.findAll(req.user.id);
+  }
   @ApiOperation({ summary: "Upload a document" })
   @ApiBody({ type: CreateDocumentDto })
-  @Post() create(@Req() req: any, @Body() body: CreateDocumentDto) { return this.service.create(req.user.id, body); }
+  @Post()
+  create(@Req() req: AuthenticatedRequest, @Body() body: CreateDocumentDto) {
+    return this.service.create(req.user.id, body);
+  }
   @ApiOperation({ summary: "Delete a document" })
-  @Delete(":id") remove(@Req() req: any, @Param("id") id: string) { return this.service.remove(req.user.id, id); }
+  @Delete(":id")
+  remove(@Req() req: AuthenticatedRequest, @Param("id") id: string) {
+    return this.service.remove(req.user.id, id);
+  }
 }

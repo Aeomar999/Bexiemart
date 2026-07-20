@@ -26,8 +26,8 @@ export async function sendOtpViaSms(phoneNumber: string, code: string): Promise<
   const isDev = process.env.NODE_ENV !== "production";
 
   if (isDev) {
-    console.log(
-      `\n\n=== SMS GATEWAY ===\nTo: ${phoneNumber}\nMessage: Your BexieMart verification code is: ${code}\n===================\n\n`
+    logger.log(
+      `SMS GATEWAY | To: ${phoneNumber} | Message: Your BexieMart verification code is: ${code}`
     );
   }
 

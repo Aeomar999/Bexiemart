@@ -2,6 +2,7 @@ import "react-native-get-random-values";
 import "../global.css";
 import "../src/lib/sentry";
 import * as Sentry from "@sentry/react-native";
+import { logger } from "../src/lib/logger";
 import { posthog } from "../src/lib/posthog";
 import { PostHogProvider } from "posthog-react-native";
 import { Stack, useRouter, useRootNavigationState, useSegments, usePathname } from "expo-router";
@@ -147,7 +148,7 @@ function RootLayout() {
         }
       }
     } catch (err) {
-      console.warn("Navigation failed (likely due to ErrorBoundary removing Stack):", err);
+      logger.error("Navigation failed (likely due to ErrorBoundary removing Stack):", err);
     }
   }, [
     isLoading,

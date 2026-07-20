@@ -1,5 +1,6 @@
 import { tokens } from "@/theme/tokens";
 import { BackButton } from "@/components/ui/BackButton";
+import { logger } from "@/lib/logger";
 import { View, Text, ScrollView, TextInput, Keyboard, Pressable } from "react-native";
 import { useState } from "react";
 import { useRouter } from "expo-router";
@@ -47,7 +48,7 @@ export default function TopUpScreen() {
       }
       setIsSuccess(true);
     } catch (error) {
-      console.error("Top-up failed", error);
+      logger.error("Top-up failed", error);
     } finally {
       setIsProcessing(false);
     }

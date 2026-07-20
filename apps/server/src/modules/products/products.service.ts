@@ -1,10 +1,11 @@
-import { Injectable, NotFoundException } from "@nestjs/common";
+import { Injectable, Logger, NotFoundException } from "@nestjs/common";
 import { PrismaService } from "../../prisma/prisma.service";
 import { QueryProductsDto, ProductSort } from "./dto/query-products.dto";
 import { getCache, setCache } from "../../utils/cache";
 
 @Injectable()
 export class ProductsService {
+  private readonly logger = new Logger(ProductsService.name);
   constructor(private readonly prisma: PrismaService) {}
 
   async findAll(dto: QueryProductsDto) {
@@ -187,7 +188,7 @@ export class ProductsService {
         id
       );
     } catch (e) {
-      console.error(`Failed to track visit for store ${id}:`, e);
+      this.logger.error(`Failed to track visit for store ${id}:`, e);
     }
 
     const stats = await this.prisma.product.aggregate({

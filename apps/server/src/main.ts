@@ -3,12 +3,13 @@ import "./instrument";
 import { NestFactory } from "@nestjs/core";
 import { NestExpressApplication } from "@nestjs/platform-express";
 import { AppModule } from "./app.module";
-import { ValidationPipe, VersioningType } from "@nestjs/common";
+import { ValidationPipe, VersioningType, RequestMethod } from "@nestjs/common";
 import { GlobalExceptionFilter } from "./filters/global-exception.filter";
 import helmet from "helmet";
 import { join } from "path";
 import { existsSync, mkdirSync } from "fs";
 import { DocumentBuilder, SwaggerModule } from "@nestjs/swagger";
+import { Logger } from "@nestjs/common";
 
 import { Request, Response, NextFunction } from "express";
 
@@ -60,7 +61,13 @@ async function bootstrap() {
 
   app.useGlobalFilters(new GlobalExceptionFilter());
 
-  app.setGlobalPrefix("api");
+  app.setGlobalPrefix("api", {
+    exclude: [
+      { path: "health", method: RequestMethod.GET },
+      { path: "api/health", method: RequestMethod.GET },
+      { path: "api/v1/health", method: RequestMethod.GET },
+    ],
+  });
   app.enableVersioning({
     type: VersioningType.URI,
     defaultVersion: "1",
@@ -82,6 +89,6 @@ async function bootstrap() {
   app.enableShutdownHooks();
   const port = process.env.PORT ?? 3000;
   await app.listen(port, "0.0.0.0");
-  console.log(`BexieMart API running on port ${port}`);
+  new Logger("Bootstrap").log(`BexieMart API running on port ${port}`);
 }
 bootstrap();

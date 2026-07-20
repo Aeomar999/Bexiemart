@@ -2,6 +2,7 @@ import { Test, TestingModule } from "@nestjs/testing";
 import { PaymentMethodsController } from "./payment-methods.controller";
 import { WalletService } from "./wallet.service";
 import { AuthGuard } from "../../guards/auth.guard";
+import { AuthenticatedRequest } from "../../types/request.types";
 
 describe("PaymentMethodsController", () => {
   let controller: PaymentMethodsController;
@@ -21,9 +22,7 @@ describe("PaymentMethodsController", () => {
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       controllers: [PaymentMethodsController],
-      providers: [
-        { provide: WalletService, useValue: mockService },
-      ],
+      providers: [{ provide: WalletService, useValue: mockService }],
     })
       .overrideGuard(AuthGuard)
       .useValue({ canActivate: jest.fn(() => true) })
@@ -47,7 +46,13 @@ describe("PaymentMethodsController", () => {
         { id: "card-1", type: "Visa", last4: "1234", cardholderName: "John", isDefault: true },
       ];
       const momoAccounts = [
-        { id: "momo-1", provider: "MTN", phoneNumber: "+233501234567", accountName: "John", isDefault: false },
+        {
+          id: "momo-1",
+          provider: "MTN",
+          phoneNumber: "+233501234567",
+          accountName: "John",
+          isDefault: false,
+        },
       ];
       const bankAccounts: any[] = [];
 
@@ -55,7 +60,7 @@ describe("PaymentMethodsController", () => {
       mockService.getMomoAccounts.mockResolvedValue(momoAccounts);
       mockService.getBankAccounts.mockResolvedValue(bankAccounts);
 
-      const req = { user: { id: "user-1" } };
+      const req = { user: { id: "user-1" } } as AuthenticatedRequest;
 
       const result = await controller.getAll(req);
 
@@ -86,9 +91,7 @@ describe("PaymentMethodsController", () => {
     });
 
     it("should use fallback holderName when not provided on cards", async () => {
-      const cards = [
-        { id: "card-1", type: "Visa", last4: "1234", isDefault: false },
-      ];
+      const cards = [{ id: "card-1", type: "Visa", last4: "1234", isDefault: false }];
       const momoAccounts: any[] = [];
       const bankAccounts: any[] = [];
 
@@ -96,7 +99,7 @@ describe("PaymentMethodsController", () => {
       mockService.getMomoAccounts.mockResolvedValue(momoAccounts);
       mockService.getBankAccounts.mockResolvedValue(bankAccounts);
 
-      const req = { user: { id: "user-1" } };
+      const req = { user: { id: "user-1" } } as AuthenticatedRequest;
 
       const result = await controller.getAll(req);
 
@@ -108,7 +111,7 @@ describe("PaymentMethodsController", () => {
     it("should call service.addCard and return success response", async () => {
       const newCard = { id: "card-1" };
       mockService.addCard.mockResolvedValue(newCard);
-      const req = { user: { id: "user-1" } };
+      const req = { user: { id: "user-1" } } as AuthenticatedRequest;
       const body = {
         provider: "Visa",
         holderName: "John Doe",
@@ -135,7 +138,7 @@ describe("PaymentMethodsController", () => {
     it("should call service.linkMomoAccount and return success response", async () => {
       const newMomo = { id: "momo-1" };
       mockService.linkMomoAccount.mockResolvedValue(newMomo);
-      const req = { user: { id: "user-1" } };
+      const req = { user: { id: "user-1" } } as AuthenticatedRequest;
       const body = {
         provider: "mtn",
         holderName: "John Doe",
@@ -158,7 +161,7 @@ describe("PaymentMethodsController", () => {
   describe("remove", () => {
     it("should try deleteCard first and succeed", async () => {
       mockService.deleteCard.mockResolvedValue({ success: true });
-      const req = { user: { id: "user-1" } };
+      const req = { user: { id: "user-1" } } as AuthenticatedRequest;
 
       const result = await controller.remove(req, "card-1");
 
@@ -170,7 +173,7 @@ describe("PaymentMethodsController", () => {
     it("should fallback to deleteMomoAccount when deleteCard fails", async () => {
       mockService.deleteCard.mockRejectedValue(new Error("Not a card"));
       mockService.deleteMomoAccount.mockResolvedValue({ success: true });
-      const req = { user: { id: "user-1" } };
+      const req = { user: { id: "user-1" } } as AuthenticatedRequest;
 
       const result = await controller.remove(req, "momo-1");
 
@@ -182,16 +185,18 @@ describe("PaymentMethodsController", () => {
     it("should throw BadRequestException when both fail", async () => {
       mockService.deleteCard.mockRejectedValue(new Error("Not found"));
       mockService.deleteMomoAccount.mockRejectedValue(new Error("Not found"));
-      const req = { user: { id: "user-1" } };
+      const req = { user: { id: "user-1" } } as AuthenticatedRequest;
 
-      await expect(controller.remove(req, "unknown-id")).rejects.toThrow("Payment method not found");
+      await expect(controller.remove(req, "unknown-id")).rejects.toThrow(
+        "Payment method not found"
+      );
     });
   });
 
   describe("setDefault", () => {
     it("should call service.setDefaultCard and return success", async () => {
       mockService.setDefaultCard.mockResolvedValue({ success: true });
-      const req = { user: { id: "user-1" } };
+      const req = { user: { id: "user-1" } } as AuthenticatedRequest;
 
       const result = await controller.setDefault(req, "card-1");
 
@@ -201,9 +206,11 @@ describe("PaymentMethodsController", () => {
 
     it("should throw BadRequestException when setDefaultCard fails", async () => {
       mockService.setDefaultCard.mockRejectedValue(new Error("Not found"));
-      const req = { user: { id: "user-1" } };
+      const req = { user: { id: "user-1" } } as AuthenticatedRequest;
 
-      await expect(controller.setDefault(req, "unknown-id")).rejects.toThrow("Could not set default payment method");
+      await expect(controller.setDefault(req, "unknown-id")).rejects.toThrow(
+        "Could not set default payment method"
+      );
     });
   });
 });

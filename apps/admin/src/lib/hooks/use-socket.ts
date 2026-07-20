@@ -61,7 +61,9 @@ export function useSocketEvent<T>(eventName: string, callback: (data: T) => void
         socketInstance = socket;
         socket.on(eventName, callback);
       })
-      .catch(() => {});
+      .catch((err) => {
+        console.warn("Failed to connect socket:", err);
+      });
 
     return () => {
       mounted = false;

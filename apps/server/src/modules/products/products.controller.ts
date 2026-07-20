@@ -3,6 +3,7 @@ import { ApiTags, ApiOperation, ApiBearerAuth } from "@nestjs/swagger";
 import { AuthGuard } from "../../guards/auth.guard";
 import { ProductsService } from "./products.service";
 import { QueryProductsDto } from "./dto/query-products.dto";
+import { AuthenticatedRequest } from "../../types/request.types";
 
 @Controller("products")
 @ApiTags("Products")

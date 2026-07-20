@@ -3,6 +3,7 @@ import { ApiBearerAuth, ApiOperation, ApiTags } from "@nestjs/swagger";
 import { AuthGuard } from "../../guards/auth.guard";
 import { NotificationPreferencesService } from "./notification-preferences.service";
 import { UpdatePreferencesDto } from "./dto/update-preferences.dto";
+import { AuthenticatedRequest } from "../../types/request.types";
 
 @ApiTags("Notification Preferences")
 @ApiBearerAuth()
@@ -13,13 +14,13 @@ export class NotificationPreferencesController {
 
   @Get()
   @ApiOperation({ summary: "Get user notification preferences" })
-  get(@Req() req: any) {
+  get(@Req() req: AuthenticatedRequest) {
     return this.service.get(req.user.id);
   }
 
   @Put()
   @ApiOperation({ summary: "Update user notification preferences" })
-  update(@Req() req: any, @Body() dto: UpdatePreferencesDto) {
+  update(@Req() req: AuthenticatedRequest, @Body() dto: UpdatePreferencesDto) {
     return this.service.update(req.user.id, dto);
   }
 }

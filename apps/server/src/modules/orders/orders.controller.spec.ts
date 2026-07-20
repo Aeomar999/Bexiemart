@@ -2,6 +2,7 @@ import { Test, TestingModule } from "@nestjs/testing";
 import { OrdersController } from "./orders.controller";
 import { OrdersService } from "./orders.service";
 import { AuthGuard } from "../../guards/auth.guard";
+import { AuthenticatedRequest } from "../../types/request.types";
 
 describe("OrdersController", () => {
   let controller: OrdersController;
@@ -18,9 +19,7 @@ describe("OrdersController", () => {
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       controllers: [OrdersController],
-      providers: [
-        { provide: OrdersService, useValue: mockService },
-      ],
+      providers: [{ provide: OrdersService, useValue: mockService }],
     })
       .overrideGuard(AuthGuard)
       .useValue({ canActivate: jest.fn(() => true) })
@@ -42,7 +41,7 @@ describe("OrdersController", () => {
     it("should call service.create with user id and dto", async () => {
       const result = { id: "ord-1" };
       mockService.create.mockResolvedValue(result);
-      const req = { user: { id: "user-1" } };
+      const req = { user: { id: "user-1" } } as AuthenticatedRequest;
       const dto = { items: [] } as any;
 
       expect(await controller.create(req, dto)).toEqual(result);
@@ -54,7 +53,7 @@ describe("OrdersController", () => {
     it("should call service.findAll with user id and parsed pagination", async () => {
       const result = [{ id: "ord-1" }];
       mockService.findAll.mockResolvedValue(result);
-      const req = { user: { id: "user-1" } };
+      const req = { user: { id: "user-1" } } as AuthenticatedRequest;
 
       expect(await controller.findAll(req, "1", "20")).toEqual(result);
       expect(mockService.findAll).toHaveBeenCalledWith("user-1", 1, 20);
@@ -65,7 +64,7 @@ describe("OrdersController", () => {
     it("should call service.findOne with user id and param id", async () => {
       const result = { id: "ord-1" };
       mockService.findOne.mockResolvedValue(result);
-      const req = { user: { id: "user-1" } };
+      const req = { user: { id: "user-1" } } as AuthenticatedRequest;
 
       expect(await controller.findOne(req, "order-1")).toEqual(result);
       expect(mockService.findOne).toHaveBeenCalledWith("user-1", "order-1");
@@ -76,7 +75,7 @@ describe("OrdersController", () => {
     it("should call service.cancel with user id and param id", async () => {
       const result = { status: "cancelled" };
       mockService.cancel.mockResolvedValue(result);
-      const req = { user: { id: "user-1" } };
+      const req = { user: { id: "user-1" } } as AuthenticatedRequest;
 
       expect(await controller.cancel(req, "order-1")).toEqual(result);
       expect(mockService.cancel).toHaveBeenCalledWith("user-1", "order-1");
@@ -87,9 +86,11 @@ describe("OrdersController", () => {
     it("should call service.requestRefund with user id, param id and reason", async () => {
       const result = { status: "refund_requested" };
       mockService.requestRefund.mockResolvedValue(result);
-      const req = { user: { id: "user-1" } };
+      const req = { user: { id: "user-1" } } as AuthenticatedRequest;
 
-      expect(await controller.requestRefund(req, "order-1", { reason: "broken" } as any)).toEqual(result);
+      expect(await controller.requestRefund(req, "order-1", { reason: "broken" } as any)).toEqual(
+        result
+      );
       expect(mockService.requestRefund).toHaveBeenCalledWith("user-1", "order-1", "broken");
     });
   });

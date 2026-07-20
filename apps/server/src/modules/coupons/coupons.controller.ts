@@ -4,6 +4,7 @@ import { CouponsService } from "./coupons.service";
 import { ValidateCouponDto } from "./dto/validate-coupon.dto";
 import { AuthGuard } from "../../guards/auth.guard";
 import { Throttle } from "@nestjs/throttler";
+import { AuthenticatedRequest } from "../../types/request.types";
 
 @ApiBearerAuth()
 @Controller("coupons")

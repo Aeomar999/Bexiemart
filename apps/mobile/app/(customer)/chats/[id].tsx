@@ -1,4 +1,5 @@
 import { tokens } from "@/theme/tokens";
+import { logger } from "@/lib/logger";
 import {
   View,
   Text,
@@ -76,7 +77,7 @@ export default function ChatDetailScreen() {
         // send message
         sendMessage.mutate({ type: "IMAGE", mediaUrl: url });
       } catch (e) {
-        console.error("Upload failed", e);
+        logger.error("Upload failed", e);
         alert("Failed to upload image.");
       } finally {
         setIsUploading(false);

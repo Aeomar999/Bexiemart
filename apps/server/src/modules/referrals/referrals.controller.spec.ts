@@ -2,6 +2,7 @@ import { Test, TestingModule } from "@nestjs/testing";
 import { ReferralsController } from "./referrals.controller";
 import { ReferralsService } from "./referrals.service";
 import { AuthGuard } from "../../guards/auth.guard";
+import { AuthenticatedRequest } from "../../types/request.types";
 
 describe("ReferralsController", () => {
   let controller: ReferralsController;
@@ -17,9 +18,7 @@ describe("ReferralsController", () => {
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       controllers: [ReferralsController],
-      providers: [
-        { provide: ReferralsService, useValue: mockService },
-      ],
+      providers: [{ provide: ReferralsService, useValue: mockService }],
     })
       .overrideGuard(AuthGuard)
       .useValue({ canActivate: jest.fn(() => true) })
@@ -41,7 +40,7 @@ describe("ReferralsController", () => {
     it("should call service.generate and return result", async () => {
       const result = { code: "REF-ABC" };
       mockService.generate.mockResolvedValue(result);
-      const req = { user: { id: "user-1" } };
+      const req = { user: { id: "user-1" } } as AuthenticatedRequest;
 
       expect(await controller.generate(req, {})).toEqual(result);
       expect(mockService.generate).toHaveBeenCalledWith("user-1");
@@ -52,7 +51,7 @@ describe("ReferralsController", () => {
     it("should call service.getMyReferral and return result", async () => {
       const result = { code: "REF-ABC" };
       mockService.getMyReferral.mockResolvedValue(result);
-      const req = { user: { id: "user-1" } };
+      const req = { user: { id: "user-1" } } as AuthenticatedRequest;
 
       expect(await controller.getMyReferral(req)).toEqual(result);
       expect(mockService.getMyReferral).toHaveBeenCalledWith("user-1");
@@ -63,7 +62,7 @@ describe("ReferralsController", () => {
     it("should call service.apply and return result", async () => {
       const result = { success: true };
       mockService.apply.mockResolvedValue(result);
-      const req = { user: { id: "user-1" } };
+      const req = { user: { id: "user-1" } } as AuthenticatedRequest;
 
       expect(await controller.apply(req, { code: "ABC" })).toEqual(result);
       expect(mockService.apply).toHaveBeenCalledWith("user-1", "ABC");
@@ -74,7 +73,7 @@ describe("ReferralsController", () => {
     it("should call service.getStats and return result", async () => {
       const result = { total: 10, earnings: 50 };
       mockService.getStats.mockResolvedValue(result);
-      const req = { user: { id: "user-1" } };
+      const req = { user: { id: "user-1" } } as AuthenticatedRequest;
 
       expect(await controller.getStats(req)).toEqual(result);
       expect(mockService.getStats).toHaveBeenCalledWith("user-1");

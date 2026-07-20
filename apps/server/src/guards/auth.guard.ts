@@ -1,13 +1,13 @@
 import { Injectable, CanActivate, ExecutionContext, UnauthorizedException } from "@nestjs/common";
-import { Request } from "express";
 import { PrismaService } from "../prisma/prisma.service";
+import { AuthenticatedRequest } from "../types/request.types";
 
 @Injectable()
 export class AuthGuard implements CanActivate {
   constructor(private readonly prisma: PrismaService) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
-    const request = context.switchToHttp().getRequest<Request>();
+    const request = context.switchToHttp().getRequest<AuthenticatedRequest>();
     const authHeader = request.headers.authorization;
 
     if (!authHeader?.startsWith("Bearer ")) {
@@ -32,16 +32,10 @@ export class AuthGuard implements CanActivate {
         throw new UnauthorizedException("Account has been deactivated");
       }
 
-      (request as any).user = session.user;
+      request.user = session.user;
       return true;
     } catch (err) {
       throw new UnauthorizedException("Invalid or expired session");
     }
   }
-}
-
-export function CurrentUser(): ParameterDecorator {
-  return (_target, _propertyKey, parameterIndex) => {
-    // Extracted via custom decorator factory
-  };
 }

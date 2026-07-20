@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useRef } from "react";
+import Image from "next/image";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "../../../../components/ui/Card";
 import { Button } from "../../../../components/ui/Button";
 import { Input } from "../../../../components/ui/Input";
@@ -73,8 +74,7 @@ function ProfileSettingsForm({ user }: { user: any }) {
             <div className="relative group cursor-pointer" onClick={() => fileInputRef.current?.click()}>
               <div className="h-24 w-24 rounded-full bg-(--color-bg) border-2 border-dashed border-(--color-border) flex items-center justify-center overflow-hidden relative">
                 {image ? (
-                  /* eslint-disable-next-line @next/next/no-img-element */
-                  <img src={image} alt="Avatar" className="h-full w-full object-cover" />
+                  <Image src={image} alt="Avatar" width={96} height={96} className="h-full w-full object-cover" unoptimized />
                 ) : (
                   <User className="h-10 w-10 text-(--color-text-muted)" />
                 )}
