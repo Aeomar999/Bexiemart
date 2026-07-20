@@ -3,6 +3,7 @@ import { DispatcherController } from "./dispatcher.controller";
 import { DispatcherService } from "./dispatcher.service";
 import { AuthGuard } from "../../guards/auth.guard";
 import { PrismaService } from "../../prisma/prisma.service";
+import { AuthenticatedRequest } from "../../types/request.types";
 
 describe("DispatcherController", () => {
   let controller: DispatcherController;
@@ -56,7 +57,7 @@ describe("DispatcherController", () => {
     it("should call service.getProfile and return result", async () => {
       const result = { id: "disp-1", status: "online" };
       mockService.getProfile.mockResolvedValue(result);
-      const req = { user: { id: "user-1" } };
+      const req = { user: { id: "user-1" } } as AuthenticatedRequest;
 
       expect(await controller.getProfile(req)).toEqual(result);
       expect(mockService.getProfile).toHaveBeenCalledWith("user-1");
@@ -67,7 +68,7 @@ describe("DispatcherController", () => {
     it("should call service.createProfile and return result", async () => {
       const result = { id: "disp-1" };
       mockService.createProfile.mockResolvedValue(result);
-      const req = { user: { id: "user-1" } };
+      const req = { user: { id: "user-1" } } as AuthenticatedRequest;
       const dto = { vehicle: "car" } as any;
 
       expect(await controller.createProfile(req, dto)).toEqual(result);
@@ -79,7 +80,7 @@ describe("DispatcherController", () => {
     it("should call service.updateStatus and return result", async () => {
       const result = { status: "online" };
       mockService.updateStatus.mockResolvedValue(result);
-      const req = { user: { id: "user-1" } };
+      const req = { user: { id: "user-1" } } as AuthenticatedRequest;
 
       expect(await controller.toggleStatus(req, { status: "online" } as any)).toEqual(result);
       expect(mockService.updateStatus).toHaveBeenCalledWith("user-1", "online");
@@ -90,7 +91,7 @@ describe("DispatcherController", () => {
     it("should call service.updateLocation and return result", async () => {
       const result = { success: true };
       mockService.updateLocation.mockResolvedValue(result);
-      const req = { user: { id: "user-1" } };
+      const req = { user: { id: "user-1" } } as AuthenticatedRequest;
 
       expect(await controller.updateLocation(req, { lat: 40.7128, lng: -74.006 })).toEqual(result);
       expect(mockService.updateLocation).toHaveBeenCalledWith("user-1", 40.7128, -74.006);
@@ -101,7 +102,7 @@ describe("DispatcherController", () => {
     it("should call service.getAvailableTasks with default pagination", async () => {
       const result = [{ id: "task-1" }];
       mockService.getAvailableTasks.mockResolvedValue(result);
-      const req = { user: { id: "user-1" } };
+      const req = { user: { id: "user-1" } } as AuthenticatedRequest;
 
       expect(await controller.getAvailableTasks(req)).toEqual(result);
       expect(mockService.getAvailableTasks).toHaveBeenCalledWith("user-1", 1, 20);
@@ -112,7 +113,7 @@ describe("DispatcherController", () => {
     it("should call service.getMyTasks with status and default pagination", async () => {
       const result = [{ id: "task-1", status: "active" }];
       mockService.getMyTasks.mockResolvedValue(result);
-      const req = { user: { id: "user-1" } };
+      const req = { user: { id: "user-1" } } as AuthenticatedRequest;
 
       expect(await controller.getMyTasks(req, "active")).toEqual(result);
       expect(mockService.getMyTasks).toHaveBeenCalledWith("user-1", "active", 1, 20);
@@ -123,7 +124,7 @@ describe("DispatcherController", () => {
     it("should call service.acceptTask and return result", async () => {
       const result = { success: true };
       mockService.acceptTask.mockResolvedValue(result);
-      const req = { user: { id: "user-1" } };
+      const req = { user: { id: "user-1" } } as AuthenticatedRequest;
 
       expect(await controller.acceptTask(req, "task-1")).toEqual(result);
       expect(mockService.acceptTask).toHaveBeenCalledWith("user-1", "task-1");
@@ -134,7 +135,7 @@ describe("DispatcherController", () => {
     it("should call service.updateTaskStatus and return result", async () => {
       const result = { success: true };
       mockService.updateTaskStatus.mockResolvedValue(result);
-      const req = { user: { id: "user-1" } };
+      const req = { user: { id: "user-1" } } as AuthenticatedRequest;
 
       expect(await controller.updateTaskStatus(req, "task-1", { status: "DELIVERED" })).toEqual(
         result
@@ -147,7 +148,7 @@ describe("DispatcherController", () => {
     it("should call service.getEarnings and return result", async () => {
       const result = { total: 500 };
       mockService.getEarnings.mockResolvedValue(result);
-      const req = { user: { id: "user-1" } };
+      const req = { user: { id: "user-1" } } as AuthenticatedRequest;
 
       expect(await controller.getEarnings(req)).toEqual(result);
       expect(mockService.getEarnings).toHaveBeenCalledWith("user-1");
@@ -158,7 +159,7 @@ describe("DispatcherController", () => {
     it("should call service.getTransactions and return result", async () => {
       const result = [{ amount: 50 }];
       mockService.getTransactions.mockResolvedValue(result);
-      const req = { user: { id: "user-1" } };
+      const req = { user: { id: "user-1" } } as AuthenticatedRequest;
 
       expect(await controller.getTransactions(req)).toEqual(result);
       expect(mockService.getTransactions).toHaveBeenCalledWith("user-1");
@@ -169,7 +170,7 @@ describe("DispatcherController", () => {
     it("should call service.getAnalytics and return result", async () => {
       const result = { completedOrders: 10 };
       mockService.getAnalytics.mockResolvedValue(result);
-      const req = { user: { id: "user-1" } };
+      const req = { user: { id: "user-1" } } as AuthenticatedRequest;
 
       expect(await controller.getAnalytics(req)).toEqual(result);
       expect(mockService.getAnalytics).toHaveBeenCalledWith("user-1");

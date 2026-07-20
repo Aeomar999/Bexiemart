@@ -4,6 +4,7 @@ import { ReferralsService } from "./referrals.service";
 import { GenerateReferralDto } from "./dto/generate-referral.dto";
 import { ApplyReferralDto } from "./dto/apply-referral.dto";
 import { ApiTags, ApiOperation, ApiBody, ApiBearerAuth } from "@nestjs/swagger";
+import { AuthenticatedRequest } from "../../types/request.types";
 
 @ApiTags("Referral")
 @ApiBearerAuth()
@@ -15,26 +16,26 @@ export class ReferralsController {
   @Post("generate")
   @ApiOperation({ summary: "Generate a referral code" })
   @ApiBody({ type: GenerateReferralDto })
-  generate(@Req() req: any, @Body() body: GenerateReferralDto) {
+  generate(@Req() req: AuthenticatedRequest, @Body() body: GenerateReferralDto) {
     return this.referralsService.generate(req.user.id);
   }
 
   @Get()
   @ApiOperation({ summary: "Get my referral code" })
-  getMyReferral(@Req() req: any) {
+  getMyReferral(@Req() req: AuthenticatedRequest) {
     return this.referralsService.getMyReferral(req.user.id);
   }
 
   @Post("apply")
   @ApiOperation({ summary: "Apply a referral code" })
   @ApiBody({ type: ApplyReferralDto })
-  apply(@Req() req: any, @Body() body: ApplyReferralDto) {
+  apply(@Req() req: AuthenticatedRequest, @Body() body: ApplyReferralDto) {
     return this.referralsService.apply(req.user.id, body.code);
   }
 
   @Get("stats")
   @ApiOperation({ summary: "Get referral stats" })
-  getStats(@Req() req: any) {
+  getStats(@Req() req: AuthenticatedRequest) {
     return this.referralsService.getStats(req.user.id);
   }
 }

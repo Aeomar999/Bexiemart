@@ -27,6 +27,7 @@ import { ResolveTicketDto } from "./dto/resolve-ticket.dto";
 import { UpdateDispatcherStatusDto } from "./dto/update-dispatcher-status.dto";
 import { CreateFlashSaleDto } from "./dto/create-flash-sale.dto";
 import { CreateCouponDto } from "./dto/create-coupon.dto";
+import { AuthenticatedRequest } from "../../types/request.types";
 
 @ApiTags("Admin")
 @ApiBearerAuth()
@@ -374,14 +375,18 @@ export class AdminController {
   @ApiOperation({ summary: "Claim a support ticket" })
   @ApiBody({ type: ClaimTicketDto })
   @Patch("support/tickets/:id/claim")
-  claimTicket(@Param("id") id: string, @Req() req: any) {
+  claimTicket(@Param("id") id: string, @Req() req: AuthenticatedRequest) {
     return this.adminService.claimTicket(id, req.user.id);
   }
 
   @ApiOperation({ summary: "Resolve a support ticket" })
   @ApiBody({ type: ResolveTicketDto })
   @Post("support/tickets/:id/resolve")
-  resolveTicket(@Param("id") id: string, @Body() body: ResolveTicketDto, @Req() req: any) {
+  resolveTicket(
+    @Param("id") id: string,
+    @Body() body: ResolveTicketDto,
+    @Req() req: AuthenticatedRequest
+  ) {
     return this.adminService.resolveTicket(id, req.user.id, body.resolution);
   }
 

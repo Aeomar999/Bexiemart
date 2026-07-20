@@ -17,6 +17,7 @@ import { AdminGuard } from "../../guards/admin.guard";
 import { BannersService } from "./banners.service";
 import { CreateBannerDto } from "./dto/create-banner.dto";
 import { UpdateBannerDto } from "./dto/update-banner.dto";
+import { AuthenticatedRequest } from "../../types/request.types";
 
 @ApiTags("Admin Banners")
 @ApiBearerAuth()

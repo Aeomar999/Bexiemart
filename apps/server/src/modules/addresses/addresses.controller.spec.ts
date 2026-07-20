@@ -2,6 +2,7 @@ import { Test, TestingModule } from "@nestjs/testing";
 import { AddressesController } from "./addresses.controller";
 import { AddressesService } from "./addresses.service";
 import { AuthGuard } from "../../guards/auth.guard";
+import { AuthenticatedRequest } from "../../types/request.types";
 
 describe("AddressesController", () => {
   let controller: AddressesController;
@@ -18,9 +19,7 @@ describe("AddressesController", () => {
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       controllers: [AddressesController],
-      providers: [
-        { provide: AddressesService, useValue: mockService },
-      ],
+      providers: [{ provide: AddressesService, useValue: mockService }],
     })
       .overrideGuard(AuthGuard)
       .useValue({ canActivate: jest.fn(() => true) })
@@ -42,7 +41,7 @@ describe("AddressesController", () => {
     it("should call service.findAll with user id", async () => {
       const result = [{ id: "addr-1" }];
       mockService.findAll.mockResolvedValue(result);
-      const req = { user: { id: "user-1" } };
+      const req = { user: { id: "user-1" } } as AuthenticatedRequest;
 
       expect(await controller.findAll(req)).toEqual(result);
       expect(mockService.findAll).toHaveBeenCalledWith("user-1");
@@ -53,7 +52,7 @@ describe("AddressesController", () => {
     it("should call service.create with user id and dto", async () => {
       const result = { id: "addr-1" };
       mockService.create.mockResolvedValue(result);
-      const req = { user: { id: "user-1" } };
+      const req = { user: { id: "user-1" } } as AuthenticatedRequest;
       const dto = { street: "123 Main St", city: "NYC" } as any;
 
       expect(await controller.create(req, dto)).toEqual(result);
@@ -65,7 +64,7 @@ describe("AddressesController", () => {
     it("should call service.update with user id, param id and dto", async () => {
       const result = { id: "addr-1" };
       mockService.update.mockResolvedValue(result);
-      const req = { user: { id: "user-1" } };
+      const req = { user: { id: "user-1" } } as AuthenticatedRequest;
       const dto = { street: "456 Oak Ave" } as any;
 
       expect(await controller.update(req, "addr-1", dto)).toEqual(result);
@@ -77,7 +76,7 @@ describe("AddressesController", () => {
     it("should call service.remove with user id and param id", async () => {
       const result = { deleted: true };
       mockService.remove.mockResolvedValue(result);
-      const req = { user: { id: "user-1" } };
+      const req = { user: { id: "user-1" } } as AuthenticatedRequest;
 
       expect(await controller.remove(req, "addr-1")).toEqual(result);
       expect(mockService.remove).toHaveBeenCalledWith("user-1", "addr-1");
@@ -88,7 +87,7 @@ describe("AddressesController", () => {
     it("should call service.setDefault with user id and param id", async () => {
       const result = { id: "addr-1", isDefault: true };
       mockService.setDefault.mockResolvedValue(result);
-      const req = { user: { id: "user-1" } };
+      const req = { user: { id: "user-1" } } as AuthenticatedRequest;
 
       expect(await controller.setDefault(req, "addr-1")).toEqual(result);
       expect(mockService.setDefault).toHaveBeenCalledWith("user-1", "addr-1");

@@ -1,6 +1,7 @@
 import { Controller, Get } from "@nestjs/common";
 import { FlashSalesService } from "./flash-sales.service";
 import { ApiTags, ApiOperation } from "@nestjs/swagger";
+import { AuthenticatedRequest } from "../../types/request.types";
 
 @ApiTags("Flash Sale")
 @Controller("flash-sales")

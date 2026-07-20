@@ -2,7 +2,6 @@ import * as dotenv from "dotenv";
 import * as path from "path";
 dotenv.config({ path: path.resolve(__dirname, "../../.env") });
 const isDev = process.env.NODE_ENV !== "production";
-if (isDev) console.log("BETTER_AUTH_URL:", process.env.BETTER_AUTH_URL);
 import { betterAuth } from "better-auth";
 import { prismaAdapter } from "better-auth/adapters/prisma";
 import { phoneNumber, bearer, twoFactor } from "better-auth/plugins";
@@ -117,9 +116,9 @@ export function createAuth(prisma: PrismaClient) {
             subject: "Verify your BexieMart Email",
             html,
           });
-          console.log("Email sent successfully via Nodemailer:", info.messageId);
+          if (isDev) console.log("Email sent successfully via Nodemailer:", info.messageId);
         } catch (error) {
-          console.error("Failed to send email via Nodemailer:", error);
+          if (isDev) console.error("Failed to send email via Nodemailer:", error);
         }
       },
     },

@@ -1,6 +1,6 @@
 import { Injectable, CanActivate, ExecutionContext } from "@nestjs/common";
-import { Request } from "express";
 import { PrismaService } from "../prisma/prisma.service";
+import { AuthenticatedRequest } from "../types/request.types";
 
 /**
  * Like {@link AuthGuard}, but never rejects. If a valid, non-expired session
@@ -16,7 +16,7 @@ export class OptionalAuthGuard implements CanActivate {
   constructor(private readonly prisma: PrismaService) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
-    const request = context.switchToHttp().getRequest<Request>();
+    const request = context.switchToHttp().getRequest<AuthenticatedRequest>();
     const authHeader = request.headers.authorization;
 
     if (!authHeader?.startsWith("Bearer ")) return true; // anonymous
@@ -32,7 +32,7 @@ export class OptionalAuthGuard implements CanActivate {
       // Mirror AuthGuard's checks (not expired, account not deactivated) but
       // fall through to anonymous instead of throwing on failure.
       if (session && session.expiresAt >= new Date() && session.user.isActive !== false) {
-        (request as any).user = session.user;
+        request.user = session.user;
       }
     } catch {
       // Treat any lookup failure as an anonymous request.

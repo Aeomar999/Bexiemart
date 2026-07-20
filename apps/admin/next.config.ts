@@ -4,6 +4,18 @@ import path from "path";
 
 const nextConfig: NextConfig = {
   output: "standalone",
+  images: {
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "res.cloudinary.com",
+      },
+      {
+        protocol: "https",
+        hostname: "*.cloudinary.com",
+      },
+    ],
+  },
   // Point Turbopack to the actual monorepo root to ignore C:\Users\Jerry\package-lock.json
   turbopack: {
     root: path.join(__dirname, "../../"),

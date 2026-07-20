@@ -2,6 +2,7 @@ import { Test, TestingModule } from "@nestjs/testing";
 import { VendorHoursController } from "./vendor-hours.controller";
 import { VendorHoursService } from "./vendor-hours.service";
 import { AuthGuard } from "../../guards/auth.guard";
+import { AuthenticatedRequest } from "../../types/request.types";
 
 describe("VendorHoursController", () => {
   let controller: VendorHoursController;
@@ -15,9 +16,7 @@ describe("VendorHoursController", () => {
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       controllers: [VendorHoursController],
-      providers: [
-        { provide: VendorHoursService, useValue: mockService },
-      ],
+      providers: [{ provide: VendorHoursService, useValue: mockService }],
     })
       .overrideGuard(AuthGuard)
       .useValue({ canActivate: jest.fn(() => true) })
@@ -39,7 +38,7 @@ describe("VendorHoursController", () => {
     it("should call service.findAll and return result", async () => {
       const result = [{ day: "Monday", open: "09:00", close: "17:00" }];
       mockService.findAll.mockResolvedValue(result);
-      const req = { user: { id: "user-1" } };
+      const req = { user: { id: "user-1" } } as AuthenticatedRequest;
 
       expect(await controller.findAll(req)).toEqual(result);
       expect(mockService.findAll).toHaveBeenCalledWith("user-1");
@@ -52,7 +51,7 @@ describe("VendorHoursController", () => {
       const hours = [{ day: "Monday", open: "09:00", close: "17:00" }] as any;
       const body = { hours } as any;
       mockService.update.mockResolvedValue(result);
-      const req = { user: { id: "user-1" } };
+      const req = { user: { id: "user-1" } } as AuthenticatedRequest;
 
       expect(await controller.update(req, body)).toEqual(result);
       expect(mockService.update).toHaveBeenCalledWith("user-1", hours);

@@ -3,6 +3,7 @@ import { AuthGuard } from "../../guards/auth.guard";
 import { CustomerServicesService } from "./customer-services.service";
 import { BookServiceDto } from "./dto/book-service.dto";
 import { ApiTags, ApiOperation, ApiBody, ApiBearerAuth } from "@nestjs/swagger";
+import { AuthenticatedRequest } from "../../types/request.types";
 
 // Service catalog browsing (list + detail) is public; booking and a user's own
 // bookings are guarded per-method below.
@@ -28,7 +29,11 @@ export class CustomerServicesController {
   @Get("bookings")
   @UseGuards(AuthGuard)
   @ApiOperation({ summary: "List current user's bookings" })
-  findMyBookings(@Req() req: any, @Query("page") page?: string, @Query("limit") limit?: string) {
+  findMyBookings(
+    @Req() req: AuthenticatedRequest,
+    @Query("page") page?: string,
+    @Query("limit") limit?: string
+  ) {
     return this.service.findMyBookings(req.user.id, Number(page) || 1, Number(limit) || 20);
   }
 
@@ -42,14 +47,14 @@ export class CustomerServicesController {
   @UseGuards(AuthGuard)
   @ApiOperation({ summary: "Book a service" })
   @ApiBody({ type: BookServiceDto })
-  book(@Req() req: any, @Param("id") id: string, @Body() body: BookServiceDto) {
+  book(@Req() req: AuthenticatedRequest, @Param("id") id: string, @Body() body: BookServiceDto) {
     return this.service.book(req.user.id, id, body);
   }
 
   @Delete("bookings/:id")
   @UseGuards(AuthGuard)
   @ApiOperation({ summary: "Cancel a booking by ID" })
-  cancel(@Req() req: any, @Param("id") id: string) {
+  cancel(@Req() req: AuthenticatedRequest, @Param("id") id: string) {
     return this.service.cancel(req.user.id, id);
   }
 }

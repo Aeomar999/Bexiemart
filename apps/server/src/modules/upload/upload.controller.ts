@@ -14,6 +14,7 @@ import { FileInterceptor } from "@nestjs/platform-express";
 import { AuthGuard } from "../../guards/auth.guard";
 import { ApiTags, ApiOperation, ApiQuery, ApiBearerAuth } from "@nestjs/swagger";
 import { UploadService } from "./upload.service";
+import { AuthenticatedRequest } from "../../types/request.types";
 
 @ApiBearerAuth()
 @Controller("upload")

@@ -2,6 +2,7 @@ import { Test, TestingModule } from "@nestjs/testing";
 import { FoodController } from "./food.controller";
 import { FoodService } from "./food.service";
 import { AuthGuard } from "../../guards/auth.guard";
+import { AuthenticatedRequest } from "../../types/request.types";
 
 describe("FoodController", () => {
   let controller: FoodController;
@@ -76,7 +77,7 @@ describe("FoodController", () => {
     it("should call service.addToCart with user id and body fields", async () => {
       const result = { success: true };
       mockService.addToCart.mockResolvedValue(result);
-      const req = { user: { id: "user-1" } };
+      const req = { user: { id: "user-1" } } as AuthenticatedRequest;
       const body = { foodItemId: "food-1", quantity: 2, specialInstructions: "no onions" };
 
       expect(await controller.addToCart(req, body)).toEqual(result);
@@ -88,7 +89,7 @@ describe("FoodController", () => {
     it("should call service.getCart with user id", async () => {
       const result = { items: [] };
       mockService.getCart.mockResolvedValue(result);
-      const req = { user: { id: "user-1" } };
+      const req = { user: { id: "user-1" } } as AuthenticatedRequest;
 
       expect(await controller.getCart(req)).toEqual(result);
       expect(mockService.getCart).toHaveBeenCalledWith("user-1");
@@ -99,7 +100,7 @@ describe("FoodController", () => {
     it("should call service.updateCartItem with user id, param id and body quantity", async () => {
       const result = { success: true };
       mockService.updateCartItem.mockResolvedValue(result);
-      const req = { user: { id: "user-1" } };
+      const req = { user: { id: "user-1" } } as AuthenticatedRequest;
 
       expect(await controller.updateCartItem(req, "item-1", { quantity: 3 })).toEqual(result);
       expect(mockService.updateCartItem).toHaveBeenCalledWith("user-1", "item-1", 3);
@@ -110,7 +111,7 @@ describe("FoodController", () => {
     it("should call service.removeCartItem with user id and param id", async () => {
       const result = { success: true };
       mockService.removeCartItem.mockResolvedValue(result);
-      const req = { user: { id: "user-1" } };
+      const req = { user: { id: "user-1" } } as AuthenticatedRequest;
 
       expect(await controller.removeCartItem(req, "item-1")).toEqual(result);
       expect(mockService.removeCartItem).toHaveBeenCalledWith("user-1", "item-1");
@@ -121,7 +122,7 @@ describe("FoodController", () => {
     it("should call service.clearCart with user id", async () => {
       const result = { success: true };
       mockService.clearCart.mockResolvedValue(result);
-      const req = { user: { id: "user-1" } };
+      const req = { user: { id: "user-1" } } as AuthenticatedRequest;
 
       expect(await controller.clearCart(req)).toEqual(result);
       expect(mockService.clearCart).toHaveBeenCalledWith("user-1");
@@ -132,7 +133,7 @@ describe("FoodController", () => {
     it("should call service.checkout with user id", async () => {
       const result = { orderId: "ord-1" };
       mockService.checkout.mockResolvedValue(result);
-      const req = { user: { id: "user-1" } };
+      const req = { user: { id: "user-1" } } as AuthenticatedRequest;
 
       const dto = { deliveryLat: 5.6, deliveryLng: -0.2 } as any;
       expect(await controller.checkout(req, dto)).toEqual(result);
@@ -144,7 +145,7 @@ describe("FoodController", () => {
     it("should call service.getOrders with user id and parsed pagination", async () => {
       const result = [{ id: "ord-1" }];
       mockService.getOrders.mockResolvedValue(result);
-      const req = { user: { id: "user-1" } };
+      const req = { user: { id: "user-1" } } as AuthenticatedRequest;
 
       expect(await controller.getOrders(req, "1", "20")).toEqual(result);
       expect(mockService.getOrders).toHaveBeenCalledWith("user-1", 1, 20);
@@ -155,7 +156,7 @@ describe("FoodController", () => {
     it("should call service.getOrder with user id and param id", async () => {
       const result = { id: "ord-1" };
       mockService.getOrder.mockResolvedValue(result);
-      const req = { user: { id: "user-1" } };
+      const req = { user: { id: "user-1" } } as AuthenticatedRequest;
 
       expect(await controller.getOrder(req, "order-1")).toEqual(result);
       expect(mockService.getOrder).toHaveBeenCalledWith("user-1", "order-1");

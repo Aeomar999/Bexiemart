@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import { useParams, useRouter } from "next/navigation";
+import Image from "next/image";
 import { useDispatcher, useUpdateDispatcherStatus } from "../../../../lib/hooks/use-dispatchers";
 import { DashboardLayout } from "../../../../components/layout/DashboardLayout";
 import { Badge } from "../../../../components/ui/Badge";
@@ -84,7 +85,7 @@ export default function DispatcherDetailsPage() {
               <div className="flex justify-center pb-4">
                 <div className="h-24 w-24 overflow-hidden rounded-full border-2 border-[var(--color-primary)]/20 bg-gray-100 flex items-center justify-center">
                   {dispatcher.user?.image ? (
-                    <img src={dispatcher.user.image} alt={dispatcher.user.name} className="h-full w-full object-cover" />
+                    <Image src={dispatcher.user.image} alt={dispatcher.user.name} width={96} height={96} className="h-full w-full object-cover" unoptimized />
                   ) : (
                     <span className="text-3xl font-bold text-gray-400">{dispatcher.user?.name?.charAt(0)}</span>
                   )}

@@ -9,6 +9,7 @@ import helmet from "helmet";
 import { join } from "path";
 import { existsSync, mkdirSync } from "fs";
 import { DocumentBuilder, SwaggerModule } from "@nestjs/swagger";
+import { Logger } from "@nestjs/common";
 
 import { Request, Response, NextFunction } from "express";
 
@@ -88,6 +89,6 @@ async function bootstrap() {
   app.enableShutdownHooks();
   const port = process.env.PORT ?? 3000;
   await app.listen(port, "0.0.0.0");
-  console.log(`BexieMart API running on port ${port}`);
+  new Logger("Bootstrap").log(`BexieMart API running on port ${port}`);
 }
 bootstrap();

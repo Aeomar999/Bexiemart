@@ -1,15 +1,26 @@
 "use client";
 
 import React from "react";
+import dynamic from "next/dynamic";
 import { Users, Store, ShoppingBag, DollarSign } from "lucide-react";
 import { DashboardLayout } from "../../components/layout/DashboardLayout";
 import { Stat } from "../../components/ui/Stat";
 import { Card, CardHeader, CardTitle, CardContent } from "../../components/ui/Card";
-import { RevenueChart } from "../../components/charts/RevenueChart";
-import { RoleDistribution } from "../../components/charts/RoleDistribution";
-import { OrdersTimeline } from "../../components/charts/OrdersTimeline";
 import { useDashboardStats } from "../../lib/hooks/use-dashboard";
 import { formatCurrency } from "../../lib/utils";
+
+const RevenueChart = dynamic(
+  () => import("../../components/charts/RevenueChart").then((m) => m.RevenueChart),
+  { ssr: false, loading: () => <div className="h-[300px] animate-pulse rounded bg-[var(--color-surface-100)]" /> }
+);
+const RoleDistribution = dynamic(
+  () => import("../../components/charts/RoleDistribution").then((m) => m.RoleDistribution),
+  { ssr: false, loading: () => <div className="h-[300px] animate-pulse rounded bg-[var(--color-surface-100)]" /> }
+);
+const OrdersTimeline = dynamic(
+  () => import("../../components/charts/OrdersTimeline").then((m) => m.OrdersTimeline),
+  { ssr: false, loading: () => <div className="h-[300px] animate-pulse rounded bg-[var(--color-surface-100)]" /> }
+);
 
 export default function DashboardPage() {
   const { data: stats, isLoading } = useDashboardStats();

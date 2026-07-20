@@ -3,6 +3,7 @@ import { ChatController } from "./chat.controller";
 import { ChatService } from "./chat.service";
 import { ChatGateway } from "./chat.gateway";
 import { AuthGuard } from "../../guards/auth.guard";
+import { AuthenticatedRequest } from "../../types/request.types";
 
 describe("ChatController", () => {
   let controller: ChatController;
@@ -69,7 +70,7 @@ describe("ChatController", () => {
     it("should call service.getConversations with user id", async () => {
       const result = [{ id: "conv-1" }];
       mockService.getConversations.mockResolvedValue(result);
-      const req = { user: { id: "user-1" } };
+      const req = { user: { id: "user-1" } } as AuthenticatedRequest;
 
       expect(await controller.getConversations(req)).toEqual(result);
       expect(mockService.getConversations).toHaveBeenCalledWith("user-1");
@@ -80,7 +81,7 @@ describe("ChatController", () => {
     it("should call service.getConversation with conversation id and user id", async () => {
       const result = { id: "conv-1" };
       mockService.getConversation.mockResolvedValue(result);
-      const req = { user: { id: "user-1" } };
+      const req = { user: { id: "user-1" } } as AuthenticatedRequest;
 
       expect(await controller.getConversation(req, "conv-1")).toEqual(result);
       expect(mockService.getConversation).toHaveBeenCalledWith("conv-1", "user-1");
@@ -91,7 +92,7 @@ describe("ChatController", () => {
     it("should call service.createConversation with user id, participant id, and order id", async () => {
       const result = { id: "conv-1" };
       mockService.createConversation.mockResolvedValue(result);
-      const req = { user: { id: "user-1" } };
+      const req = { user: { id: "user-1" } } as AuthenticatedRequest;
       const body = { participantId: "user-2", orderId: "order-1" };
 
       expect(await controller.createConversation(req, body)).toEqual(result);
@@ -102,7 +103,7 @@ describe("ChatController", () => {
   describe("markAsRead", () => {
     it("should call service.markAsRead with conversation id and user id", async () => {
       mockService.markAsRead.mockResolvedValue({ success: true });
-      const req = { user: { id: "user-1" } };
+      const req = { user: { id: "user-1" } } as AuthenticatedRequest;
 
       expect(await controller.markAsRead(req, "conv-1")).toEqual({ success: true });
       expect(mockService.markAsRead).toHaveBeenCalledWith("conv-1", "user-1");
@@ -113,7 +114,7 @@ describe("ChatController", () => {
     it("should call service.getMessages with all params", async () => {
       const result = { data: [], total: 0 };
       mockService.getMessages.mockResolvedValue(result);
-      const req = { user: { id: "user-1" } };
+      const req = { user: { id: "user-1" } } as AuthenticatedRequest;
 
       expect(await controller.getMessages(req, "conv-1", 1, 20)).toEqual(result);
       expect(mockService.getMessages).toHaveBeenCalledWith("conv-1", "user-1", 1, 20);
@@ -122,10 +123,15 @@ describe("ChatController", () => {
     it("should call service.getMessages with undefined pagination", async () => {
       const result = { data: [], total: 0 };
       mockService.getMessages.mockResolvedValue(result);
-      const req = { user: { id: "user-1" } };
+      const req = { user: { id: "user-1" } } as AuthenticatedRequest;
 
       expect(await controller.getMessages(req, "conv-1")).toEqual(result);
-      expect(mockService.getMessages).toHaveBeenCalledWith("conv-1", "user-1", undefined, undefined);
+      expect(mockService.getMessages).toHaveBeenCalledWith(
+        "conv-1",
+        "user-1",
+        undefined,
+        undefined
+      );
     });
   });
 });

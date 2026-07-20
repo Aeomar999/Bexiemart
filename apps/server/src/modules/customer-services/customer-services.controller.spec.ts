@@ -2,6 +2,7 @@ import { Test, TestingModule } from "@nestjs/testing";
 import { CustomerServicesController } from "./customer-services.controller";
 import { CustomerServicesService } from "./customer-services.service";
 import { AuthGuard } from "../../guards/auth.guard";
+import { AuthenticatedRequest } from "../../types/request.types";
 
 describe("CustomerServicesController", () => {
   let controller: CustomerServicesController;
@@ -18,9 +19,7 @@ describe("CustomerServicesController", () => {
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       controllers: [CustomerServicesController],
-      providers: [
-        { provide: CustomerServicesService, useValue: mockService },
-      ],
+      providers: [{ provide: CustomerServicesService, useValue: mockService }],
     })
       .overrideGuard(AuthGuard)
       .useValue({ canActivate: jest.fn(() => true) })
@@ -70,7 +69,7 @@ describe("CustomerServicesController", () => {
     it("should call service.book and return result", async () => {
       const result = { bookingId: "book-1" };
       mockService.book.mockResolvedValue(result);
-      const req = { user: { id: "user-1" } };
+      const req = { user: { id: "user-1" } } as AuthenticatedRequest;
       const dto = { date: "2025-01-01" } as any;
 
       expect(await controller.book(req, "svc-1", dto)).toEqual(result);
@@ -82,7 +81,7 @@ describe("CustomerServicesController", () => {
     it("should call service.findMyBookings with default pagination", async () => {
       const result = [{ id: "book-1" }];
       mockService.findMyBookings.mockResolvedValue(result);
-      const req = { user: { id: "user-1" } };
+      const req = { user: { id: "user-1" } } as AuthenticatedRequest;
 
       expect(await controller.findMyBookings(req)).toEqual(result);
       expect(mockService.findMyBookings).toHaveBeenCalledWith("user-1", 1, 20);
@@ -91,7 +90,7 @@ describe("CustomerServicesController", () => {
     it("should call service.findMyBookings with custom pagination", async () => {
       const result = [{ id: "book-1" }];
       mockService.findMyBookings.mockResolvedValue(result);
-      const req = { user: { id: "user-1" } };
+      const req = { user: { id: "user-1" } } as AuthenticatedRequest;
 
       expect(await controller.findMyBookings(req, "2", "10")).toEqual(result);
       expect(mockService.findMyBookings).toHaveBeenCalledWith("user-1", 2, 10);
@@ -102,7 +101,7 @@ describe("CustomerServicesController", () => {
     it("should call service.cancel and return result", async () => {
       const result = { success: true };
       mockService.cancel.mockResolvedValue(result);
-      const req = { user: { id: "user-1" } };
+      const req = { user: { id: "user-1" } } as AuthenticatedRequest;
 
       expect(await controller.cancel(req, "book-1")).toEqual(result);
       expect(mockService.cancel).toHaveBeenCalledWith("user-1", "book-1");

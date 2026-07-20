@@ -3,6 +3,7 @@ import { CustomerReelsController } from "./customer-reels.controller";
 import { CustomerReelsService } from "./customer-reels.service";
 import { AuthGuard } from "../../guards/auth.guard";
 import { OptionalAuthGuard } from "../../guards/optional-auth.guard";
+import { AuthenticatedRequest } from "../../types/request.types";
 
 describe("CustomerReelsController", () => {
   let controller: CustomerReelsController;
@@ -42,7 +43,7 @@ describe("CustomerReelsController", () => {
     it("should call service.findAll and return result", async () => {
       const result = [{ id: "reel-1", url: "https://example.com/reel.mp4" }];
       mockService.findAll.mockResolvedValue(result);
-      const req = { user: { id: "user-1" } };
+      const req = { user: { id: "user-1" } } as AuthenticatedRequest;
 
       expect(await controller.findAll(req)).toEqual(result);
       expect(mockService.findAll).toHaveBeenCalledWith("user-1", undefined);
@@ -53,7 +54,7 @@ describe("CustomerReelsController", () => {
     it("should call service.toggleLike and return result", async () => {
       const result = { liked: true };
       mockService.toggleLike.mockResolvedValue(result);
-      const req = { user: { id: "user-1" } };
+      const req = { user: { id: "user-1" } } as AuthenticatedRequest;
 
       expect(await controller.toggleLike(req, "reel-1")).toEqual(result);
       expect(mockService.toggleLike).toHaveBeenCalledWith("user-1", "reel-1");
@@ -74,7 +75,7 @@ describe("CustomerReelsController", () => {
     it("should call service.findFollowing and return result", async () => {
       const result = [{ id: "reel-2" }];
       mockService.findFollowing.mockResolvedValue(result);
-      const req = { user: { id: "user-1" } };
+      const req = { user: { id: "user-1" } } as AuthenticatedRequest;
 
       expect(await controller.findFollowing(req)).toEqual(result);
       expect(mockService.findFollowing).toHaveBeenCalledWith("user-1", undefined);

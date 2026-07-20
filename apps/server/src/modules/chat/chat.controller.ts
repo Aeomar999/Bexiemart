@@ -4,6 +4,7 @@ import { ChatService } from "./chat.service";
 import { CreateConversationDto } from "./dto/create-conversation.dto";
 import { ApiTags, ApiOperation, ApiBody, ApiBearerAuth } from "@nestjs/swagger";
 import { ChatGateway } from "./chat.gateway";
+import { AuthenticatedRequest } from "../../types/request.types";
 
 @ApiTags("Chat")
 @ApiBearerAuth()
@@ -29,39 +30,36 @@ export class ChatController {
 
   @Get("conversations")
   @ApiOperation({ summary: "Get all conversations for the user" })
-  getConversations(@Req() req: any) {
+  getConversations(@Req() req: AuthenticatedRequest) {
     return this.chatService.getConversations(req.user.id);
   }
 
   @Get("conversations/:id")
   @ApiOperation({ summary: "Get a conversation by ID" })
-  getConversation(@Req() req: any, @Param("id") id: string) {
+  getConversation(@Req() req: AuthenticatedRequest, @Param("id") id: string) {
     return this.chatService.getConversation(id, req.user.id);
   }
 
   @Post("conversations")
   @ApiOperation({ summary: "Create a new conversation" })
   @ApiBody({ type: CreateConversationDto })
-  createConversation(
-    @Req() req: any,
-    @Body() body: CreateConversationDto,
-  ) {
+  createConversation(@Req() req: AuthenticatedRequest, @Body() body: CreateConversationDto) {
     return this.chatService.createConversation(req.user.id, body.participantId, body.orderId);
   }
 
   @Post("conversations/:id/read")
   @ApiOperation({ summary: "Mark conversation as read" })
-  markAsRead(@Req() req: any, @Param("id") id: string) {
+  markAsRead(@Req() req: AuthenticatedRequest, @Param("id") id: string) {
     return this.chatService.markAsRead(id, req.user.id);
   }
 
   @Get("conversations/:id/messages")
   @ApiOperation({ summary: "Get messages in a conversation" })
   getMessages(
-    @Req() req: any,
+    @Req() req: AuthenticatedRequest,
     @Param("id") id: string,
     @Query("page") page?: number,
-    @Query("pageSize") pageSize?: number,
+    @Query("pageSize") pageSize?: number
   ) {
     return this.chatService.getMessages(id, req.user.id, page, pageSize);
   }

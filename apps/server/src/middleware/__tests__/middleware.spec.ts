@@ -1,5 +1,6 @@
-import { Request, Response, NextFunction } from "express";
+import { Response, NextFunction } from "express";
 import { BadRequestException } from "@nestjs/common";
+import { AuthenticatedRequest } from "../../types/request.types";
 
 jest.mock("uuid", () => ({ v4: () => "mocked-uuid" }));
 
@@ -9,7 +10,7 @@ import { InputSanitizerMiddleware } from "../input-sanitizer.middleware";
 import { SsrfGuardMiddleware } from "../ssrf-guard.middleware";
 
 describe("Middleware", () => {
-  let req: Partial<Request>;
+  let req: Partial<AuthenticatedRequest>;
   let res: Partial<Response>;
   let next: NextFunction;
 
@@ -17,6 +18,7 @@ describe("Middleware", () => {
     req = {
       headers: {},
       socket: { remoteAddress: "127.0.0.1" } as any,
+      user: { id: "test-user-id" } as any,
     };
     res = {
       setHeader: jest.fn(),
@@ -46,7 +48,7 @@ describe("Middleware", () => {
 
       const loggerSpy = jest.spyOn((middleware as any).logger, "log").mockImplementation();
 
-      middleware.use(req as Request, res as Response, next);
+      middleware.use(req as AuthenticatedRequest, res as Response, next);
 
       expect(next).toHaveBeenCalled();
       expect(res.on).toHaveBeenCalledWith("finish", expect.any(Function));
@@ -63,7 +65,7 @@ describe("Middleware", () => {
 
       const loggerSpy = jest.spyOn((middleware as any).logger, "log").mockImplementation();
 
-      middleware.use(req as Request, res as Response, next);
+      middleware.use(req as AuthenticatedRequest, res as Response, next);
 
       expect(next).toHaveBeenCalled();
 
@@ -84,10 +86,10 @@ describe("Middleware", () => {
     });
 
     it("should generate a new correlation id if not provided", () => {
-      middleware.use(req as Request, res as Response, next);
+      middleware.use(req as AuthenticatedRequest, res as Response, next);
 
-      expect((req as any).correlationId).toBeDefined();
-      expect(res.setHeader).toHaveBeenCalledWith("x-correlation-id", (req as any).correlationId);
+      expect(req.correlationId).toBeDefined();
+      expect(res.setHeader).toHaveBeenCalledWith("x-correlation-id", req.correlationId);
       expect(next).toHaveBeenCalled();
     });
 
@@ -95,9 +97,9 @@ describe("Middleware", () => {
       const existingId = "existing-id-123";
       req.headers = { "x-correlation-id": existingId };
 
-      middleware.use(req as Request, res as Response, next);
+      middleware.use(req as AuthenticatedRequest, res as Response, next);
 
-      expect((req as any).correlationId).toBe(existingId);
+      expect(req.correlationId).toBe(existingId);
       expect(res.setHeader).toHaveBeenCalledWith("x-correlation-id", existingId);
       expect(next).toHaveBeenCalled();
     });
@@ -118,7 +120,7 @@ describe("Middleware", () => {
       req.query = { q: "javascript:alert(1)" };
       req.params = { id: "<iframe src='bad'></iframe>123" };
 
-      middleware.use(req as Request, res as Response, next);
+      middleware.use(req as AuthenticatedRequest, res as Response, next);
 
       expect((req.body as any).description).toBe("hello");
       expect((req.query as any).q).toBe("alert(1)");
@@ -131,7 +133,7 @@ describe("Middleware", () => {
 
       req.body = JSON.parse('{"__proto__": {"admin": true}, "name": "test"}');
 
-      middleware.use(req as Request, res as Response, next);
+      middleware.use(req as AuthenticatedRequest, res as Response, next);
 
       expect(loggerSpy).toHaveBeenCalledWith(
         expect.stringContaining("Prototype pollution blocked")
@@ -144,7 +146,7 @@ describe("Middleware", () => {
       const safeBody = { name: "John Doe", age: 30 };
       req.body = { ...safeBody };
 
-      middleware.use(req as Request, res as Response, next);
+      middleware.use(req as AuthenticatedRequest, res as Response, next);
 
       expect(req.body).toEqual(safeBody);
       expect(next).toHaveBeenCalled();
@@ -162,14 +164,14 @@ describe("Middleware", () => {
 
     it("should allow valid external URLs", () => {
       req.body = { url: "https://google.com" };
-      middleware.use(req as Request, res as Response, next);
+      middleware.use(req as AuthenticatedRequest, res as Response, next);
       expect(next).toHaveBeenCalled();
     });
 
     it("should block localhost URLs", () => {
       req.body = { url: "http://localhost:8080/admin" };
 
-      expect(() => middleware.use(req as Request, res as Response, next)).toThrow(
+      expect(() => middleware.use(req as AuthenticatedRequest, res as Response, next)).toThrow(
         BadRequestException
       );
       expect(next).not.toHaveBeenCalled();
@@ -178,7 +180,7 @@ describe("Middleware", () => {
     it("should block IP ranges in nested objects", () => {
       req.body = { data: { config: { webhook: "http://127.0.0.1/internal" } } };
 
-      expect(() => middleware.use(req as Request, res as Response, next)).toThrow(
+      expect(() => middleware.use(req as AuthenticatedRequest, res as Response, next)).toThrow(
         BadRequestException
       );
       expect(next).not.toHaveBeenCalled();
@@ -189,7 +191,7 @@ describe("Middleware", () => {
         endpoints: ["https://api.stripe.com", "http://169.254.169.254/latest/meta-data"],
       };
 
-      expect(() => middleware.use(req as Request, res as Response, next)).toThrow(
+      expect(() => middleware.use(req as AuthenticatedRequest, res as Response, next)).toThrow(
         BadRequestException
       );
       expect(next).not.toHaveBeenCalled();
@@ -197,7 +199,7 @@ describe("Middleware", () => {
 
     it("should handle non-URL strings safely", () => {
       req.body = { message: "Check out 127.0.0.1" }; // Not a valid URL
-      middleware.use(req as Request, res as Response, next);
+      middleware.use(req as AuthenticatedRequest, res as Response, next);
       expect(next).toHaveBeenCalled();
     });
   });

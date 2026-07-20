@@ -2,6 +2,7 @@ import { Test, TestingModule } from "@nestjs/testing";
 import { WishlistController } from "./wishlist.controller";
 import { WishlistService } from "./wishlist.service";
 import { AuthGuard } from "../../guards/auth.guard";
+import { AuthenticatedRequest } from "../../types/request.types";
 
 describe("WishlistController", () => {
   let controller: WishlistController;
@@ -15,9 +16,7 @@ describe("WishlistController", () => {
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       controllers: [WishlistController],
-      providers: [
-        { provide: WishlistService, useValue: mockService },
-      ],
+      providers: [{ provide: WishlistService, useValue: mockService }],
     })
       .overrideGuard(AuthGuard)
       .useValue({ canActivate: jest.fn(() => true) })
@@ -39,7 +38,7 @@ describe("WishlistController", () => {
     it("should call service.getWishlist and return result", async () => {
       const result = [{ productId: "prod-1" }];
       mockService.getWishlist.mockResolvedValue(result);
-      const req = { user: { id: "user-1" } };
+      const req = { user: { id: "user-1" } } as AuthenticatedRequest;
 
       expect(await controller.getWishlist(req)).toEqual(result);
       expect(mockService.getWishlist).toHaveBeenCalledWith("user-1");
@@ -50,7 +49,7 @@ describe("WishlistController", () => {
     it("should call service.toggleWishlist and return result", async () => {
       const result = { added: true };
       mockService.toggleWishlist.mockResolvedValue(result);
-      const req = { user: { id: "user-1" } };
+      const req = { user: { id: "user-1" } } as AuthenticatedRequest;
 
       expect(await controller.toggleWishlist(req, "product-1")).toEqual(result);
       expect(mockService.toggleWishlist).toHaveBeenCalledWith("user-1", "product-1");

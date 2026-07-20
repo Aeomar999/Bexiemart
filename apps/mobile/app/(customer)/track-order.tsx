@@ -1,5 +1,6 @@
 import { LoadingState } from "@/components/ui/LoadingState";
 import { tokens } from "@/theme/tokens";
+import Toast from "@/lib/toast-polyfill";
 import { View, Text, Pressable, Linking, ActivityIndicator } from "react-native";
 import { useRouter, useLocalSearchParams } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -288,7 +289,9 @@ export default function TrackOrderScreen() {
                 disabled={!job.dispatcher.user?.phoneNumber}
                 onPress={() => {
                   if (job.dispatcher.user?.phoneNumber) {
-                    Linking.openURL(`tel:${job.dispatcher.user.phoneNumber}`).catch(() => {});
+                    Linking.openURL(`tel:${job.dispatcher.user.phoneNumber}`).catch(() => {
+                      Toast.show({ type: "error", text1: "Unable to open phone app" });
+                    });
                   }
                 }}
               >

@@ -2,6 +2,7 @@ import { Test, TestingModule } from "@nestjs/testing";
 import { ServicesController } from "./services.controller";
 import { ServicesService } from "./services.service";
 import { AuthGuard } from "../../guards/auth.guard";
+import { AuthenticatedRequest } from "../../types/request.types";
 
 describe("ServicesController", () => {
   let controller: ServicesController;
@@ -18,9 +19,7 @@ describe("ServicesController", () => {
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       controllers: [ServicesController],
-      providers: [
-        { provide: ServicesService, useValue: mockService },
-      ],
+      providers: [{ provide: ServicesService, useValue: mockService }],
     })
       .overrideGuard(AuthGuard)
       .useValue({ canActivate: jest.fn(() => true) })
@@ -42,7 +41,7 @@ describe("ServicesController", () => {
     it("should call service.findAll and return result", async () => {
       const result = [{ id: "service-1" }];
       mockService.findAll.mockResolvedValue(result);
-      const req = { user: { id: "user-1" } };
+      const req = { user: { id: "user-1" } } as AuthenticatedRequest;
 
       expect(await controller.findAll(req)).toEqual(result);
       expect(mockService.findAll).toHaveBeenCalledWith("user-1");
@@ -53,7 +52,7 @@ describe("ServicesController", () => {
     it("should call service.findOne and return result", async () => {
       const result = { id: "service-1" };
       mockService.findOne.mockResolvedValue(result);
-      const req = { user: { id: "user-1" } };
+      const req = { user: { id: "user-1" } } as AuthenticatedRequest;
 
       expect(await controller.findOne(req, "service-1")).toEqual(result);
       expect(mockService.findOne).toHaveBeenCalledWith("user-1", "service-1");
@@ -65,7 +64,7 @@ describe("ServicesController", () => {
       const result = { id: "service-1" };
       const dto = { name: "New Service", price: 100 } as any;
       mockService.create.mockResolvedValue(result);
-      const req = { user: { id: "user-1" } };
+      const req = { user: { id: "user-1" } } as AuthenticatedRequest;
 
       expect(await controller.create(req, dto)).toEqual(result);
       expect(mockService.create).toHaveBeenCalledWith("user-1", dto);
@@ -77,7 +76,7 @@ describe("ServicesController", () => {
       const result = { id: "service-1", name: "Updated" };
       const dto = { name: "Updated" } as any;
       mockService.update.mockResolvedValue(result);
-      const req = { user: { id: "user-1" } };
+      const req = { user: { id: "user-1" } } as AuthenticatedRequest;
 
       expect(await controller.update(req, "service-1", dto)).toEqual(result);
       expect(mockService.update).toHaveBeenCalledWith("user-1", "service-1", dto);
@@ -88,7 +87,7 @@ describe("ServicesController", () => {
     it("should call service.remove and return result", async () => {
       const result = { deleted: true };
       mockService.remove.mockResolvedValue(result);
-      const req = { user: { id: "user-1" } };
+      const req = { user: { id: "user-1" } } as AuthenticatedRequest;
 
       expect(await controller.remove(req, "service-1")).toEqual(result);
       expect(mockService.remove).toHaveBeenCalledWith("user-1", "service-1");

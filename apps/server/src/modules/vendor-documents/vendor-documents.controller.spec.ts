@@ -2,6 +2,7 @@ import { Test, TestingModule } from "@nestjs/testing";
 import { VendorDocumentsController } from "./vendor-documents.controller";
 import { VendorDocumentsService } from "./vendor-documents.service";
 import { AuthGuard } from "../../guards/auth.guard";
+import { AuthenticatedRequest } from "../../types/request.types";
 
 describe("VendorDocumentsController", () => {
   let controller: VendorDocumentsController;
@@ -16,9 +17,7 @@ describe("VendorDocumentsController", () => {
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       controllers: [VendorDocumentsController],
-      providers: [
-        { provide: VendorDocumentsService, useValue: mockService },
-      ],
+      providers: [{ provide: VendorDocumentsService, useValue: mockService }],
     })
       .overrideGuard(AuthGuard)
       .useValue({ canActivate: jest.fn(() => true) })
@@ -40,7 +39,7 @@ describe("VendorDocumentsController", () => {
     it("should call service.findAll and return result", async () => {
       const result = [{ id: "doc-1" }];
       mockService.findAll.mockResolvedValue(result);
-      const req = { user: { id: "user-1" } };
+      const req = { user: { id: "user-1" } } as AuthenticatedRequest;
 
       expect(await controller.findAll(req)).toEqual(result);
       expect(mockService.findAll).toHaveBeenCalledWith("user-1");
@@ -52,7 +51,7 @@ describe("VendorDocumentsController", () => {
       const result = { id: "doc-1" };
       const body = { name: "license.pdf", url: "https://..." } as any;
       mockService.create.mockResolvedValue(result);
-      const req = { user: { id: "user-1" } };
+      const req = { user: { id: "user-1" } } as AuthenticatedRequest;
 
       expect(await controller.create(req, body)).toEqual(result);
       expect(mockService.create).toHaveBeenCalledWith("user-1", body);
@@ -63,7 +62,7 @@ describe("VendorDocumentsController", () => {
     it("should call service.remove and return result", async () => {
       const result = { deleted: true };
       mockService.remove.mockResolvedValue(result);
-      const req = { user: { id: "user-1" } };
+      const req = { user: { id: "user-1" } } as AuthenticatedRequest;
 
       expect(await controller.remove(req, "doc-1")).toEqual(result);
       expect(mockService.remove).toHaveBeenCalledWith("user-1", "doc-1");

@@ -3,6 +3,7 @@ import { ApiTags, ApiOperation, ApiBearerAuth } from "@nestjs/swagger";
 import { AuthGuard } from "../../guards/auth.guard";
 import { DeliveryService } from "./delivery.service";
 import { QuoteDeliveryDto, CreateParcelJobDto } from "./dto/delivery.dto";
+import { AuthenticatedRequest } from "../../types/request.types";
 
 @ApiBearerAuth()
 @ApiTags("Delivery")
@@ -24,13 +25,17 @@ export class DeliveryController {
 
   @ApiOperation({ summary: "Create a parcel/ride delivery job" })
   @Post("jobs")
-  createJob(@Req() req: any, @Body() dto: CreateParcelJobDto) {
+  createJob(@Req() req: AuthenticatedRequest, @Body() dto: CreateParcelJobDto) {
     return this.deliveryService.createParcelJob(req.user.id, dto);
   }
 
   @ApiOperation({ summary: "List my delivery jobs (as customer)" })
   @Get("jobs")
-  myJobs(@Req() req: any, @Query("page") page?: string, @Query("limit") limit?: string) {
+  myJobs(
+    @Req() req: AuthenticatedRequest,
+    @Query("page") page?: string,
+    @Query("limit") limit?: string
+  ) {
     return this.deliveryService.getCustomerJobs(
       req.user.id,
       Number(page) || 1,
@@ -40,19 +45,19 @@ export class DeliveryController {
 
   @ApiOperation({ summary: "Get a job for live tracking (customer or assigned driver)" })
   @Get("jobs/:id")
-  getJob(@Req() req: any, @Param("id") id: string) {
+  getJob(@Req() req: AuthenticatedRequest, @Param("id") id: string) {
     return this.deliveryService.getJob(id, req.user.id);
   }
 
   @ApiOperation({ summary: "Confirm receipt — clears the driver's held payout" })
   @Post("jobs/:id/confirm")
-  confirm(@Req() req: any, @Param("id") id: string) {
+  confirm(@Req() req: AuthenticatedRequest, @Param("id") id: string) {
     return this.deliveryService.confirmDelivery(req.user.id, id);
   }
 
   @ApiOperation({ summary: "Cancel a job (before pickup)" })
   @Post("jobs/:id/cancel")
-  cancel(@Req() req: any, @Param("id") id: string) {
+  cancel(@Req() req: AuthenticatedRequest, @Param("id") id: string) {
     return this.deliveryService.cancelJob(req.user.id, id);
   }
 }

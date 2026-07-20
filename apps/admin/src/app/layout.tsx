@@ -16,6 +16,7 @@ const outfit = Outfit({
 export const metadata: Metadata = {
   title: "BexieMart Admin",
   description: "Admin dashboard for BexieMart platform",
+  robots: { index: false, follow: false },
 };
 
 export default function RootLayout({

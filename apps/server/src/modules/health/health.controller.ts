@@ -7,6 +7,7 @@ import {
   VERSION_NEUTRAL,
 } from "@nestjs/common";
 import { HealthService } from "./health.service";
+import { AuthenticatedRequest } from "../../types/request.types";
 
 @Controller()
 export class HealthController {

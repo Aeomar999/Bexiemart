@@ -4,14 +4,14 @@ jest.mock("better-auth/node", () => ({
 
 import { Test, TestingModule } from "@nestjs/testing";
 import { AuthController } from "./auth.controller";
+import { RegisterDto } from "./dto/register.dto";
 import { AuthGuard } from "../guards/auth.guard";
 import { AUTH } from "./auth.constants";
 import { PrismaService } from "../prisma/prisma.service";
+import { AuthenticatedRequest } from "../types/request.types";
 
 describe("AuthController", () => {
   let controller: AuthController;
-  let prisma: any;
-  let auth: any;
 
   const mockPrisma = {
     user: {
@@ -53,8 +53,6 @@ describe("AuthController", () => {
       .compile();
 
     controller = module.get<AuthController>(AuthController);
-    prisma = module.get(PrismaService);
-    auth = module.get(AUTH);
   });
 
   afterEach(() => {
@@ -124,15 +122,15 @@ describe("AuthController", () => {
         shopName: "Test's Shop",
       });
 
-      const body = {
+      const body: RegisterDto = {
         email: "vendor@test.com",
         password: "Pass123!",
         name: "Test",
         role: "vendor",
-      } as any;
+      };
       const result = await controller.register(body);
 
-      expect((result as any).user.role).toBe("VENDOR");
+      expect("role" in result.user ? result.user.role : undefined).toBe("VENDOR");
       expect(mockPrisma.vendorProfile.create).toHaveBeenCalled();
     });
   });
@@ -194,14 +192,14 @@ describe("AuthController", () => {
         vendorProfile: null,
       });
 
-      const req = { user: { id: "user-1" } };
+      const req = { user: { id: "user-1" } } as AuthenticatedRequest;
       const result = await controller.getCurrentUser(req);
 
       expect(result.user.email).toBe("test@test.com");
     });
 
     it("should throw when no user in request", async () => {
-      const req = {};
+      const req = {} as AuthenticatedRequest;
       await expect(controller.getCurrentUser(req)).rejects.toThrow("User not found");
     });
   });

@@ -3,6 +3,7 @@ import { ApiTags, ApiOperation, ApiBody, ApiBearerAuth } from "@nestjs/swagger";
 import { AuthGuard } from "../../guards/auth.guard";
 import { UsersService } from "./users.service";
 import { UpdateProfileDto } from "./dto/update-profile.dto";
+import { AuthenticatedRequest } from "../../types/request.types";
 
 @ApiBearerAuth()
 @Controller("users")
@@ -13,14 +14,14 @@ export class UsersController {
 
   @ApiOperation({ summary: "Get current user profile" })
   @Get("me")
-  getCurrentUser(@Req() req: any) {
+  getCurrentUser(@Req() req: AuthenticatedRequest) {
     return this.usersService.getMe(req.user.id);
   }
 
   @ApiOperation({ summary: "Update user profile" })
   @ApiBody({ type: UpdateProfileDto })
   @Patch("profile")
-  updateProfile(@Req() req: any, @Body() dto: UpdateProfileDto) {
+  updateProfile(@Req() req: AuthenticatedRequest, @Body() dto: UpdateProfileDto) {
     return this.usersService.updateProfile(req.user.id, dto);
   }
 }

@@ -2,6 +2,7 @@ import { Test, TestingModule } from "@nestjs/testing";
 import { VendorCustomersController } from "./vendor-customers.controller";
 import { VendorCustomersService } from "./vendor-customers.service";
 import { AuthGuard } from "../../guards/auth.guard";
+import { AuthenticatedRequest } from "../../types/request.types";
 
 describe("VendorCustomersController", () => {
   let controller: VendorCustomersController;
@@ -15,9 +16,7 @@ describe("VendorCustomersController", () => {
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       controllers: [VendorCustomersController],
-      providers: [
-        { provide: VendorCustomersService, useValue: mockService },
-      ],
+      providers: [{ provide: VendorCustomersService, useValue: mockService }],
     })
       .overrideGuard(AuthGuard)
       .useValue({ canActivate: jest.fn(() => true) })
@@ -39,7 +38,7 @@ describe("VendorCustomersController", () => {
     it("should call service.findAll and return result", async () => {
       const result = [{ id: "customer-1" }];
       mockService.findAll.mockResolvedValue(result);
-      const req = { user: { id: "user-1" } };
+      const req = { user: { id: "user-1" } } as AuthenticatedRequest;
 
       expect(await controller.findAll(req)).toEqual(result);
       expect(mockService.findAll).toHaveBeenCalledWith("user-1");
@@ -50,7 +49,7 @@ describe("VendorCustomersController", () => {
     it("should call service.findOne and return result", async () => {
       const result = { id: "customer-1" };
       mockService.findOne.mockResolvedValue(result);
-      const req = { user: { id: "user-1" } };
+      const req = { user: { id: "user-1" } } as AuthenticatedRequest;
 
       expect(await controller.findOne(req, "customer-1")).toEqual(result);
       expect(mockService.findOne).toHaveBeenCalledWith("user-1", "customer-1");

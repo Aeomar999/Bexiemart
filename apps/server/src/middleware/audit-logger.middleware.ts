@@ -1,5 +1,6 @@
 import { Injectable, NestMiddleware, Logger } from "@nestjs/common";
-import { Request, Response, NextFunction } from "express";
+import { Response, NextFunction } from "express";
+import { AuthenticatedRequest } from "../types/request.types";
 
 @Injectable()
 export class AuditLoggerMiddleware implements NestMiddleware {
@@ -11,17 +12,19 @@ export class AuditLoggerMiddleware implements NestMiddleware {
     "/wallet/transfer",
     "/admin/resolve-dispute",
     "/auth/login",
-    "/auth/register"
+    "/auth/register",
   ];
 
-  use(req: Request, res: Response, next: NextFunction) {
-    const isSensitive = this.sensitiveRoutes.some((route) => req.baseUrl.includes(route) || req.path.includes(route));
+  use(req: AuthenticatedRequest, res: Response, next: NextFunction) {
+    const isSensitive = this.sensitiveRoutes.some(
+      (route) => req.baseUrl.includes(route) || req.path.includes(route)
+    );
 
     if (isSensitive) {
       const start = Date.now();
       res.on("finish", () => {
         const duration = Date.now() - start;
-        const userId = (req as any).user?.id || "anonymous";
+        const userId = req.user?.id || "anonymous";
         const ip = req.headers["x-forwarded-for"] || req.socket.remoteAddress;
         const userAgent = req.headers["user-agent"] || "unknown";
 

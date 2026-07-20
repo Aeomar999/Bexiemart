@@ -3,6 +3,7 @@ import { VendorController } from "./vendor.controller";
 import { VendorService } from "./vendor.service";
 import { AuthGuard } from "../../guards/auth.guard";
 import { VendorGuard } from "../../guards/vendor.guard";
+import { AuthenticatedRequest } from "../../types/request.types";
 
 describe("VendorController", () => {
   let controller: VendorController;
@@ -53,7 +54,7 @@ describe("VendorController", () => {
     it("should call service.getProfile with user id", async () => {
       const result = { id: "vendor-1", businessName: "Test Shop" };
       mockService.getProfile.mockResolvedValue(result);
-      const req = { user: { id: "user-1" } };
+      const req = { user: { id: "user-1" } } as AuthenticatedRequest;
 
       expect(await controller.getProfile(req)).toEqual(result);
       expect(mockService.getProfile).toHaveBeenCalledWith("user-1");
@@ -64,7 +65,7 @@ describe("VendorController", () => {
     it("should call service.onboard with user id and body", async () => {
       const result = { id: "vendor-1" };
       mockService.onboard.mockResolvedValue(result);
-      const req = { user: { id: "user-1" } };
+      const req = { user: { id: "user-1" } } as AuthenticatedRequest;
       const body = { shopName: "Test Shop", slug: "test-shop", description: "A test shop" };
 
       expect(await controller.onboard(req, body)).toEqual(result);
@@ -76,7 +77,7 @@ describe("VendorController", () => {
     it("should call service.getStats with user id", async () => {
       const result = { totalProducts: 10, totalOrders: 25 };
       mockService.getStats.mockResolvedValue(result);
-      const req = { user: { id: "user-1" } };
+      const req = { user: { id: "user-1" } } as AuthenticatedRequest;
 
       expect(await controller.getStats(req)).toEqual(result);
       expect(mockService.getStats).toHaveBeenCalledWith("user-1");
@@ -87,7 +88,7 @@ describe("VendorController", () => {
     it("should call service.getProducts with default pagination", async () => {
       const result = { data: [], total: 0 };
       mockService.getProducts.mockResolvedValue(result);
-      const req = { user: { id: "user-1" } };
+      const req = { user: { id: "user-1" } } as AuthenticatedRequest;
 
       expect(await controller.getProducts(req)).toEqual(result);
       expect(mockService.getProducts).toHaveBeenCalledWith("user-1", 1, 20);
@@ -96,7 +97,7 @@ describe("VendorController", () => {
     it("should call service.getProducts with custom pagination", async () => {
       const result = { data: [], total: 0 };
       mockService.getProducts.mockResolvedValue(result);
-      const req = { user: { id: "user-1" } };
+      const req = { user: { id: "user-1" } } as AuthenticatedRequest;
 
       expect(await controller.getProducts(req, "2", "10")).toEqual(result);
       expect(mockService.getProducts).toHaveBeenCalledWith("user-1", 2, 10);
@@ -107,7 +108,7 @@ describe("VendorController", () => {
     it("should call service.createProduct with user id and body", async () => {
       const result = { id: "prod-1" };
       mockService.createProduct.mockResolvedValue(result);
-      const req = { user: { id: "user-1" } };
+      const req = { user: { id: "user-1" } } as AuthenticatedRequest;
       const body = { name: "Test Product", description: "A test product", price: 100 };
 
       expect(await controller.createProduct(req, body)).toEqual(result);
@@ -119,7 +120,7 @@ describe("VendorController", () => {
     it("should call service.updateProduct with user id, product id, and body", async () => {
       const result = { id: "prod-1" };
       mockService.updateProduct.mockResolvedValue(result);
-      const req = { user: { id: "user-1" } };
+      const req = { user: { id: "user-1" } } as AuthenticatedRequest;
       const body = { name: "Updated Product" };
 
       expect(await controller.updateProduct(req, "prod-1", body)).toEqual(result);
@@ -130,7 +131,7 @@ describe("VendorController", () => {
   describe("deleteProduct", () => {
     it("should call service.deleteProduct with user id and product id", async () => {
       mockService.deleteProduct.mockResolvedValue({ success: true });
-      const req = { user: { id: "user-1" } };
+      const req = { user: { id: "user-1" } } as AuthenticatedRequest;
 
       expect(await controller.deleteProduct(req, "prod-1")).toEqual({ success: true });
       expect(mockService.deleteProduct).toHaveBeenCalledWith("user-1", "prod-1");
@@ -141,7 +142,7 @@ describe("VendorController", () => {
     it("should call service.getOrders with default pagination", async () => {
       const result = { data: [], total: 0 };
       mockService.getOrders.mockResolvedValue(result);
-      const req = { user: { id: "user-1" } };
+      const req = { user: { id: "user-1" } } as AuthenticatedRequest;
 
       expect(await controller.getOrders(req)).toEqual(result);
       expect(mockService.getOrders).toHaveBeenCalledWith("user-1", 1, 20);
@@ -150,7 +151,7 @@ describe("VendorController", () => {
     it("should call service.getOrders with custom pagination", async () => {
       const result = { data: [], total: 0 };
       mockService.getOrders.mockResolvedValue(result);
-      const req = { user: { id: "user-1" } };
+      const req = { user: { id: "user-1" } } as AuthenticatedRequest;
 
       expect(await controller.getOrders(req, "1", "50")).toEqual(result);
       expect(mockService.getOrders).toHaveBeenCalledWith("user-1", 1, 50);
@@ -161,7 +162,7 @@ describe("VendorController", () => {
     it("should call service.getOrder with user id and order id", async () => {
       const result = { id: "order-1" };
       mockService.getOrder.mockResolvedValue(result);
-      const req = { user: { id: "user-1" } };
+      const req = { user: { id: "user-1" } } as AuthenticatedRequest;
 
       expect(await controller.getOrder(req, "order-1")).toEqual(result);
       expect(mockService.getOrder).toHaveBeenCalledWith("user-1", "order-1");
@@ -172,7 +173,7 @@ describe("VendorController", () => {
     it("should call service.updateOrderStatus with user id, order id, and status", async () => {
       const result = { id: "order-1" };
       mockService.updateOrderStatus.mockResolvedValue(result);
-      const req = { user: { id: "user-1" } };
+      const req = { user: { id: "user-1" } } as AuthenticatedRequest;
       const body = { status: "SHIPPED" };
 
       expect(await controller.updateOrderStatus(req, "order-1", body)).toEqual(result);
@@ -184,7 +185,7 @@ describe("VendorController", () => {
     it("should call service.getEarnings with user id", async () => {
       const result = { total: 5000, available: 3000 };
       mockService.getEarnings.mockResolvedValue(result);
-      const req = { user: { id: "user-1" } };
+      const req = { user: { id: "user-1" } } as AuthenticatedRequest;
 
       expect(await controller.getEarnings(req)).toEqual(result);
       expect(mockService.getEarnings).toHaveBeenCalledWith("user-1");
@@ -195,7 +196,7 @@ describe("VendorController", () => {
     it("should call service.getTransactions with user id", async () => {
       const result = { data: [] };
       mockService.getTransactions.mockResolvedValue(result);
-      const req = { user: { id: "user-1" } };
+      const req = { user: { id: "user-1" } } as AuthenticatedRequest;
 
       expect(await controller.getTransactions(req)).toEqual(result);
       expect(mockService.getTransactions).toHaveBeenCalledWith("user-1");
@@ -206,7 +207,7 @@ describe("VendorController", () => {
     it("should call service.getAnalytics with user id", async () => {
       const result = { views: 100, sales: 20 };
       mockService.getAnalytics.mockResolvedValue(result);
-      const req = { user: { id: "user-1" } };
+      const req = { user: { id: "user-1" } } as AuthenticatedRequest;
 
       expect(await controller.getAnalytics(req)).toEqual(result);
       expect(mockService.getAnalytics).toHaveBeenCalledWith("user-1");
@@ -217,7 +218,7 @@ describe("VendorController", () => {
     it("should call service.updateShop with user id and body", async () => {
       const result = { id: "shop-1" };
       mockService.updateShop.mockResolvedValue(result);
-      const req = { user: { id: "user-1" } };
+      const req = { user: { id: "user-1" } } as AuthenticatedRequest;
       const body = { shopName: "New Shop Name", description: "Updated description" };
 
       expect(await controller.updateShop(req, body)).toEqual(result);
@@ -229,7 +230,7 @@ describe("VendorController", () => {
     it("should call service.getDisputes with default pagination", async () => {
       const result = { data: [], total: 0 };
       mockService.getDisputes.mockResolvedValue(result);
-      const req = { user: { id: "user-1" } };
+      const req = { user: { id: "user-1" } } as AuthenticatedRequest;
 
       expect(await controller.getDisputes(req)).toEqual(result);
       expect(mockService.getDisputes).toHaveBeenCalledWith("user-1", 1, 20);
@@ -238,7 +239,7 @@ describe("VendorController", () => {
     it("should call service.getDisputes with custom pagination", async () => {
       const result = { data: [], total: 0 };
       mockService.getDisputes.mockResolvedValue(result);
-      const req = { user: { id: "user-1" } };
+      const req = { user: { id: "user-1" } } as AuthenticatedRequest;
 
       expect(await controller.getDisputes(req, "1", "5")).toEqual(result);
       expect(mockService.getDisputes).toHaveBeenCalledWith("user-1", 1, 5);

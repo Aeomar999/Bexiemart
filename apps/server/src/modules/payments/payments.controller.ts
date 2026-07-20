@@ -16,6 +16,8 @@ import { AuthGuard } from "../../guards/auth.guard";
 import { PaymentsService } from "./payments.service";
 import { InitializePaymentDto } from "./dto/initialize-payment.dto";
 import { ChargeCardDto } from "./dto/charge-card.dto";
+import { PaystackWebhookDto } from "./dto/paystack-webhook.dto";
+import { AuthenticatedRequest } from "../../types/request.types";
 
 @ApiBearerAuth()
 @Controller("payments")
@@ -28,23 +30,23 @@ export class PaymentsController {
   @Post("initialize")
   @UseGuards(AuthGuard)
   @Throttle({ default: { limit: 5, ttl: 60000 } })
-  initialize(@Req() req: any, @Body() dto: InitializePaymentDto) {
+  initialize(@Req() req: AuthenticatedRequest, @Body() dto: InitializePaymentDto) {
     return this.paymentsService.initialize(req.user.id, dto);
   }
 
   @ApiOperation({ summary: "Verify a payment" })
   @Get("verify/:reference")
   @UseGuards(AuthGuard)
-  verify(@Req() req: any, @Param("reference") reference: string) {
+  verify(@Req() req: AuthenticatedRequest, @Param("reference") reference: string) {
     return this.paymentsService.verify(req.user.id, reference);
   }
 
   @ApiOperation({ summary: "Handle payment webhook" })
   @Post("webhook")
   handleWebhook(
-    @Req() req: any,
+    @Req() req: AuthenticatedRequest,
     @Headers("x-paystack-signature") signature: string,
-    @Body() body: any
+    @Body() body: PaystackWebhookDto
   ) {
     const secret = process.env.PAYSTACK_SECRET_KEY;
     if (!secret) {
@@ -74,7 +76,7 @@ export class PaymentsController {
   @Post("charge-card")
   @UseGuards(AuthGuard)
   @Throttle({ default: { limit: 5, ttl: 60000 } })
-  chargeCard(@Req() req: any, @Body() body: ChargeCardDto) {
+  chargeCard(@Req() req: AuthenticatedRequest, @Body() body: ChargeCardDto) {
     return this.paymentsService.chargeAuthorization(req.user.id, body.orderId, body.cardId);
   }
 }

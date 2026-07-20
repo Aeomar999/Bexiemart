@@ -3,6 +3,7 @@ import { ApiTags, ApiOperation, ApiBody, ApiBearerAuth } from "@nestjs/swagger";
 import { AuthGuard } from "../../guards/auth.guard";
 import { ReviewsService } from "./reviews.service";
 import { CreateReviewDto } from "./dto/create-review.dto";
+import { AuthenticatedRequest } from "../../types/request.types";
 
 @ApiBearerAuth()
 @Controller("reviews")
@@ -14,7 +15,7 @@ export class ReviewsController {
   @ApiBody({ type: CreateReviewDto })
   @Post()
   @UseGuards(AuthGuard)
-  create(@Req() req: any, @Body() dto: CreateReviewDto) {
+  create(@Req() req: AuthenticatedRequest, @Body() dto: CreateReviewDto) {
     return this.reviewsService.create(req.user.id, dto);
   }
 
@@ -33,7 +34,7 @@ export class ReviewsController {
   @ApiOperation({ summary: "Delete a review" })
   @Delete(":id")
   @UseGuards(AuthGuard)
-  remove(@Req() req: any, @Param("id") id: string) {
+  remove(@Req() req: AuthenticatedRequest, @Param("id") id: string) {
     return this.reviewsService.remove(req.user.id, id);
   }
 }

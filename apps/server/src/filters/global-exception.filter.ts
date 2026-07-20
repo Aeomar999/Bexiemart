@@ -8,18 +8,24 @@ import {
   UnprocessableEntityException,
   BadRequestException,
 } from "@nestjs/common";
-import { Request, Response } from "express";
+import { Response } from "express";
 import { Prisma } from "@prisma/client";
 import * as Sentry from "@sentry/nestjs";
+import { AuthenticatedRequest } from "../types/request.types";
 
 @Catch()
 export class GlobalExceptionFilter implements ExceptionFilter {
   private readonly logger = new Logger(GlobalExceptionFilter.name);
 
-  private logValidationFailure(request: Request, status: number, message: string, errors: any) {
-    const userId = (request as any).user?.id || "anonymous";
+  private logValidationFailure(
+    request: AuthenticatedRequest,
+    status: number,
+    message: string,
+    errors: string[] | undefined
+  ) {
+    const userId = request.user?.id || "anonymous";
     const ip = request.headers["x-forwarded-for"] || request.socket.remoteAddress;
-    const correlationId = (request as any).correlationId;
+    const correlationId = request.correlationId;
 
     this.logger.warn(
       `[VALIDATION_FAILURE] User: ${userId} | IP: ${ip} | ${request.method} ${request.url} | ${status} - ${message}`,
@@ -30,11 +36,11 @@ export class GlobalExceptionFilter implements ExceptionFilter {
   catch(exception: unknown, host: ArgumentsHost) {
     const ctx = host.switchToHttp();
     const response = ctx.getResponse<Response>();
-    const request = ctx.getRequest<Request>();
+    const request = ctx.getRequest<AuthenticatedRequest>();
 
     let status = HttpStatus.INTERNAL_SERVER_ERROR;
     let message = "Internal server error";
-    let errors: any = undefined;
+    let errors: string[] | undefined = undefined;
 
     if (exception instanceof HttpException) {
       status = exception.getStatus();
@@ -42,9 +48,9 @@ export class GlobalExceptionFilter implements ExceptionFilter {
       if (typeof res === "string") {
         message = res;
       } else if (typeof res === "object") {
-        const obj = res as any;
-        message = obj.message ?? message;
-        errors = Array.isArray(obj.message) ? obj.message : undefined;
+        const obj = res as Record<string, unknown>;
+        message = (obj.message as string) ?? message;
+        errors = Array.isArray(obj.message) ? (obj.message as string[]) : undefined;
       }
 
       if (status === 400 || status === 422) {
@@ -77,7 +83,7 @@ export class GlobalExceptionFilter implements ExceptionFilter {
     // "Internal server error" message. The real error/stack is logged below;
     // it must never be returned to the client to avoid leaking internals.
 
-    const correlationId = (request as any).correlationId;
+    const correlationId = request.correlationId;
 
     if (status === HttpStatus.NOT_FOUND) {
       if (request.url !== "/favicon.ico" && request.url !== "/") {
@@ -97,7 +103,7 @@ export class GlobalExceptionFilter implements ExceptionFilter {
       }
     }
 
-    const body: Record<string, any> = {
+    const body: Record<string, unknown> = {
       success: false,
       statusCode: status,
       message,

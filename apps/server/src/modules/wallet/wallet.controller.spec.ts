@@ -2,6 +2,7 @@ import { Test, TestingModule } from "@nestjs/testing";
 import { WalletController } from "./wallet.controller";
 import { WalletService } from "./wallet.service";
 import { AuthGuard } from "../../guards/auth.guard";
+import { AuthenticatedRequest } from "../../types/request.types";
 
 describe("WalletController", () => {
   let controller: WalletController;
@@ -37,9 +38,7 @@ describe("WalletController", () => {
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       controllers: [WalletController],
-      providers: [
-        { provide: WalletService, useValue: mockService },
-      ],
+      providers: [{ provide: WalletService, useValue: mockService }],
     })
       .overrideGuard(AuthGuard)
       .useValue({ canActivate: jest.fn(() => true) })
@@ -61,7 +60,7 @@ describe("WalletController", () => {
     it("should call service.getWallet with user id", async () => {
       const result = { balance: 1000 };
       mockService.getWallet.mockResolvedValue(result);
-      const req = { user: { id: "user-1" } };
+      const req = { user: { id: "user-1" } } as AuthenticatedRequest;
 
       expect(await controller.getWallet(req)).toEqual(result);
       expect(mockService.getWallet).toHaveBeenCalledWith("user-1");
@@ -72,7 +71,7 @@ describe("WalletController", () => {
     it("should call service.getTransactions with default page", async () => {
       const result = { data: [], total: 0 };
       mockService.getTransactions.mockResolvedValue(result);
-      const req = { user: { id: "user-1" } };
+      const req = { user: { id: "user-1" } } as AuthenticatedRequest;
 
       expect(await controller.getTransactions(req)).toEqual(result);
       expect(mockService.getTransactions).toHaveBeenCalledWith("user-1", 1);
@@ -81,7 +80,7 @@ describe("WalletController", () => {
     it("should call service.getTransactions with specific page", async () => {
       const result = { data: [], total: 0 };
       mockService.getTransactions.mockResolvedValue(result);
-      const req = { user: { id: "user-1" } };
+      const req = { user: { id: "user-1" } } as AuthenticatedRequest;
 
       expect(await controller.getTransactions(req, "2")).toEqual(result);
       expect(mockService.getTransactions).toHaveBeenCalledWith("user-1", 2);
@@ -92,7 +91,7 @@ describe("WalletController", () => {
     it("should call service.initializeTopUp with default channel", async () => {
       const result = { reference: "ref-1" };
       mockService.initializeTopUp.mockResolvedValue(result);
-      const req = { user: { id: "user-1" } };
+      const req = { user: { id: "user-1" } } as AuthenticatedRequest;
       const body = { amount: 5000, channel: "MOMO" };
 
       expect(await controller.initializeTopUp(req, body)).toEqual(result);
@@ -102,7 +101,7 @@ describe("WalletController", () => {
     it("should call service.initializeTopUp with specified channel", async () => {
       const result = { reference: "ref-1" };
       mockService.initializeTopUp.mockResolvedValue(result);
-      const req = { user: { id: "user-1" } };
+      const req = { user: { id: "user-1" } } as AuthenticatedRequest;
       const body = { amount: 5000, channel: "CARD" };
 
       expect(await controller.initializeTopUp(req, body)).toEqual(result);
@@ -114,7 +113,7 @@ describe("WalletController", () => {
     it("should call service.verifyTopUp with user id and reference", async () => {
       const result = { status: "success" };
       mockService.verifyTopUp.mockResolvedValue(result);
-      const req = { user: { id: "user-1" } };
+      const req = { user: { id: "user-1" } } as AuthenticatedRequest;
 
       expect(await controller.verifyTopUp(req, "ref-1")).toEqual(result);
       expect(mockService.verifyTopUp).toHaveBeenCalledWith("user-1", "ref-1");
@@ -125,7 +124,7 @@ describe("WalletController", () => {
     it("should call service.withdraw with all params", async () => {
       const result = { success: true };
       mockService.withdraw.mockResolvedValue(result);
-      const req = { user: { id: "user-1" } };
+      const req = { user: { id: "user-1" } } as AuthenticatedRequest;
       const body = { amount: 2000, accountId: "acc-1", accountType: "bank" as const, pin: "1234" };
 
       expect(await controller.withdraw(req, body)).toEqual(result);
@@ -137,7 +136,7 @@ describe("WalletController", () => {
     it("should call service.transfer with all params", async () => {
       const result = { success: true };
       mockService.transfer.mockResolvedValue(result);
-      const req = { user: { id: "user-1" } };
+      const req = { user: { id: "user-1" } } as AuthenticatedRequest;
       const body = { recipientEmail: "user2@test.com", amount: 1000, pin: "1234" };
 
       expect(await controller.transfer(req, body)).toEqual(result);
@@ -149,7 +148,7 @@ describe("WalletController", () => {
     it("should call service.setPin with user id and pin", async () => {
       const result = { success: true };
       mockService.setPin.mockResolvedValue(result);
-      const req = { user: { id: "user-1" } };
+      const req = { user: { id: "user-1" } } as AuthenticatedRequest;
       const body = { pin: "1234" };
 
       expect(await controller.setPin(req, body)).toEqual(result);
@@ -161,7 +160,7 @@ describe("WalletController", () => {
     it("should call service.changePin with current pin and new pin", async () => {
       const result = { success: true };
       mockService.changePin.mockResolvedValue(result);
-      const req = { user: { id: "user-1" } };
+      const req = { user: { id: "user-1" } } as AuthenticatedRequest;
       const body = { currentPin: "1234", newPin: "5678" };
 
       expect(await controller.changePin(req, body)).toEqual(result);
@@ -173,7 +172,7 @@ describe("WalletController", () => {
     it("should call service.verifyPin with user id and pin", async () => {
       const result = { valid: true };
       mockService.verifyPin.mockResolvedValue(result);
-      const req = { user: { id: "user-1" } };
+      const req = { user: { id: "user-1" } } as AuthenticatedRequest;
       const body = { pin: "1234" };
 
       expect(await controller.verifyPin(req, body)).toEqual(result);
@@ -185,7 +184,7 @@ describe("WalletController", () => {
     it("should call service.resetPinFailures with user id", async () => {
       const result = { success: true };
       mockService.resetPinFailures.mockResolvedValue(result);
-      const req = { user: { id: "user-1" } };
+      const req = { user: { id: "user-1" } } as AuthenticatedRequest;
 
       expect(await controller.resetPinFailures(req)).toEqual(result);
       expect(mockService.resetPinFailures).toHaveBeenCalledWith("user-1");
@@ -196,7 +195,7 @@ describe("WalletController", () => {
     it("should call service.getPinStatus with user id", async () => {
       const result = { hasPin: true };
       mockService.getPinStatus.mockResolvedValue(result);
-      const req = { user: { id: "user-1" } };
+      const req = { user: { id: "user-1" } } as AuthenticatedRequest;
 
       expect(await controller.getPinStatus(req)).toEqual(result);
       expect(mockService.getPinStatus).toHaveBeenCalledWith("user-1");
@@ -207,7 +206,7 @@ describe("WalletController", () => {
     it("should call service.getCards with user id", async () => {
       const result = [{ id: "card-1", last4: "1234" }];
       mockService.getCards.mockResolvedValue(result);
-      const req = { user: { id: "user-1" } };
+      const req = { user: { id: "user-1" } } as AuthenticatedRequest;
 
       expect(await controller.getCards(req)).toEqual(result);
       expect(mockService.getCards).toHaveBeenCalledWith("user-1");
@@ -218,8 +217,14 @@ describe("WalletController", () => {
     it("should call service.addCard with user id and body", async () => {
       const result = { id: "card-1" };
       mockService.addCard.mockResolvedValue(result);
-      const req = { user: { id: "user-1" } };
-      const body = { type: "Visa", cardholderName: "John Doe", last4: "1234", expiryMonth: "12", expiryYear: "28" };
+      const req = { user: { id: "user-1" } } as AuthenticatedRequest;
+      const body = {
+        type: "Visa",
+        cardholderName: "John Doe",
+        last4: "1234",
+        expiryMonth: "12",
+        expiryYear: "28",
+      };
 
       expect(await controller.addCard(req, body)).toEqual(result);
       expect(mockService.addCard).toHaveBeenCalledWith("user-1", body);
@@ -230,7 +235,7 @@ describe("WalletController", () => {
     it("should call service.updateCard with user id, card id, and body", async () => {
       const result = { id: "card-1" };
       mockService.updateCard.mockResolvedValue(result);
-      const req = { user: { id: "user-1" } };
+      const req = { user: { id: "user-1" } } as AuthenticatedRequest;
       const body = { isDefault: true };
 
       expect(await controller.updateCard(req, "card-1", body)).toEqual(result);
@@ -241,7 +246,7 @@ describe("WalletController", () => {
   describe("deleteCard", () => {
     it("should call service.deleteCard with user id and card id", async () => {
       mockService.deleteCard.mockResolvedValue({ success: true });
-      const req = { user: { id: "user-1" } };
+      const req = { user: { id: "user-1" } } as AuthenticatedRequest;
 
       expect(await controller.deleteCard(req, "card-1")).toEqual({ success: true });
       expect(mockService.deleteCard).toHaveBeenCalledWith("user-1", "card-1");
@@ -251,7 +256,7 @@ describe("WalletController", () => {
   describe("setDefaultCard", () => {
     it("should call service.setDefaultCard with user id and card id", async () => {
       mockService.setDefaultCard.mockResolvedValue({ success: true });
-      const req = { user: { id: "user-1" } };
+      const req = { user: { id: "user-1" } } as AuthenticatedRequest;
 
       expect(await controller.setDefaultCard(req, "card-1")).toEqual({ success: true });
       expect(mockService.setDefaultCard).toHaveBeenCalledWith("user-1", "card-1");
@@ -262,7 +267,7 @@ describe("WalletController", () => {
     it("should call service.getBankAccounts with user id", async () => {
       const result = [{ id: "bank-1", accountNumber: "1234567890" }];
       mockService.getBankAccounts.mockResolvedValue(result);
-      const req = { user: { id: "user-1" } };
+      const req = { user: { id: "user-1" } } as AuthenticatedRequest;
 
       expect(await controller.getBankAccounts(req)).toEqual(result);
       expect(mockService.getBankAccounts).toHaveBeenCalledWith("user-1");
@@ -273,7 +278,7 @@ describe("WalletController", () => {
     it("should call service.linkBankAccount with user id and body", async () => {
       const result = { id: "bank-1" };
       mockService.linkBankAccount.mockResolvedValue(result);
-      const req = { user: { id: "user-1" } };
+      const req = { user: { id: "user-1" } } as AuthenticatedRequest;
       const body = { bankCode: "044", accountNumber: "1234567890", accountName: "John Doe" };
 
       expect(await controller.linkBankAccount(req, body)).toEqual(result);
@@ -284,7 +289,7 @@ describe("WalletController", () => {
   describe("deleteBankAccount", () => {
     it("should call service.deleteBankAccount with user id and account id", async () => {
       mockService.deleteBankAccount.mockResolvedValue({ success: true });
-      const req = { user: { id: "user-1" } };
+      const req = { user: { id: "user-1" } } as AuthenticatedRequest;
 
       expect(await controller.deleteBankAccount(req, "bank-1")).toEqual({ success: true });
       expect(mockService.deleteBankAccount).toHaveBeenCalledWith("user-1", "bank-1");
@@ -306,7 +311,7 @@ describe("WalletController", () => {
     it("should call service.getMomoAccounts with user id", async () => {
       const result = [{ id: "momo-1", phoneNumber: "+233501234567" }];
       mockService.getMomoAccounts.mockResolvedValue(result);
-      const req = { user: { id: "user-1" } };
+      const req = { user: { id: "user-1" } } as AuthenticatedRequest;
 
       expect(await controller.getMomoAccounts(req)).toEqual(result);
       expect(mockService.getMomoAccounts).toHaveBeenCalledWith("user-1");
@@ -317,8 +322,12 @@ describe("WalletController", () => {
     it("should call service.linkMomoAccount with user id and body", async () => {
       const result = { id: "momo-1" };
       mockService.linkMomoAccount.mockResolvedValue(result);
-      const req = { user: { id: "user-1" } };
-      const body = { provider: "MTN" as any, phoneNumber: "+233501234567", accountName: "John Doe" };
+      const req = { user: { id: "user-1" } } as AuthenticatedRequest;
+      const body = {
+        provider: "MTN" as any,
+        phoneNumber: "+233501234567",
+        accountName: "John Doe",
+      };
 
       expect(await controller.linkMomoAccount(req, body)).toEqual(result);
       expect(mockService.linkMomoAccount).toHaveBeenCalledWith("user-1", body);
@@ -328,7 +337,7 @@ describe("WalletController", () => {
   describe("deleteMomoAccount", () => {
     it("should call service.deleteMomoAccount with user id and momo id", async () => {
       mockService.deleteMomoAccount.mockResolvedValue({ success: true });
-      const req = { user: { id: "user-1" } };
+      const req = { user: { id: "user-1" } } as AuthenticatedRequest;
 
       expect(await controller.deleteMomoAccount(req, "momo-1")).toEqual({ success: true });
       expect(mockService.deleteMomoAccount).toHaveBeenCalledWith("user-1", "momo-1");
@@ -339,11 +348,16 @@ describe("WalletController", () => {
     it("should call service.verifyAndSaveCard with all params", async () => {
       const result = { id: "card-1" };
       mockService.verifyAndSaveCard.mockResolvedValue(result);
-      const req = { user: { id: "user-1" } };
+      const req = { user: { id: "user-1" } } as AuthenticatedRequest;
       const body = { reference: "ref-1", cardholderName: "John Doe", isDefault: true };
 
       expect(await controller.verifyAndSaveCard(req, body)).toEqual(result);
-      expect(mockService.verifyAndSaveCard).toHaveBeenCalledWith("user-1", "ref-1", "John Doe", true);
+      expect(mockService.verifyAndSaveCard).toHaveBeenCalledWith(
+        "user-1",
+        "ref-1",
+        "John Doe",
+        true
+      );
     });
   });
 });
