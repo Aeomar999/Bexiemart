@@ -1,0 +1,12 @@
+{
+  "folders": [
+    { "path": "apps/server", "name": "Server" },
+    { "path": "apps/admin", "name": "Admin" },
+    { "path": "apps/mobile", "name": "Mobile" },
+    { "path": "packages/shared", "name": "Shared" }
+  ],
+  "settings": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.formatOnSave": true
+  }
+}
