@@ -27,8 +27,8 @@ export default function AddReelScreen() {
   const insets = useSafeAreaInsets();
   const { user } = useAuthStore();
   const createReel = useCreateReel();
-  const products = useProductStore((s) => s.products);
-  const showPopup = usePopupStore((s) => s.showPopup);
+  const products = useProductStore((s: any) => s.products);
+  const showPopup = usePopupStore((s: any) => s.showPopup);
 
   const [videoUrl, setVideoUrl] = useState<string | null>(null);
   const [description, setDescription] = useState("");
@@ -70,7 +70,7 @@ export default function AddReelScreen() {
       return;
     }
 
-    const linkedProduct = products.find((p) => p.id === selectedProductId);
+    const linkedProduct = products.find((p: any) => p.id === selectedProductId);
     if (!linkedProduct) return;
 
     setIsPublishing(true);
@@ -99,7 +99,7 @@ export default function AddReelScreen() {
     });
   };
 
-  const linkedProduct = products.find((p) => p.id === selectedProductId);
+  const linkedProduct = products.find((p: any) => p.id === selectedProductId);
 
   return (
     <KeyboardAvoidingView
@@ -125,12 +125,15 @@ export default function AddReelScreen() {
         {/* Video Upload Section */}
         <View className="mb-8 mt-2">
           <Pressable
-            style={({ pressed }) => [
-              { opacity: pressed ? 0.95 : 1, transform: [{ scale: pressed ? 0.98 : 1 }] },
+            style={({ pressed }: { pressed: boolean }) => [
+              {
+                aspectRatio: 9 / 16,
+                opacity: pressed ? 0.95 : 1,
+                transform: [{ scale: pressed ? 0.98 : 1 }],
+              },
             ]}
             onPress={() => setUploadModalVisible(true)}
             className="w-full bg-background rounded-3xl overflow-hidden items-center justify-center relative shadow-lg shadow-black/10"
-            style={{ aspectRatio: 9 / 16 }}
           >
             {videoUrl ? (
               <>
@@ -183,13 +186,13 @@ export default function AddReelScreen() {
           Shoppable Link
         </Text>
         <Pressable
-          style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
+          style={({ pressed }: { pressed: boolean }) => [{ opacity: pressed ? 0.7 : 1 }]}
           className={`flex-row items-center p-4 rounded-2xl border ${linkedProduct ? "bg-primary-subtle border-border" : "bg-white border-border border-dashed"}`}
           onPress={() => setProductModalVisible(true)}
         >
           {linkedProduct ? (
             <>
-              <View className="w-14 h-14 bg-white rounded-xl items-center justify-center border border-border shadow-sm shadow-none">
+              <View className="w-14 h-14 bg-white rounded-xl items-center justify-center border border-border shadow-sm">
                 <Icon name="shopping-bag" size={24} color={tokens.primary} />
               </View>
               <View className="ml-4 flex-1">
@@ -237,7 +240,7 @@ export default function AddReelScreen() {
           loading={isPublishing}
           disabled={!videoUrl || isPublishing}
           onPress={handlePublish}
-          className="w-full shadow-lg shadow-none"
+          className="w-full shadow-lg"
         />
       </View>
 
@@ -276,11 +279,11 @@ export default function AddReelScreen() {
                 </Text>
                 <View className="gap-4">
                   <Pressable
-                    style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
+                    style={({ pressed }: { pressed: boolean }) => [{ opacity: pressed ? 0.7 : 1 }]}
                     className="flex-row items-center p-5 bg-background border border-border rounded-2xl"
                     onPress={handleUploadOption}
                   >
-                    <View className="w-14 h-14 bg-white rounded-full items-center justify-center shadow-sm shadow-sm">
+                    <View className="w-14 h-14 bg-white rounded-full items-center justify-center shadow-sm">
                       <Icon name="camera" size={24} color="#0f172a" />
                     </View>
                     <View className="ml-4 flex-1">
@@ -295,11 +298,11 @@ export default function AddReelScreen() {
                   </Pressable>
 
                   <Pressable
-                    style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
+                    style={({ pressed }: { pressed: boolean }) => [{ opacity: pressed ? 0.7 : 1 }]}
                     className="flex-row items-center p-5 bg-primary-subtle border border-border rounded-2xl"
                     onPress={handleUploadOption}
                   >
-                    <View className="w-14 h-14 bg-primary rounded-full items-center justify-center shadow-md shadow-none">
+                    <View className="w-14 h-14 bg-primary rounded-full items-center justify-center shadow-md">
                       <Icon name="image" size={24} color="#fff" />
                     </View>
                     <View className="ml-4 flex-1">
@@ -361,7 +364,7 @@ export default function AddReelScreen() {
             </View>
 
             <ScrollView className="flex-1 p-5" showsVerticalScrollIndicator={false}>
-              {products.map((product) => (
+              {products.map((product: any) => (
                 <Pressable
                   key={product.id}
                   onPress={() => {
