@@ -116,9 +116,9 @@ export function createAuth(prisma: PrismaClient) {
             subject: "Verify your BexieMart Email",
             html,
           });
-          if (isDev) console.log("Email sent successfully via Nodemailer:", info.messageId);
+          if (isDev) console.log("Email sent successfully:", info.messageId);
         } catch (error) {
-          if (isDev) console.error("Failed to send email via Nodemailer:", error);
+          console.error("[EmailVerification] Failed to send email:", error);
         }
       },
     },
