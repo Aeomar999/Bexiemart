@@ -39,4 +39,4 @@ COPY --from=build /app/apps/server/dist ./dist
 COPY --from=build /app/apps/server/prisma ./prisma
 
 EXPOSE 3000
-CMD ["sh", "-c", "npx prisma migrate deploy && node dist/main.js"]
+CMD ["sh", "-c", "npx prisma migrate deploy && (node dist/scripts/seed-admin.js || true) && node dist/main.js"]
