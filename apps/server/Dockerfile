@@ -34,8 +34,9 @@ RUN npm ci --omit=dev
 # Copy compiled output and generated Prisma artifacts from build stage
 COPY --from=build /app/apps/server/node_modules/.prisma ./node_modules/.prisma
 COPY --from=build /app/apps/server/node_modules/@prisma ./node_modules/@prisma
+COPY --from=build /app/apps/server/node_modules/prisma ./node_modules/prisma
 COPY --from=build /app/apps/server/dist ./dist
 COPY --from=build /app/apps/server/prisma ./prisma
 
 EXPOSE 3000
-CMD ["node", "dist/main.js"]
+CMD ["sh", "-c", "npx prisma migrate deploy && node dist/main.js"]
