@@ -64,7 +64,7 @@ describe("PaymentsController", () => {
       const origSecret = process.env.PAYSTACK_SECRET_KEY;
       process.env.PAYSTACK_SECRET_KEY = "test-secret";
 
-      const body = { event: "charge.success" };
+      const body = { event: "charge.success", data: {} };
       const rawBody = Buffer.from(JSON.stringify(body));
       const crypto = require("crypto");
       const signature = crypto.createHmac("sha512", "test-secret").update(rawBody).digest("hex");
@@ -84,7 +84,7 @@ describe("PaymentsController", () => {
       const origSecret = process.env.PAYSTACK_SECRET_KEY;
       process.env.PAYSTACK_SECRET_KEY = "test-secret";
 
-      const body = { event: "charge.success" };
+      const body = { event: "charge.success", data: {} };
       const rawBody = Buffer.from(JSON.stringify(body));
 
       expect(() =>
@@ -99,7 +99,7 @@ describe("PaymentsController", () => {
       const origSecret = process.env.PAYSTACK_SECRET_KEY;
       process.env.PAYSTACK_SECRET_KEY = "test-secret";
 
-      const body = { event: "charge.success" };
+      const body = { event: "charge.success", data: {} };
       const crypto = require("crypto");
       const signature = crypto
         .createHmac("sha512", "test-secret")
