@@ -1,34 +1,49 @@
 import { Logger } from "@nestjs/common";
-import * as nodemailer from "nodemailer";
+import { Resend } from "resend";
 
 const logger = new Logger("MailTransporter");
-const smtpPort = parseInt(process.env.SMTP_PORT || "465", 10);
 
-/** Shared Nodemailer transporter with connection pooling for all outbound emails. */
-export const mailTransporter = nodemailer.createTransport({
-  host: process.env.SMTP_HOST || "smtp.gmail.com",
-  port: smtpPort,
-  secure: smtpPort === 465,
-  auth: {
-    user: process.env.SMTP_USER,
-    pass: process.env.SMTP_PASS,
-  },
-  pool: true,
-  maxConnections: 3,
-  maxMessages: 100,
-  connectionTimeout: 10_000,
-  greetingTimeout: 10_000,
-  socketTimeout: 20_000,
-});
-
-const isDev = process.env.NODE_ENV !== "production";
 const isTest = process.env.NODE_ENV === "test" || Boolean(process.env.JEST_WORKER_ID);
 
-if (!isTest && process.env.SMTP_USER && process.env.SMTP_PASS) {
+const resendApiKey = process.env.RESEND_API_KEY;
+const resend = resendApiKey ? new Resend(resendApiKey) : null;
+
+/**
+ * Shared mail transport.  Uses Resend HTTP API (works on platforms that block
+ * outbound SMTP like Render free tier).  Exposes a sendMail() method compatible
+ * with the Nodemailer call-sites already in the codebase.
+ */
+export const mailTransporter = {
+  async sendMail(options: { from: string; to: string; subject: string; html: string }) {
+    if (!resend) {
+      logger.warn("RESEND_API_KEY not set — email not sent");
+      return { messageId: "skipped-no-key" };
+    }
+
+    const result = await resend.emails.send({
+      from: options.from,
+      to: [options.to],
+      subject: options.subject,
+      html: options.html,
+    });
+
+    if (result.error) {
+      throw new Error(result.error.message);
+    }
+
+    return { messageId: result.data?.id ?? "unknown" };
+  },
+
+  async verify() {
+    if (!resend) throw new Error("RESEND_API_KEY not set");
+    // Resend doesn't have a verify endpoint — just confirm the key is set.
+    return true;
+  },
+};
+
+if (!isTest && resend) {
   mailTransporter.verify().then(
-    () => {
-      if (isDev) logger.log("SMTP transporter verified and ready");
-    },
-    (error) => logger.error("SMTP transporter verification failed:", error?.message || error)
+    () => logger.log("Resend email transport verified and ready"),
+    (error: any) => logger.error("Resend transport verification failed:", error?.message || error)
   );
 }
