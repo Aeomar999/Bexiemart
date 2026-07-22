@@ -8,28 +8,46 @@ import { phoneNumber, bearer, twoFactor } from "better-auth/plugins";
 import type { PrismaClient } from "@prisma/client";
 import { dash, sentinel } from "@better-auth/infra";
 import * as crypto from "crypto";
+import { Logger } from "@nestjs/common";
 import { mailTransporter } from "./mail-transporter";
 import { sendOtpDualChannel } from "./otp-notification.service";
 import { buildEmailVerifyHtml } from "./templates/email-verify.template";
 
+const logger = new Logger("BetterAuth");
+
+function generateSecureOtp(): string {
+  const code = crypto.randomInt(100000, 999999);
+  return code.toString();
+}
+
 export function createAuth(prisma: PrismaClient) {
+  const betterAuthUrl = process.env.BETTER_AUTH_URL;
+  if (!betterAuthUrl) {
+    throw new Error("BETTER_AUTH_URL is required");
+  }
+
+  const betterAuthApiKey = process.env.BETTER_AUTH_API_KEY;
+  if (!betterAuthApiKey) {
+    throw new Error("BETTER_AUTH_API_KEY is required");
+  }
+
   return betterAuth({
     database: prismaAdapter(prisma, {
       provider: "postgresql",
     }),
-    baseURL: process.env.BETTER_AUTH_URL + "/api/v1/auth",
+    baseURL: `${betterAuthUrl}/api/v1/auth`,
     plugins: [
       bearer(),
       twoFactor({ issuer: "BexieMart" }),
       dash({
         ...(process.env.BETTER_AUTH_API_URL ? { apiUrl: process.env.BETTER_AUTH_API_URL } : {}),
         ...(process.env.BETTER_AUTH_KV_URL ? { kvUrl: process.env.BETTER_AUTH_KV_URL } : {}),
-        apiKey: process.env.BETTER_AUTH_API_KEY!,
+        apiKey: betterAuthApiKey,
       }),
       sentinel({
         ...(process.env.BETTER_AUTH_API_URL ? { apiUrl: process.env.BETTER_AUTH_API_URL } : {}),
         ...(process.env.BETTER_AUTH_KV_URL ? { kvUrl: process.env.BETTER_AUTH_KV_URL } : {}),
-        apiKey: process.env.BETTER_AUTH_API_KEY!,
+        apiKey: betterAuthApiKey,
         security: {
           credentialStuffing: {
             enabled: true,
@@ -84,7 +102,7 @@ export function createAuth(prisma: PrismaClient) {
             : url;
         const appUrl = `bexiemart://verify-email?token=${token}`;
 
-        const emailOtpCode = Math.floor(100000 + Math.random() * 900000).toString();
+        const emailOtpCode = generateSecureOtp();
         const cuid = crypto.randomUUID();
 
         await prisma.verification.create({
@@ -97,7 +115,7 @@ export function createAuth(prisma: PrismaClient) {
         });
 
         if (isDev) {
-          console.log(
+          logger.log(
             `\n\n=== EMAIL VERIFICATION ===\nTo: ${user.email}\nWeb: ${webUrl}\nApp: ${appUrl}\nOTP: ${emailOtpCode}\n==========================\n\n`
           );
         }
@@ -116,9 +134,9 @@ export function createAuth(prisma: PrismaClient) {
             subject: "Verify your BexieMart Email",
             html,
           });
-          if (isDev) console.log("Email sent successfully:", info.messageId);
+          if (isDev) logger.log(`Email sent successfully: ${info.messageId}`);
         } catch (error) {
-          console.error("[EmailVerification] Failed to send email:", error);
+          logger.error("[EmailVerification] Failed to send email:", error as Error);
         }
       },
     },

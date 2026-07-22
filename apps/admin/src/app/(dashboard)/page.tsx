@@ -1,6 +1,5 @@
 "use client";
 
-import React from "react";
 import dynamic from "next/dynamic";
 import { Users, Store, ShoppingBag, DollarSign } from "lucide-react";
 import { DashboardLayout } from "../../components/layout/DashboardLayout";

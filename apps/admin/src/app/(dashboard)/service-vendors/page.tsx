@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import { useState } from "react";
 import { useServiceVendors } from "../../../lib/hooks/use-services";
 import { Pagination } from "../../../components/ui/Pagination";
 import { DashboardLayout } from "../../../components/layout/DashboardLayout";

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import { useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import Image from "next/image";
 import { useDispatcher, useUpdateDispatcherStatus } from "../../../../lib/hooks/use-dispatchers";

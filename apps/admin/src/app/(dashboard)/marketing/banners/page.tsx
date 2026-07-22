@@ -224,13 +224,14 @@ export default function BannersPage() {
                       <TableCell>{banner.sortOrder}</TableCell>
                       <TableCell>
                         <div className="flex items-center justify-end gap-2">
-                          <Button variant="ghost" size="icon" onClick={() => openEdit(banner)}>
+                          <Button variant="ghost" size="icon" onClick={() => openEdit(banner)} aria-label="Edit banner">
                             <Pencil className="h-4 w-4" />
                           </Button>
                           <Button
                             variant="ghost"
                             size="icon"
                             onClick={() => setDeleteTarget(banner)}
+                            aria-label="Delete banner"
                           >
                             <Trash2 className="h-4 w-4 text-[var(--color-error)]" />
                           </Button>

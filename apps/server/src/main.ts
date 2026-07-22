@@ -1,5 +1,10 @@
 // Must be the first import so Sentry can instrument other modules.
 import "./instrument";
+import { validateEnv } from "./env.validation";
+
+// Validate environment variables before anything else imports process.env
+validateEnv();
+
 import { NestFactory } from "@nestjs/core";
 import { NestExpressApplication } from "@nestjs/platform-express";
 import { AppModule } from "./app.module";

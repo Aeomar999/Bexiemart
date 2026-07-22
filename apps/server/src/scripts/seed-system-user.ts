@@ -3,11 +3,14 @@ dotenv.config();
 
 import { PrismaClient, UserRole } from "@prisma/client";
 import { PrismaPg } from "@prisma/adapter-pg";
+import { Logger } from "@nestjs/common";
 import {
   SYSTEM_USER_ID,
   SYSTEM_USER_EMAIL,
   SYSTEM_USER_NAME,
 } from "../modules/support/support.constants";
+
+const logger = new Logger("SeedSystemUser");
 
 const adapter = new PrismaPg({ connectionString: process.env.DATABASE_URL });
 const prisma = new PrismaClient({ adapter });
@@ -20,7 +23,7 @@ const prisma = new PrismaClient({ adapter });
  * be logged into via better-auth; it exists only to satisfy `Message.senderId`.
  */
 async function main() {
-  console.log(`Seeding SYSTEM user (${SYSTEM_USER_ID})...`);
+  logger.log(`Seeding SYSTEM user (${SYSTEM_USER_ID})...`);
   try {
     const user = await prisma.user.upsert({
       where: { id: SYSTEM_USER_ID },
@@ -34,9 +37,9 @@ async function main() {
         isActive: true,
       },
     });
-    console.log(`SYSTEM user ready: ${user.id} <${user.email}>`);
+    logger.log(`SYSTEM user ready: ${user.id} <${user.email}>`);
   } catch (error) {
-    console.error("Failed to seed SYSTEM user:", error);
+    logger.error("Failed to seed SYSTEM user:", error as Error);
     process.exit(1);
   } finally {
     await prisma.$disconnect();
