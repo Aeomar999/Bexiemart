@@ -110,6 +110,24 @@ export const resolveDispute = async (id: string, action: "REFUND" | "RELEASE", r
   return data;
 };
 
+export const getDisputeSupportTicket = async (id: string) => {
+  const { data } = await apiClient.get(`/support/admin/disputes/${id}/ticket`);
+  return data;
+};
+
+export const ensureDisputeSupportTicket = async (id: string) => {
+  const { data } = await apiClient.post(`/support/admin/disputes/${id}/ticket`);
+  return data;
+};
+
+export const sendSupportTicketMessage = async (ticketId: string, content: string) => {
+  const { data } = await apiClient.post(`/support/admin/tickets/${ticketId}/messages`, {
+    content,
+    type: "TEXT",
+  });
+  return data;
+};
+
 // Reports
 export const getRevenueReport = async (params?: Record<string, any>) => {
   const { data } = await apiClient.get("/admin/reports/revenue", { params });

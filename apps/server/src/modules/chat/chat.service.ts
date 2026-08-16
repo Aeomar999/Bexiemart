@@ -160,6 +160,23 @@ export class ChatService {
     });
   }
 
+  async ensureConversationParticipant(
+    conversationId: string,
+    userId: string,
+    tx?: Prisma.TransactionClient
+  ) {
+    const client = tx ?? this.prisma;
+    const existing = await client.conversationParticipant.findUnique({
+      where: { conversationId_userId: { conversationId, userId } },
+    });
+
+    if (existing) return existing;
+
+    return client.conversationParticipant.create({
+      data: { conversationId, userId },
+    });
+  }
+
   async markAsRead(conversationId: string, userId: string) {
     await this.getConversation(conversationId, userId);
     await this.prisma.conversationParticipant.updateMany({

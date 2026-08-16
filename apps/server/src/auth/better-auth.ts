@@ -9,6 +9,7 @@ import { phoneNumber } from "better-auth/plugins";
 import type { PrismaClient } from "@prisma/client";
 import * as nodemailer from "nodemailer";
 import { dash, sentinel } from "@better-auth/infra";
+import { resolveBetterAuthBaseURL } from "./better-auth-config";
 
 const smtpPort = parseInt(process.env.SMTP_PORT || "465", 10);
 const transporter = nodemailer.createTransport({
@@ -44,7 +45,7 @@ export function createAuth(prisma: PrismaClient) {
     database: prismaAdapter(prisma, {
       provider: "postgresql",
     }),
-    baseURL: process.env.BETTER_AUTH_URL + "/api/v1/auth",
+    baseURL: resolveBetterAuthBaseURL(),
     plugins: [
       dash({
         ...(process.env.BETTER_AUTH_API_URL ? { apiUrl: process.env.BETTER_AUTH_API_URL } : {}),

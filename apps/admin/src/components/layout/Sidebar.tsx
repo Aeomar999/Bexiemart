@@ -20,6 +20,7 @@ import {
   ShieldAlert,
   ShieldCheck,
   Ticket,
+  MessageSquare,
   ChevronDown,
   ChevronRight
 } from "lucide-react";
@@ -110,6 +111,12 @@ const navigationConfig: NavGroup[] = [
     ]
   },
   {
+    group: "Support",
+    items: [
+      { name: "Support Inbox", href: "/support", icon: MessageSquare },
+    ]
+  },
+  {
     group: "System",
     items: [
       { name: "Admins", href: "/admins", icon: ShieldCheck, superAdminOnly: true },
@@ -160,15 +167,15 @@ export function Sidebar() {
   return (
     <div
       className={cn(
-        "flex flex-col border-r border-[var(--color-border)] bg-[var(--color-card)] transition-all duration-300 overflow-hidden",
-        isSidebarOpen ? "w-[260px]" : "w-[72px]"
+        "flex flex-col border-r border-(--color-border) bg-(--color-card) transition-all duration-300 overflow-hidden",
+        isSidebarOpen ? "w-sidebar" : "w-sidebar-collapsed"
       )}
     >
-      <div className="flex h-16 items-center justify-center border-b border-[var(--color-border)] px-4">
+      <div className="flex h-16 items-center justify-center border-b border-(--color-border) px-4">
         {isSidebarOpen ? (
-          <h1 className="text-xl font-bold text-[var(--color-primary)]">BexieMart</h1>
+          <h1 className="text-xl font-bold text-(--color-primary)">BexieMart</h1>
         ) : (
-          <h1 className="text-xl font-bold text-[var(--color-primary)]">B</h1>
+          <h1 className="text-xl font-bold text-(--color-primary)">B</h1>
         )}
       </div>
 
@@ -176,7 +183,7 @@ export function Sidebar() {
         {navigationConfig.map((group, groupIdx) => (
           <div key={group.group} className="mb-6 px-3">
             {isSidebarOpen && (
-              <h3 className="mb-2 px-3 text-xs font-semibold text-[var(--color-text-muted)] uppercase tracking-wider">
+              <h3 className="mb-2 px-3 text-xs font-semibold text-(--color-text-muted) uppercase tracking-wider">
                 {group.group}
               </h3>
             )}
@@ -198,8 +205,8 @@ export function Sidebar() {
                         className={cn(
                           "group relative flex items-center justify-between rounded-md px-3 py-2 text-sm font-medium transition-all duration-200",
                           isActive
-                            ? "bg-[var(--color-primary)]/10 text-[var(--color-primary)] shadow-sm"
-                            : "text-[var(--color-text-secondary)] hover:bg-[var(--color-surface-100)] hover:text-[var(--color-text)]",
+                            ? "bg-(--color-primary)/10 text-(--color-primary) shadow-sm"
+                            : "text-(--color-text-secondary) hover:bg-surface-100 hover:text-(--color-text)",
                           !isSidebarOpen && "justify-center px-0"
                         )}
                         title={!isSidebarOpen ? item.name : undefined}
@@ -207,15 +214,15 @@ export function Sidebar() {
                         <div className="flex items-center">
                           <Icon
                             className={cn(
-                              "flex-shrink-0 transition-colors",
-                              isActive ? "text-[var(--color-primary)]" : "text-[var(--color-text-muted)] group-hover:text-[var(--color-text)]",
+                              "shrink-0 transition-colors",
+                              isActive ? "text-(--color-primary)" : "text-(--color-text-muted) group-hover:text-(--color-text)",
                               isSidebarOpen ? "mr-3 h-5 w-5" : "h-6 w-6"
                             )}
                           />
                           {isSidebarOpen && <span>{item.name}</span>}
                         </div>
                         {isSidebarOpen && item.badge && (
-                          <span className="ml-auto inline-flex items-center rounded-full bg-[var(--color-surface-100)] px-2 py-0.5 text-xs font-medium text-[var(--color-text)]">
+                          <span className="ml-auto inline-flex items-center rounded-full bg-surface-100 px-2 py-0.5 text-xs font-medium text-(--color-text)">
                             {item.badge}
                           </span>
                         )}
@@ -226,8 +233,8 @@ export function Sidebar() {
                         className={cn(
                           "group relative flex w-full items-center justify-between rounded-md px-3 py-2 text-sm font-medium transition-all duration-200",
                           isChildActive
-                            ? "bg-[var(--color-primary)]/5 text-[var(--color-primary)] font-semibold"
-                            : "text-[var(--color-text-secondary)] hover:bg-[var(--color-surface-100)] hover:text-[var(--color-text)]",
+                            ? "bg-(--color-primary)/5 text-(--color-primary) font-semibold"
+                            : "text-(--color-text-secondary) hover:bg-surface-100 hover:text-(--color-text)",
                           !isSidebarOpen && "justify-center px-0"
                         )}
                         title={!isSidebarOpen ? item.name : undefined}
@@ -235,8 +242,8 @@ export function Sidebar() {
                         <div className="flex items-center">
                           <Icon
                             className={cn(
-                              "flex-shrink-0 transition-colors",
-                              isChildActive ? "text-[var(--color-primary)]" : "text-[var(--color-text-muted)] group-hover:text-[var(--color-text)]",
+                              "shrink-0 transition-colors",
+                              isChildActive ? "text-(--color-primary)" : "text-(--color-text-muted) group-hover:text-(--color-text)",
                               isSidebarOpen ? "mr-3 h-5 w-5" : "h-6 w-6"
                             )}
                           />
@@ -245,14 +252,14 @@ export function Sidebar() {
                         {isSidebarOpen && (
                           <div className="flex items-center">
                             {item.badge && (
-                              <span className="mr-2 inline-flex items-center rounded-full bg-[var(--color-surface-100)] px-2 py-0.5 text-xs font-medium text-[var(--color-text)]">
+                              <span className="mr-2 inline-flex items-center rounded-full bg-surface-100 px-2 py-0.5 text-xs font-medium text-(--color-text)">
                                 {item.badge}
                               </span>
                             )}
                             {isExpanded ? (
-                              <ChevronDown className="h-4 w-4 text-[var(--color-text-muted)]" />
+                              <ChevronDown className="h-4 w-4 text-(--color-text-muted)" />
                             ) : (
-                              <ChevronRight className="h-4 w-4 text-[var(--color-text-muted)]" />
+                              <ChevronRight className="h-4 w-4 text-(--color-text-muted)" />
                             )}
                           </div>
                         )}
@@ -260,7 +267,7 @@ export function Sidebar() {
                     )}
 
                     {isSidebarOpen && isExpanded && item.subItems && (
-                      <div className="mt-1 flex flex-col space-y-1 relative before:absolute before:left-[21px] before:top-0 before:bottom-0 before:w-[1px] before:bg-[var(--color-border)]">
+                      <div className="mt-1 flex flex-col space-y-1 relative before:absolute before:left-5.25 before:top-0 before:bottom-0 before:w-px before:bg-(--color-border)">
                         {item.subItems.map((sub) => {
                           const isSubActive = pathname === sub.href || pathname.startsWith(`${sub.href}/`);
                           return (
@@ -270,11 +277,11 @@ export function Sidebar() {
                               className={cn(
                                 "group relative flex items-center rounded-md py-2 pl-10 pr-3 text-sm font-medium transition-colors",
                                 isSubActive
-                                  ? "text-[var(--color-primary)]"
-                                  : "text-[var(--color-text-secondary)] hover:text-[var(--color-text)]"
+                                  ? "text-(--color-primary)"
+                                  : "text-(--color-text-secondary) hover:text-(--color-text)"
                               )}
                             >
-                              <div className="absolute left-[21px] top-1/2 w-3 h-[1px] bg-[var(--color-border)]"></div>
+                              <div className="absolute left-5.25 top-1/2 w-3 h-px bg-(--color-border)"></div>
                               <span>{sub.name}</span>
                             </Link>
                           );
@@ -289,18 +296,18 @@ export function Sidebar() {
         ))}
       </nav>
 
-      <div className="border-t border-[var(--color-border)] p-3 bg-[var(--color-card)]">
+      <div className="border-t border-(--color-border) p-3 bg-(--color-card)">
         <button
           onClick={logout}
           className={cn(
-            "group flex w-full items-center rounded-md px-3 py-2 text-sm font-medium text-[var(--color-text-secondary)] hover:bg-[var(--color-error)]/10 hover:text-[var(--color-error)] transition-colors",
+            "group flex w-full items-center rounded-md px-3 py-2 text-sm font-medium text-(--color-text-secondary) hover:bg-error/10 hover:text-error transition-colors",
             !isSidebarOpen && "justify-center px-0"
           )}
           title={!isSidebarOpen ? "Logout" : undefined}
         >
           <LogOut
             className={cn(
-              "flex-shrink-0 transition-colors",
+              "shrink-0 transition-colors",
               isSidebarOpen ? "mr-3 h-5 w-5" : "h-6 w-6"
             )}
             aria-hidden="true"

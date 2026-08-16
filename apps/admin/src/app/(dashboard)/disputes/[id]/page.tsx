@@ -2,7 +2,13 @@
 
 import React, { useState } from "react";
 import { useParams, useRouter } from "next/navigation";
-import { useDispute, useResolveDispute } from "../../../../lib/hooks/use-disputes";
+import {
+  useDispute,
+  useDisputeSupportTicket,
+  useEnsureDisputeSupportTicket,
+  useResolveDispute,
+  useSendSupportTicketMessage,
+} from "../../../../lib/hooks/use-disputes";
 import { DashboardLayout } from "../../../../components/layout/DashboardLayout";
 import { Card, CardHeader, CardTitle, CardContent, CardFooter } from "../../../../components/ui/Card";
 import { Badge } from "../../../../components/ui/Badge";
@@ -10,17 +16,53 @@ import { Button } from "../../../../components/ui/Button";
 import { formatCurrency } from "../../../../lib/utils";
 import { ConfirmModal } from "../../../../components/ui/ConfirmModal";
 import { CardSkeleton } from "../../../../components/ui/Skeleton";
+import { useAuthStore } from "../../../../lib/stores/auth-store";
+import { Loader2, MessageSquare, SendHorizonal } from "lucide-react";
+
+interface DisputeSupportTicket {
+  id: string;
+  subject: string;
+  status: string;
+  priority: string;
+  user: { id: string; name?: string | null; email?: string | null };
+  conversation: {
+    id: string;
+    messages: Array<{
+      id: string;
+      content?: string | null;
+      type: string;
+      mediaUrl?: string | null;
+      createdAt: string;
+      sender: { id: string; name?: string | null; email?: string | null };
+    }>;
+  };
+}
+
+function formatChatTime(value: string) {
+  return new Date(value).toLocaleString([], {
+    month: "short",
+    day: "numeric",
+    hour: "numeric",
+    minute: "2-digit",
+  });
+}
 
 export default function DisputeDetailPage() {
   const { id } = useParams();
   const router = useRouter();
+  const disputeId = id as string;
+  const user = useAuthStore((state: { user: { id: string } | null }) => state.user);
   
-  const { data: dispute, isLoading } = useDispute(id as string);
+  const { data: dispute, isLoading } = useDispute(disputeId);
+  const { data: supportTicket, isLoading: isLoadingSupportTicket } = useDisputeSupportTicket(disputeId);
+  const { mutate: ensureSupportTicket, isPending: isEnsuringSupportTicket } = useEnsureDisputeSupportTicket();
+  const { mutate: sendSupportMessage, isPending: isSendingSupportMessage } = useSendSupportTicketMessage(disputeId);
   const { mutate: resolveDispute, isPending: isResolving } = useResolveDispute();
   
   const [resolutionAction, setResolutionAction] = useState<"REFUND" | "RELEASE" | "">("");
   const [resolutionReason, setResolutionReason] = useState("");
   const [isResolveModalOpen, setIsResolveModalOpen] = useState(false);
+  const [supportMessage, setSupportMessage] = useState("");
 
   if (isLoading) {
     return (
@@ -59,6 +101,19 @@ export default function DisputeDetailPage() {
     }, {
       onSuccess: () => setIsResolveModalOpen(false)
     });
+  };
+
+  const ticket = supportTicket as DisputeSupportTicket | null | undefined;
+
+  const handleSendSupportMessage = () => {
+    if (!ticket?.id || !supportMessage.trim()) return;
+
+    sendSupportMessage(
+      { ticketId: ticket.id, content: supportMessage.trim() },
+      {
+        onSuccess: () => setSupportMessage(""),
+      }
+    );
   };
 
   return (
@@ -124,6 +179,130 @@ export default function DisputeDetailPage() {
                     View Full Order Details &rarr;
                   </Button>
                 </div>
+              </CardContent>
+            </Card>
+
+            <Card className="col-span-full">
+              <CardHeader>
+                <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                  <div>
+                    <CardTitle className="flex items-center gap-2">
+                      <MessageSquare className="h-5 w-5" />
+                      Support Chat
+                    </CardTitle>
+                    <p className="mt-1 text-sm text-[var(--color-text-muted)]">
+                      Message the customer with this dispute and order context attached.
+                    </p>
+                  </div>
+                  {ticket && (
+                    <div className="flex items-center gap-2">
+                      <Badge variant={ticket.status === "OPEN" ? "warning" : "success"}>
+                        {ticket.status}
+                      </Badge>
+                      <span className="rounded-full bg-[var(--color-surface-100)] px-3 py-1 text-xs font-medium text-[var(--color-text-muted)]">
+                        {ticket.priority}
+                      </span>
+                    </div>
+                  )}
+                </div>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                {isLoadingSupportTicket ? (
+                  <div className="flex items-center justify-center rounded-md border border-dashed border-[var(--color-border)] py-10 text-sm text-[var(--color-text-muted)]">
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Loading support chat...
+                  </div>
+                ) : !ticket ? (
+                  <div className="rounded-md border border-dashed border-[var(--color-border)] p-5">
+                    <p className="text-sm font-medium text-[var(--color-text)]">No support chat yet.</p>
+                    <p className="mt-1 text-sm text-[var(--color-text-muted)]">
+                      Open one to keep all dispute messages in a tracked support ticket.
+                    </p>
+                    <Button
+                      className="mt-4 gap-2"
+                      variant="outline"
+                      isLoading={isEnsuringSupportTicket}
+                      onClick={() => ensureSupportTicket(dispute.id)}
+                    >
+                      <MessageSquare className="h-4 w-4" />
+                      Open Support Chat
+                    </Button>
+                  </div>
+                ) : (
+                  <>
+                    <div className="flex items-center justify-between gap-3 rounded-md border border-[var(--color-border)] bg-[var(--color-bg)] p-3">
+                      <div>
+                        <p className="text-sm font-semibold text-[var(--color-text)]">
+                          {ticket.user.name || ticket.user.email || "Customer"}
+                        </p>
+                        <p className="text-xs text-[var(--color-text-muted)]">
+                          Ticket #{ticket.id.slice(0, 8)} for {ticket.subject}
+                        </p>
+                      </div>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        isLoading={isEnsuringSupportTicket}
+                        onClick={() => ensureSupportTicket(dispute.id)}
+                      >
+                        Refresh
+                      </Button>
+                    </div>
+
+                    <div className="max-h-90 min-h-64 space-y-3 overflow-y-auto rounded-md border border-[var(--color-border)] bg-white p-4 dark:bg-slate-950/30">
+                      {ticket.conversation.messages.length === 0 ? (
+                        <div className="flex h-40 items-center justify-center text-sm text-[var(--color-text-muted)]">
+                          No messages have been sent yet.
+                        </div>
+                      ) : (
+                        ticket.conversation.messages.map((message) => {
+                          const isMine = message.sender.id === user?.id;
+                          return (
+                            <div key={message.id} className={`flex ${isMine ? "justify-end" : "justify-start"}`}>
+                              <div
+                                className={`max-w-[85%] rounded-2xl px-3 py-2 text-sm shadow-sm md:max-w-[70%] ${
+                                  isMine
+                                    ? "bg-[var(--color-primary)] text-white"
+                                    : "bg-[var(--color-surface-100)] text-[var(--color-text)]"
+                                }`}
+                              >
+                                <div className="mb-1 text-[11px] font-medium opacity-80">
+                                  {message.sender.name || message.sender.email || "Support"}
+                                </div>
+                                <div className="whitespace-pre-wrap break-words">{message.content}</div>
+                                <div
+                                  className={`mt-1 text-[10px] ${
+                                    isMine ? "text-white/70" : "text-[var(--color-text-muted)]"
+                                  }`}
+                                >
+                                  {formatChatTime(message.createdAt)}
+                                </div>
+                              </div>
+                            </div>
+                          );
+                        })
+                      )}
+                    </div>
+
+                    <div className="flex flex-col gap-3 sm:flex-row sm:items-end">
+                      <textarea
+                        className="min-h-24 flex-1 resize-none rounded-md border border-[var(--color-border)] bg-white p-3 text-sm text-[var(--color-text)] outline-none focus:border-[var(--color-primary)] dark:bg-slate-900"
+                        placeholder="Type a support reply..."
+                        value={supportMessage}
+                        onChange={(e) => setSupportMessage(e.target.value)}
+                      />
+                      <Button
+                        className="gap-2 sm:h-11"
+                        disabled={!supportMessage.trim() || isSendingSupportMessage}
+                        isLoading={isSendingSupportMessage}
+                        onClick={handleSendSupportMessage}
+                      >
+                        <SendHorizonal className="h-4 w-4" />
+                        Send
+                      </Button>
+                    </div>
+                  </>
+                )}
               </CardContent>
             </Card>
 

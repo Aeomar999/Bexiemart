@@ -1,6 +1,13 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { getAdminDisputes, getAdminDispute, resolveDispute } from "../api/admin";
+import {
+  ensureDisputeSupportTicket,
+  getAdminDispute,
+  getAdminDisputes,
+  getDisputeSupportTicket,
+  resolveDispute,
+  sendSupportTicketMessage,
+} from "../api/admin";
 
 export const useDisputes = (params?: Record<string, any>) => {
   return useQuery({
@@ -31,5 +38,46 @@ export const useResolveDispute = () => {
     onError: (error: any) => {
       toast.error(error?.response?.data?.message || "Failed to resolve dispute");
     }
+  });
+};
+
+export const useDisputeSupportTicket = (id: string) => {
+  return useQuery({
+    queryKey: ["disputes", id, "support-ticket"],
+    queryFn: () => getDisputeSupportTicket(id),
+    enabled: !!id,
+  });
+};
+
+export const useEnsureDisputeSupportTicket = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (id: string) => ensureDisputeSupportTicket(id),
+    onSuccess: (ticket, id) => {
+      queryClient.setQueryData(["disputes", id, "support-ticket"], ticket);
+      queryClient.invalidateQueries({ queryKey: ["admin", "support", "tickets"] });
+      toast.success("Support chat is ready");
+    },
+    onError: (error: any) => {
+      toast.error(error?.response?.data?.message || "Failed to open support chat");
+    },
+  });
+};
+
+export const useSendSupportTicketMessage = (disputeId: string) => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({ ticketId, content }: { ticketId: string; content: string }) =>
+      sendSupportTicketMessage(ticketId, content),
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({ queryKey: ["disputes", disputeId, "support-ticket"] });
+      queryClient.invalidateQueries({ queryKey: ["admin", "support", "tickets", variables.ticketId] });
+      queryClient.invalidateQueries({ queryKey: ["admin", "support", "tickets"] });
+    },
+    onError: (error: any) => {
+      toast.error(error?.response?.data?.message || "Failed to send message");
+    },
   });
 };

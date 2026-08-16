@@ -39,7 +39,7 @@ export default function OrdersPage() {
     <DashboardLayout>
       <div className="flex flex-col space-y-6">
         <div className="flex items-center justify-between">
-          <h1 className="text-2xl font-bold tracking-tight text-[var(--color-text)]">Orders</h1>
+          <h1 className="text-2xl font-bold tracking-tight text-(--color-text)">Orders</h1>
         </div>
 
         <Card>
@@ -49,7 +49,7 @@ export default function OrdersPage() {
           <CardContent>
             <div className="flex items-center space-x-2 pb-4">
               <div className="relative w-64">
-                <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-[var(--color-text-muted)]" />
+                <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-(--color-text-muted)" />
                 <Input
                   placeholder="Search orders (ID, customer)..."
                   className="pl-8"
@@ -68,7 +68,7 @@ export default function OrdersPage() {
               </div>
             ) : orders.length === 0 ? (
               <EmptyState 
-                icon={<ShoppingBag className="h-10 w-10 text-[var(--color-text-muted)]" />}
+                icon={<ShoppingBag className="h-10 w-10 text-(--color-text-muted)" />}
                 title="No orders found"
                 description={debouncedSearch ? "We couldn't find any orders matching your search." : "No orders have been placed yet."}
               />
@@ -86,8 +86,8 @@ export default function OrdersPage() {
                 </TableHeader>
                 <TableBody>
                   {orders.map((order: any) => (
-                    <TableRow key={order.id} className="cursor-pointer hover:bg-[var(--color-bg)]" onClick={() => router.push(`/orders/${order.id}`)}>
-                      <TableCell className="font-medium text-[var(--color-primary)]">{order.id.slice(0, 8)}</TableCell>
+                    <TableRow key={order.id} className="cursor-pointer hover:bg-(--color-bg)" onClick={() => router.push(`/orders/${order.id}`)}>
+                      <TableCell className="font-medium text-(--color-primary)">{order.id.slice(0, 8)}</TableCell>
                       <TableCell>{order.user?.name}</TableCell>
                       <TableCell>{order.vendor?.businessName || "N/A"}</TableCell>
                       <TableCell>{new Date(order.createdAt).toLocaleString()}</TableCell>
@@ -111,12 +111,12 @@ export default function OrdersPage() {
             {/* Pagination Controls */}
             {!isLoading && totalPages > 1 && (
               <div className="flex items-center justify-between mt-4">
-                <span className="text-sm text-[var(--color-text-muted)]">
+                <span className="text-sm text-(--color-text-muted)">
                   Showing {(page - 1) * limit + 1} to {Math.min(page * limit, total)} of {total} orders
                 </span>
                 <div className="flex items-center space-x-2">
                   <button
-                    className="px-3 py-1 border border-[var(--color-border)] rounded-md disabled:opacity-50"
+                    className="px-3 py-1 border border-(--color-border) rounded-md disabled:opacity-50"
                     disabled={page === 1}
                     onClick={() => setPage(p => p - 1)}
                   >
@@ -124,7 +124,7 @@ export default function OrdersPage() {
                   </button>
                   <span className="text-sm">Page {page} of {totalPages}</span>
                   <button
-                    className="px-3 py-1 border border-[var(--color-border)] rounded-md disabled:opacity-50"
+                    className="px-3 py-1 border border-(--color-border) rounded-md disabled:opacity-50"
                     disabled={page === totalPages}
                     onClick={() => setPage(p => p + 1)}
                   >

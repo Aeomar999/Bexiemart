@@ -16,15 +16,124 @@ function makeMocks() {
       create: jest.fn().mockResolvedValue({ id: "ticket-1" }),
       findUnique: jest.fn().mockResolvedValue({ id: "ticket-1", conversationId: "conv-1" }),
     },
+    conversationParticipant: {
+      findUnique: jest.fn().mockResolvedValue(null),
+      create: jest.fn().mockResolvedValue({ id: "participant-1" }),
+    },
     message: { create: jest.fn().mockResolvedValue({ id: "msg-1" }) },
   };
-  const prisma: any = { $transaction: jest.fn((cb: any) => cb(tx)) };
+  const prisma: any = {
+    $transaction: jest.fn((cb: any) => cb(tx)),
+    escrow: { findUnique: jest.fn() },
+    supportTicket: { findFirst: jest.fn(), findMany: jest.fn(), findUnique: jest.fn() },
+    conversationParticipant: {
+      findUnique: jest.fn().mockResolvedValue(null),
+      create: jest.fn().mockResolvedValue({ id: "participant-1" }),
+    },
+  };
   const chatService = new ChatService(prisma);
   const service = new SupportService(prisma, chatService);
   return { service, prisma, tx };
 }
 
 const CUSTOMER = "user-1";
+
+describe("SupportService.getAdminQueue", () => {
+  it("returns support tickets with customer and conversation context for admins", async () => {
+    const { service, prisma } = makeMocks();
+    prisma.supportTicket = {
+      findMany: jest.fn().mockResolvedValue([
+        {
+          id: "ticket-1",
+          subject: "Order delay",
+          status: "OPEN",
+          user: { id: "user-1", name: "Ada" },
+          conversation: { id: "conv-1", messages: [] },
+        },
+      ]),
+    };
+
+    const result = await service.getAdminQueue();
+
+    expect(result).toHaveLength(1);
+    expect(result[0]).toMatchObject({ id: "ticket-1", subject: "Order delay" });
+    expect(prisma.supportTicket.findMany).toHaveBeenCalled();
+  });
+});
+
+describe("SupportService dispute ticket helpers", () => {
+  it("returns an existing dispute ticket and adds the admin as a participant", async () => {
+    const { service, prisma } = makeMocks();
+    const ticket = { id: "ticket-1", conversationId: "conv-1", subject: "Dispute escrow-1" };
+
+    prisma.escrow.findUnique.mockResolvedValue({ id: "escrow-1", orderId: "order-1" });
+    prisma.supportTicket.findFirst.mockResolvedValue(ticket);
+
+    const result = await service.getDisputeTicketForAdmin("escrow-1", "admin-1");
+
+    expect(result).toBe(ticket);
+    expect(prisma.supportTicket.findFirst).toHaveBeenCalledWith(
+      expect.objectContaining({
+        where: { orderId: "order-1", subject: "Dispute escrow-1" },
+      })
+    );
+    expect(prisma.conversationParticipant.create).toHaveBeenCalledWith({
+      data: { conversationId: "conv-1", userId: "admin-1" },
+    });
+  });
+
+  it("creates a dispute ticket with a support conversation when none exists", async () => {
+    const { service, prisma, tx } = makeMocks();
+
+    prisma.escrow.findUnique
+      .mockResolvedValueOnce({ id: "escrow-1", orderId: "order-1" })
+      .mockResolvedValueOnce({
+        id: "escrow-1",
+        orderId: "order-1",
+        reason: "Item never arrived",
+        order: { id: "order-1", orderNumber: "BM-1001", userId: CUSTOMER, user: { id: CUSTOMER } },
+        vendor: { shopName: "Campus Store" },
+      });
+    prisma.supportTicket.findFirst.mockResolvedValue(null);
+    tx.supportTicket.findUnique.mockResolvedValue({
+      id: "ticket-1",
+      conversationId: "conv-1",
+      subject: "Dispute escrow-1",
+    });
+
+    const result = await service.ensureDisputeTicketForAdmin("escrow-1", "admin-1");
+
+    expect(tx.conversation.create).toHaveBeenCalledWith({
+      data: {
+        type: "SUPPORT",
+        orderId: "order-1",
+        participants: { create: [{ userId: CUSTOMER }] },
+      },
+    });
+    expect(tx.supportTicket.create).toHaveBeenCalledWith({
+      data: expect.objectContaining({
+        userId: CUSTOMER,
+        orderId: "order-1",
+        conversationId: "conv-1",
+        category: "PAYMENT_REFUND",
+        priority: "HIGH",
+        status: "IN_PROGRESS",
+        agentId: "admin-1",
+      }),
+    });
+    expect(tx.conversationParticipant.create).toHaveBeenCalledWith({
+      data: { conversationId: "conv-1", userId: "admin-1" },
+    });
+    expect(tx.message.create).toHaveBeenCalledWith({
+      data: expect.objectContaining({
+        conversationId: "conv-1",
+        senderId: SYSTEM_USER_ID,
+        type: "TEXT",
+      }),
+    });
+    expect(result).toMatchObject({ id: "ticket-1", conversationId: "conv-1" });
+  });
+});
 
 describe("SupportService.createTicket", () => {
   it("creates a SUPPORT conversation with a single participant + ticket + seeded receipt", async () => {

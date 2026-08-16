@@ -37,11 +37,11 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
   if (!isAuthenticated) return null;
 
   return (
-    <div className="flex h-screen overflow-hidden bg-[var(--color-bg)]">
+    <div className="flex h-screen overflow-hidden bg-(--color-bg)">
       <Sidebar />
       <div className="flex flex-1 flex-col overflow-hidden">
         <Header />
-        <main className="flex-1 overflow-y-auto bg-[var(--color-bg)] p-6 animate-fade-in">
+        <main className="flex-1 overflow-y-auto bg-(--color-bg) p-4 animate-fade-in sm:p-6">
           {children}
         </main>
       </div>
