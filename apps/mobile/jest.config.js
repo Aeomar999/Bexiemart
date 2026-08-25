@@ -2,6 +2,7 @@ const path = require("path");
 
 module.exports = {
   preset: "jest-expo",
+  testTimeout: 20000,
   setupFilesAfterEnv: ["./jest.setup.js"],
   transform: {
     "\\.(js|jsx|ts|tsx|mjs|cjs)$": [

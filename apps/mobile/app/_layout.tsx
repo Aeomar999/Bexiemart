@@ -13,7 +13,6 @@ import { useFonts } from "expo-font";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { useAuthStore } from "../src/lib/stores/auth-store";
 import { useAuthEnabled } from "../src/lib/feature-flags";
-import { LoadingSpinner } from "../src/components/ui/LoadingSpinner";
 import { GlobalPopup } from "../src/components/ui/GlobalPopup";
 import { ErrorBoundary } from "../src/components/ui/ErrorBoundary";
 import { AnimatedSplashScreen } from "../src/components/screens/AnimatedSplashScreen";
@@ -40,8 +39,9 @@ import {
 
 import { SafeAreaProvider } from "react-native-safe-area-context";
 
+const isMock = process.env.EXPO_PUBLIC_MOCK_API === "true";
 const PAYSTACK_PUBLIC_KEY = process.env.EXPO_PUBLIC_PAYSTACK_PUBLIC_KEY;
-if (!PAYSTACK_PUBLIC_KEY) {
+if (!PAYSTACK_PUBLIC_KEY && !isMock) {
   throw new Error(
     "EXPO_PUBLIC_PAYSTACK_PUBLIC_KEY is not set. Configure it in eas.json / .env before running the app."
   );
@@ -167,43 +167,78 @@ function RootLayout() {
 
   return (
     <SafeAreaProvider>
-      <PostHogProvider client={posthog} autocapture>
+      <PostHogProvider client={posthog ?? undefined} autocapture>
         <ThemeController />
         <OfflineBanner />
         <PaymentTestModeBanner />
         <QueryClientProvider client={queryClient}>
-          <PaystackProvider publicKey={PAYSTACK_PUBLIC_KEY}>
-            <StatusBar style="auto" />
-            <ErrorBoundary>
-              <Stack screenOptions={{ headerShown: false }}>
-                <Stack.Screen name="(auth)" />
-                <Stack.Screen name="(onboarding)" />
-                <Stack.Screen name="(customer)" />
-                <Stack.Screen name="(vendor)" />
-                <Stack.Screen name="(dispatcher)" />
-              </Stack>
-              {(!fontsLoaded || isLoading || !splashDone) && (
-                <View
-                  style={{
-                    position: "absolute",
-                    top: 0,
-                    left: 0,
-                    right: 0,
-                    bottom: 0,
-                    backgroundColor: "white",
-                    justifyContent: "center",
-                    alignItems: "center",
-                    zIndex: 9999,
-                  }}
-                >
-                  {!fontsLoaded || isLoading ? null : (
-                    <AnimatedSplashScreen onAnimationComplete={() => setSplashDone(true)} />
-                  )}
-                </View>
-              )}
-              <GlobalPopup />
-            </ErrorBoundary>
-          </PaystackProvider>
+          {PAYSTACK_PUBLIC_KEY ? (
+            <PaystackProvider publicKey={PAYSTACK_PUBLIC_KEY}>
+              <StatusBar style="auto" />
+              <ErrorBoundary>
+                <Stack screenOptions={{ headerShown: false }}>
+                  <Stack.Screen name="(auth)" />
+                  <Stack.Screen name="(onboarding)" />
+                  <Stack.Screen name="(customer)" />
+                  <Stack.Screen name="(vendor)" />
+                  <Stack.Screen name="(dispatcher)" />
+                </Stack>
+                {(!fontsLoaded || isLoading || !splashDone) && (
+                  <View
+                    style={{
+                      position: "absolute",
+                      top: 0,
+                      left: 0,
+                      right: 0,
+                      bottom: 0,
+                      backgroundColor: "white",
+                      justifyContent: "center",
+                      alignItems: "center",
+                      zIndex: 9999,
+                    }}
+                  >
+                    {!fontsLoaded || isLoading ? null : (
+                      <AnimatedSplashScreen onAnimationComplete={() => setSplashDone(true)} />
+                    )}
+                  </View>
+                )}
+                <GlobalPopup />
+              </ErrorBoundary>
+            </PaystackProvider>
+          ) : (
+            <>
+              <StatusBar style="auto" />
+              <ErrorBoundary>
+                <Stack screenOptions={{ headerShown: false }}>
+                  <Stack.Screen name="(auth)" />
+                  <Stack.Screen name="(onboarding)" />
+                  <Stack.Screen name="(customer)" />
+                  <Stack.Screen name="(vendor)" />
+                  <Stack.Screen name="(dispatcher)" />
+                </Stack>
+                {(!fontsLoaded || isLoading || !splashDone) && (
+                  <View
+                    style={{
+                      position: "absolute",
+                      top: 0,
+                      left: 0,
+                      right: 0,
+                      bottom: 0,
+                      backgroundColor: "white",
+                      justifyContent: "center",
+                      alignItems: "center",
+                      zIndex: 9999,
+                    }}
+                  >
+                    {!fontsLoaded || isLoading ? null : (
+                      <AnimatedSplashScreen onAnimationComplete={() => setSplashDone(true)} />
+                    )}
+                  </View>
+                )}
+                <GlobalPopup />
+              </ErrorBoundary>
+            </>
+          )}
         </QueryClientProvider>
       </PostHogProvider>
     </SafeAreaProvider>

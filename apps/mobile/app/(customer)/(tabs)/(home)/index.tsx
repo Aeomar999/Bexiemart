@@ -1,4 +1,4 @@
-import { tokens } from "@/theme/tokens";
+﻿import { tokens } from "@/theme/tokens";
 import { View, Text, ScrollView, Pressable, RefreshControl, TextInput } from "react-native";
 import { FlashList } from "@shopify/flash-list";
 import { useState, useCallback, useEffect } from "react";
@@ -214,7 +214,7 @@ export default function HomeScreen() {
       {/* ===== HEADER ===== */}
       <View className="px-5 bg-card pb-3" style={{ paddingTop: (insets.top || 12) + 12 }}>
         <View className="flex-row justify-between items-center mb-5">
-          {/* NOTE: renders a hamburger but navigates to the profile tab — icon
+          {/* NOTE: renders a hamburger but navigates to the profile tab â€” icon
               and destination should be reconciled (product call). Label reflects
               what actually happens so screen readers aren't misled. */}
           <Pressable
@@ -284,7 +284,6 @@ export default function HomeScreen() {
           horizontal
           showsHorizontalScrollIndicator={false}
           className="mt-6"
-          estimatedItemSize={120}
           contentContainerStyle={{ paddingHorizontal: 20, gap: 12 }}
           keyExtractor={(item) => item.id}
           renderItem={({ item }) => (
@@ -426,7 +425,6 @@ export default function HomeScreen() {
             decelerationRate="fast"
             snapToInterval={88} // 72px width + 16px gap
             snapToAlignment="start"
-            estimatedItemSize={72}
             contentContainerStyle={{ paddingHorizontal: 20, gap: 16 }}
             keyExtractor={(item) => item.id}
             renderItem={({ item }) => (
@@ -478,7 +476,6 @@ export default function HomeScreen() {
               decelerationRate="fast"
               snapToInterval={156} // 140px width + 16px gap
               snapToAlignment="start"
-              estimatedItemSize={140}
               contentContainerStyle={{ paddingHorizontal: 20, gap: 16 }}
               keyExtractor={(item) => item.id}
               renderItem={({ item }) => (
@@ -592,7 +589,6 @@ export default function HomeScreen() {
             decelerationRate="fast"
             snapToInterval={122} // 110px width + 12px gap
             snapToAlignment="start"
-            estimatedItemSize={110}
             contentContainerStyle={{ paddingHorizontal: 20, gap: 12 }}
             keyExtractor={(item) => item.id}
             renderItem={({ item }) => (

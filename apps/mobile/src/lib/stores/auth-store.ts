@@ -4,6 +4,7 @@ import { Platform } from "react-native";
 import { authClient } from "../api/better-auth";
 
 const isWeb = Platform.OS === "web";
+const isMock = process.env.EXPO_PUBLIC_MOCK_API === "true";
 
 // In-memory fallback for web to prevent XSS exfiltration from localStorage
 const webStorage = new Map<string, string>();
@@ -124,6 +125,27 @@ export const useAuthStore = create<AuthState>((set) => ({
 
   hydrate: async () => {
     try {
+      // In mock mode, skip real auth — set a fake user so the app boots straight
+      // into the customer home screen without touching SecureStore or the network.
+      if (isMock) {
+        const mockUser = {
+          id: "mock-user-001",
+          name: "Test User",
+          email: "test@bexiemart.com",
+          role: "CUSTOMER",
+          image: null,
+        };
+        set({
+          token: "mock-token",
+          user: mockUser,
+          isAuthenticated: true,
+          isLoading: false,
+          hasSeenOnboarding: true,
+          hasLaunchedBefore: true,
+        });
+        return;
+      }
+
       const [token, onboardingStatus, launchedStatus, cachedUserStr] = await Promise.all([
         storage.getItem("bexiemart_token"),
         storage.getItem("bexiemart_onboarding"),
@@ -158,7 +180,7 @@ export const useAuthStore = create<AuthState>((set) => ({
       // Background verification
       authClient
         .getSession()
-        .then(async ({ data, error }) => {
+        .then(async ({ data, error }: { data: any; error: any }) => {
           if (data && data.user) {
             const tokenVal = data.session?.token || data.session?.id || token;
             const normalizedUser = { ...data.user, role: (data.user as any).role?.toUpperCase() };

@@ -41,6 +41,9 @@ export default function VerifyEmailScreen() {
   const [resendError, setResendError] = useState("");
   const [code, setCode] = useState("");
 
+  const otpStatus = status === "error" ? "error" : status === "verifying" ? "verifying" : "idle";
+  const otpDisabled = status === "verifying";
+
   useEffect(() => {
     if (token) {
       verifyEmail.mutate(token, {
@@ -184,8 +187,8 @@ export default function VerifyEmailScreen() {
             <SegmentedOtpInput
               code={code}
               onChangeCode={setCode}
-              status={status === "error" ? "error" : status === "verifying" ? "verifying" : "idle"}
-              disabled={status === "verifying"}
+              status={otpStatus}
+              disabled={otpDisabled}
             />
             <Text className="text-body-sm text-muted-foreground font-body text-center mb-6">
               Enter the code from your email, or click the verification link.

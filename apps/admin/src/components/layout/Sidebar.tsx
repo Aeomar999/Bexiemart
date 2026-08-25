@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { 
@@ -126,35 +126,29 @@ export function Sidebar() {
   const { data: me } = useUser();
   const isSuperAdmin = !!me?.isSuperAdmin;
 
-  const [expandedItems, setExpandedItems] = useState<Record<string, boolean>>({});
+  const [manualExpanded, setManualExpanded] = useState<Record<string, boolean>>({});
 
-  useEffect(() => {
-    const newExpanded = { ...expandedItems };
-    let changed = false;
-
-    navigationConfig.forEach(group => {
-      group.items.forEach(item => {
-        if (item.subItems) {
-          const isChildActive = item.subItems.some(sub => pathname === sub.href || pathname.startsWith(`${sub.href}/`));
-          if (isChildActive && !newExpanded[item.name]) {
-            newExpanded[item.name] = true;
-            changed = true;
-          }
+  // Groups with an active child stay open; manual toggles take precedence.
+  const autoExpanded: Record<string, boolean> = {};
+  navigationConfig.forEach(group => {
+    group.items.forEach(item => {
+      if (item.subItems) {
+        const isChildActive = item.subItems.some(sub => pathname === sub.href || pathname.startsWith(`${sub.href}/`));
+        if (isChildActive) {
+          autoExpanded[item.name] = true;
         }
-      });
+      }
     });
+  });
 
-    if (changed) {
-      setExpandedItems(newExpanded);
-    }
-  }, [pathname]);
+  const expandedItems = { ...autoExpanded, ...manualExpanded };
 
   const toggleExpand = (name: string) => {
     if (!isSidebarOpen) {
       toggleSidebar();
-      setExpandedItems(prev => ({ ...prev, [name]: true }));
+      setManualExpanded(prev => ({ ...prev, [name]: true }));
     } else {
-      setExpandedItems(prev => ({ ...prev, [name]: !prev[name] }));
+      setManualExpanded(prev => ({ ...prev, [name]: !prev[name] }));
     }
   };
 

@@ -8,6 +8,7 @@ import { useAuthStore } from "../stores/auth-store";
 import { logger } from "../logger";
 
 const isWeb = Platform.OS === "web";
+const isMock = process.env.EXPO_PUBLIC_MOCK_API === "true";
 
 const storage = {
   getItem: async (key: string): Promise<string | null> => {
@@ -27,6 +28,13 @@ const apiClient = axios.create({
   timeout: 15000,
   headers: { "Content-Type": "application/json" },
 });
+
+// In mock mode, swap the real HTTP adapter for the local stub so no network
+// requests are made.  All API calls resolve instantly with realistic data.
+if (isMock) {
+  const { mockAdapter } = require("./mock-adapter");
+  apiClient.defaults.adapter = mockAdapter;
+}
 
 apiClient.interceptors.request.use(async (config) => {
   const token = await storage.getItem("bexiemart_token");

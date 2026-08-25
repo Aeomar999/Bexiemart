@@ -52,7 +52,7 @@ export function AddToCollectionModal({ visible, productId, onClose }: Props) {
 
           {collections.length === 0 ? (
             <Text className="text-muted-foreground text-center py-6 font-body">
-              You haven't created any collections yet. Create one first!
+              You haven&apos;t created any collections yet. Create one first!
             </Text>
           ) : (
             <FlatList

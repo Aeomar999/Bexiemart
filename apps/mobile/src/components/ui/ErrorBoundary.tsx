@@ -66,8 +66,8 @@ export class ErrorBoundary extends React.Component<ErrorBoundaryProps, State> {
             </Text>
 
             <Text className="text-muted-foreground text-center mb-10 text-base leading-relaxed">
-              We're sorry, but something unexpected happened. You can try restarting the app to get
-              back on track.
+              We&apos;re sorry, but something unexpected happened. You can try restarting the app to
+              get back on track.
             </Text>
 
             <Pressable

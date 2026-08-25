@@ -42,6 +42,17 @@
         "EXPO_PUBLIC_CLOUDINARY_CLOUD_NAME": "duirkgqop"
       }
     },
+    "mock": {
+      "distribution": "internal",
+      "channel": "mock",
+      "android": {
+        "buildType": "apk"
+      },
+      "env": {
+        "EXPO_PUBLIC_MOCK_API": "true",
+        "EXPO_PUBLIC_API_URL": "http://localhost:0/api/v1"
+      }
+    },
     "production": {
       "autoIncrement": true,
       "channel": "production",
@@ -64,8 +75,7 @@
       "ios": {
         "appleId": "developer@bexiemart.com",
         "ascAppId": "1234567890",
-        "appleTeamId": "TEAMID1234",
-        "_TODO": "ascAppId and appleTeamId are PLACEHOLDERS — replace with real App Store Connect values before `eas submit` (see Task 36 launch checklist)"
+        "appleTeamId": "TEAMID1234"
       },
       "android": {
         "serviceAccountKeyPath": "./google-api-key.json",

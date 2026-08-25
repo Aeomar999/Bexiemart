@@ -19,8 +19,13 @@ export function useUpdateProfile() {
   const qc = useQueryClient();
 
   return useMutation({
-    mutationFn: (data: { name?: string; image?: string; onboardingCompleted?: boolean }) =>
-      usersApi.updateProfile(data),
+    mutationFn: (data: {
+      name?: string;
+      image?: string;
+      bio?: string;
+      location?: string;
+      onboardingCompleted?: boolean;
+    }) => usersApi.updateProfile(data),
     onSuccess: () => qc.invalidateQueries({ queryKey: USER_KEYS.me }),
   });
 }

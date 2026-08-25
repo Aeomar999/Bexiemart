@@ -91,9 +91,9 @@ export default function TwoFactorScreen() {
           message: "Two-factor authentication has been turned off.",
         });
       } else if (pendingAction === "regenerate") {
-        const codes = await regenerateMutation.mutateAsync(password);
-        setBackupCodes(codes || []);
-        setBackupCodeCount(codes?.length || 10);
+        const res = await regenerateMutation.mutateAsync(password);
+        setBackupCodes(res.backupCodes || []);
+        setBackupCodeCount(res.backupCodes?.length || 10);
         setPassword("");
         setActiveModal("backupCodes");
       }

@@ -63,7 +63,7 @@ export default function ForgotPasswordScreen() {
             Forgot password?
           </Text>
           <Text className="text-body-lg text-muted-foreground font-body mb-8">
-            Enter your email and we'll send you a reset link
+            Enter your email and we&apos;ll send you a reset link
           </Text>
 
           <View className="bg-card p-6 rounded-3xl border border-border gap-5">

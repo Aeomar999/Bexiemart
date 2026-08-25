@@ -1,4 +1,4 @@
-import { BackButton } from "@/components/ui/BackButton";
+﻿import { BackButton } from "@/components/ui/BackButton";
 import {
   View,
   Text,
@@ -18,6 +18,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Icon } from "@/components/ui/Icon";
 import { useState, useRef, useCallback, useEffect } from "react";
 import { usePopupStore } from "@/lib/stores/popup-store";
+import { logger } from "@/lib/logger";
 import {
   useReels,
   useToggleReelLike,
@@ -236,7 +237,7 @@ export default function ReelsScreen() {
         message: `Check out this reel from ${reel.user?.name || "vendor"} on Bexiemart!`,
       });
     } catch (error) {
-      logger.error(error);
+      logger.error("Failed to share reel", error);
     }
   };
 
@@ -289,7 +290,6 @@ export default function ReelsScreen() {
         showsVerticalScrollIndicator={false}
         snapToAlignment="start"
         decelerationRate="fast"
-        estimatedItemSize={height}
         onViewableItemsChanged={onViewableItemsChanged}
         viewabilityConfig={viewabilityConfig}
         onEndReached={() => {
@@ -361,7 +361,6 @@ export default function ReelsScreen() {
               data={comments}
               keyExtractor={(item: any) => item.id}
               className="flex-1 px-5 pt-4"
-              estimatedItemSize={60}
               ListEmptyComponent={
                 commentsLoading ? (
                   <View className="items-center justify-center py-10">

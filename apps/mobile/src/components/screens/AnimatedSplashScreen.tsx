@@ -140,7 +140,7 @@ export function AnimatedSplashScreen({ onAnimationComplete }: AnimatedSplashScre
     transform: [{ scale: logoScale.value }, { rotate: `${logoRotateZ.value}deg` }],
   }));
 
-  const ringStyle = (scale: SharedValue<number>, opacity: SharedValue<number>, size: number) =>
+  const useRingStyle = (scale: SharedValue<number>, opacity: SharedValue<number>, size: number) =>
     useAnimatedStyle(() => ({
       opacity: opacity.value,
       transform: [{ scale: scale.value }],
@@ -149,9 +149,9 @@ export function AnimatedSplashScreen({ onAnimationComplete }: AnimatedSplashScre
       borderRadius: size / 2,
     }));
 
-  const ring1Style = ringStyle(ring1Scale, ring1Opacity, 180);
-  const ring2Style = ringStyle(ring2Scale, ring2Opacity, 260);
-  const ring3Style = ringStyle(ring3Scale, ring3Opacity, 340);
+  const ring1Style = useRingStyle(ring1Scale, ring1Opacity, 180);
+  const ring2Style = useRingStyle(ring2Scale, ring2Opacity, 260);
+  const ring3Style = useRingStyle(ring3Scale, ring3Opacity, 340);
 
   const brandStyle = useAnimatedStyle(() => ({
     opacity: brandOpacity.value,

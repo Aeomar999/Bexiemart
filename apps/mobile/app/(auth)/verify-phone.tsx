@@ -1,4 +1,4 @@
-import { tokens } from "@/theme/tokens";
+﻿import { tokens } from "@/theme/tokens";
 import {
   View,
   Text,
@@ -86,7 +86,6 @@ export default function VerifyPhoneScreen() {
     setErrorMessage("");
     try {
       const normalizedPhone = getNormalizedPhone();
-      // @ts-expect-error - Better Auth plugin types might not infer correctly
       const res = await authClient.phoneNumber.sendOtp({ phoneNumber: normalizedPhone });
       if (res.error) {
         setErrorMessage(res.error.message || "Failed to send verification code.");
@@ -106,7 +105,6 @@ export default function VerifyPhoneScreen() {
     setErrorMessage("");
     try {
       const normalizedPhone = getNormalizedPhone();
-      // @ts-expect-error - Better Auth plugin types might not infer correctly
       const res = await authClient.phoneNumber.verify({
         phoneNumber: normalizedPhone,
         code,

@@ -1,5 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { authApi } from "../api/auth";
+import { authApi, type LoginParams, type RegisterParams } from "../api/auth";
 import { useAuthStore } from "../stores/auth-store";
 
 export const AUTH_KEYS = {
@@ -10,7 +10,7 @@ export function useLogin() {
   const setAuth = useAuthStore((s) => s.setAuth);
 
   return useMutation({
-    mutationFn: (data) => authApi.login(data),
+    mutationFn: (data: LoginParams) => authApi.login(data),
     onSuccess: (response) => {
       setAuth(response.data.user as any, response.data.token);
     },
@@ -19,7 +19,7 @@ export function useLogin() {
 
 export function useRegister() {
   return useMutation({
-    mutationFn: (data) => authApi.register(data),
+    mutationFn: (data: RegisterParams) => authApi.register(data),
   });
 }
 

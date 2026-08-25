@@ -117,7 +117,7 @@ export default function BecomeDispatcherScreen() {
         />
 
         <Text className="text-body-lg font-bold font-body text-foreground mb-2">
-          Driver's License ID
+          Driver&apos;s License ID
         </Text>
         <TextInput
           value={form.licenseNumber}

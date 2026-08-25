@@ -236,16 +236,16 @@ export default function SupportTicketsScreen() {
             <View className="flex-row gap-3">
               <Button
                 variant="outline"
-                label="Cancel"
+                title="Cancel"
                 onPress={() => setRatingModalVisible(false)}
                 className="flex-1"
               />
               <Button
                 variant="primary"
-                label="Submit"
+                title="Submit"
                 onPress={handleSubmitRating}
                 className="flex-1"
-                isLoading={rateMutation.isPending}
+                loading={rateMutation.isPending}
               />
             </View>
           </View>

@@ -37,7 +37,7 @@ import { PRODUCT_KEYS } from "./use-products";
 export function useCreateProduct() {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: (data) => vendorApi.createProduct(data),
+    mutationFn: (data: Record<string, unknown>) => vendorApi.createProduct(data),
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: VENDOR_KEYS.products });
       qc.invalidateQueries({ queryKey: PRODUCT_KEYS.all });
@@ -48,7 +48,8 @@ export function useCreateProduct() {
 export function useUpdateProduct() {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: ({ id, ...data }: any) => vendorApi.updateProduct(id, data),
+    mutationFn: ({ id, ...data }: { id: string } & Record<string, unknown>) =>
+      vendorApi.updateProduct(id, data),
     onSuccess: () => qc.invalidateQueries({ queryKey: VENDOR_KEYS.products }),
   });
 }
@@ -56,7 +57,7 @@ export function useUpdateProduct() {
 export function useDeleteProduct() {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: (data) => vendorApi.deleteProduct(data),
+    mutationFn: (id: string) => vendorApi.deleteProduct(id),
     onSuccess: () => qc.invalidateQueries({ queryKey: VENDOR_KEYS.products }),
   });
 }
@@ -94,7 +95,7 @@ export function useVendorEarnings() {
 export function useUpdateShop() {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: (data) => vendorApi.updateShop(data),
+    mutationFn: (data: Record<string, unknown>) => vendorApi.updateShop(data),
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: VENDOR_KEYS.stats });
       qc.invalidateQueries({ queryKey: VENDOR_KEYS.profile });

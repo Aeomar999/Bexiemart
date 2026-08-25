@@ -130,8 +130,8 @@ export default function SecurityScreen() {
             <Icon name="chevron-right" size={20} color="#cbd5e1" />
           </View>
           <Text className="text-sm text-muted-foreground leading-relaxed">
-            We'll ask for a code from your authenticator app when you log in from an unrecognized
-            device or withdraw funds.
+            We&apos;ll ask for a code from your authenticator app when you log in from an
+            unrecognized device or withdraw funds.
           </Text>
         </Pressable>
 

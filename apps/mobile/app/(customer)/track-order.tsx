@@ -288,8 +288,9 @@ export default function TrackOrderScreen() {
                 className={`w-10 h-10 rounded-full items-center justify-center border ${job.dispatcher.user?.phoneNumber ? "bg-emerald-50 border-emerald-100" : "bg-muted border-border opacity-50"}`}
                 disabled={!job.dispatcher.user?.phoneNumber}
                 onPress={() => {
-                  if (job.dispatcher.user?.phoneNumber) {
-                    Linking.openURL(`tel:${job.dispatcher.user.phoneNumber}`).catch(() => {
+                  const phone = job.dispatcher?.user?.phoneNumber;
+                  if (phone) {
+                    Linking.openURL(`tel:${phone}`).catch(() => {
                       Toast.show({ type: "error", text1: "Unable to open phone app" });
                     });
                   }

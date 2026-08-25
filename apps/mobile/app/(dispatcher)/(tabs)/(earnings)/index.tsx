@@ -100,7 +100,7 @@ export default function EarningsDashboardScreen() {
                     <Icon name="trending-up" size={16} color="#3b82f6" />
                   </View>
                   <Text className="text-body-sm text-muted-foreground font-body mb-1">
-                    Today's Revenue
+                    Today&apos;s Revenue
                   </Text>
                   <Text className="text-body-lg font-bold font-heading text-foreground">
                     GH₵ {earnings?.todayRevenue?.toFixed(2) ?? "0.00"}

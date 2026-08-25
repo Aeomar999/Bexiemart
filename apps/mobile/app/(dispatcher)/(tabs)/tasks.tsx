@@ -174,7 +174,7 @@ export default function DispatcherTasks() {
             No Active Tasks
           </Text>
           <Text className="text-muted-foreground font-body text-center">
-            You don't have any ongoing deliveries right now.
+            You don&apos;t have any ongoing deliveries right now.
           </Text>
         </View>
       );

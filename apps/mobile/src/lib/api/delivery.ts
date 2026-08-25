@@ -51,7 +51,7 @@ export interface DeliveryJob {
     plateNumber: string;
     lastLatitude: number | null;
     lastLongitude: number | null;
-    user: { id: string; name: string; image: string | null };
+    user: { id: string; name: string; image: string | null; phoneNumber?: string | null };
   } | null;
 }
 

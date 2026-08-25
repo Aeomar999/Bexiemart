@@ -138,8 +138,8 @@ export default function TaxesDocumentsScreen() {
                   Verification Required
                 </Text>
                 <Text className="text-sm text-amber-700 leading-relaxed">
-                  Please complete your KYC to increase your withdrawal limits and get the "Verified
-                  Vendor" badge.
+                  Please complete your KYC to increase your withdrawal limits and get the
+                  &quot;Verified Vendor&quot; badge.
                 </Text>
               </View>
             </View>

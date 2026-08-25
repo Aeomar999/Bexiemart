@@ -30,7 +30,7 @@ export default function LoginScreen() {
   const [countdown, setCountdown] = useState(0);
 
   useEffect(() => {
-    let interval: NodeJS.Timeout;
+    let interval: ReturnType<typeof setInterval>;
     if (countdown > 0) {
       interval = setInterval(() => {
         setCountdown((c) => c - 1);
@@ -150,9 +150,10 @@ export default function LoginScreen() {
                       style={{ marginTop: 2 }}
                     />
                     <Text className="flex-1 text-body-sm text-primary-hover leading-tight">
-                      <Text className="font-bold">Testing locally?</Text> Phone browsers can't open
-                      "localhost" links. Copy the link to your PC browser, or update your .env to
-                      use your local IP address (e.g., 192.168.x.x) instead of localhost.
+                      <Text className="font-bold">Testing locally?</Text> Phone browsers can&apos;t
+                      open &quot;localhost&quot; links. Copy the link to your PC browser, or update
+                      your .env to use your local IP address (e.g., 192.168.x.x) instead of
+                      localhost.
                     </Text>
                   </View>
                 </View>
@@ -210,7 +211,7 @@ export default function LoginScreen() {
 
         <View className="flex-row justify-center mt-10 gap-2">
           <Text className="text-body-md text-muted-foreground font-body">
-            Don't have an account?
+            Don&apos;t have an account?
           </Text>
           <TouchableOpacity onPress={() => router.push("/(auth)/register")}>
             <Text className="text-body-md text-primary font-bold font-body">Create one</Text>

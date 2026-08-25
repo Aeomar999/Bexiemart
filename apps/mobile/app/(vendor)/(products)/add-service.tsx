@@ -10,7 +10,7 @@ import { useState } from "react";
 
 export default function AddServiceScreen() {
   const router = useRouter();
-  const { mode, id } = useLocalSearchParams();
+  const { mode, id } = useLocalSearchParams<{ mode?: string; id?: string }>();
   const isEdit = mode === "edit";
 
   const createMutation = useCreateService();
@@ -50,7 +50,7 @@ export default function AddServiceScreen() {
     };
     if (isEdit) {
       updateMutation.mutate(
-        { ...formData, id },
+        { ...formData, id: id! },
         {
           onSuccess: () => {
             Alert.alert("Updated", "Service updated successfully!");

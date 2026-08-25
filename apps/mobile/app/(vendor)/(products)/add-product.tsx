@@ -15,7 +15,7 @@ import { productSchema } from "@/lib/validation/schemas";
 
 export default function AddProductScreen() {
   const router = useRouter();
-  const { mode, id } = useLocalSearchParams();
+  const { mode, id } = useLocalSearchParams<{ mode?: string; id?: string }>();
   const isEdit = mode === "edit";
 
   const createMutation = useCreateProduct();
@@ -81,7 +81,7 @@ export default function AddProductScreen() {
 
       if (isEdit) {
         updateMutation.mutate(
-          { ...formData, id },
+          { ...formData, id: id! },
           {
             onSuccess: () => {
               Alert.alert("Updated", "Product updated successfully!");

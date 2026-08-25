@@ -216,7 +216,7 @@ export default function FoodCartScreen() {
             Your cart is empty
           </Text>
           <Text className="text-body-md font-body text-muted-foreground text-center mb-6">
-            Looks like you haven't added any food yet.
+            Looks like you haven&apos;t added any food yet.
           </Text>
           <Pressable
             style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}

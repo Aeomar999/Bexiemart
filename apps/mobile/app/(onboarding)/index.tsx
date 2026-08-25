@@ -8,6 +8,7 @@ import Animated, {
   useAnimatedStyle,
   interpolate,
   Extrapolation,
+  type SharedValue,
 } from "react-native-reanimated";
 import { Image } from "expo-image";
 import { useAuthStore } from "../../src/lib/stores/auth-store";
@@ -43,6 +44,137 @@ const SLIDES = [
     image: require("../../assets/images/onboarding/payment.png"),
   },
 ];
+
+type Slide = (typeof SLIDES)[number];
+
+const getInterpolationArrays = (i: number) => {
+  if (i === 0) {
+    return {
+      translateX: [0, -60, 60],
+      rotate: [0, -12, 12],
+      scale: [1, 0.9, 0.9],
+      opacity: [1, 0.4, 0.4],
+      zIndex: [3, 1, 2],
+    };
+  } else if (i === 1) {
+    return {
+      translateX: [60, 0, -60],
+      rotate: [12, 0, -12],
+      scale: [0.9, 1, 0.9],
+      opacity: [0.4, 1, 0.4],
+      zIndex: [2, 3, 1],
+    };
+  } else {
+    return {
+      translateX: [-60, 60, 0],
+      rotate: [-12, 12, 0],
+      scale: [0.9, 0.9, 1],
+      opacity: [0.4, 0.4, 1],
+      zIndex: [1, 2, 3],
+    };
+  }
+};
+
+function SlideCard({
+  slide,
+  index,
+  scrollX,
+}: {
+  slide: Slide;
+  index: number;
+  scrollX: SharedValue<number>;
+}) {
+  const arrays = getInterpolationArrays(index);
+
+  const cardStyle = useAnimatedStyle(() => {
+    const tx = interpolate(
+      scrollX.value,
+      [0, width, width * 2],
+      arrays.translateX,
+      Extrapolation.CLAMP
+    );
+    const rot = interpolate(
+      scrollX.value,
+      [0, width, width * 2],
+      arrays.rotate,
+      Extrapolation.CLAMP
+    );
+    const sc = interpolate(scrollX.value, [0, width, width * 2], arrays.scale, Extrapolation.CLAMP);
+    const op = interpolate(
+      scrollX.value,
+      [0, width, width * 2],
+      arrays.opacity,
+      Extrapolation.CLAMP
+    );
+    const zi = Math.round(
+      interpolate(scrollX.value, [0, width, width * 2], arrays.zIndex, Extrapolation.CLAMP)
+    );
+
+    return {
+      transform: [{ translateX: tx }, { rotate: `${rot}deg` }, { scale: sc }],
+      opacity: op,
+      zIndex: zi,
+    };
+  });
+
+  return (
+    <Animated.View
+      className="absolute w-[280px] h-[340px] rounded-3xl overflow-hidden shadow-2xl shadow-none bg-primary-subtle"
+      style={cardStyle}
+    >
+      <Image source={slide.image} style={{ width: "100%", height: "100%" }} contentFit="cover" />
+    </Animated.View>
+  );
+}
+
+function SlideText({
+  slide,
+  index,
+  scrollX,
+}: {
+  slide: Slide;
+  index: number;
+  scrollX: SharedValue<number>;
+}) {
+  const textStyle = useAnimatedStyle(() => {
+    const opacity = interpolate(
+      scrollX.value,
+      [(index - 1) * width, index * width, (index + 1) * width],
+      [0, 1, 0],
+      Extrapolation.CLAMP
+    );
+
+    const translateY = interpolate(
+      scrollX.value,
+      [(index - 1) * width, index * width, (index + 1) * width],
+      [20, 0, -20],
+      Extrapolation.CLAMP
+    );
+
+    return {
+      opacity,
+      transform: [{ translateY }],
+      position: "absolute" as const,
+      left: 0,
+      right: 0,
+      alignItems: "center" as const,
+    };
+  });
+
+  return (
+    <Animated.View style={textStyle}>
+      <Text className="text-[38px] font-heading text-center leading-[46px] text-muted-foreground mb-4">
+        {slide.titleStart} <Text className="font-bold text-foreground">{slide.titleBold}</Text>
+        {"\n"}
+        {slide.titleEnd}
+      </Text>
+
+      <Text className="text-heading-md text-muted-foreground font-body text-center leading-[28px] px-4">
+        {slide.description}
+      </Text>
+    </Animated.View>
+  );
+}
 
 export default function OnboardingScreen() {
   const router = useRouter();
@@ -126,92 +258,9 @@ export default function OnboardingScreen() {
       <View className="flex-1 items-center pt-32 pb-[120px] px-6" pointerEvents="none">
         {/* Overlapping Cards Container */}
         <View className="relative w-[280px] h-[340px] items-center justify-center mb-8">
-          {SLIDES.map((slide, index) => {
-            const getInterpolationArrays = (i: number) => {
-              if (i === 0) {
-                return {
-                  translateX: [0, -60, 60],
-                  rotate: [0, -12, 12],
-                  scale: [1, 0.9, 0.9],
-                  opacity: [1, 0.4, 0.4],
-                  zIndex: [3, 1, 2],
-                };
-              } else if (i === 1) {
-                return {
-                  translateX: [60, 0, -60],
-                  rotate: [12, 0, -12],
-                  scale: [0.9, 1, 0.9],
-                  opacity: [0.4, 1, 0.4],
-                  zIndex: [2, 3, 1],
-                };
-              } else {
-                return {
-                  translateX: [-60, 60, 0],
-                  rotate: [-12, 12, 0],
-                  scale: [0.9, 0.9, 1],
-                  opacity: [0.4, 0.4, 1],
-                  zIndex: [1, 2, 3],
-                };
-              }
-            };
-
-            const arrays = getInterpolationArrays(index);
-
-            const cardStyle = useAnimatedStyle(() => {
-              const tx = interpolate(
-                scrollX.value,
-                [0, width, width * 2],
-                arrays.translateX,
-                Extrapolation.CLAMP
-              );
-              const rot = interpolate(
-                scrollX.value,
-                [0, width, width * 2],
-                arrays.rotate,
-                Extrapolation.CLAMP
-              );
-              const sc = interpolate(
-                scrollX.value,
-                [0, width, width * 2],
-                arrays.scale,
-                Extrapolation.CLAMP
-              );
-              const op = interpolate(
-                scrollX.value,
-                [0, width, width * 2],
-                arrays.opacity,
-                Extrapolation.CLAMP
-              );
-              const zi = Math.round(
-                interpolate(
-                  scrollX.value,
-                  [0, width, width * 2],
-                  arrays.zIndex,
-                  Extrapolation.CLAMP
-                )
-              );
-
-              return {
-                transform: [{ translateX: tx }, { rotate: `${rot}deg` }, { scale: sc }],
-                opacity: op,
-                zIndex: zi,
-              };
-            });
-
-            return (
-              <Animated.View
-                key={slide.id}
-                className="absolute w-[280px] h-[340px] rounded-3xl overflow-hidden shadow-2xl shadow-none bg-primary-subtle"
-                style={cardStyle}
-              >
-                <Image
-                  source={slide.image}
-                  style={{ width: "100%", height: "100%" }}
-                  contentFit="cover"
-                />
-              </Animated.View>
-            );
-          })}
+          {SLIDES.map((slide, index) => (
+            <SlideCard key={slide.id} slide={slide} index={index} scrollX={scrollX} />
+          ))}
         </View>
 
         {/* Reimagined Pagination: Liquid Worm */}
@@ -251,47 +300,9 @@ export default function OnboardingScreen() {
 
         {/* Typography Container */}
         <View className="flex-1 w-full items-center justify-center">
-          {SLIDES.map((slide, index) => {
-            const textStyle = useAnimatedStyle(() => {
-              const opacity = interpolate(
-                scrollX.value,
-                [(index - 1) * width, index * width, (index + 1) * width],
-                [0, 1, 0],
-                Extrapolation.CLAMP
-              );
-
-              const translateY = interpolate(
-                scrollX.value,
-                [(index - 1) * width, index * width, (index + 1) * width],
-                [20, 0, -20],
-                Extrapolation.CLAMP
-              );
-
-              return {
-                opacity,
-                transform: [{ translateY }],
-                position: "absolute",
-                left: 0,
-                right: 0,
-                alignItems: "center",
-              };
-            });
-
-            return (
-              <Animated.View key={`text-${slide.id}`} style={textStyle}>
-                <Text className="text-[38px] font-heading text-center leading-[46px] text-muted-foreground mb-4">
-                  {slide.titleStart}{" "}
-                  <Text className="font-bold text-foreground">{slide.titleBold}</Text>
-                  {"\n"}
-                  {slide.titleEnd}
-                </Text>
-
-                <Text className="text-heading-md text-muted-foreground font-body text-center leading-[28px] px-4">
-                  {slide.description}
-                </Text>
-              </Animated.View>
-            );
-          })}
+          {SLIDES.map((slide, index) => (
+            <SlideText key={`text-${slide.id}`} slide={slide} index={index} scrollX={scrollX} />
+          ))}
         </View>
       </View>
 

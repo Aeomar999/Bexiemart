@@ -18,7 +18,7 @@ jobs:
           node-version: 20
           cache: 'npm'
           cache-dependency-path: packages/shared/package-lock.json
-      - run: npm ci --if-present || npm install
+      - run: npm ci
       - run: npx tsc --noEmit
 
   server:

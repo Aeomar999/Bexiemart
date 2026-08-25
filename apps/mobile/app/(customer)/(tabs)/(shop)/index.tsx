@@ -1,4 +1,4 @@
-import { tokens } from "@/theme/tokens";
+﻿import { tokens } from "@/theme/tokens";
 import { View, Text, ActivityIndicator, TextInput, Modal, Pressable } from "react-native";
 import { FlashList } from "@shopify/flash-list";
 import { Image } from "expo-image";
@@ -179,14 +179,13 @@ export default function ShopScreen() {
             <Icon name="sliders-horizontal" size={18} color="#475569" />
           </Pressable>
         </View>
-        <FlashList
+        <FlashList<{ id: string; name: string }>
           data={categories}
           horizontal
           showsHorizontalScrollIndicator={false}
           decelerationRate="fast"
           keyExtractor={(item) => item.id}
           className="mt-4"
-          estimatedItemSize={100}
           contentContainerStyle={{ gap: 10, paddingRight: 20 }}
           renderItem={({ item }) => (
             <Pressable
@@ -229,7 +228,6 @@ export default function ShopScreen() {
           { paddingHorizontal: 20, paddingBottom: 20, gap: 14 },
           filteredProducts.length === 0 && { flexGrow: 1 },
         ]}
-        estimatedItemSize={300}
         keyExtractor={(item) => item.id}
         showsVerticalScrollIndicator={false}
         onEndReached={() => {

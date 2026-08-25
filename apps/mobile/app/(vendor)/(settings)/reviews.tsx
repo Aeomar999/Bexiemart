@@ -132,7 +132,7 @@ export default function VendorReviewsScreen() {
                   </View>
                 </View>
                 <Text className="text-body-md text-muted-foreground leading-relaxed mb-4">
-                  "{review.comment}"
+                  &quot;{review.comment}&quot;
                 </Text>
 
                 {review.reply ? (

@@ -345,7 +345,7 @@ export default function CreateTicketScreen() {
         {step > 1 && (
           <Button
             variant="outline"
-            label="Back"
+            title="Back"
             onPress={handlePrevStep}
             className="flex-1"
             disabled={createTicketMutation.isPending}
@@ -353,7 +353,7 @@ export default function CreateTicketScreen() {
         )}
         <Button
           variant="primary"
-          label={
+          title={
             step === 3
               ? createTicketMutation.isPending
                 ? "Submitting..."
@@ -362,7 +362,7 @@ export default function CreateTicketScreen() {
           }
           onPress={handleNextStep}
           className="flex-1"
-          isLoading={createTicketMutation.isPending}
+          loading={createTicketMutation.isPending}
         />
       </View>
     </View>

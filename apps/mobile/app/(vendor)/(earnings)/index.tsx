@@ -93,7 +93,9 @@ export default function EarningsDashboardScreen() {
                   <View className="w-8 h-8 rounded-full bg-blue-50 items-center justify-center mb-2">
                     <Icon name="trending-up" size={16} color="#3b82f6" />
                   </View>
-                  <Text className="text-body-sm text-muted-foreground mb-1">Today's Revenue</Text>
+                  <Text className="text-body-sm text-muted-foreground mb-1">
+                    Today&apos;s Revenue
+                  </Text>
                   <Text className="text-body-lg font-bold text-foreground">
                     GHS {earnings?.todayRevenue?.toFixed(2) ?? "0.00"}
                   </Text>

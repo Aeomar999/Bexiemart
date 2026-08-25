@@ -9,7 +9,7 @@ const mockPush = jest.fn();
 jest.mock("expo-router", () => ({
   router: {
     back: (...args: any[]) => mockBack(...args),
-    canGoBack: (...args: any[]) => mockCanGoBack(...args),
+    canGoBack: () => mockCanGoBack(),
     push: (...args: any[]) => mockPush(...args),
   },
 }));
