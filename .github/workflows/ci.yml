@@ -6,6 +6,23 @@ on:
   pull_request:
 
 jobs:
+  changes:
+    runs-on: ubuntu-latest
+    outputs:
+      server: ${{ steps.filter.outputs.server }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: dorny/paths-filter@v3
+        id: filter
+        with:
+          filters: |
+            server:
+              - 'apps/server/**'
+              - 'packages/shared/**'
+              - 'railway.json'
+
   shared:
     runs-on: ubuntu-latest
     defaults:
@@ -80,4 +97,29 @@ jobs:
         run: npm run build
         env:
           NEXT_PUBLIC_API_URL: https://bexiemart-production.up.railway.app/api/v1
+
+  deploy-server:
+    needs: [changes, shared, server]
+    if: >-
+      github.event_name == 'push' &&
+      github.ref == 'refs/heads/main' &&
+      needs.changes.outputs.server == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    concurrency:
+      group: deploy-server
+      cancel-in-progress: false
+    environment: production
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Railway CLI
+        run: curl -fsSL https://railway.app/install.sh | sh
+      - name: Deploy to Railway
+        env:
+          RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
+          RAILWAY_SERVICE: bexiemart-api
+          RAILWAY_ENVIRONMENT: production
+        run: railway up --ci --service "$RAILWAY_SERVICE" --environment "$RAILWAY_ENVIRONMENT"
+      - name: Verify health endpoint
+        run: curl -fsS --retry 6 --retry-delay 15 --retry-all-errors https://bexiemart-production.up.railway.app/api/v1/health
 
