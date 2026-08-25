@@ -1,6 +1,6 @@
 import React from "react";
 import { render, screen, fireEvent } from "@testing-library/react-native";
-import NotificationSettingsScreen from "./notification-settings";
+import NotificationSettingsScreen from "../../../../app/(vendor)/(settings)/notification-settings";
 import {
   useNotificationPreferences,
   useUpdateNotificationPreferences,

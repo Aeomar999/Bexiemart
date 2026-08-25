@@ -1,6 +1,6 @@
 import React from "react";
 import { render, screen, fireEvent, waitFor } from "@testing-library/react-native";
-import ChangePasswordScreen from "./change-password";
+import ChangePasswordScreen from "../../../../app/(vendor)/(settings)/change-password";
 import { authApi } from "@/lib/api/auth";
 import { usePopupStore } from "@/lib/stores/popup-store";
 

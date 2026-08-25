@@ -1,6 +1,6 @@
 import React from "react";
 import { render, screen, fireEvent } from "@testing-library/react-native";
-import DispatcherProfile from "./profile";
+import DispatcherProfile from "../../../../app/(dispatcher)/(tabs)/profile";
 import { useDispatcherProfile, useDispatcherAnalytics } from "@/lib/hooks/use-dispatcher";
 
 const mockPush = jest.fn();

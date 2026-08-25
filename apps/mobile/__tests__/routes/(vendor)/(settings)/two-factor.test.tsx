@@ -1,6 +1,6 @@
 import React from "react";
 import { render, fireEvent, waitFor } from "@testing-library/react-native";
-import TwoFactorScreen from "./two-factor";
+import TwoFactorScreen from "../../../../app/(vendor)/(settings)/two-factor";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useRouter } from "expo-router";
 import * as useTwoFactorHooks from "@/lib/hooks/use-two-factor";

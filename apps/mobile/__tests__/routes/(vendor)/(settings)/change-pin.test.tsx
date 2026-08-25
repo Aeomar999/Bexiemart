@@ -1,6 +1,6 @@
 import React from "react";
 import { render, screen, fireEvent, waitFor } from "@testing-library/react-native";
-import ChangePinScreen from "./change-pin";
+import ChangePinScreen from "../../../../app/(vendor)/(settings)/change-pin";
 import { usePinStatus, useChangePin, useSetPin } from "@/lib/hooks/use-wallet";
 import { usePopupStore } from "@/lib/stores/popup-store";
 

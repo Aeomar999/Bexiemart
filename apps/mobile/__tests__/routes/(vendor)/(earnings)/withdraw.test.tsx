@@ -1,7 +1,7 @@
 import React from "react";
-import { render, screen, fireEvent, waitFor } from "@testing-library/react-native";
-import WithdrawFundsScreen from "./withdraw";
-import { useDispatcherEarnings } from "@/lib/hooks/use-dispatcher";
+import { render, screen } from "@testing-library/react-native";
+import WithdrawFundsScreen from "../../../../app/(vendor)/(earnings)/withdraw";
+import { useVendorEarnings } from "@/lib/hooks/use-vendor";
 import {
   useBankAccounts,
   useMomoAccounts,
@@ -24,8 +24,8 @@ jest.mock("@/lib/stores/popup-store", () => ({
   usePopupStore: () => jest.fn(),
 }));
 
-jest.mock("@/lib/hooks/use-dispatcher", () => ({
-  useDispatcherEarnings: jest.fn(),
+jest.mock("@/lib/hooks/use-vendor", () => ({
+  useVendorEarnings: jest.fn(),
 }));
 
 jest.mock("@/lib/hooks/use-wallet", () => ({
@@ -35,13 +35,13 @@ jest.mock("@/lib/hooks/use-wallet", () => ({
   useWithdraw: jest.fn(),
 }));
 
-describe("WithdrawFundsScreen (Dispatcher)", () => {
+describe("WithdrawFundsScreen (Vendor)", () => {
   beforeEach(() => {
     jest.clearAllMocks();
   });
 
   it("renders 'No payout account' guard when methods are empty", () => {
-    (useDispatcherEarnings as jest.Mock).mockReturnValue({ data: { pendingClearance: 100 } });
+    (useVendorEarnings as jest.Mock).mockReturnValue({ data: { availableBalance: 100 } });
     (useBankAccounts as jest.Mock).mockReturnValue({ data: [] });
     (useMomoAccounts as jest.Mock).mockReturnValue({ data: [] });
     (usePinStatus as jest.Mock).mockReturnValue({ data: { hasPin: true } });
@@ -53,7 +53,7 @@ describe("WithdrawFundsScreen (Dispatcher)", () => {
   });
 
   it("renders 'Set a withdrawal PIN' guard when methods exist but pin not set", () => {
-    (useDispatcherEarnings as jest.Mock).mockReturnValue({ data: { pendingClearance: 100 } });
+    (useVendorEarnings as jest.Mock).mockReturnValue({ data: { availableBalance: 100 } });
     (useBankAccounts as jest.Mock).mockReturnValue({
       data: [{ id: "b1", bankName: "Ecobank", accountNumber: "1234" }],
     });
@@ -67,7 +67,7 @@ describe("WithdrawFundsScreen (Dispatcher)", () => {
   });
 
   it("renders withdraw form when methods and PIN are set", () => {
-    (useDispatcherEarnings as jest.Mock).mockReturnValue({ data: { pendingClearance: 250 } });
+    (useVendorEarnings as jest.Mock).mockReturnValue({ data: { availableBalance: 250 } });
     (useBankAccounts as jest.Mock).mockReturnValue({
       data: [{ id: "b1", bankName: "Ecobank", accountNumber: "1234" }],
     });

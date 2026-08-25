@@ -1,6 +1,6 @@
 import React from "react";
 import { render, screen, fireEvent } from "@testing-library/react-native";
-import ReviewModalScreen from "./review-modal";
+import ReviewModalScreen from "../../../app/(customer)/review-modal";
 import { useCreateReview } from "@/lib/hooks/use-reviews";
 
 const mockPush = jest.fn();

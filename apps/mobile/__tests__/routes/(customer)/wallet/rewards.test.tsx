@@ -1,6 +1,6 @@
 import React from "react";
 import { render, screen, fireEvent } from "@testing-library/react-native";
-import RewardsScreen from "./rewards";
+import RewardsScreen from "../../../../app/(customer)/wallet/rewards";
 import { useCoinsSummary, useConvertCoins } from "@/lib/hooks/use-wallet";
 
 jest.mock("expo-router", () => ({

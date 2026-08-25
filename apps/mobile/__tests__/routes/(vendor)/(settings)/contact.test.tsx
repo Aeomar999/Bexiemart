@@ -1,6 +1,6 @@
 import React from "react";
 import { render, fireEvent, waitFor } from "@testing-library/react-native";
-import VendorContactScreen from "./contact";
+import VendorContactScreen from "../../../../app/(vendor)/(settings)/contact";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useRouter } from "expo-router";
 import * as useSupportHooks from "@/lib/hooks/use-support";

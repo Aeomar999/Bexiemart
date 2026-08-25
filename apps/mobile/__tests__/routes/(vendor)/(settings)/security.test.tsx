@@ -1,6 +1,6 @@
 import React from "react";
 import { render, screen, fireEvent, waitFor } from "@testing-library/react-native";
-import SecurityScreen from "./security";
+import SecurityScreen from "../../../../app/(vendor)/(settings)/security";
 import {
   useSessions,
   useRevokeSession,

@@ -1,6 +1,6 @@
 import React from "react";
 import { render, fireEvent } from "@testing-library/react-native";
-import TaxesDocumentsScreen from "./taxes";
+import TaxesDocumentsScreen from "../../../../app/(vendor)/(settings)/taxes";
 import { useVendorProfile, useUpdateTaxInfo } from "@/lib/hooks/use-vendor";
 import { useVendorDocuments } from "@/lib/hooks/use-vendor-documents";
 
