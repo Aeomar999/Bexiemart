@@ -93,8 +93,29 @@ export class WalletService {
     return { data, total, page, pages: Math.ceil(total / limit) };
   }
 
+  /* ─── Platform Limits ─── */
+
+  private async getPlatformLimits() {
+    const cfg = await this.prisma.platformConfig.findFirst();
+    return {
+      minTopup: Number(cfg?.minTopup ?? 5),
+      maxTopup: Number(cfg?.maxTopup ?? 5000),
+      minWithdrawal: Number(cfg?.minWithdrawal ?? 10),
+      dailyWithdrawalLimit: Number(cfg?.dailyWithdrawalLimit ?? 5000),
+    };
+  }
+
   async initializeTopUp(userId: string, amount: number, channel: string) {
     const wallet = await this.getWallet(userId);
+
+    // Business limits from PlatformConfig (schema-defined defaults as fallback).
+    const limits = await this.getPlatformLimits();
+    if (amount < limits.minTopup || amount > limits.maxTopup) {
+      throw new BadRequestException(
+        `Top-up amount must be between GHS ${limits.minTopup} and GHS ${limits.maxTopup}`
+      );
+    }
+
     const amountInPesewas = Math.round(amount * 100);
     const reference = "tu_" + wallet.id.substring(0, 8) + "_" + Date.now();
 
@@ -231,6 +252,16 @@ export class WalletService {
 
   async setPin(userId: string, pin: string) {
     const wallet = await this.getWallet(userId);
+
+    // First-time setup only. Overwriting an existing PIN without proving
+    // knowledge of it would let anyone with a session token bypass the
+    // 5-attempt lockout by resetting the PIN directly.
+    if (wallet.pinHash) {
+      throw new BadRequestException(
+        "A transaction PIN already exists. Use the change PIN endpoint instead."
+      );
+    }
+
     const pinHash = await argon2.hash(pin, { type: argon2.argon2id });
     return this.prisma.wallet.update({
       where: { id: wallet.id },
@@ -286,15 +317,14 @@ export class WalletService {
   }
 
   async changePin(userId: string, currentPin: string, newPin: string) {
+    // Prove knowledge of the current PIN before allowing a replacement.
     await this.verifyPin(userId, currentPin);
-    return this.setPin(userId, newPin);
-  }
 
-  async resetPinFailures(userId: string) {
     const wallet = await this.getWallet(userId);
+    const pinHash = await argon2.hash(newPin, { type: argon2.argon2id });
     return this.prisma.wallet.update({
       where: { id: wallet.id },
-      data: { pinFailures: 0, pinLockedUntil: null },
+      data: { pinHash, pinFailures: 0, pinLockedUntil: null },
     });
   }
 
@@ -318,6 +348,16 @@ export class WalletService {
     const secretKey = process.env.PAYSTACK_SECRET_KEY;
     if (!secretKey) throw new Error("PAYSTACK_SECRET_KEY not configured");
 
+    // Reject replays up-front with a clean error (the unique constraint below
+    // is the backstop, but P2002 would surface as a raw 500).
+    const bindReference = `card_bind_${reference}`;
+    const alreadyUsed = await this.prisma.transaction.findUnique({
+      where: { reference: bindReference },
+    });
+    if (alreadyUsed) {
+      throw new BadRequestException("This verification reference has already been used");
+    }
+
     const response = await fetch(`https://api.paystack.co/transaction/verify/${reference}`, {
       method: "GET",
       headers: { Authorization: `Bearer ${secretKey}` },
@@ -333,8 +373,24 @@ export class WalletService {
       throw new BadRequestException("Card authorization code not found");
     }
 
+    // Bind the charge to THIS wallet owner, to the exact ₵1 verification fee,
+    // and to a transaction initiated as a card verification. Without these
+    // checks any successful Paystack reference (e.g. someone's paid order)
+    // could be submitted here to credit the caller's wallet with its amount.
+    const customerEmail: string | undefined = data.data?.customer?.email?.toLowerCase();
+    if (!customerEmail || customerEmail !== wallet.user.email.toLowerCase()) {
+      throw new ForbiddenException("This transaction does not belong to your account");
+    }
+    const amountPesewas = data.data.amount;
+    if (amountPesewas !== 100) {
+      throw new ForbiddenException("Invalid card verification transaction: unexpected amount");
+    }
+    if (data.data?.metadata?.purpose !== "card_verification") {
+      throw new ForbiddenException("This transaction was not initiated as a card verification");
+    }
+
     // 1 GHS is 100 pesewas
-    const amountPaid = data.data.amount / 100;
+    const amountPaid = amountPesewas / 100;
 
     return this.prisma.$transaction(async (tx) => {
       // 1. Credit wallet with the charge amount
@@ -351,7 +407,7 @@ export class WalletService {
             status: "COMPLETED",
             amount: amountPaid,
             netAmount: amountPaid,
-            reference: `card_bind_${reference}`,
+            reference: bindReference,
             description: "Card Validation Top-up",
           },
         });
@@ -601,6 +657,32 @@ export class WalletService {
 
     const platformConfig = await this.prisma.platformConfig.findFirst();
     const fee = platformConfig ? Number(platformConfig.withdrawalFeeFlat) : 2.0;
+    const minWithdrawal = Number(platformConfig?.minWithdrawal ?? 10);
+    const dailyWithdrawalLimit = Number(platformConfig?.dailyWithdrawalLimit ?? 5000);
+
+    if (amount < minWithdrawal) {
+      throw new BadRequestException(`Minimum withdrawal amount is GHS ${minWithdrawal}`);
+    }
+
+    // Daily withdrawal ceiling: include today's PENDING reservations so queued
+    // payouts can't be stacked past the limit by firing parallel requests.
+    const startOfDay = new Date();
+    startOfDay.setHours(0, 0, 0, 0);
+    const todaysWithdrawals = await this.prisma.transaction.aggregate({
+      _sum: { amount: true },
+      where: {
+        walletId: wallet.id,
+        type: "WITHDRAWAL",
+        status: { in: ["PENDING", "COMPLETED"] },
+        createdAt: { gte: startOfDay },
+      },
+    });
+    const withdrawnToday = Number(todaysWithdrawals._sum.amount ?? 0);
+    if (withdrawnToday + amount > dailyWithdrawalLimit) {
+      throw new BadRequestException(
+        `Daily withdrawal limit of GHS ${dailyWithdrawalLimit} exceeded (already withdrawn today: GHS ${withdrawnToday})`
+      );
+    }
 
     const totalDeduction = amount + fee;
 

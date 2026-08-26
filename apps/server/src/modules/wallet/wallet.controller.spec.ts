@@ -18,7 +18,6 @@ describe("WalletController", () => {
     setPin: jest.fn(),
     changePin: jest.fn(),
     verifyPin: jest.fn(),
-    resetPinFailures: jest.fn(),
     getPinStatus: jest.fn(),
     getCards: jest.fn(),
     addCard: jest.fn(),
@@ -180,16 +179,8 @@ describe("WalletController", () => {
     });
   });
 
-  describe("resetPinFailures", () => {
-    it("should call service.resetPinFailures with user id", async () => {
-      const result = { success: true };
-      mockService.resetPinFailures.mockResolvedValue(result);
-      const req = { user: { id: "user-1" } } as AuthenticatedRequest;
-
-      expect(await controller.resetPinFailures(req)).toEqual(result);
-      expect(mockService.resetPinFailures).toHaveBeenCalledWith("user-1");
-    });
-  });
+  // NOTE: no resetPinFailures endpoint — the failure counter is intentionally
+  // not clearable without proving the current PIN (see wallet.controller.ts).
 
   describe("getPinStatus", () => {
     it("should call service.getPinStatus with user id", async () => {

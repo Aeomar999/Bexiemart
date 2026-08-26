@@ -65,6 +65,9 @@ export default function AddCardScreen() {
       billingName: name || user?.name || "Customer",
       channels: ["card"],
       currency: "GHS",
+      // The server refuses to bind a card (or credit the wallet) from a charge
+      // that was not initiated as a card verification.
+      metadata: { purpose: "card_verification" },
       onSuccess: (res: any) => {
         const reference =
           res.data?.transactionRef?.reference || res.transactionRef?.reference || res.reference;

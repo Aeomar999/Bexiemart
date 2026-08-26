@@ -172,6 +172,7 @@ export class OrdersService {
               quantity: item.quantity,
               total: item.lineTotal,
               imageUrl: item.imageUrl,
+              flashSaleItemId: item.flashSaleItemId,
             })),
           },
         },
@@ -258,44 +259,82 @@ export class OrdersService {
 
     if (!order) throw new NotFoundException("Order not found");
 
-    if (order.status !== "pending" && order.status !== "confirmed") {
-      throw new BadRequestException(`Cannot cancel order in ${order.status} status`);
+    // Only unpaid orders can be cancelled outright. Paid orders hold funds in
+    // escrow — cancelling here would strand the money and keep stock restored
+    // against a live charge, so paid orders must go through refund requests.
+    if (order.status !== "pending" || order.paymentStatus === "success") {
+      throw new BadRequestException(
+        "This order can no longer be cancelled. If it was paid, request a refund instead."
+      );
     }
 
     return await this.prisma.$transaction(async (tx) => {
-      const updatedOrder = await tx.order.update({
-        where: { id },
+      // Atomic claim: if a payment webhook confirms the order concurrently,
+      // exactly one of {cancel, confirm} wins instead of both succeeding.
+      const claim = await tx.order.updateMany({
+        where: { id, status: "pending", paymentStatus: { not: "success" } },
         data: { status: "cancelled" },
       });
+      if (claim.count === 0) {
+        throw new BadRequestException(
+          "This order can no longer be cancelled. If it was paid, request a refund instead."
+        );
+      }
 
       for (const item of order.items) {
         await tx.product.update({
           where: { id: item.productId },
           data: { stock: { increment: item.quantity } },
         });
+
+        // Give flash-sale quota back so the promotion isn't permanently consumed.
+        if (item.flashSaleItemId) {
+          await tx.flashSaleItem.updateMany({
+            where: { id: item.flashSaleItemId },
+            data: { soldCount: { decrement: item.quantity } },
+          });
+        }
       }
 
-      return updatedOrder;
+      return tx.order.findUniqueOrThrow({
+        where: { id },
+        include: { items: true },
+      });
     });
   }
 
   async requestRefund(userId: string, id: string, reason: string) {
     const order = await this.prisma.order.findFirst({
       where: { id, userId },
-      include: { items: true },
     });
 
     if (!order) throw new NotFoundException("Order not found");
 
-    // An order can only be refunded if it has been paid, delivered, etc.
-    // Assuming 'delivered' or 'processing' are valid states for refund requests.
-    if (order.status === "cancelled" || order.status === "refunded") {
+    // Refunds only make sense for money that actually left the customer.
+    // Unpaid orders should use cancel; already-refunded/terminal states are final.
+    if (order.paymentStatus !== "success") {
+      throw new BadRequestException(
+        "Only paid orders can be refunded. Unpaid orders can be cancelled instead."
+      );
+    }
+    if (["cancelled", "refunded", "refund_requested"].includes(order.status)) {
       throw new BadRequestException(`Cannot request refund for order in ${order.status} status`);
     }
 
-    return this.prisma.order.update({
-      where: { id },
-      data: { status: "refund_requested" as any },
+    // CAS guard prevents duplicate refund requests from racing in.
+    const claim = await this.prisma.order.updateMany({
+      where: {
+        id,
+        userId,
+        paymentStatus: "success",
+        status: { notIn: ["cancelled", "refunded", "refund_requested"] },
+      },
+      data: { status: "refund_requested" },
     });
+    if (claim.count === 0) {
+      throw new BadRequestException(`Cannot request refund for order in ${order.status} status`);
+    }
+
+    return this.prisma.order.findUniqueOrThrow({ where: { id } });
   }
 }
