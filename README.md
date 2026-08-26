@@ -217,6 +217,7 @@ npm run lint --workspaces
 ## 📚 Documentation & Reference Guides
 
 Additional deep-dive manuals and design documentation can be found in the `/docs` directory:
+- `docs/RELEASE-SECRETS.md` - Required production secrets, EAS environment variables, and TLS setup.
 - `docs/bexiemart-paystack-setup-manual.md` - Complete Paystack regulatory and technical integration handbook.
 - `docs/bexiemart-wallet-integration_PRD.md` - Product requirements and state machine for campus wallet ledger.
 - `docs/DESIGN-SYSTEM.md` - UI/UX tokens, typography, and component guidelines.

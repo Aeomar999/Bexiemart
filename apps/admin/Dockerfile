@@ -1,20 +1,22 @@
+# Build context: apps/admin (see docker-compose.yml)
 # Stage 1: Dependencies
 FROM node:22-alpine AS deps
 RUN apk add --no-cache libc6-compat
 WORKDIR /app
 
-COPY apps/admin/package.json apps/admin/package-lock.json ./
+COPY package.json package-lock.json ./
 RUN npm ci
 
 # Stage 2: Builder
 FROM node:22-alpine AS builder
 WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
-COPY apps/admin ./
-COPY packages/shared /packages/shared
+COPY . .
 
 ENV NEXT_TELEMETRY_DISABLED=1
 ENV NODE_ENV=production
+# Build-time default; compose/runtime override via INTERNAL_API_URL etc.
+ENV NEXT_PUBLIC_API_URL=/api/v1
 RUN npm run build
 
 # Stage 3: Production runner

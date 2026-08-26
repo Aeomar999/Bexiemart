@@ -1,15 +1,14 @@
 import { tokens } from "@/theme/tokens";
 import { BackButton } from "@/components/ui/BackButton";
 import { logger } from "@/lib/logger";
-import { View, Text, ScrollView, TextInput, Keyboard, Pressable } from "react-native";
+import { View, Text, ScrollView, TextInput, Keyboard, Pressable, Linking } from "react-native";
 import { useState } from "react";
 import { useRouter } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Icon } from "@/components/ui/Icon";
 import { Button } from "@/components/ui/Button";
 import Toast from "@/lib/toast-polyfill";
-import { useWallet } from "@/lib/hooks/use-wallet";
-import { useTopUp } from "@/lib/hooks/use-wallet";
+import { useTopUp, useWallet } from "@/lib/hooks/use-wallet";
 import { MoneyInput } from "@/components/ui/MoneyInput";
 import { formatMoney } from "@/lib/money";
 
@@ -59,6 +58,20 @@ export default function TopUpScreen() {
     setSelectedMethod(methodId);
   };
 
+  const handleOpenPaymentPage = async () => {
+    if (!payUrl) return;
+    try {
+      await Linking.openURL(payUrl);
+    } catch (error) {
+      logger.error("Failed to open Paystack payment page", error);
+      Toast.show({
+        type: "error",
+        text1: "Unable to open",
+        text2: "Could not open the payment page. Please try again.",
+      });
+    }
+  };
+
   if (isSuccess) {
     return (
       <View
@@ -79,9 +92,7 @@ export default function TopUpScreen() {
             title="Complete Payment"
             variant="primary"
             className="w-full bg-card border-0 mb-3"
-            onPress={() =>
-              Toast.show({ type: "info", text1: "Pay", text2: "Opening payment page..." })
-            }
+            onPress={handleOpenPaymentPage}
           />
         ) : null}
         <Button
