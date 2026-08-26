@@ -10,9 +10,22 @@ ios/
 *.db
 *.db-journal
 coverage/
-.turbo/d i s t /  
- a n d r o i d / a p p / d e b u g . k e y s t o r e  
+.turbo/
+android/app/debug.keystore
 .opencode
 .cursorrules
+nginx/certs/
+
+# IDE / editor
+.idea/
+
+# Generated binary reports
+*.docx
+
+# Design inspiration assets (kept locally, not part of the codebase)
+logo inspos/
+
+# AI-tooling worktrees
+.claude/worktrees/
 
 ~$*
