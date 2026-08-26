@@ -10,6 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       server: ${{ steps.filter.outputs.server }}
+      docker: ${{ steps.filter.outputs.docker }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -22,6 +23,12 @@ jobs:
               - 'apps/server/**'
               - 'packages/shared/**'
               - 'railway.json'
+            docker:
+              - 'apps/server/Dockerfile'
+              - 'apps/admin/**'
+              - 'packages/shared/**'
+              - 'docker-compose.yml'
+              - '.github/workflows/ci.yml'
 
   shared:
     runs-on: ubuntu-latest
@@ -37,6 +44,8 @@ jobs:
           cache-dependency-path: packages/shared/package-lock.json
       - run: npm ci
       - run: npx tsc --noEmit
+      - name: Run Tests
+        run: npm test
 
   server:
     needs: shared
@@ -74,8 +83,9 @@ jobs:
       - run: npm ci
       - run: npx tsc --noEmit
       - run: npm run lint
+      # Coverage thresholds live in apps/mobile/jest.config.js (single source of truth).
       - name: Run Tests with Coverage Gate
-        run: npm run test:cov -- --maxWorkers=2 --coverageThreshold='{"global":{"lines":30,"branches":25,"statements":30}}'
+        run: npm run test:cov -- --maxWorkers=2 --workerIdleMemoryLimit=512MB
 
   admin:
     needs: shared
@@ -93,17 +103,46 @@ jobs:
       - run: npm ci
       - run: npx tsc --noEmit
       - run: npm run lint --if-present
+      - name: Run Tests
+        run: npm test
       - name: Build Admin Web App
         run: npm run build
         env:
           NEXT_PUBLIC_API_URL: https://bexiemart-production.up.railway.app/api/v1
 
+  docker-admin:
+    # The admin image once shipped permanently broken (context/COPY drift) and
+    # nothing ever caught it — building it here fails on the PR instead.
+    needs: changes
+    if: needs.changes.outputs.docker == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build admin image
+        run: docker build -t bexiemart-admin:ci apps/admin
+
+  docker-server:
+    # Same rationale for the API image Railway will build at deploy time.
+    needs: changes
+    if: needs.changes.outputs.docker == 'true' || needs.changes.outputs.server == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build server image (root build context)
+        run: docker build -f apps/server/Dockerfile -t bexiemart-server:ci .
+
   deploy-server:
-    needs: [changes, shared, server]
+    needs: [changes, shared, server, docker-server]
     if: >-
+      always() &&
       github.event_name == 'push' &&
       github.ref == 'refs/heads/main' &&
-      needs.changes.outputs.server == 'true'
+      needs.changes.outputs.server == 'true' &&
+      needs.shared.result == 'success' &&
+      needs.server.result == 'success' &&
+      (needs.docker-server.result == 'success' || needs.docker-server.result == 'skipped')
     runs-on: ubuntu-latest
     timeout-minutes: 20
     concurrency:

@@ -10,9 +10,9 @@
     "web": "expo start --web",
     "lint": "expo lint",
     "postinstall": "npx patch-package",
-    "test": "jest --passWithNoTests",
-    "test:watch": "jest --watch --passWithNoTests",
-    "test:cov": "jest --coverage --passWithNoTests",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:cov": "jest --coverage",
     "test:e2e": ".\\run-e2e.bat",
     "prepare": "husky"
   },
