@@ -7,7 +7,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useReducedMotion } from "@/hooks/useReducedMotion";
 
 export function GlobalPopup() {
-  const { isVisible, type, title, message, hidePopup } = usePopupStore();
+  const { isVisible, type, title, message, action, hidePopup } = usePopupStore();
   const translateY = useRef(new Animated.Value(100)).current;
   const opacity = useRef(new Animated.Value(0)).current;
   const [renderComponent, setRenderComponent] = useState(isVisible);
@@ -36,9 +36,12 @@ export function GlobalPopup() {
         ]).start();
       }
 
-      const timer = setTimeout(() => {
-        closeModal();
-      }, 4000);
+      const timer = setTimeout(
+        () => {
+          closeModal();
+        },
+        action ? 6000 : 4000
+      );
       return () => clearTimeout(timer);
     } else if (reducedMotion) {
       opacity.setValue(0);
@@ -206,6 +209,22 @@ export function GlobalPopup() {
           <Icon name="x" size={18} color={tokens.textMuted} />
         </Pressable>
       </Animated.View>
+
+      {action ? (
+        <Pressable
+          accessibilityRole="button"
+          accessibilityLabel={action.label}
+          onPress={() => {
+            hidePopup();
+            action.onPress();
+          }}
+          className="mt-3 self-end bg-primary rounded-full px-5 py-2"
+        >
+          <Text style={{ color: tokens.primaryText, fontFamily: "Nunito_700Bold", fontSize: 13 }}>
+            {action.label}
+          </Text>
+        </Pressable>
+      ) : null}
     </View>
   );
 }

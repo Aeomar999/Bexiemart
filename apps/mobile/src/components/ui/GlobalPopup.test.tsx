@@ -1,5 +1,5 @@
 import React from "react";
-import { render, act } from "@testing-library/react-native";
+import { render, act, fireEvent } from "@testing-library/react-native";
 import { Animated } from "react-native";
 import { GlobalPopup } from "./GlobalPopup";
 import type { PopupState } from "@/lib/stores/popup-store";
@@ -79,6 +79,25 @@ describe("GlobalPopup", () => {
     act(() => {
       jest.advanceTimersByTime(4000);
     });
+    expect(mockHidePopup).toHaveBeenCalled();
+  });
+
+  it("renders and fires the optional action button", () => {
+    const onPress = jest.fn();
+    mockUsePopupStore.mockReturnValue(
+      makePopup({
+        isVisible: true,
+        title: "Added to Cart",
+        message: "Item added to your cart.",
+        action: { label: "View Cart", onPress },
+      })
+    );
+    const { getByText } = render(<GlobalPopup />);
+    expect(getByText("View Cart")).toBeTruthy();
+    act(() => {
+      fireEvent.press(getByText("View Cart"));
+    });
+    expect(onPress).toHaveBeenCalled();
     expect(mockHidePopup).toHaveBeenCalled();
   });
 });

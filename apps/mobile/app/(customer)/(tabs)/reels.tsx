@@ -19,6 +19,8 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Icon } from "@/components/ui/Icon";
 import { useState, useRef, useCallback, useEffect } from "react";
 import { usePopupStore } from "@/lib/stores/popup-store";
+import { useRequireAuth } from "@/lib/hooks/use-require-auth";
+import { useAddToCart } from "@/lib/hooks/use-cart";
 import { logger } from "@/lib/logger";
 import {
   useReels,
@@ -44,6 +46,7 @@ const ReelItem = ({
   onToggleLike,
   onOpenComments,
   onShare,
+  onAddToCart,
   insetsBottom,
 }: {
   item: any;
@@ -51,6 +54,7 @@ const ReelItem = ({
   onToggleLike: (id: string) => void;
   onOpenComments: (reel: any) => void;
   onShare: (reel: any) => void;
+  onAddToCart: (productId: string, quantity: number) => void;
   insetsBottom: number;
 }) => {
   const router = useRouter();
@@ -68,12 +72,16 @@ const ReelItem = ({
     }
   }, [isActive, player]);
 
+  const [quantity, setQuantity] = useState(1);
+
   const vendorName = item.user?.name ?? "Vendor";
   const productName = item.product?.name ?? "Product";
   const productPrice = item.product?.price ?? 0;
   const productId = item.product?.id;
   const isLiked = item.liked ?? false;
   const isFollowing = item.isFollowing ?? false;
+  const stock = item.product?.stock ?? 0;
+  const outOfStock = stock <= 0;
 
   return (
     <View
@@ -175,17 +183,41 @@ const ReelItem = ({
               </Text>
             </View>
           </View>
+          <View className="flex-row items-center gap-2">
+            <Pressable
+              className="w-9 h-9 rounded-full bg-card/20 border border-card/30 items-center justify-center"
+              accessibilityRole="button"
+              accessibilityLabel="Decrease quantity"
+              hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+              onPress={() => setQuantity((q) => Math.max(1, q - 1))}
+            >
+              <Icon name="minus" size={14} color={tokens.textPrimary} />
+            </Pressable>
+            <Text className="text-white font-bold text-body-md min-w-[24px] text-center">
+              {quantity}
+            </Text>
+            <Pressable
+              className="w-9 h-9 rounded-full bg-card/20 border border-card/30 items-center justify-center"
+              accessibilityRole="button"
+              accessibilityLabel="Increase quantity"
+              hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+              onPress={() => setQuantity((q) => Math.max(1, Math.min(stock, q + 1)))}
+            >
+              <Icon name="plus" size={14} color={tokens.textPrimary} />
+            </Pressable>
+          </View>
+
           <Pressable
             className="bg-primary px-5 py-2.5 rounded-full"
+            disabled={outOfStock}
+            style={({ pressed }) => [{ opacity: outOfStock ? 0.5 : pressed ? 0.8 : 1 }]}
             onPress={() => {
-              showPopup({
-                type: "success",
-                title: "Added to Cart",
-                message: `${productName} added to your cart.`,
-              });
+              if (productId) onAddToCart(productId, quantity);
             }}
           >
-            <Text className="text-white font-bold text-sm">Buy</Text>
+            <Text className="text-white font-bold text-sm">
+              {outOfStock ? "Out of Stock" : "Buy"}
+            </Text>
           </Pressable>
         </Pressable>
       </View>
@@ -202,6 +234,8 @@ export default function ReelsScreen() {
   const toggleLike = useToggleReelLike();
   const incrementView = useIncrementReelView();
   const showPopup = usePopupStore((s) => s.showPopup);
+  const requireAuth = useRequireAuth();
+  const addToCartMutation = useAddToCart();
 
   const [activeReelIndex, setActiveReelIndex] = useState(0);
   const [commentModalVisible, setCommentModalVisible] = useState(false);
@@ -277,6 +311,25 @@ export default function ReelsScreen() {
         setCommentModalVisible(true);
       }}
       onShare={handleShare}
+      onAddToCart={(productId, quantity) => {
+        if (!requireAuth()) return;
+        addToCartMutation.mutate(
+          { productId, quantity },
+          {
+            onSuccess: () => {
+              showPopup({
+                type: "success",
+                title: "Added to Cart",
+                message: `${quantity} item${quantity > 1 ? "s" : ""} added to your cart.`,
+                action: {
+                  label: "View Cart",
+                  onPress: () => router.push("/(customer)/cart"),
+                },
+              });
+            },
+          }
+        );
+      }}
       insetsBottom={insets.bottom}
     />
   );

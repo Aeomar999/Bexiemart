@@ -1,4 +1,5 @@
 import { BackButton } from "@/components/ui/BackButton";
+import { tokens } from "@/theme/tokens";
 import { View, Text, ScrollView, Pressable, TextInput } from "react-native";
 import { useRouter } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";

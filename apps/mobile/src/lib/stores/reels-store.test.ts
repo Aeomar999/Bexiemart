@@ -13,14 +13,30 @@ import { reelsApi } from "../api/reels";
 const mockReels = {
   data: [
     {
-      id: "r1", vendorId: "v1", vendorName: "Vendor 1", description: "Check this out!",
-      videoUrl: "vid1.mp4", likes: 100, comments: [], shares: 5, isLiked: false, isFollowing: false,
-      product: { id: "p1", name: "Product 1", price: 50 },
+      id: "r1",
+      vendorId: "v1",
+      vendorName: "Vendor 1",
+      description: "Check this out!",
+      videoUrl: "vid1.mp4",
+      likes: 100,
+      comments: [],
+      shares: 5,
+      isLiked: false,
+      isFollowing: false,
+      product: { id: "p1", name: "Product 1", price: 50, stock: 10 },
     },
     {
-      id: "r2", vendorId: "v2", vendorName: "Vendor 2", description: "Amazing!",
-      videoUrl: "vid2.mp4", likes: 200, comments: [], shares: 10, isLiked: true, isFollowing: true,
-      product: { id: "p2", name: "Product 2", price: 100 },
+      id: "r2",
+      vendorId: "v2",
+      vendorName: "Vendor 2",
+      description: "Amazing!",
+      videoUrl: "vid2.mp4",
+      likes: 200,
+      comments: [],
+      shares: 10,
+      isLiked: true,
+      isFollowing: true,
+      product: { id: "p2", name: "Product 2", price: 100, stock: 5 },
     },
   ],
 };
@@ -94,7 +110,19 @@ describe("Reels Store", () => {
 
   it("should add reel to beginning", () => {
     useReelsStore.setState({ reels: mockReels.data });
-    const newReel = { id: "r3", vendorId: "v3", vendorName: "V3", description: "New!", videoUrl: "v3.mp4", likes: 0, comments: [], shares: 0, isLiked: false, isFollowing: false, product: { id: "p3", name: "P3", price: 30 } };
+    const newReel = {
+      id: "r3",
+      vendorId: "v3",
+      vendorName: "V3",
+      description: "New!",
+      videoUrl: "v3.mp4",
+      likes: 0,
+      comments: [],
+      shares: 0,
+      isLiked: false,
+      isFollowing: false,
+      product: { id: "p3", name: "P3", price: 30, stock: 3 },
+    };
     useReelsStore.getState().addReel(newReel);
     expect(useReelsStore.getState().reels).toHaveLength(3);
     expect(useReelsStore.getState().reels[0].id).toBe("r3");
