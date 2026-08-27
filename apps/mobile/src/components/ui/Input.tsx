@@ -1,5 +1,6 @@
 import { View, Text, TextInput, type TextInputProps, TouchableOpacity } from "react-native";
 import { useState, forwardRef } from "react";
+import { tokens } from "@/theme/tokens";
 
 interface InputProps extends TextInputProps {
   label?: string;
@@ -42,7 +43,7 @@ export const Input = forwardRef<TextInput, InputProps>(
           <TextInput
             ref={ref}
             className={`flex-1 font-body text-body-md text-foreground ${!editable ? "text-muted-foreground" : ""} ${className}`}
-            placeholderTextColor="#94A3B8"
+            placeholderTextColor={tokens.textMuted}
             onFocus={() => setIsFocused(true)}
             onBlur={() => setIsFocused(false)}
             secureTextEntry={secureTextEntry && !isSecureVisible}

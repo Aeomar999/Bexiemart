@@ -88,7 +88,7 @@ export default function ServicesScreen() {
         </View>
 
         <View className="flex-row items-center bg-background rounded-2xl px-4 py-3 border border-border">
-          <Icon name="search" size={18} color="#64748b" />
+          <Icon name="search" size={18} color={tokens.textMuted} />
           <TextInput
             placeholder="What service do you need?"
             className="flex-1 ml-2 font-body text-body-lg text-foreground"
@@ -101,7 +101,7 @@ export default function ServicesScreen() {
               accessibilityLabel="Clear search"
               onPress={() => setSearchQuery("")}
             >
-              <Icon name="x-circle" size={18} color="#cbd5e1" />
+              <Icon name="x-circle" size={18} color={tokens.textDisabled} />
             </Pressable>
           )}
         </View>
@@ -149,9 +149,15 @@ export default function ServicesScreen() {
                   >
                     <View
                       className={`w-16 h-16 rounded-2xl items-center justify-center mb-2 ${isActive ? "border border-primary" : ""}`}
-                      style={{ backgroundColor: isActive ? "#eff6ff" : item.color + "15" }}
+                      style={{
+                        backgroundColor: isActive ? tokens.primarySubtle : item.color + "15",
+                      }}
                     >
-                      <Icon name={item.icon} size={28} color={isActive ? "#3b82f6" : item.color} />
+                      <Icon
+                        name={item.icon}
+                        size={28}
+                        color={isActive ? tokens.primary : item.color}
+                      />
                     </View>
                     <Text
                       className={`text-body-sm ${isActive ? "font-black text-primary-hover" : "font-bold text-foreground"}`}
@@ -193,7 +199,7 @@ export default function ServicesScreen() {
                   onPress={() => router.push(`/(customer)/services/${provider.id}`)}
                 >
                   <View className="w-20 h-20 bg-muted rounded-xl items-center justify-center mr-4 overflow-hidden">
-                    <Icon name="user" size={32} color="#94a3b8" />
+                    <Icon name="user" size={32} color={tokens.textMuted} />
                   </View>
                   <View className="flex-1">
                     <Text className="text-body-lg font-bold text-foreground font-heading mb-0.5">
@@ -205,7 +211,7 @@ export default function ServicesScreen() {
 
                     <View className="flex-row items-center justify-between">
                       <View className="flex-row items-center">
-                        <Icon name="star" size={12} color="#f59e0b" />
+                        <Icon name="star" size={12} color={tokens.warning} />
                         <Text className="text-body-sm font-bold text-muted-foreground ml-1">
                           {Number(provider.rating).toFixed(1)}
                         </Text>

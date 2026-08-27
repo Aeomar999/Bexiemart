@@ -1,3 +1,4 @@
+import { tokens } from "@/theme/tokens";
 import { BackButton } from "@/components/ui/BackButton";
 import { View, Text, ScrollView, Pressable, TextInput } from "react-native";
 import { useRouter } from "expo-router";
@@ -76,7 +77,7 @@ export default function ChangePasswordScreen() {
       >
         <BackButton
           className="w-10 h-10 rounded-full bg-background items-center justify-center mr-3"
-          color="#0f172a"
+          color={tokens.textPrimary}
         />
         <Text className="text-display-sm font-heading font-black text-foreground">
           Change Password
@@ -96,7 +97,7 @@ export default function ChangePasswordScreen() {
             onChangeText={setCurrentPassword}
             secureTextEntry={true}
             placeholder="Enter current password"
-            leftIcon={<Icon name="lock" size={20} color="#94a3b8" />}
+            leftIcon={<Icon name="lock" size={20} color={tokens.textMuted} />}
           />
         </View>
 
@@ -107,7 +108,7 @@ export default function ChangePasswordScreen() {
             onChangeText={setNewPassword}
             secureTextEntry={true}
             placeholder="Enter new password"
-            leftIcon={<Icon name="key" size={20} color="#94a3b8" />}
+            leftIcon={<Icon name="key" size={20} color={tokens.textMuted} />}
           />
 
           {/* Password Strength Indicator */}
@@ -140,7 +141,7 @@ export default function ChangePasswordScreen() {
             onChangeText={setConfirmPassword}
             secureTextEntry={true}
             placeholder="Confirm new password"
-            leftIcon={<Icon name="check-circle" size={20} color="#94a3b8" />}
+            leftIcon={<Icon name="check-circle" size={20} color={tokens.textMuted} />}
             error={
               confirmPassword.length > 0 && newPassword !== confirmPassword
                 ? "Passwords do not match."

@@ -1,3 +1,4 @@
+import { tokens } from "@/theme/tokens";
 import { BackButton } from "@/components/ui/BackButton";
 import {
   View,
@@ -174,7 +175,7 @@ export function EditProfileScreen() {
                 <TextInput
                   className="text-body-lg font-body text-foreground flex-1"
                   placeholder="Tell us a bit about yourself..."
-                  placeholderTextColor="#94a3b8"
+                  placeholderTextColor={tokens.textMuted}
                   multiline
                   textAlignVertical="top"
                   value={bio}

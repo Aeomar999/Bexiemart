@@ -1,3 +1,4 @@
+import { tokens } from "@/theme/tokens";
 import { BackButton } from "@/components/ui/BackButton";
 import {
   View,
@@ -70,7 +71,7 @@ export default function RequestMoneyScreen() {
 
         <View className="bg-emerald-50/50 p-5 rounded-2xl mb-8 border border-emerald-100">
           <View className="w-10 h-10 rounded-full bg-emerald-100 items-center justify-center mb-3">
-            <Icon name="arrow-down-left" size={20} color="#059669" />
+            <Icon name="arrow-down-left" size={20} color={tokens.success} />
           </View>
           <Text className="text-body-md text-muted-foreground font-body leading-[22px]">
             Ask friends, family, or customers for money. They will receive a notification and a
@@ -86,7 +87,7 @@ export default function RequestMoneyScreen() {
             placeholder="Phone Number or Username"
             value={contact}
             onChangeText={setContact}
-            leftIcon={<Icon name="user" size={18} color="#64748b" />}
+            leftIcon={<Icon name="user" size={18} color={tokens.textMuted} />}
             className="bg-background border-0"
           />
         </View>
@@ -99,7 +100,7 @@ export default function RequestMoneyScreen() {
             placeholder="What's this for?"
             value={note}
             onChangeText={setNote}
-            leftIcon={<Icon name="file-text" size={18} color="#64748b" />}
+            leftIcon={<Icon name="file-text" size={18} color={tokens.textMuted} />}
             className="bg-background border-0"
           />
         </View>

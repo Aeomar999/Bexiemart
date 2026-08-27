@@ -119,7 +119,7 @@ function SlideCard({
 
   return (
     <Animated.View
-      className="absolute w-[280px] h-[340px] rounded-3xl overflow-hidden shadow-2xl shadow-none bg-primary-subtle"
+      className="absolute w-[280px] h-[340px] rounded-3xl overflow-hidden bg-primary-subtle"
       style={cardStyle}
     >
       <Image source={slide.image} style={{ width: "100%", height: "100%" }} contentFit="cover" />

@@ -1,3 +1,4 @@
+import { tokens } from "@/theme/tokens";
 import { BackButton } from "@/components/ui/BackButton";
 import { View, Text, ScrollView, FlatList, Dimensions, Pressable, Share } from "react-native";
 import { useRouter } from "expo-router";
@@ -56,7 +57,7 @@ export default function FlashSalesScreen() {
           <View className="flex-row items-center gap-2">
             {sale?.endDate && (
               <View className="flex-row items-center gap-1 bg-rose-50 px-3 py-1.5 rounded-full border border-rose-200">
-                <Icon name="clock" size={12} color="#e11d48" />
+                <Icon name="clock" size={12} color={tokens.error} />
                 <Text className="text-caption font-bold text-error font-body">
                   {formatNumber(timeLeft.hours)}:{formatNumber(timeLeft.minutes)}:
                   {formatNumber(timeLeft.seconds)}
@@ -71,7 +72,7 @@ export default function FlashSalesScreen() {
               className="w-8 h-8 rounded-full bg-rose-50 border border-rose-200 items-center justify-center"
               onPress={() => Share.share({ message: "Check out this flash sale on Bexiemart!" })}
             >
-              <Icon name="share-2" size={15} color="#e11d48" />
+              <Icon name="share-2" size={15} color={tokens.error} />
             </Pressable>
           </View>
         </View>
@@ -84,7 +85,7 @@ export default function FlashSalesScreen() {
         </View>
       ) : !flashSalesEnabled || !sale ? (
         <View className="flex-1 items-center justify-center p-10">
-          <Icon name="clock" size={48} color="#cbd5e1" />
+          <Icon name="clock" size={48} color={tokens.textDisabled} />
           <Text className="text-body-lg font-bold text-muted-foreground mt-4">
             No active flash sales
           </Text>
@@ -104,7 +105,7 @@ export default function FlashSalesScreen() {
             return (
               <Pressable
                 style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
-                className="bg-card rounded-2xl p-4 flex-row gap-4 mb-4 border border-border shadow-[0_4px_10px_rgba(0,0,0,0.03)]"
+                className="bg-card rounded-2xl p-4 flex-row gap-4 mb-4 border border-border"
                 onPress={() => router.push(`/(customer)/product/${item.product.id}`)}
               >
                 <View className="w-[110px] h-[110px] rounded-xl bg-background items-center justify-center overflow-hidden border border-border relative">
@@ -115,7 +116,7 @@ export default function FlashSalesScreen() {
                       contentFit="cover"
                     />
                   ) : (
-                    <Icon name="image" size={32} color="#cbd5e1" />
+                    <Icon name="image" size={32} color={tokens.textDisabled} />
                   )}
                   <View className="absolute top-0 left-0 bg-error px-2 py-1 rounded-br-[12px] rounded-tl-[16px]">
                     <Text className="text-caption font-bold text-white uppercase">
@@ -156,7 +157,7 @@ export default function FlashSalesScreen() {
                         className="h-full rounded-full"
                         style={{
                           width: `${claimedPercent}%`,
-                          backgroundColor: claimedPercent > 80 ? "#ef4444" : "#f59e0b",
+                          backgroundColor: claimedPercent > 80 ? tokens.error : tokens.warning,
                         }}
                       />
                     </View>

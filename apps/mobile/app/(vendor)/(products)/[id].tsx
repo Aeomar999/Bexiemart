@@ -1,3 +1,4 @@
+import { tokens } from "@/theme/tokens";
 import { BackButton } from "@/components/ui/BackButton";
 import { View, Text, ScrollView, Alert, Pressable } from "react-native";
 import { Image } from "expo-image";
@@ -191,7 +192,7 @@ export default function ListingDetailsScreen() {
           </ScrollView>
         ) : (
           <View className="w-full h-64 bg-secondary rounded-2xl items-center justify-center mb-6 border border-border">
-            <Icon name="image" size={48} color="#94a3b8" />
+            <Icon name="image" size={48} color={tokens.textMuted} />
             <Text className="text-body-md text-muted-foreground mt-4">No images available</Text>
           </View>
         )}

@@ -6,7 +6,7 @@ interface CardProps extends ViewProps {
 }
 
 const variantStyles: Record<string, string> = {
-  elevated: "bg-card rounded-2xl shadow-lg border border-border",
+  elevated: "bg-card rounded-2xl border border-border",
   outlined: "bg-card rounded-2xl border border-border",
   flat: "bg-background rounded-2xl",
 };

@@ -1,3 +1,4 @@
+import { tokens } from "@/theme/tokens";
 import { View, Text, ScrollView, Alert, Pressable, TextInput } from "react-native";
 import { useRouter } from "expo-router";
 import { BlurView } from "expo-blur";
@@ -167,9 +168,9 @@ export default function CartScreen() {
             <View className="flex-row items-center justify-between mb-3 px-1">
               <View className="flex-row items-center gap-2">
                 <View className="w-[22px] h-[22px] rounded-md bg-primary items-center justify-center">
-                  <Icon name="check" size={14} color="#fff" />
+                  <Icon name="check" size={14} color={tokens.primaryText} />
                 </View>
-                <Icon name="store" size={16} color="#475569" />
+                <Icon name="store" size={16} color={tokens.textSecondary} />
                 <Text className="text-body-lg font-heading font-bold text-foreground">
                   {group.vendor}
                 </Text>
@@ -189,12 +190,12 @@ export default function CartScreen() {
               <Pressable
                 style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
                 key={item.productId}
-                className="flex-row bg-card rounded-2xl p-4 border border-border gap-3 mb-3 shadow-[0_4px_10px_rgba(0,0,0,0.02)]"
+                className="flex-row bg-card rounded-2xl p-4 border border-border gap-3 mb-3"
                 onPress={() => router.push(`/(customer)/product/${item.productId}`)}
               >
                 <View className="flex-row items-center mr-1">
                   <View className="w-[22px] h-[22px] rounded-md bg-primary items-center justify-center">
-                    <Icon name="check" size={14} color="#fff" />
+                    <Icon name="check" size={14} color={tokens.primaryText} />
                   </View>
                 </View>
 
@@ -206,7 +207,7 @@ export default function CartScreen() {
                       contentFit="cover"
                     />
                   ) : (
-                    <Icon name="image" size={24} color="#cbd5e1" />
+                    <Icon name="image" size={24} color={tokens.textDisabled} />
                   )}
                 </View>
 
@@ -226,7 +227,7 @@ export default function CartScreen() {
                       className="w-8 h-8 rounded-full bg-rose-50 items-center justify-center -mt-1 -mr-1"
                       onPress={() => handleRemoveItem(item.productId, item.name)}
                     >
-                      <Icon name="trash-2" size={15} color="#f43f5e" />
+                      <Icon name="trash-2" size={15} color={tokens.error} />
                     </Pressable>
                   </View>
 
@@ -270,7 +271,7 @@ export default function CartScreen() {
                         <Icon
                           name="minus"
                           size={14}
-                          color={item.quantity <= 1 ? "#cbd5e1" : "#475569"}
+                          color={item.quantity <= 1 ? tokens.textDisabled : tokens.textSecondary}
                         />
                       </Pressable>
                       <Text className="text-body-md font-bold text-foreground font-body w-6 text-center">
@@ -295,7 +296,9 @@ export default function CartScreen() {
                         <Icon
                           name="plus"
                           size={14}
-                          color={item.quantity >= item.stock ? "#cbd5e1" : "#475569"}
+                          color={
+                            item.quantity >= item.stock ? tokens.textDisabled : tokens.textSecondary
+                          }
                         />
                       </Pressable>
                     </View>
@@ -312,17 +315,17 @@ export default function CartScreen() {
         <BlurView
           intensity={90}
           tint="light"
-          className="px-5 py-5 rounded-t-3xl border-t border-border/50 shadow-2xl bg-white/80"
+          className="px-5 py-5 rounded-t-3xl border-t border-border/50 bg-white/80"
         >
           {/* Coupon Section */}
           {!couponApplied ? (
             <View className="flex-row gap-2 mb-4">
               <View className="flex-1 flex-row items-center gap-2 bg-background rounded-full px-4 h-11 border border-border">
-                <Icon name="ticket-percent" size={16} color="#94a3b8" />
+                <Icon name="ticket-percent" size={16} color={tokens.textMuted} />
                 <TextInput
                   className="flex-1 font-body text-body-md text-foreground"
                   placeholder="Enter coupon code"
-                  placeholderTextColor="#94a3b8"
+                  placeholderTextColor={tokens.textMuted}
                   value={couponCode}
                   onChangeText={setCouponCode}
                 />
@@ -339,7 +342,7 @@ export default function CartScreen() {
             <View className="flex-row items-center justify-between bg-emerald-50 rounded-xl px-5 py-4 mb-5 border border-emerald-100">
               <View className="flex-row items-center gap-3">
                 <View className="w-8 h-8 rounded-full bg-emerald-500 items-center justify-center">
-                  <Icon name="ticket-percent" size={16} color="#fff" />
+                  <Icon name="ticket-percent" size={16} color={tokens.primaryText} />
                 </View>
                 <View>
                   <Text className="text-body-md font-bold text-emerald-700 font-body">

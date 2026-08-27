@@ -57,7 +57,7 @@ const QUICK_ACTIONS = [
     id: "4",
     label: "Store\nSettings",
     icon: "settings",
-    color: "#64748b",
+    color: tokens.textMuted,
     bg: "#f1f5f9",
     route: "/(vendor)/(settings)",
   },
@@ -101,7 +101,7 @@ export default function DashboardScreen() {
               className="w-10 h-10 rounded-full bg-background border border-border items-center justify-center relative"
               onPress={() => router.push("/(vendor)/inbox")}
             >
-              <Icon name="message-square" size={20} color="#64748b" />
+              <Icon name="message-square" size={20} color={tokens.textMuted} />
               <View className="absolute top-2 right-2 w-2 h-2 bg-error rounded-full border border-card" />
             </Pressable>
             <Pressable
@@ -112,7 +112,7 @@ export default function DashboardScreen() {
               className="w-10 h-10 rounded-full bg-background border border-border items-center justify-center relative"
               onPress={() => router.push("/(vendor)/notifications")}
             >
-              <Icon name="bell" size={20} color="#64748b" />
+              <Icon name="bell" size={20} color={tokens.textMuted} />
               <View className="absolute top-2 right-2 w-2 h-2 bg-primary rounded-full border border-card" />
             </Pressable>
           </View>
@@ -158,7 +158,7 @@ export default function DashboardScreen() {
               onPress={() => router.push("/(vendor)/(earnings)")}
             >
               <Text className="text-white font-bold font-body text-body-lg">Withdraw Funds</Text>
-              <Icon name="arrow-right" size={16} color="#ffffff" />
+              <Icon name="arrow-right" size={16} color={tokens.primaryText} />
             </Pressable>
           </View>
         </View>
@@ -167,7 +167,7 @@ export default function DashboardScreen() {
         <View className="px-5 mb-8">
           <View
             style={{
-              backgroundColor: "#ffffff",
+              backgroundColor: tokens.primaryText,
               borderRadius: 32,
               padding: 20,
               flexDirection: "row",
@@ -200,7 +200,7 @@ export default function DashboardScreen() {
                   style={{
                     fontSize: 10,
                     fontWeight: "700",
-                    color: "#0f172a",
+                    color: tokens.textPrimary,
                     textAlign: "center",
                     lineHeight: 12,
                   }}

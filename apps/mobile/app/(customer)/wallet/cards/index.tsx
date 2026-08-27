@@ -1,3 +1,4 @@
+import { tokens } from "@/theme/tokens";
 import { BackButton } from "@/components/ui/BackButton";
 import { View, Text, Pressable, FlatList, Alert } from "react-native";
 import { useRouter } from "expo-router";
@@ -50,8 +51,8 @@ export default function CardsScreen() {
           showsVerticalScrollIndicator={false}
           ListEmptyComponent={
             <View className="items-center justify-center py-24">
-              <View className="w-20 h-20 bg-blue-50 rounded-full items-center justify-center mb-6 shadow-sm border border-blue-100">
-                <Icon name="credit-card" size={32} color="#3B82F6" />
+              <View className="w-20 h-20 bg-blue-50 rounded-full items-center justify-center mb-6 border border-blue-100">
+                <Icon name="credit-card" size={32} color={tokens.primary} />
               </View>
               <Text className="text-gray-900 font-bold text-xl">No cards added</Text>
               <Text className="text-gray-500 text-center mt-3 max-w-[240px] leading-relaxed">
@@ -62,16 +63,7 @@ export default function CardsScreen() {
           renderItem={({ item }) => (
             <View className="mb-8">
               {/* Card Face */}
-              <View
-                className="rounded-3xl overflow-hidden shadow-lg border border-white/10"
-                style={{
-                  shadowColor: getCardColors(item.type)[0],
-                  shadowOffset: { width: 0, height: 8 },
-                  shadowOpacity: 0.3,
-                  shadowRadius: 12,
-                  elevation: 10,
-                }}
-              >
+              <View className="rounded-3xl overflow-hidden border border-white/10" style={{}}>
                 <LinearGradient
                   colors={getCardColors(item.id, item.type) as any}
                   start={{ x: 0, y: 0 }}
@@ -101,7 +93,7 @@ export default function CardsScreen() {
                           style={{ transform: [{ rotate: "90deg" }] }}
                         />
                       </View>
-                      <Text className="text-white font-extrabold text-2xl tracking-wider italic shadow-sm">
+                      <Text className="text-white font-extrabold text-2xl tracking-wider italic">
                         {item.type.toUpperCase()}
                       </Text>
                     </View>
@@ -121,7 +113,7 @@ export default function CardsScreen() {
                         <Text className="text-white font-bold text-lg tracking-[4px] mr-2">
                           ••••
                         </Text>
-                        <Text className="text-white font-mono text-xl tracking-[2px] font-bold shadow-sm mt-0.5">
+                        <Text className="text-white font-mono text-xl tracking-[2px] font-bold mt-0.5">
                           {item.last4}
                         </Text>
                       </View>
@@ -134,7 +126,7 @@ export default function CardsScreen() {
                           Cardholder Name
                         </Text>
                         <Text
-                          className="text-white font-bold text-body-lg tracking-widest uppercase shadow-sm"
+                          className="text-white font-bold text-body-lg tracking-widest uppercase"
                           numberOfLines={1}
                         >
                           {item.cardholderName}
@@ -144,7 +136,7 @@ export default function CardsScreen() {
                         <Text className="text-white/70 text-caption uppercase tracking-[2px] mb-1 font-medium">
                           Valid Thru
                         </Text>
-                        <Text className="text-white font-bold text-body-lg tracking-widest shadow-sm">
+                        <Text className="text-white font-bold text-body-lg tracking-widest">
                           {item.expiryMonth}/{item.expiryYear}
                         </Text>
                       </View>
@@ -158,7 +150,7 @@ export default function CardsScreen() {
                 <View className="flex-row items-center">
                   {item.isDefault ? (
                     <View className="bg-green-100/80 px-4 py-2 rounded-full flex-row items-center border border-green-200">
-                      <Icon name="check-circle" size={14} color="#15803D" />
+                      <Icon name="check-circle" size={14} color={tokens.success} />
                       <Text className="text-green-800 text-xs font-bold ml-1.5 tracking-wide">
                         Primary Card
                       </Text>
@@ -183,7 +175,7 @@ export default function CardsScreen() {
                     onPress={() => router.push(`/(customer)/wallet/cards/edit/${item.id}`)}
                     className="p-2.5 rounded-full bg-blue-50 active:bg-blue-100 border border-blue-100"
                   >
-                    <Icon name="edit-2" size={18} color="#2563EB" />
+                    <Icon name="edit-2" size={18} color={tokens.primary} />
                   </Pressable>
 
                   <Pressable
@@ -193,7 +185,7 @@ export default function CardsScreen() {
                     onPress={() => handleDelete(item.id)}
                     className="p-2.5 rounded-full bg-red-50 active:bg-red-100 border border-red-100"
                   >
-                    <Icon name="trash-2" size={18} color="#EF4444" />
+                    <Icon name="trash-2" size={18} color={tokens.error} />
                   </Pressable>
                 </View>
               </View>
@@ -211,9 +203,9 @@ export default function CardsScreen() {
         <Pressable
           onPress={() => router.push("/(customer)/wallet/cards/add")}
           style={({ pressed }) => [{ transform: [{ scale: pressed ? 0.98 : 1 }] }]}
-          className="bg-[#2563EB] w-full rounded-2xl py-4 flex-row items-center justify-center shadow-lg shadow-blue-500/30"
+          className="bg-primary w-full rounded-2xl py-4 flex-row items-center justify-center"
         >
-          <Icon name="plus" size={22} color="#fff" />
+          <Icon name="plus" size={22} color={tokens.primaryText} />
           <Text className="text-white font-bold text-lg ml-2 tracking-wide">Add New Card</Text>
         </Pressable>
       </LinearGradient>

@@ -1,3 +1,4 @@
+import { tokens } from "@/theme/tokens";
 import { BackButton } from "@/components/ui/BackButton";
 import {
   View,
@@ -118,11 +119,6 @@ export default function EditCardScreen() {
             style={{
               height: 200,
               width: "100%",
-              elevation: 15,
-              shadowColor: "#4f2ae8",
-              shadowOffset: { width: 0, height: 10 },
-              shadowOpacity: 0.3,
-              shadowRadius: 20,
             }}
           >
             <LinearGradient
@@ -187,17 +183,17 @@ export default function EditCardScreen() {
         </View>
 
         <View className="px-5">
-          <View className="bg-white rounded-3xl p-5 border border-gray-100 shadow-sm">
+          <View className="bg-white rounded-3xl p-5 border border-gray-100">
             <View className="mb-5">
               <Text className="text-gray-500 text-xs font-bold uppercase tracking-wider mb-2 ml-1">
                 Cardholder Name
               </Text>
               <View className="bg-gray-50 flex-row items-center rounded-2xl px-4 border border-gray-200">
-                <Icon name="user" size={18} color="#9ca3af" />
+                <Icon name="user" size={18} color={tokens.textMuted} />
                 <TextInput
                   className="flex-1 py-4 px-3 text-gray-900 font-medium"
                   placeholder="e.g. John Doe"
-                  placeholderTextColor="#9ca3af"
+                  placeholderTextColor={tokens.textMuted}
                   value={name}
                   onChangeText={setName}
                   autoCapitalize="words"
@@ -210,7 +206,7 @@ export default function EditCardScreen() {
                 Card Number (Cannot be edited)
               </Text>
               <View className="bg-gray-100 flex-row items-center rounded-2xl px-4 border border-gray-200">
-                <Icon name="credit-card" size={18} color="#9ca3af" />
+                <Icon name="credit-card" size={18} color={tokens.textMuted} />
                 <TextInput
                   className="flex-1 py-4 px-3 text-gray-400 font-medium font-mono"
                   value={`•••• •••• •••• ${last4}`}
@@ -225,11 +221,11 @@ export default function EditCardScreen() {
                   Expiry Date
                 </Text>
                 <View className="bg-gray-50 flex-row items-center rounded-2xl px-4 border border-gray-200">
-                  <Icon name="calendar" size={18} color="#9ca3af" />
+                  <Icon name="calendar" size={18} color={tokens.textMuted} />
                   <TextInput
                     className="flex-1 py-4 px-3 text-gray-900 font-medium font-mono"
                     placeholder="MM/YY"
-                    placeholderTextColor="#9ca3af"
+                    placeholderTextColor={tokens.textMuted}
                     keyboardType="number-pad"
                     maxLength={5}
                     value={expiry}
@@ -252,7 +248,7 @@ export default function EditCardScreen() {
               <View
                 className={`w-6 h-6 rounded-md items-center justify-center border mr-3 ${isDefault ? "bg-primary border-primary" : "border-gray-300 bg-gray-50"}`}
               >
-                {isDefault && <Icon name="check" size={14} color="#fff" />}
+                {isDefault && <Icon name="check" size={14} color={tokens.primaryText} />}
               </View>
               <Text className="text-gray-700 font-medium">Set as default card</Text>
             </Pressable>
@@ -261,19 +257,13 @@ export default function EditCardScreen() {
               onPress={handleSave}
               disabled={updateCard.isPending}
               className={`w-full rounded-2xl py-4 flex-row justify-center items-center ${updateCard.isPending ? "bg-primary-subtle" : "bg-primary"}`}
-              style={{
-                shadowColor: "#4f2ae8",
-                shadowOffset: { width: 0, height: 4 },
-                shadowOpacity: 0.3,
-                shadowRadius: 8,
-                elevation: 5,
-              }}
+              style={{}}
             >
               {updateCard.isPending ? (
-                <ActivityIndicator color="#fff" />
+                <ActivityIndicator color={tokens.primaryText} />
               ) : (
                 <>
-                  <Icon name="save" size={18} color="#fff" />
+                  <Icon name="save" size={18} color={tokens.primaryText} />
                   <Text className="text-white font-bold text-base ml-2 tracking-wide">
                     Save Changes
                   </Text>

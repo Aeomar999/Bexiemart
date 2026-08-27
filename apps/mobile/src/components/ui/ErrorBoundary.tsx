@@ -58,7 +58,7 @@ export class ErrorBoundary extends React.Component<ErrorBoundaryProps, State> {
             }}
           >
             <View className="h-24 w-24 rounded-full bg-destructive/10 items-center justify-center mb-8">
-              <Icon name="alert-circle" size={48} color="#ef4444" />
+              <Icon name="alert-circle" size={48} color={tokens.error} />
             </View>
 
             <Text className="text-3xl font-bold text-foreground mb-4 text-center">

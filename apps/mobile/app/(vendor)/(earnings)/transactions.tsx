@@ -58,7 +58,7 @@ export default function TransactionsScreen() {
           className="w-10 h-10 rounded-full bg-background items-center justify-center mr-3"
           onPress={() => router.back()}
         >
-          <Icon name="arrow-left" size={20} color="#0f172a" />
+          <Icon name="arrow-left" size={20} color={tokens.textPrimary} />
         </Pressable>
         <Text className="text-display-sm font-heading font-black text-foreground">
           Transaction History
@@ -113,7 +113,12 @@ export default function TransactionsScreen() {
             </View>
           ) : filteredTransactions.length === 0 ? (
             <View className="p-10 items-center justify-center">
-              <Icon name="file-text" size={32} color="#cbd5e1" style={{ marginBottom: 12 }} />
+              <Icon
+                name="file-text"
+                size={32}
+                color={tokens.textDisabled}
+                style={{ marginBottom: 12 }}
+              />
               <Text className="text-body-lg font-bold text-foreground">No Transactions</Text>
               <Text className="text-sm text-muted-foreground text-center mt-1">
                 You have no {activeFilter.toLowerCase()} history.
@@ -136,7 +141,7 @@ export default function TransactionsScreen() {
                       <Icon
                         name={isWithdrawal ? "arrow-up-right" : "arrow-down-left"}
                         size={18}
-                        color={isWithdrawal ? "#e11d48" : "#16a34a"}
+                        color={isWithdrawal ? tokens.error : tokens.success}
                       />
                     </View>
                     <View className="flex-1 pr-4">

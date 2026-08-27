@@ -203,7 +203,7 @@ export default function TrackOrderScreen() {
         {driver && (
           <Marker coordinate={driver} anchor={{ x: 0.5, y: 0.5 }}>
             <View className="w-10 h-10 bg-primary rounded-full items-center justify-center border-4 border-white">
-              <Icon name="truck" size={16} color="#fff" />
+              <Icon name="truck" size={16} color={tokens.primaryText} />
             </View>
           </Marker>
         )}
@@ -227,7 +227,7 @@ export default function TrackOrderScreen() {
               onPress={handleCancel}
               disabled={actioning}
             >
-              <Icon name="x" size={14} color="#ef4444" />
+              <Icon name="x" size={14} color={tokens.error} />
               <Text className="text-sm font-bold text-error font-heading">Cancel</Text>
             </Pressable>
           )}
@@ -270,7 +270,7 @@ export default function TrackOrderScreen() {
             <View className="flex-row items-center justify-between bg-background p-4 rounded-2xl border border-border mb-6">
               <View className="flex-row items-center gap-4">
                 <View className="w-12 h-12 rounded-full bg-secondary items-center justify-center border border-border">
-                  <Icon name="user" size={24} color="#64748b" />
+                  <Icon name="user" size={24} color={tokens.textMuted} />
                 </View>
                 <View>
                   <Text className="text-body-lg font-bold text-foreground font-heading">
@@ -299,7 +299,7 @@ export default function TrackOrderScreen() {
                 <Icon
                   name="phone"
                   size={18}
-                  color={job.dispatcher.user?.phoneNumber ? "#059669" : "#94a3b8"}
+                  color={job.dispatcher.user?.phoneNumber ? tokens.success : tokens.textMuted}
                 />
               </Pressable>
             </View>
@@ -318,7 +318,7 @@ export default function TrackOrderScreen() {
               disabled={actioning}
             >
               {actioning ? (
-                <ActivityIndicator color="#fff" />
+                <ActivityIndicator color={tokens.primaryText} />
               ) : (
                 <Text className="text-white font-bold text-body-lg">Confirm Delivery</Text>
               )}

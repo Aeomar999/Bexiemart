@@ -1,3 +1,4 @@
+import { tokens } from "@/theme/tokens";
 import { BackButton } from "@/components/ui/BackButton";
 import {
   View,
@@ -87,7 +88,7 @@ export default function VendorContactScreen() {
               testID="category-picker-button"
             >
               <Text className="text-body-lg text-foreground">{selectedCategoryLabel}</Text>
-              <Icon name="chevron-down" size={20} color="#94a3b8" />
+              <Icon name="chevron-down" size={20} color={tokens.textMuted} />
             </Pressable>
           </View>
 
@@ -169,7 +170,9 @@ export default function VendorContactScreen() {
                   >
                     {cat.label}
                   </Text>
-                  {category === cat.value && <Icon name="check" size={20} color="#0ea5e9" />}
+                  {category === cat.value && (
+                    <Icon name="check" size={20} color={tokens.secondary} />
+                  )}
                 </Pressable>
               ))}
             </View>

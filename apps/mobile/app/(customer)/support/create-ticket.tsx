@@ -139,7 +139,7 @@ export default function CreateTicketScreen() {
               onPress={handlePrevStep}
               className="p-2 -ml-2"
             >
-              <Icon name="arrow-left" size={24} color="#0f172a" />
+              <Icon name="arrow-left" size={24} color={tokens.textPrimary} />
             </Pressable>
             <Text className="text-display-sm font-heading font-black text-foreground">
               Contact Support
@@ -188,7 +188,7 @@ export default function CreateTicketScreen() {
                     <Icon
                       name={cat.icon}
                       size={22}
-                      color={isSelected ? "#ffffff" : tokens.primary}
+                      color={isSelected ? tokens.primaryText : tokens.primary}
                     />
                   </View>
                   <View className="flex-1">
@@ -204,7 +204,7 @@ export default function CreateTicketScreen() {
                   <View
                     className={`w-6 h-6 rounded-full border items-center justify-center ${isSelected ? "border-primary bg-primary" : "border-muted"}`}
                   >
-                    {isSelected && <Icon name="check" size={14} color="#ffffff" />}
+                    {isSelected && <Icon name="check" size={14} color={tokens.primaryText} />}
                   </View>
                 </Pressable>
               );
@@ -236,7 +236,7 @@ export default function CreateTicketScreen() {
               <View
                 className={`w-6 h-6 rounded-full border items-center justify-center ${!selectedOrderId ? "border-primary bg-primary" : "border-muted"}`}
               >
-                {!selectedOrderId && <Icon name="check" size={14} color="#ffffff" />}
+                {!selectedOrderId && <Icon name="check" size={14} color={tokens.primaryText} />}
               </View>
             </Pressable>
 
@@ -277,14 +277,14 @@ export default function CreateTicketScreen() {
                     <View
                       className={`w-6 h-6 rounded-full border items-center justify-center ${isSelected ? "border-primary bg-primary" : "border-muted"}`}
                     >
-                      {isSelected && <Icon name="check" size={14} color="#ffffff" />}
+                      {isSelected && <Icon name="check" size={14} color={tokens.primaryText} />}
                     </View>
                   </Pressable>
                 );
               })
             ) : (
               <View className="p-6 bg-card rounded-2xl border border-border items-center justify-center">
-                <Icon name="package" size={32} color="#94a3b8" />
+                <Icon name="package" size={32} color={tokens.textMuted} />
                 <Text className="text-foreground font-bold text-body-md mt-2">
                   No recent orders found
                 </Text>
@@ -313,7 +313,7 @@ export default function CreateTicketScreen() {
                 value={subject}
                 onChangeText={setSubject}
                 placeholder="e.g. Missing drink from my order"
-                placeholderTextColor="#94a3b8"
+                placeholderTextColor={tokens.textMuted}
                 className="bg-card px-4 py-3.5 rounded-xl border border-border text-foreground font-body text-body-md"
               />
             </View>
@@ -326,7 +326,7 @@ export default function CreateTicketScreen() {
                 value={content}
                 onChangeText={setContent}
                 placeholder="Describe your issue in detail here..."
-                placeholderTextColor="#94a3b8"
+                placeholderTextColor={tokens.textMuted}
                 multiline
                 numberOfLines={6}
                 textAlignVertical="top"

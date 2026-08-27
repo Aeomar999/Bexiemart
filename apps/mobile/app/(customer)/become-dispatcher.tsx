@@ -93,7 +93,7 @@ export default function BecomeDispatcherScreen() {
                 <Icon
                   name={type === "bike" ? "briefcase" : "truck"}
                   size={24}
-                  color={isSelected ? tokens.primary : "#64748b"}
+                  color={isSelected ? tokens.primary : tokens.textMuted}
                 />
                 <Text
                   className={`mt-2 font-bold font-body capitalize ${isSelected ? "text-primary-hover" : "text-muted-foreground"}`}
@@ -113,7 +113,7 @@ export default function BecomeDispatcherScreen() {
           onChangeText={(val) => setForm((prev) => ({ ...prev, licensePlate: val }))}
           placeholder="e.g. AS-1234-21"
           className="bg-card border border-border p-4 rounded-xl font-body text-body-lg mb-6 text-foreground"
-          placeholderTextColor="#94a3b8"
+          placeholderTextColor={tokens.textMuted}
         />
 
         <Text className="text-body-lg font-bold font-body text-foreground mb-2">
@@ -124,7 +124,7 @@ export default function BecomeDispatcherScreen() {
           onChangeText={(val) => setForm((prev) => ({ ...prev, licenseNumber: val }))}
           placeholder="Enter license ID"
           className="bg-card border border-border p-4 rounded-xl font-body text-body-lg mb-8 text-foreground"
-          placeholderTextColor="#94a3b8"
+          placeholderTextColor={tokens.textMuted}
         />
 
         <Pressable
@@ -133,7 +133,7 @@ export default function BecomeDispatcherScreen() {
           className="bg-primary p-4 rounded-xl items-center justify-center flex-row h-14"
         >
           {createProfile.isPending ? (
-            <ActivityIndicator color="#ffffff" />
+            <ActivityIndicator color={tokens.primaryText} />
           ) : (
             <Text className="text-white font-bold font-heading text-body-lg">
               Submit Application

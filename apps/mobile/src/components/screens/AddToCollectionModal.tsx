@@ -46,7 +46,7 @@ export function AddToCollectionModal({ visible, productId, onClose }: Props) {
               onPress={onClose}
               className="w-8 h-8 rounded-full bg-muted items-center justify-center"
             >
-              <Icon name="x" size={16} color="#0f172a" />
+              <Icon name="x" size={16} color={tokens.textPrimary} />
             </Pressable>
           </View>
 
@@ -74,7 +74,7 @@ export function AddToCollectionModal({ visible, productId, onClose }: Props) {
                       {item.name}
                     </Text>
                   </View>
-                  <Icon name="chevron-right" size={16} color="#cbd5e1" />
+                  <Icon name="chevron-right" size={16} color={tokens.textDisabled} />
                 </Pressable>
               )}
             />

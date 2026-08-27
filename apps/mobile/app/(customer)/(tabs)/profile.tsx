@@ -309,7 +309,7 @@ export default function ProfileScreen() {
             className="flex-row items-center justify-center gap-2 p-4 bg-primary rounded-xl mt-2"
             onPress={() => router.push("/(auth)/login")}
           >
-            <Icon name="log-in" size={18} color="#ffffff" />
+            <Icon name="log-in" size={18} color={tokens.primaryText} />
             <Text className="text-body-lg font-body font-bold text-white">
               Sign In / Create Account
             </Text>

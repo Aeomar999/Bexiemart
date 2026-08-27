@@ -1,3 +1,4 @@
+import { tokens } from "@/theme/tokens";
 import { BackButton } from "@/components/ui/BackButton";
 import { View, Text, ScrollView, Alert, Pressable, ActivityIndicator } from "react-native";
 import { useRouter } from "expo-router";
@@ -104,22 +105,22 @@ export default function RewardsScreen() {
 
       {isLoading ? (
         <View className="flex-1 items-center justify-center">
-          <ActivityIndicator size="large" color="#d97706" testID="rewards-loading" />
+          <ActivityIndicator size="large" color={tokens.warning} testID="rewards-loading" />
         </View>
       ) : (
         <ScrollView className="flex-1 px-5 pt-6 pb-20">
-          <View className="rounded-3xl shadow-[0_20px_40px_rgba(217,119,6,0.2)] overflow-hidden mb-8">
+          <View className="rounded-3xl overflow-hidden mb-8">
             <LinearGradient
-              colors={["#f59e0b", "#d97706"]}
+              colors={[tokens.warning, "#d97706"]}
               start={{ x: 0, y: 0 }}
               end={{ x: 1, y: 0 }}
               style={{ padding: 24, position: "relative", alignItems: "center" }}
             >
               <View className="absolute right-[-20px] top-[-20px] opacity-10">
-                <Icon name="award" size={160} color="#fff" />
+                <Icon name="award" size={160} color={tokens.primaryText} />
               </View>
               <View className="w-16 h-16 rounded-full bg-card/20 items-center justify-center mb-4">
-                <Icon name="star" size={32} color="#fff" />
+                <Icon name="star" size={32} color={tokens.primaryText} />
               </View>
               <Text className="text-body-md font-heading font-bold text-white/90 uppercase tracking-wider mb-2">
                 Your Balance
@@ -157,7 +158,7 @@ export default function RewardsScreen() {
           <Text className="text-heading-md font-bold text-foreground font-heading mb-4 px-1">
             How to earn coins
           </Text>
-          <View className="bg-card rounded-2xl border border-border overflow-hidden mb-8 shadow-lg">
+          <View className="bg-card rounded-2xl border border-border overflow-hidden mb-8">
             {earningMethods.map((method, idx) => {
               const isLast = idx === earningMethods.length - 1;
               return (
@@ -166,12 +167,12 @@ export default function RewardsScreen() {
                   className={`flex-row items-center p-4 ${!isLast ? "border-b border-border" : ""}`}
                 >
                   <View className="w-12 h-12 rounded-full bg-amber-50 items-center justify-center mr-4">
-                    <Icon name={method.icon} size={22} color="#d97706" />
+                    <Icon name={method.icon} size={22} color={tokens.warning} />
                   </View>
                   <View className="flex-1">
                     <Text className="text-body-lg font-bold text-foreground">{method.title}</Text>
                     <View className="flex-row items-center mt-1">
-                      <Icon name="plus-circle" size={14} color="#f59e0b" />
+                      <Icon name="plus-circle" size={14} color={tokens.warning} />
                       <Text className="text-sm font-bold text-amber-500 ml-1">
                         {method.coins} Coins
                       </Text>
@@ -188,7 +189,7 @@ export default function RewardsScreen() {
                         method.completed ? "bg-emerald-50" : "bg-amber-50"
                       }`}
                     >
-                      {method.completed && <Icon name="check" size={12} color="#059669" />}
+                      {method.completed && <Icon name="check" size={12} color={tokens.success} />}
                       <Text
                         className={`text-body-sm font-bold ml-1 ${
                           method.completed ? "text-emerald-600" : "text-amber-600"

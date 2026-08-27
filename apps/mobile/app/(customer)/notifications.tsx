@@ -14,11 +14,11 @@ import {
 
 const typeIcons: Record<string, { icon: string; color: string; bg: string }> = {
   order: { icon: "shopping-bag", color: tokens.primary, bg: "#e0e7ff" },
-  payment: { icon: "banknote", color: "#059669", bg: "#d1fae5" },
-  shipping: { icon: "truck", color: "#d97706", bg: "#fef3c7" },
+  payment: { icon: "banknote", color: tokens.success, bg: "#d1fae5" },
+  shipping: { icon: "truck", color: tokens.warning, bg: "#fef3c7" },
   promotion: { icon: "percent", color: "#db2777", bg: "#fce7f3" },
-  system: { icon: "info", color: "#64748b", bg: "#f1f5f9" },
-  review: { icon: "star", color: "#f59e0b", bg: "#ffedd5" },
+  system: { icon: "info", color: tokens.textMuted, bg: "#f1f5f9" },
+  review: { icon: "star", color: tokens.warning, bg: "#ffedd5" },
 };
 
 export default function NotificationsScreen() {

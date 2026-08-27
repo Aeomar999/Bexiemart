@@ -33,13 +33,13 @@ export const SegmentedOtpInput: React.FC<SegmentedOtpInputProps> = ({
     const isError = status === "error";
 
     if (isCurrent) {
-      return "border-primary bg-primary/10 border-2 shadow-sm";
+      return "border-primary bg-primary/10 border-2";
     }
     if (isError) {
       return isFilled ? "border-error bg-error/10 border" : "border-error/40 bg-error/5 border";
     }
     if (isFilled) {
-      return "border-foreground/25 bg-card border shadow-sm";
+      return "border-foreground/25 bg-card border";
     }
     return "border-border/60 bg-muted/30 border";
   };

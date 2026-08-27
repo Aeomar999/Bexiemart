@@ -32,7 +32,7 @@ export default function ContactUsScreen() {
             onPress={() => router.push("/(customer)/support/tickets")}
           >
             <View className="w-14 h-14 bg-primary rounded-full items-center justify-center">
-              <Icon name="message-square" size={28} color="#ffffff" />
+              <Icon name="message-square" size={28} color={tokens.primaryText} />
             </View>
             <Text className="text-heading-md font-bold text-primary font-heading">
               In-App Live Support
@@ -78,7 +78,7 @@ export default function ContactUsScreen() {
             }
           >
             <View className="w-12 h-12 bg-emerald-100 rounded-full items-center justify-center">
-              <Icon name="phone" size={24} color="#10b981" />
+              <Icon name="phone" size={24} color={tokens.success} />
             </View>
             <Text className="text-heading-sm font-bold text-foreground font-heading">Call Us</Text>
             <Text className="text-body-md text-muted-foreground font-body">+233 24 123 4567</Text>

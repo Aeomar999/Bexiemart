@@ -40,7 +40,7 @@ export default function DispatcherProfile() {
 
       <ScrollView className="flex-1 px-5 pt-6 pb-10" showsVerticalScrollIndicator={false}>
         {/* User Card */}
-        <View className="bg-card rounded-2xl p-5 flex-row items-center shadow-lg border border-border mb-6">
+        <View className="bg-card rounded-2xl p-5 flex-row items-center border border-border mb-6">
           <View className="mr-4">
             <Avatar uri={user?.image} name={user?.name || "D"} size={64} fallback="initials" />
           </View>
@@ -57,7 +57,7 @@ export default function DispatcherProfile() {
             className="w-10 h-10 rounded-full bg-background items-center justify-center"
             onPress={() => router.push("/(dispatcher)/edit-profile")}
           >
-            <Icon name="edit-2" size={16} color="#64748b" />
+            <Icon name="edit-2" size={16} color={tokens.textMuted} />
           </Pressable>
         </View>
 
@@ -76,7 +76,7 @@ export default function DispatcherProfile() {
           </View>
           <View className="flex-1 bg-card border border-border p-3 rounded-2xl items-center">
             <View className="flex-row items-center gap-1 mb-1">
-              <Icon name="dollar-sign" size={14} color="#10b981" />
+              <Icon name="dollar-sign" size={14} color={tokens.success} />
               <Text className="font-bold text-foreground font-heading">
                 {formatMoney(Number(analytics?.revenue30Days || 0), "GH₵")}
               </Text>
@@ -91,10 +91,10 @@ export default function DispatcherProfile() {
         <Text className="text-body-lg font-heading font-bold text-foreground mb-3 px-1">
           Vehicle Details
         </Text>
-        <View className="bg-card rounded-2xl border border-border overflow-hidden mb-8 shadow-lg">
+        <View className="bg-card rounded-2xl border border-border overflow-hidden mb-8">
           <View className="flex-row items-center p-4 border-b border-border">
             <View className="w-10 h-10 rounded-full bg-slate-100 items-center justify-center mr-3">
-              <Icon name="truck" size={18} color="#64748b" />
+              <Icon name="truck" size={18} color={tokens.textMuted} />
             </View>
             <View className="flex-1">
               <Text className="text-body-lg font-body font-semibold text-foreground">Type</Text>
@@ -105,7 +105,7 @@ export default function DispatcherProfile() {
           </View>
           <View className="flex-row items-center p-4 border-b border-border">
             <View className="w-10 h-10 rounded-full bg-slate-100 items-center justify-center mr-3">
-              <Icon name="credit-card" size={18} color="#64748b" />
+              <Icon name="credit-card" size={18} color={tokens.textMuted} />
             </View>
             <View className="flex-1">
               <Text className="text-body-lg font-body font-semibold text-foreground">
@@ -122,11 +122,11 @@ export default function DispatcherProfile() {
         <Text className="text-body-lg font-heading font-bold text-foreground mb-3 px-1">
           Preferences
         </Text>
-        <View className="bg-card rounded-2xl border border-border overflow-hidden mb-8 shadow-lg">
+        <View className="bg-card rounded-2xl border border-border overflow-hidden mb-8">
           <Pressable className="flex-row items-center justify-between p-4 border-b border-border">
             <View className="flex-row items-center gap-3">
               <View className="w-10 h-10 rounded-full bg-emerald-50 items-center justify-center">
-                <Icon name="navigation" size={18} color="#10b981" />
+                <Icon name="navigation" size={18} color={tokens.success} />
               </View>
               <Text className="text-body-lg font-body font-semibold text-foreground">
                 Navigation App
@@ -134,7 +134,7 @@ export default function DispatcherProfile() {
             </View>
             <View className="flex-row items-center gap-2">
               <Text className="text-body-sm font-body text-muted-foreground">Google Maps</Text>
-              <Icon name="chevron-right" size={18} color="#cbd5e1" />
+              <Icon name="chevron-right" size={18} color={tokens.textDisabled} />
             </View>
           </Pressable>
           <Pressable
@@ -143,13 +143,13 @@ export default function DispatcherProfile() {
           >
             <View className="flex-row items-center gap-3">
               <View className="w-10 h-10 rounded-full bg-rose-50 items-center justify-center">
-                <Icon name="help-circle" size={18} color="#e11d48" />
+                <Icon name="help-circle" size={18} color={tokens.error} />
               </View>
               <Text className="text-body-lg font-body font-semibold text-foreground">
                 Driver Support
               </Text>
             </View>
-            <Icon name="chevron-right" size={18} color="#cbd5e1" />
+            <Icon name="chevron-right" size={18} color={tokens.textDisabled} />
           </Pressable>
         </View>
 
@@ -159,7 +159,7 @@ export default function DispatcherProfile() {
           className="flex-row items-center justify-center gap-2 p-4 bg-rose-50 rounded-xl mb-8 border border-rose-100"
           onPress={handleLogout}
         >
-          <Icon name="log-out" size={18} color="#ef4444" />
+          <Icon name="log-out" size={18} color={tokens.error} />
           <Text className="text-body-lg font-body font-bold text-rose-500">Log Out</Text>
         </Pressable>
       </ScrollView>

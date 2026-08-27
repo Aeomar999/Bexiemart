@@ -149,11 +149,11 @@ export default function ShopScreen() {
       >
         <View className="flex-row items-center gap-3">
           <View className="flex-1 flex-row items-center gap-2 bg-muted rounded-full px-4 h-11 border border-border">
-            <Icon name="search" size={16} color="#94A3B8" />
+            <Icon name="search" size={16} color={tokens.textMuted} />
             <TextInput
               className="flex-1 font-body text-body-sm text-foreground"
               placeholder="Search products..."
-              placeholderTextColor="#94A3B8"
+              placeholderTextColor={tokens.textMuted}
               value={searchQuery}
               onChangeText={setSearchQuery}
             />
@@ -165,7 +165,7 @@ export default function ShopScreen() {
                 onPress={() => setSearchQuery("")}
                 className="active:opacity-70"
               >
-                <Icon name="x" size={14} color="#94A3B8" />
+                <Icon name="x" size={14} color={tokens.textMuted} />
               </Pressable>
             )}
           </View>
@@ -176,7 +176,7 @@ export default function ShopScreen() {
             className="w-11 h-11 rounded-full bg-card border border-border items-center justify-center active:opacity-70"
             onPress={() => setShowSortModal(true)}
           >
-            <Icon name="sliders-horizontal" size={18} color="#475569" />
+            <Icon name="sliders-horizontal" size={18} color={tokens.textSecondary} />
           </Pressable>
         </View>
         <FlashList<{ id: string; name: string }>
@@ -217,7 +217,7 @@ export default function ShopScreen() {
           onPress={() => setShowSortModal(true)}
         >
           <Text className="text-caption text-muted-foreground font-body">{sortLabels[sortBy]}</Text>
-          <Icon name="chevron-down" size={10} color="#94A3B8" />
+          <Icon name="chevron-down" size={10} color={tokens.textMuted} />
         </Pressable>
       </View>
 
@@ -271,7 +271,7 @@ export default function ShopScreen() {
                     contentFit="cover"
                   />
                 ) : (
-                  <Icon name="image" size={32} color="#cbd5e1" />
+                  <Icon name="image" size={32} color={tokens.textDisabled} />
                 )}
                 {discount > 0 && (
                   <View className="absolute top-2 left-2 bg-error px-2 py-0.5 rounded-lg">
@@ -286,10 +286,10 @@ export default function ShopScreen() {
                   accessibilityLabel={isFav ? "Remove from favorites" : "Add to favorites"}
                   accessibilityState={{ selected: isFav }}
                   hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
-                  className="absolute top-2 right-2 w-8 h-8 rounded-full bg-card/90 items-center justify-center shadow-sm active:opacity-70"
+                  className="absolute top-2 right-2 w-8 h-8 rounded-full bg-card/90 items-center justify-center active:opacity-70"
                   onPress={() => handleToggleFavorite(item.id)}
                 >
-                  <Icon name="heart" size={15} color={isFav ? "#ef4444" : "#64748b"} />
+                  <Icon name="heart" size={15} color={isFav ? tokens.error : tokens.textMuted} />
                 </Pressable>
               </View>
               <View className="p-3">
@@ -324,11 +324,11 @@ export default function ShopScreen() {
                     className="w-9 h-9 rounded-full bg-primary items-center justify-center active:scale-95"
                     onPress={() => handleAddToCart(item)}
                   >
-                    <Icon name="plus" size={16} color="#fff" />
+                    <Icon name="plus" size={16} color={tokens.primaryText} />
                   </Pressable>
                 </View>
                 <View className="flex-row items-center gap-1 mt-2">
-                  <Icon name="star" size={10} color="#f59e0b" />
+                  <Icon name="star" size={10} color={tokens.warning} />
                   <Text className="text-caption text-muted-foreground font-body">
                     {item.rating}
                   </Text>

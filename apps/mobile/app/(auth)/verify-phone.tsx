@@ -138,7 +138,7 @@ export default function VerifyPhoneScreen() {
         {status === "success" ? (
           <View className="items-center justify-center">
             <View className="w-20 h-20 rounded-full bg-green-50 items-center justify-center mb-6 border border-green-100">
-              <FontAwesome5 name="check" size={32} color="#16A34A" />
+              <FontAwesome5 name="check" size={32} color={tokens.success} />
             </View>
             <Text className="text-display-sm font-heading font-black text-foreground text-center">
               Verified

@@ -79,7 +79,7 @@ export default function TopUpScreen() {
         style={{ paddingTop: insets.top }}
       >
         <View className="w-20 h-20 bg-card rounded-full items-center justify-center mb-6">
-          <Icon name="check" size={40} color="#10b981" />
+          <Icon name="check" size={40} color={tokens.success} />
         </View>
         <Text className="text-display-lg font-black text-white font-heading text-center mb-2">
           Top-Up Initiated!
@@ -173,13 +173,13 @@ export default function TopUpScreen() {
                     alignItems: "center",
                     justifyContent: "center",
                     marginRight: 16,
-                    backgroundColor: isSelected ? "#ffffff" : "#e2e8f0",
+                    backgroundColor: isSelected ? tokens.primaryText : "#e2e8f0",
                   }}
                 >
                   <Icon
                     name={method.icon}
                     size={18}
-                    color={isSelected ? tokens.primary : "#64748b"}
+                    color={isSelected ? tokens.primary : tokens.textMuted}
                   />
                 </View>
                 <Text
@@ -198,13 +198,13 @@ export default function TopUpScreen() {
                     height: 22,
                     borderRadius: 11,
                     borderWidth: 2,
-                    borderColor: isSelected ? "#3b82f6" : "#cbd5e1",
+                    borderColor: isSelected ? "#3b82f6" : tokens.textDisabled,
                     backgroundColor: isSelected ? "#3b82f6" : "transparent",
                     alignItems: "center",
                     justifyContent: "center",
                   }}
                 >
-                  {isSelected && <Icon name="check" size={10} color="#fff" />}
+                  {isSelected && <Icon name="check" size={10} color={tokens.primaryText} />}
                 </View>
               </Pressable>
             );
@@ -217,7 +217,7 @@ export default function TopUpScreen() {
           paddingHorizontal: 20,
           paddingTop: 16,
           paddingBottom: Math.max(insets.bottom, 20),
-          backgroundColor: "#ffffff",
+          backgroundColor: tokens.primaryText,
           borderTopWidth: 1,
           borderTopColor: "#f1f5f9",
         }}

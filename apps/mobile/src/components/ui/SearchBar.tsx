@@ -1,6 +1,7 @@
 import { Text, TouchableOpacity, View, TouchableOpacityProps } from "react-native";
 import { Icon } from "@/components/ui/Icon";
 import { useRouter } from "expo-router";
+import { tokens } from "@/theme/tokens";
 
 interface SearchBarProps extends Omit<TouchableOpacityProps, "onPress"> {
   placeholder?: string;
@@ -34,13 +35,13 @@ export function SearchBar({
       activeOpacity={0.9}
       {...props}
     >
-      <Icon name="search" size={18} color="#64748b" />
+      <Icon name="search" size={18} color={tokens.textMuted} />
       <Text className="flex-1 ml-2 text-body-lg font-body text-muted-foreground">
         {placeholder}
       </Text>
       {showCamera && (
         <View className="ml-2 w-8 h-8 items-center justify-center">
-          <Icon name="camera" size={18} color="#64748b" />
+          <Icon name="camera" size={18} color={tokens.textMuted} />
         </View>
       )}
     </TouchableOpacity>

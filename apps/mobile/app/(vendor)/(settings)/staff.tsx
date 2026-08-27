@@ -134,14 +134,14 @@ export default function StaffManagementScreen() {
         </View>
       ) : (
         <ScrollView className="flex-1 px-5 pt-6 pb-12">
-          <View className="bg-card rounded-2xl border border-border overflow-hidden shadow-lg">
+          <View className="bg-card rounded-2xl border border-border overflow-hidden">
             {list.map((staff: any, idx: number) => {
               const isLast = idx === list.length - 1;
               return (
                 <View key={staff.id} className={`p-5 ${!isLast ? "border-b border-border" : ""}`}>
                   <View className="flex-row items-center justify-between mb-3">
                     <View className="flex-row items-center">
-                      <View className="w-12 h-12 rounded-full bg-primary-subtle items-center justify-center mr-3 border-2 border-card shadow-sm">
+                      <View className="w-12 h-12 rounded-full bg-primary-subtle items-center justify-center mr-3 border-2 border-card">
                         <Text className="text-body-lg font-heading font-black text-primary">
                           {staff.name.charAt(0)}
                         </Text>
@@ -173,7 +173,7 @@ export default function StaffManagementScreen() {
                         onPress={() => openActionSheet(staff.id)}
                         className="w-8 h-8 rounded-full bg-background items-center justify-center"
                       >
-                        <Icon name="more-vertical" size={16} color="#64748b" />
+                        <Icon name="more-vertical" size={16} color={tokens.textMuted} />
                       </Pressable>
                     )}
                   </View>
@@ -186,8 +186,8 @@ export default function StaffManagementScreen() {
                       <Switch
                         value={staff.active}
                         onValueChange={() => toggleAccess(staff.id)}
-                        trackColor={{ false: "#e2e8f0", true: "#10b981" }}
-                        thumbColor={"#ffffff"}
+                        trackColor={{ false: "#e2e8f0", true: tokens.success }}
+                        thumbColor={tokens.primaryText}
                       />
                     </View>
                   )}
@@ -282,7 +282,7 @@ export default function StaffManagementScreen() {
                 onPress={openEditForm}
               >
                 <View className="w-12 h-12 bg-card rounded-full items-center justify-center border border-border">
-                  <Icon name="edit-2" size={20} color="#0f172a" />
+                  <Icon name="edit-2" size={20} color={tokens.textPrimary} />
                 </View>
                 <View className="ml-4 flex-1">
                   <Text className="text-body-lg font-bold text-foreground mb-0.5">
@@ -292,7 +292,7 @@ export default function StaffManagementScreen() {
                     Change name, email or role
                   </Text>
                 </View>
-                <Icon name="chevron-right" size={20} color="#94a3b8" />
+                <Icon name="chevron-right" size={20} color={tokens.textMuted} />
               </Pressable>
 
               <Pressable
@@ -301,13 +301,13 @@ export default function StaffManagementScreen() {
                 onPress={handleDeleteStaff}
               >
                 <View className="w-12 h-12 bg-card rounded-full items-center justify-center border border-rose-100">
-                  <Icon name="trash-2" size={20} color="#ef4444" />
+                  <Icon name="trash-2" size={20} color={tokens.error} />
                 </View>
                 <View className="ml-4 flex-1">
                   <Text className="text-body-lg font-bold text-error mb-0.5">Remove Staff</Text>
                   <Text className="text-sm font-body text-rose-500">Revoke access permanently</Text>
                 </View>
-                <Icon name="chevron-right" size={20} color="#f87171" />
+                <Icon name="chevron-right" size={20} color={tokens.error} />
               </Pressable>
             </View>
           </View>

@@ -1,3 +1,4 @@
+import { tokens } from "@/theme/tokens";
 import { BackButton } from "@/components/ui/BackButton";
 import { View, Text, ScrollView, Pressable } from "react-native";
 import { useRouter } from "expo-router";
@@ -84,7 +85,7 @@ export default function ChangePinScreen() {
               maxLength={4}
               placeholder="••••"
               className="tracking-[4px] text-display-sm"
-              leftIcon={<Icon name="lock" size={20} color="#94a3b8" />}
+              leftIcon={<Icon name="lock" size={20} color={tokens.textMuted} />}
             />
           </View>
         )}
@@ -99,7 +100,7 @@ export default function ChangePinScreen() {
             maxLength={4}
             placeholder="••••"
             className="tracking-[4px] text-display-sm"
-            leftIcon={<Icon name="key" size={20} color="#94a3b8" />}
+            leftIcon={<Icon name="key" size={20} color={tokens.textMuted} />}
           />
         </View>
 
@@ -113,7 +114,7 @@ export default function ChangePinScreen() {
             maxLength={4}
             placeholder="••••"
             className="tracking-[4px] text-display-sm"
-            leftIcon={<Icon name="check-circle" size={20} color="#94a3b8" />}
+            leftIcon={<Icon name="check-circle" size={20} color={tokens.textMuted} />}
             error={
               confirmPin.length === 4 && newPin !== confirmPin ? "PINs do not match." : undefined
             }

@@ -1,3 +1,4 @@
+import { tokens } from "@/theme/tokens";
 import { LoadingState } from "@/components/ui/LoadingState";
 import { BackButton } from "@/components/ui/BackButton";
 import { View, Text, ScrollView, Pressable, TextInput, FlatList } from "react-native";
@@ -63,7 +64,7 @@ export default function FoodDeliveryScreen() {
             className="w-10 h-10 rounded-full bg-background items-center justify-center relative"
             onPress={() => router.push("/(customer)/food-cart")}
           >
-            <Icon name="shopping-bag" size={20} color="#0f172a" />
+            <Icon name="shopping-bag" size={20} color={tokens.textPrimary} />
             {cartItemCount > 0 && (
               <View className="absolute top-0 right-0 w-4 h-4 bg-error rounded-full items-center justify-center">
                 <Text className="text-white font-bold text-caption">{cartItemCount}</Text>
@@ -73,7 +74,7 @@ export default function FoodDeliveryScreen() {
         </View>
 
         <View className="flex-row items-center bg-background rounded-2xl px-4 py-3 border border-border">
-          <Icon name="search" size={18} color="#64748b" />
+          <Icon name="search" size={18} color={tokens.textMuted} />
           <TextInput
             placeholder="Search restaurants, dishes..."
             className="flex-1 ml-2 font-body text-body-lg text-foreground"
@@ -86,7 +87,7 @@ export default function FoodDeliveryScreen() {
               accessibilityLabel="Clear search"
               onPress={() => setSearchQuery("")}
             >
-              <Icon name="x" size={16} color="#94a3b8" />
+              <Icon name="x" size={16} color={tokens.textMuted} />
             </Pressable>
           )}
         </View>
@@ -153,7 +154,7 @@ export default function FoodDeliveryScreen() {
 
               {filteredRestaurants.length === 0 ? (
                 <View className="items-center justify-center py-10">
-                  <Icon name="search" size={48} color="#cbd5e1" />
+                  <Icon name="search" size={48} color={tokens.textDisabled} />
                   <Text className="text-body-lg font-bold text-muted-foreground mt-4">
                     No restaurants found
                   </Text>
@@ -178,7 +179,7 @@ export default function FoodDeliveryScreen() {
                             contentFit="cover"
                           />
                         ) : (
-                          <Icon name="image" size={32} color="#94a3b8" />
+                          <Icon name="image" size={32} color={tokens.textMuted} />
                         )}
                       </View>
                       <View className="p-4">
@@ -192,13 +193,13 @@ export default function FoodDeliveryScreen() {
                         </Text>
                         <View className="flex-row gap-4">
                           <View className="flex-row items-center gap-1.5">
-                            <Icon name="map-pin" size={14} color="#64748b" />
+                            <Icon name="map-pin" size={14} color={tokens.textMuted} />
                             <Text className="text-sm font-bold text-muted-foreground">
                               {restaurant.city ?? restaurant.address ?? "Accra"}
                             </Text>
                           </View>
                           <View className="flex-row items-center gap-1.5">
-                            <Icon name="shopping-bag" size={14} color="#64748b" />
+                            <Icon name="shopping-bag" size={14} color={tokens.textMuted} />
                             <Text className="text-sm font-bold text-muted-foreground">
                               {restaurant._count?.foodItems ?? 0} items
                             </Text>

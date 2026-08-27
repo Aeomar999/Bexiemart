@@ -1,3 +1,4 @@
+import { tokens } from "@/theme/tokens";
 import { BackButton } from "@/components/ui/BackButton";
 import {
   View,
@@ -82,7 +83,7 @@ export default function TransferScreen() {
         style={{ paddingTop: insets.top }}
       >
         <View className="w-20 h-20 bg-card rounded-full items-center justify-center mb-6">
-          <Icon name="check" size={40} color="#10b981" />
+          <Icon name="check" size={40} color={tokens.success} />
         </View>
         <Text className="text-display-lg font-black text-white font-heading text-center mb-2">
           Transfer Sent!
@@ -145,7 +146,7 @@ export default function TransferScreen() {
             placeholder="Phone number, username, or email"
             value={recipient}
             onChangeText={setRecipient}
-            leftIcon={<Icon name="user" size={18} color="#64748b" />}
+            leftIcon={<Icon name="user" size={18} color={tokens.textMuted} />}
             className="bg-background border-0"
             error={errors.recipient}
           />
@@ -181,7 +182,7 @@ export default function TransferScreen() {
                 <View
                   className={`w-5 h-5 rounded-full border-2 items-center justify-center ${isSelected ? "border-primary bg-primary" : "border-border bg-transparent"}`}
                 >
-                  {isSelected && <Icon name="check" size={10} color="#fff" />}
+                  {isSelected && <Icon name="check" size={10} color={tokens.primaryText} />}
                 </View>
               </Pressable>
             );
@@ -237,7 +238,7 @@ export default function TransferScreen() {
                   className={`w-16 h-16 rounded-full items-center justify-center ${typeof key === "number" ? "bg-background" : "bg-transparent"}`}
                 >
                   {key === "del" ? (
-                    <Icon name="delete" size={24} color="#ef4444" />
+                    <Icon name="delete" size={24} color={tokens.error} />
                   ) : key === "" ? null : (
                     <Text className="text-display-md font-bold text-foreground">{key}</Text>
                   )}

@@ -88,11 +88,11 @@ export default function SearchScreen() {
         <BackButton />
 
         <View className="flex-1 flex-row items-center bg-background h-12 rounded-xl px-4 border border-border focus:border-primary">
-          <Icon name="search" size={18} color="#64748b" />
+          <Icon name="search" size={18} color={tokens.textMuted} />
           <TextInput
             className="flex-1 ml-2 text-body-lg font-body text-foreground h-full"
             placeholder="Search Bexiemart..."
-            placeholderTextColor="#94a3b8"
+            placeholderTextColor={tokens.textMuted}
             value={query}
             onChangeText={setQuery}
           />
@@ -103,7 +103,7 @@ export default function SearchScreen() {
               style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
               onPress={() => setQuery("")}
             >
-              <Icon name="x-circle" size={18} color="#94a3b8" />
+              <Icon name="x-circle" size={18} color={tokens.textMuted} />
             </Pressable>
           )}
         </View>
@@ -115,7 +115,11 @@ export default function SearchScreen() {
           className={`w-12 h-12 rounded-xl items-center justify-center ${showFilters ? "bg-primary-subtle border border-border" : "bg-background border border-border"}`}
           onPress={() => setShowFilters(!showFilters)}
         >
-          <Icon name="sliders" size={20} color={showFilters ? tokens.primary : "#0f172a"} />
+          <Icon
+            name="sliders"
+            size={20}
+            color={showFilters ? tokens.primary : tokens.textPrimary}
+          />
         </Pressable>
       </View>
 
@@ -143,11 +147,11 @@ export default function SearchScreen() {
                     className="flex-row items-center py-3 border-b border-border"
                     onPress={() => setQuery(item)}
                   >
-                    <Icon name="clock" size={16} color="#94a3b8" />
+                    <Icon name="clock" size={16} color={tokens.textMuted} />
                     <Text className="ml-3 text-body-lg font-body text-muted-foreground flex-1">
                       {item}
                     </Text>
-                    <Icon name="arrow-up-left" size={16} color="#cbd5e1" />
+                    <Icon name="arrow-up-left" size={16} color={tokens.textDisabled} />
                   </Pressable>
                 ))}
               </View>
@@ -197,7 +201,7 @@ export default function SearchScreen() {
                   <Pressable
                     style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
                     key={item.id}
-                    className="flex-row items-center bg-card rounded-2xl p-4 border border-border shadow-lg"
+                    className="flex-row items-center bg-card rounded-2xl p-4 border border-border"
                     onPress={() => router.push(`/(customer)/product/${item.id}` as any)}
                   >
                     <View className="w-20 h-20 rounded-xl bg-muted items-center justify-center overflow-hidden">
@@ -208,7 +212,7 @@ export default function SearchScreen() {
                           contentFit="cover"
                         />
                       ) : (
-                        <Icon name="image" size={24} color="#cbd5e1" />
+                        <Icon name="image" size={24} color={tokens.textDisabled} />
                       )}
                     </View>
                     <View className="flex-1 ml-4 justify-center">
@@ -223,7 +227,7 @@ export default function SearchScreen() {
                           GHS {item.price.toFixed(2)}
                         </Text>
                         <View className="flex-row items-center gap-1">
-                          <Icon name="star" size={12} color="#f59e0b" />
+                          <Icon name="star" size={12} color={tokens.warning} />
                           <Text className="text-body-sm font-bold text-muted-foreground">
                             {item.rating}
                           </Text>
@@ -242,7 +246,7 @@ export default function SearchScreen() {
       {showFilters && (
         <View className="absolute inset-0 bg-black/40 justify-end z-50">
           <View
-            className="bg-card rounded-t-3xl p-6 shadow-2xl"
+            className="bg-card rounded-t-3xl p-6"
             style={{ paddingBottom: Math.max(insets.bottom, 24) }}
           >
             <View className="flex-row justify-between items-center mb-6">
@@ -257,7 +261,7 @@ export default function SearchScreen() {
                 onPress={() => setShowFilters(false)}
                 className="w-8 h-8 rounded-full bg-muted items-center justify-center"
               >
-                <Icon name="x" size={16} color="#0f172a" />
+                <Icon name="x" size={16} color={tokens.textPrimary} />
               </Pressable>
             </View>
 
@@ -269,7 +273,7 @@ export default function SearchScreen() {
                 <TextInput
                   className="text-body-lg font-body text-foreground"
                   placeholder="Min"
-                  placeholderTextColor="#94a3b8"
+                  placeholderTextColor={tokens.textMuted}
                   keyboardType="numeric"
                   value={minPrice}
                   onChangeText={setMinPrice}
@@ -279,7 +283,7 @@ export default function SearchScreen() {
                 <TextInput
                   className="text-body-lg font-body text-foreground"
                   placeholder="Max"
-                  placeholderTextColor="#94a3b8"
+                  placeholderTextColor={tokens.textMuted}
                   keyboardType="numeric"
                   value={maxPrice}
                   onChangeText={setMaxPrice}

@@ -36,7 +36,7 @@ export default function EarningsDashboardScreen() {
           style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
           onPress={() => router.push("/(vendor)/(settings)/help")}
         >
-          <Icon name="help-circle" size={20} color="#64748b" />
+          <Icon name="help-circle" size={20} color={tokens.textMuted} />
         </Pressable>
       </View>
 
@@ -91,7 +91,7 @@ export default function EarningsDashboardScreen() {
                   onPress={() => router.push("/(vendor)/(earnings)/analytics")}
                 >
                   <View className="w-8 h-8 rounded-full bg-blue-50 items-center justify-center mb-2">
-                    <Icon name="trending-up" size={16} color="#3b82f6" />
+                    <Icon name="trending-up" size={16} color={tokens.secondary} />
                   </View>
                   <Text className="text-body-sm text-muted-foreground mb-1">
                     Today&apos;s Revenue
@@ -106,7 +106,7 @@ export default function EarningsDashboardScreen() {
                   onPress={() => router.push("/(vendor)/(earnings)/analytics")}
                 >
                   <View className="w-8 h-8 rounded-full bg-green-50 items-center justify-center mb-2">
-                    <Icon name="calendar" size={16} color="#22c55e" />
+                    <Icon name="calendar" size={16} color={tokens.success} />
                   </View>
                   <Text className="text-body-sm text-muted-foreground mb-1">This Week</Text>
                   <Text className="text-body-lg font-bold text-foreground">
@@ -145,7 +145,7 @@ export default function EarningsDashboardScreen() {
                           <Icon
                             name={isWithdrawal ? "arrow-up-right" : "arrow-down-left"}
                             size={18}
-                            color={isWithdrawal ? "#e11d48" : "#16a34a"}
+                            color={isWithdrawal ? tokens.error : tokens.success}
                           />
                         </View>
                         <View className="flex-1 pr-4">

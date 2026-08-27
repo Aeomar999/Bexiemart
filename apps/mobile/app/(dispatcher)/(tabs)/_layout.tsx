@@ -17,17 +17,12 @@ function CustomTabBar({ state, descriptors, navigation }: any) {
         paddingBottom: insets.bottom + 16,
         paddingTop: 16,
         paddingHorizontal: 20,
-        backgroundColor: "#FFFFFF",
+        backgroundColor: tokens.primaryText,
         borderTopWidth: 1,
         borderTopColor: "#F8FAFC",
         flexDirection: "row",
         justifyContent: "space-between",
         alignItems: "center",
-        shadowColor: "#000",
-        shadowOffset: { width: 0, height: -2 },
-        shadowOpacity: 0.05,
-        shadowRadius: 10,
-        elevation: 10,
       }}
     >
       {state.routes.map((route: any, index: number) => {
@@ -65,7 +60,7 @@ function CustomTabBar({ state, descriptors, navigation }: any) {
             }}
           >
             {options.tabBarIcon &&
-              options.tabBarIcon({ color: isFocused ? tokens.primary : "#94A3B8" })}
+              options.tabBarIcon({ color: isFocused ? tokens.primary : tokens.textMuted })}
             {isFocused && (
               <Text
                 style={{

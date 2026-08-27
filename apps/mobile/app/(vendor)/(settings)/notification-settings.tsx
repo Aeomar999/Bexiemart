@@ -116,7 +116,7 @@ export default function NotificationSettingsScreen() {
         <View className="bg-card rounded-2xl border border-border overflow-hidden mb-6">
           <View className="p-4 border-b border-border flex-row justify-between items-center">
             <View className="flex-row items-center">
-              <Icon name="mail" size={20} color="#64748b" style={{ marginRight: 12 }} />
+              <Icon name="mail" size={20} color={tokens.textMuted} style={{ marginRight: 12 }} />
               <Text className="text-body-lg font-bold text-foreground">Email Summaries</Text>
             </View>
             <Switch
@@ -127,7 +127,12 @@ export default function NotificationSettingsScreen() {
           </View>
           <View className="p-4 flex-row justify-between items-center">
             <View className="flex-row items-center">
-              <Icon name="smartphone" size={20} color="#64748b" style={{ marginRight: 12 }} />
+              <Icon
+                name="smartphone"
+                size={20}
+                color={tokens.textMuted}
+                style={{ marginRight: 12 }}
+              />
               <Text className="text-body-lg font-bold text-foreground">SMS Alerts</Text>
             </View>
             <Switch

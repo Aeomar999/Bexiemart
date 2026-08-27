@@ -79,7 +79,7 @@ export default function VendorReviewsScreen() {
                     key={star}
                     name="star"
                     size={16}
-                    color="#f59e0b"
+                    color={tokens.warning ?? "#f59e0b"}
                     style={{ marginHorizontal: 2 }}
                   />
                 ))}
@@ -125,7 +125,7 @@ export default function VendorReviewsScreen() {
                     </View>
                   </View>
                   <View className="flex-row bg-amber-50 px-2 py-1 rounded-full items-center">
-                    <Icon name="star" size={12} color="#f59e0b" />
+                    <Icon name="star" size={12} color={tokens.warning ?? "#f59e0b"} />
                     <Text className="text-body-sm font-bold text-amber-600 ml-1">
                       {review.rating}.0
                     </Text>
@@ -141,7 +141,7 @@ export default function VendorReviewsScreen() {
                       <Icon
                         name="corner-down-right"
                         size={14}
-                        color="#64748b"
+                        color={tokens.textMuted}
                         style={{ marginRight: 6 }}
                       />
                       <Text className="text-sm font-bold text-foreground">Your Reply</Text>
@@ -191,7 +191,7 @@ export default function VendorReviewsScreen() {
                 <TextInput
                   className="text-body-lg text-foreground min-h-[100px]"
                   placeholder="Write your reply..."
-                  placeholderTextColor="#94a3b8"
+                  placeholderTextColor={tokens.textMuted}
                   value={replyText}
                   onChangeText={setReplyText}
                   multiline

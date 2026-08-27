@@ -1,3 +1,4 @@
+import { tokens } from "@/theme/tokens";
 import { View, Text, FlatList, Pressable, Modal } from "react-native";
 import { useState } from "react";
 import { useRouter } from "expo-router";
@@ -203,7 +204,7 @@ export default function ListingsScreen() {
           className="w-14 h-14 bg-primary rounded-full items-center justify-center border-4 border-border"
           onPress={() => setAddModalVisible(true)}
         >
-          <Icon name="plus" size={24} color="#ffffff" />
+          <Icon name="plus" size={24} color={tokens.primaryText} />
         </Pressable>
       </View>
 
@@ -232,7 +233,7 @@ export default function ListingsScreen() {
                 }}
               >
                 <View className="w-12 h-12 bg-card rounded-full items-center justify-center border border-border">
-                  <Icon name="package" size={24} color="#0f172a" />
+                  <Icon name="package" size={24} color={tokens.textPrimary} />
                 </View>
                 <View className="ml-4 flex-1">
                   <Text className="text-body-lg font-bold text-foreground mb-0.5">
@@ -242,7 +243,7 @@ export default function ListingsScreen() {
                     Items that require shipping or delivery
                   </Text>
                 </View>
-                <Icon name="chevron-right" size={20} color="#94a3b8" />
+                <Icon name="chevron-right" size={20} color={tokens.textMuted} />
               </Pressable>
 
               <Pressable
@@ -254,7 +255,7 @@ export default function ListingsScreen() {
                 }}
               >
                 <View className="w-12 h-12 bg-card rounded-full items-center justify-center border border-border">
-                  <Icon name="coffee" size={24} color="#0f172a" />
+                  <Icon name="coffee" size={24} color={tokens.textPrimary} />
                 </View>
                 <View className="ml-4 flex-1">
                   <Text className="text-body-lg font-bold text-foreground mb-0.5">Food Item</Text>
@@ -262,7 +263,7 @@ export default function ListingsScreen() {
                     Restaurant meals, snacks, or beverages
                   </Text>
                 </View>
-                <Icon name="chevron-right" size={20} color="#94a3b8" />
+                <Icon name="chevron-right" size={20} color={tokens.textMuted} />
               </Pressable>
 
               <Pressable
@@ -274,7 +275,7 @@ export default function ListingsScreen() {
                 }}
               >
                 <View className="w-12 h-12 bg-card rounded-full items-center justify-center border border-border">
-                  <Icon name="briefcase" size={24} color="#0f172a" />
+                  <Icon name="briefcase" size={24} color={tokens.textPrimary} />
                 </View>
                 <View className="ml-4 flex-1">
                   <Text className="text-body-lg font-bold text-foreground mb-0.5">Service</Text>
@@ -282,7 +283,7 @@ export default function ListingsScreen() {
                     Bookable appointments or freelance work
                   </Text>
                 </View>
-                <Icon name="chevron-right" size={20} color="#94a3b8" />
+                <Icon name="chevron-right" size={20} color={tokens.textMuted} />
               </Pressable>
             </View>
           </View>

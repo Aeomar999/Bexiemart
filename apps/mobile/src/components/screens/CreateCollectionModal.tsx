@@ -7,6 +7,7 @@ import {
   KeyboardAvoidingView,
   Platform,
 } from "react-native";
+import { tokens } from "@/theme/tokens";
 import { useState, useEffect, useRef } from "react";
 import { Icon } from "@/components/ui/Icon";
 import { Button } from "@/components/ui/Button";
@@ -65,7 +66,7 @@ export function CreateCollectionModal({ visible, onClose }: Props) {
                   onPress={onClose}
                   className="w-8 h-8 rounded-full bg-muted items-center justify-center"
                 >
-                  <Icon name="x" size={16} color="#0f172a" />
+                  <Icon name="x" size={16} color={tokens.textPrimary} />
                 </Pressable>
               </View>
 
@@ -74,11 +75,11 @@ export function CreateCollectionModal({ visible, onClose }: Props) {
                   Collection Name
                 </Text>
                 <View className="flex-row items-center bg-background h-[52px] rounded-xl px-4 border border-border focus:border-primary">
-                  <Icon name="folder" size={20} color="#94a3b8" />
+                  <Icon name="folder" size={20} color={tokens.textMuted} />
                   <TextInput
                     className="flex-1 ml-3 text-body-lg font-body text-foreground h-full"
                     placeholder="e.g., Summer Outfits"
-                    placeholderTextColor="#94a3b8"
+                    placeholderTextColor={tokens.textMuted}
                     value={name}
                     onChangeText={setName}
                     autoFocus

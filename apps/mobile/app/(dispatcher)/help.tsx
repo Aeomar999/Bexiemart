@@ -163,7 +163,7 @@ export default function DispatcherHelpScreen() {
             return (
               <Pressable
                 key={i}
-                className={`bg-card p-5 rounded-2xl border ${isExpanded ? "border-border shadow-sm" : "border-border"}`}
+                className={`bg-card p-5 rounded-2xl border ${isExpanded ? "border-border" : "border-border"}`}
                 onPress={() => setExpandedIndex(isExpanded ? null : i)}
               >
                 <View className="flex-row justify-between items-center">
@@ -173,7 +173,7 @@ export default function DispatcherHelpScreen() {
                   <Icon
                     name={isExpanded ? "chevron-up" : "chevron-down"}
                     size={20}
-                    color={isExpanded ? tokens.primary : "#64748b"}
+                    color={isExpanded ? tokens.primary : tokens.textMuted}
                   />
                 </View>
                 {isExpanded && (

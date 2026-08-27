@@ -14,6 +14,7 @@ import Animated, {
   SharedValue,
   useReducedMotion,
 } from "react-native-reanimated";
+import { tokens } from "@/theme/tokens";
 // @ts-expect-error
 import { FontAwesome5 } from "@expo/vector-icons";
 
@@ -171,9 +172,15 @@ export function AnimatedSplashScreen({ onAnimationComplete }: AnimatedSplashScre
     <Animated.View style={[{ flex: 1, backgroundColor: "white" }, screenStyle]}>
       <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
         {/* Pulse Rings */}
-        <Animated.View style={[ring3Style, { position: "absolute", backgroundColor: "#06406b" }]} />
-        <Animated.View style={[ring2Style, { position: "absolute", backgroundColor: "#06406b" }]} />
-        <Animated.View style={[ring1Style, { position: "absolute", backgroundColor: "#06406b" }]} />
+        <Animated.View
+          style={[ring3Style, { position: "absolute", backgroundColor: tokens.primary }]}
+        />
+        <Animated.View
+          style={[ring2Style, { position: "absolute", backgroundColor: tokens.primary }]}
+        />
+        <Animated.View
+          style={[ring1Style, { position: "absolute", backgroundColor: tokens.primary }]}
+        />
 
         {/* Logo Icon */}
         <Animated.View style={logoStyle}>
@@ -182,17 +189,12 @@ export function AnimatedSplashScreen({ onAnimationComplete }: AnimatedSplashScre
               width: 96,
               height: 96,
               borderRadius: 28,
-              backgroundColor: "#06406b",
+              backgroundColor: tokens.primary,
               alignItems: "center",
               justifyContent: "center",
-              shadowColor: "#06406b",
-              shadowOffset: { width: 0, height: 12 },
-              shadowOpacity: 0.35,
-              shadowRadius: 24,
-              elevation: 16,
             }}
           >
-            <FontAwesome5 name="store" size={42} color="#FFFFFF" solid />
+            <FontAwesome5 name="store" size={42} color={tokens.primaryText} solid />
           </View>
         </Animated.View>
 
@@ -202,12 +204,12 @@ export function AnimatedSplashScreen({ onAnimationComplete }: AnimatedSplashScre
             style={{
               fontSize: 36,
               fontWeight: "800",
-              color: "#0a0a0a",
+              color: tokens.textPrimary,
               letterSpacing: -0.5,
               fontFamily: "Raleway_700Bold",
             }}
           >
-            Bexie<Text style={{ color: "#06406b" }}>Mart</Text>
+            Bexie<Text style={{ color: tokens.primary }}>Mart</Text>
           </Text>
         </Animated.View>
 
@@ -218,7 +220,7 @@ export function AnimatedSplashScreen({ onAnimationComplete }: AnimatedSplashScre
               numberOfLines={1}
               style={{
                 fontSize: 16,
-                color: "#9ca3af",
+                color: tokens.textMuted,
                 fontFamily: "Nunito_500Medium",
                 textAlign: "center",
                 width: SCREEN_WIDTH * 0.6,

@@ -224,7 +224,7 @@ export default function HomeScreen() {
             className="w-10 h-10 justify-center active:opacity-70"
             onPress={() => router.push("/(customer)/profile")}
           >
-            <Icon name="menu" size={24} color="#0f172a" />
+            <Icon name="menu" size={24} color={tokens.textPrimary} />
           </Pressable>
 
           <Text className="text-display-sm font-heading font-black text-foreground tracking-tight">
@@ -238,7 +238,7 @@ export default function HomeScreen() {
             className="w-10 h-10 items-end justify-center active:opacity-70"
             onPress={() => router.push("/(customer)/notifications")}
           >
-            <Icon name="bell" size={22} color="#0f172a" />
+            <Icon name="bell" size={22} color={tokens.textPrimary} />
           </Pressable>
         </View>
 
@@ -366,16 +366,7 @@ export default function HomeScreen() {
                     </View>
 
                     {/* Medallion: real category image when present, icon fallback otherwise */}
-                    <View
-                      className="w-12 h-12 rounded-2xl bg-card items-center justify-center overflow-hidden"
-                      style={{
-                        shadowColor: "#0f172a",
-                        shadowOffset: { width: 0, height: 4 },
-                        shadowOpacity: 0.1,
-                        shadowRadius: 8,
-                        elevation: 3,
-                      }}
-                    >
+                    <View className="w-12 h-12 rounded-2xl bg-card items-center justify-center overflow-hidden">
                       {cat.image ? (
                         <Image
                           source={{ uri: cat.image }}
@@ -432,7 +423,7 @@ export default function HomeScreen() {
                 className="items-center active:opacity-70"
                 onPress={() => router.push(`/(customer)/product/${item.id}`)}
               >
-                <View className="w-18 h-18 rounded-full bg-muted mb-2 items-center justify-center border-2 border-card shadow-sm overflow-hidden">
+                <View className="w-18 h-18 rounded-full bg-muted mb-2 items-center justify-center border-2 border-card overflow-hidden">
                   {item.image ? (
                     <Image
                       source={{ uri: item.image }}
@@ -440,7 +431,7 @@ export default function HomeScreen() {
                       contentFit="cover"
                     />
                   ) : (
-                    <Icon name="image" size={24} color="#cbd5e1" />
+                    <Icon name="image" size={24} color={tokens.textDisabled} />
                   )}
                 </View>
                 <Text className="text-caption font-bold text-foreground" numberOfLines={1}>
@@ -465,7 +456,7 @@ export default function HomeScreen() {
               >
                 <Text className="text-body-sm font-bold text-muted-foreground">See All</Text>
                 <View className="w-5 h-5 rounded-full bg-foreground items-center justify-center">
-                  <Icon name="arrow-right" size={12} color="#fff" />
+                  <Icon name="arrow-right" size={12} color={tokens.primaryText} />
                 </View>
               </Pressable>
             </View>
@@ -494,7 +485,7 @@ export default function HomeScreen() {
                         contentFit="cover"
                       />
                     ) : (
-                      <Icon name="image" size={32} color="#cbd5e1" />
+                      <Icon name="image" size={32} color={tokens.textDisabled} />
                     )}
                   </View>
                   <Text className="text-body-md font-bold text-foreground" numberOfLines={1}>
@@ -527,7 +518,7 @@ export default function HomeScreen() {
                 className="flex-row items-center gap-1.5 active:opacity-70"
                 onPress={() => router.push("/(customer)/flash-sales")}
               >
-                <Icon name="clock" size={14} color="#0f172a" />
+                <Icon name="clock" size={14} color={tokens.textPrimary} />
                 <View className="bg-muted px-1.5 py-0.5 rounded">
                   <Text className="text-caption font-bold text-error">{hours}</Text>
                 </View>
@@ -537,7 +528,7 @@ export default function HomeScreen() {
                 <View className="bg-muted px-1.5 py-0.5 rounded">
                   <Text className="text-caption font-bold text-error">{seconds}</Text>
                 </View>
-                <Icon name="chevron-right" size={16} color="#0f172a" />
+                <Icon name="chevron-right" size={16} color={tokens.textPrimary} />
               </Pressable>
             </View>
             <View className="flex-row flex-wrap justify-between gap-y-4">
@@ -557,7 +548,7 @@ export default function HomeScreen() {
                         contentFit="cover"
                       />
                     ) : (
-                      <Icon name="image" size={24} color="#cbd5e1" />
+                      <Icon name="image" size={24} color={tokens.textDisabled} />
                     )}
                     <View className="absolute top-1 right-1 bg-error px-1.5 py-0.5 rounded-sm">
                       <Text className="text-caption font-bold text-white">-{discount}%</Text>
@@ -604,7 +595,7 @@ export default function HomeScreen() {
                       contentFit="cover"
                     />
                   ) : (
-                    <Icon name="image" size={28} color="#cbd5e1" />
+                    <Icon name="image" size={28} color={tokens.textDisabled} />
                   )}
                 </View>
                 <View className="flex-row justify-between items-center px-1">
@@ -612,7 +603,7 @@ export default function HomeScreen() {
                     <Text className="text-body-sm font-bold text-foreground">
                       GHS {item.price.toFixed(0)}
                     </Text>
-                    <Icon name="star" size={10} color="#f59e0b" style={{ marginLeft: 4 }} />
+                    <Icon name="star" size={10} color={tokens.warning} style={{ marginLeft: 4 }} />
                   </View>
                   <Text className="text-caption text-muted-foreground">{item.rating}</Text>
                 </View>
@@ -652,14 +643,14 @@ export default function HomeScreen() {
                       contentFit="cover"
                     />
                   ) : (
-                    <Icon name="image" size={32} color="#cbd5e1" />
+                    <Icon name="image" size={32} color={tokens.textDisabled} />
                   )}
                   <Pressable
                     style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
                     accessibilityRole="button"
                     accessibilityLabel="Toggle favorite"
                     hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
-                    className="absolute top-2 right-2 w-8 h-8 rounded-full bg-card/90 items-center justify-center shadow-sm"
+                    className="absolute top-2 right-2 w-8 h-8 rounded-full bg-card/90 items-center justify-center"
                     onPress={() => {
                       toggleFavorite(item.id);
                     }}
@@ -667,7 +658,7 @@ export default function HomeScreen() {
                     <Icon
                       name="heart"
                       size={15}
-                      color={isFavorite(item.id) ? "#ef4444" : "#64748b"}
+                      color={isFavorite(item.id) ? tokens.error : tokens.textMuted}
                     />
                   </Pressable>
                 </View>
@@ -696,7 +687,7 @@ export default function HomeScreen() {
       >
         <View
           style={{
-            backgroundColor: "#ffffff",
+            backgroundColor: tokens.primaryText,
             borderRadius: 32,
             padding: 20,
             flexDirection: "row",
@@ -704,11 +695,6 @@ export default function HomeScreen() {
             alignItems: "flex-start",
             borderWidth: 1,
             borderColor: "#f1f5f9",
-            shadowColor: "#000",
-            shadowOffset: { width: 0, height: 10 },
-            shadowOpacity: 0.08,
-            shadowRadius: 20,
-            elevation: 10,
           }}
         >
           {QUICK_ACTIONS.map((action) => (
@@ -734,7 +720,7 @@ export default function HomeScreen() {
                 style={{
                   fontSize: 10,
                   fontWeight: "700",
-                  color: "#0f172a",
+                  color: tokens.textPrimary,
                   textAlign: "center",
                   lineHeight: 12,
                 }}

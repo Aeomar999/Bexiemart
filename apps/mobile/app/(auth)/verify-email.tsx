@@ -97,7 +97,7 @@ export default function VerifyEmailScreen() {
         {status === "verifying" && (
           <View className="items-center">
             <View className="w-16 h-16 rounded-2xl bg-yellow-100 items-center justify-center mb-6">
-              <FontAwesome5 name="hourglass-half" size={28} color="#D97706" />
+              <FontAwesome5 name="hourglass-half" size={28} color={tokens.warning} />
             </View>
             <Text className="text-display-md font-heading font-bold text-foreground mb-2 text-center">
               Verifying your email
@@ -111,7 +111,7 @@ export default function VerifyEmailScreen() {
         {status === "success" && (
           <View className="items-center">
             <View className="w-16 h-16 rounded-2xl bg-green-100 items-center justify-center mb-6">
-              <FontAwesome5 name="check-circle" size={28} color="#16A34A" />
+              <FontAwesome5 name="check-circle" size={28} color={tokens.success} />
             </View>
             <Text className="text-display-md font-heading font-bold text-foreground mb-2 text-center">
               Email verified!
@@ -128,7 +128,7 @@ export default function VerifyEmailScreen() {
         {status === "error" && (
           <View className="items-center">
             <View className="w-16 h-16 rounded-2xl bg-red-100 items-center justify-center mb-6">
-              <FontAwesome5 name="exclamation-circle" size={28} color="#DC2626" />
+              <FontAwesome5 name="exclamation-circle" size={28} color={tokens.error} />
             </View>
             <Text className="text-display-md font-heading font-bold text-foreground mb-2 text-center">
               Verification failed

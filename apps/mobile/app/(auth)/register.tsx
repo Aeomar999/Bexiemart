@@ -206,9 +206,9 @@ export default function RegisterScreen() {
                   style={
                     role === "customer"
                       ? {
-                          backgroundColor: "#FFFFFF",
+                          backgroundColor: tokens.primaryText,
                           borderWidth: 1,
-                          borderColor: "#E2E8F0",
+                          borderColor: tokens.border,
                         }
                       : {
                           backgroundColor: "transparent",
@@ -220,11 +220,11 @@ export default function RegisterScreen() {
                   <FontAwesome5
                     name="shopping-bag"
                     size={14}
-                    color={role === "customer" ? tokens.primary : "#64748B"}
+                    color={role === "customer" ? tokens.primary : tokens.textMuted}
                   />
                   <Text
                     className="font-heading font-semibold"
-                    style={{ color: role === "customer" ? tokens.primary : "#64748B" }}
+                    style={{ color: role === "customer" ? tokens.primary : tokens.textMuted }}
                   >
                     Shop
                   </Text>
@@ -236,9 +236,9 @@ export default function RegisterScreen() {
                   style={
                     role === "vendor"
                       ? {
-                          backgroundColor: "#FFFFFF",
+                          backgroundColor: tokens.primaryText,
                           borderWidth: 1,
-                          borderColor: "#E2E8F0",
+                          borderColor: tokens.border,
                         }
                       : {
                           backgroundColor: "transparent",
@@ -250,11 +250,11 @@ export default function RegisterScreen() {
                   <FontAwesome5
                     name="store"
                     size={14}
-                    color={role === "vendor" ? tokens.primary : "#64748B"}
+                    color={role === "vendor" ? tokens.primary : tokens.textMuted}
                   />
                   <Text
                     className="font-heading font-semibold"
-                    style={{ color: role === "vendor" ? tokens.primary : "#64748B" }}
+                    style={{ color: role === "vendor" ? tokens.primary : tokens.textMuted }}
                   >
                     Sell
                   </Text>
@@ -269,7 +269,7 @@ export default function RegisterScreen() {
               value={name}
               onChangeText={(text) => setName(text.replace(/[^a-zA-Z\s\-']/g, ""))}
               error={errors1.name}
-              leftIcon={<FontAwesome5 name="user" size={16} color="#94A3B8" solid />}
+              leftIcon={<FontAwesome5 name="user" size={16} color={tokens.textMuted} solid />}
             />
           </View>
         )}
@@ -288,7 +288,7 @@ export default function RegisterScreen() {
               }}
               onBlur={handleEmailBlur}
               error={errors2.email || emailCheckError}
-              leftIcon={<FontAwesome5 name="envelope" size={16} color="#94A3B8" solid />}
+              leftIcon={<FontAwesome5 name="envelope" size={16} color={tokens.textMuted} solid />}
             />
 
             <Input
@@ -302,7 +302,7 @@ export default function RegisterScreen() {
               }}
               onBlur={handlePhoneBlur}
               error={errors2.phone || phoneCheckError}
-              leftIcon={<FontAwesome5 name="phone" size={16} color="#94A3B8" solid />}
+              leftIcon={<FontAwesome5 name="phone" size={16} color={tokens.textMuted} solid />}
             />
           </View>
         )}
@@ -316,7 +316,7 @@ export default function RegisterScreen() {
               value={password}
               onChangeText={setPassword}
               error={errors3.password}
-              leftIcon={<FontAwesome5 name="lock" size={16} color="#94A3B8" solid />}
+              leftIcon={<FontAwesome5 name="lock" size={16} color={tokens.textMuted} solid />}
             />
 
             <Input
@@ -326,7 +326,7 @@ export default function RegisterScreen() {
               value={confirmPassword}
               onChangeText={setConfirmPassword}
               error={errors3.confirmPassword}
-              leftIcon={<FontAwesome5 name="lock" size={16} color="#94A3B8" solid />}
+              leftIcon={<FontAwesome5 name="lock" size={16} color={tokens.textMuted} solid />}
             />
           </View>
         )}

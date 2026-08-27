@@ -77,7 +77,7 @@ export default function CheckoutScreen() {
     return (
       <View className="flex-1 bg-card items-center justify-center gap-4 px-8">
         <View className="w-24 h-24 rounded-full bg-muted items-center justify-center">
-          <Icon name="shopping-bag" size={36} color="#94a3b8" />
+          <Icon name="shopping-bag" size={36} color={tokens.textMuted} />
         </View>
         <Text className="text-display-sm font-heading font-bold text-foreground text-center">
           Nothing to checkout
@@ -178,7 +178,7 @@ export default function CheckoutScreen() {
         <View className="px-5 mt-4">
           <View className="flex-row items-center gap-2 mb-4">
             <View className="w-7 h-7 rounded-full bg-primary items-center justify-center">
-              <Icon name="map-pin" size={14} color="#fff" />
+              <Icon name="map-pin" size={14} color={tokens.primaryText} />
             </View>
             <Text className="text-heading-sm font-heading font-bold text-foreground">
               Delivery Details
@@ -201,7 +201,7 @@ export default function CheckoutScreen() {
               onChangeText={setPhone}
               keyboardType="phone-pad"
               error={errors.phone}
-              leftIcon={<Icon name="phone" size={16} color="#94A3B8" />}
+              leftIcon={<Icon name="phone" size={16} color={tokens.textMuted} />}
             />
             <Input
               label="Delivery address"
@@ -209,7 +209,7 @@ export default function CheckoutScreen() {
               value={address}
               onChangeText={setAddress}
               error={errors.address}
-              leftIcon={<Icon name="map-pin" size={16} color="#94A3B8" />}
+              leftIcon={<Icon name="map-pin" size={16} color={tokens.textMuted} />}
             />
             <View className="flex-row gap-3">
               <View className="flex-1">
@@ -235,7 +235,7 @@ export default function CheckoutScreen() {
         <View className="px-5 mt-6">
           <View className="flex-row items-center gap-2 mb-4">
             <View className="w-7 h-7 rounded-full bg-secondary items-center justify-center">
-              <Icon name="truck" size={14} color="#fff" />
+              <Icon name="truck" size={14} color={tokens.primaryText} />
             </View>
             <Text className="text-heading-sm font-heading font-bold text-foreground">
               Delivery Method
@@ -303,7 +303,7 @@ export default function CheckoutScreen() {
         <View className="px-5 mt-6">
           <View className="flex-row items-center gap-2 mb-4">
             <View className="w-7 h-7 rounded-full bg-emerald-600 items-center justify-center">
-              <Icon name="banknote" size={14} color="#fff" />
+              <Icon name="banknote" size={14} color={tokens.primaryText} />
             </View>
             <Text className="text-heading-sm font-heading font-bold text-foreground">
               Payment Method
@@ -353,7 +353,7 @@ export default function CheckoutScreen() {
                 {paymentMethod === "momo" && <View className="w-3 h-3 rounded-full bg-primary" />}
               </View>
               <View className="w-10 h-10 rounded-xl bg-amber-50 items-center justify-center">
-                <Icon name="phone" size={20} color="#d97706" />
+                <Icon name="phone" size={20} color={tokens.warning} />
               </View>
               <View className="flex-1">
                 <Text className="text-body-md font-bold text-foreground font-body">
@@ -380,7 +380,7 @@ export default function CheckoutScreen() {
                 {paymentMethod === "wallet" && <View className="w-3 h-3 rounded-full bg-primary" />}
               </View>
               <View className="w-10 h-10 rounded-xl bg-purple-50 items-center justify-center">
-                <Icon name="wallet" size={20} color="#9333ea" />
+                <Icon name="wallet" size={20} color={tokens.primary} />
               </View>
               <View className="flex-1">
                 <Text className="text-body-md font-bold text-foreground font-body">
@@ -399,7 +399,7 @@ export default function CheckoutScreen() {
           <View className="bg-amber-50 rounded-2xl p-5 border border-amber-200 flex-row items-center justify-between">
             <View className="flex-row items-center gap-3">
               <View className="w-10 h-10 rounded-full bg-amber-100 items-center justify-center">
-                <Icon name="award" size={20} color="#d97706" />
+                <Icon name="award" size={20} color={tokens.warning} />
               </View>
               <View>
                 <Text className="text-body-lg font-bold text-amber-900 font-heading">
@@ -425,7 +425,7 @@ export default function CheckoutScreen() {
                 setUseBexieCoins(!useBexieCoins);
               }}
             >
-              <View className="w-4 h-4 bg-card rounded-full shadow-sm" />
+              <View className="w-4 h-4 bg-card rounded-full" />
             </Pressable>
           </View>
         </View>

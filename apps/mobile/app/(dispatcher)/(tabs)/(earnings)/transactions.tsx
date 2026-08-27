@@ -44,7 +44,7 @@ export default function TransactionsScreen() {
             onPress={() => router.back()}
             className="w-10 h-10 -ml-2 items-center justify-center rounded-full active:bg-slate-100"
           >
-            <Icon name="arrow-left" size={24} color="#0f172a" />
+            <Icon name="arrow-left" size={24} color={tokens.textPrimary} />
           </Pressable>
           <Text className="text-display-sm font-heading font-bold text-foreground ml-2">
             Transaction History
@@ -75,7 +75,7 @@ export default function TransactionsScreen() {
         ) : filteredTransactions.length === 0 ? (
           <View className="py-20 items-center justify-center">
             <View className="w-16 h-16 rounded-full bg-slate-100 items-center justify-center mb-4">
-              <Icon name="file-text" size={24} color="#94a3b8" />
+              <Icon name="file-text" size={24} color={tokens.textMuted} />
             </View>
             <Text className="text-body-lg font-bold text-foreground mb-1">
               No Transactions Found
@@ -105,7 +105,7 @@ export default function TransactionsScreen() {
                       <Icon
                         name={isWithdrawal ? "arrow-up-right" : "arrow-down-left"}
                         size={18}
-                        color={isWithdrawal ? "#e11d48" : "#16a34a"}
+                        color={isWithdrawal ? tokens.error : tokens.success}
                       />
                     </View>
                     <View className="flex-1 pr-4">

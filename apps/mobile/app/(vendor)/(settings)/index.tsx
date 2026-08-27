@@ -142,7 +142,7 @@ export default function VendorSettingsScreen() {
         showsVerticalScrollIndicator={false}
       >
         {/* Vendor Profile Card */}
-        <View className="bg-card rounded-2xl p-5 flex-row items-center shadow-lg border border-border mb-8">
+        <View className="bg-card rounded-2xl p-5 flex-row items-center border border-border mb-8">
           <View className="mr-4">
             <Avatar uri={user?.image} name={user?.name || "V"} size={64} fallback="initials" />
           </View>
@@ -162,7 +162,7 @@ export default function VendorSettingsScreen() {
             className="w-10 h-10 rounded-full bg-background items-center justify-center"
             onPress={() => router.push("/(vendor)/(settings)/profile")}
           >
-            <Icon name="edit-2" size={16} color="#64748b" />
+            <Icon name="edit-2" size={16} color={tokens.textMuted} />
           </Pressable>
         </View>
 
@@ -172,7 +172,7 @@ export default function VendorSettingsScreen() {
             <Text className="text-body-lg font-heading font-bold text-foreground mb-3 px-1">
               {section.title}
             </Text>
-            <View className="bg-card rounded-2xl border border-border overflow-hidden shadow-lg">
+            <View className="bg-card rounded-2xl border border-border overflow-hidden">
               {section.items.map((item, itemIdx) => {
                 const isLast = itemIdx === section.items.length - 1;
                 return (
@@ -205,10 +205,10 @@ export default function VendorSettingsScreen() {
                           value={isDarkMode}
                           onValueChange={setIsDarkMode}
                           trackColor={{ false: "#e2e8f0", true: tokens.primary }}
-                          thumbColor={"#ffffff"}
+                          thumbColor={tokens.primaryText}
                         />
                       ) : (
-                        <Icon name="chevron-right" size={18} color="#cbd5e1" />
+                        <Icon name="chevron-right" size={18} color={tokens.textDisabled} />
                       )}
                     </View>
                   </Pressable>
@@ -224,7 +224,7 @@ export default function VendorSettingsScreen() {
           className="flex-row items-center justify-center gap-2 p-4 bg-rose-50 rounded-xl mt-2 border border-rose-100 active:opacity-70"
           onPress={handleLogout}
         >
-          <Icon name="log-out" size={18} color="#ef4444" />
+          <Icon name="log-out" size={18} color={tokens.error} />
           <Text className="text-body-lg font-body font-bold text-rose-500">Log Out</Text>
         </Pressable>
       </ScrollView>

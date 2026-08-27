@@ -1,3 +1,4 @@
+import { tokens } from "@/theme/tokens";
 import { BackButton } from "@/components/ui/BackButton";
 import { View, Text, ScrollView, Pressable, RefreshControl } from "react-native";
 import { useRouter } from "expo-router";
@@ -51,7 +52,7 @@ export default function VendorInboxScreen() {
                 className={`flex-row items-center p-4 bg-card border border-border rounded-xl mb-3 ${chat.unread ? "bg-primary-subtle/50 border-border" : ""}`}
               >
                 <View className="w-12 h-12 rounded-full bg-secondary items-center justify-center mr-3 relative">
-                  <Icon name="user" size={20} color="#64748b" />
+                  <Icon name="user" size={20} color={tokens.textMuted} />
                   {chat.unread && (
                     <View className="absolute top-0 right-0 w-3 h-3 rounded-full bg-error border-2 border-card" />
                   )}

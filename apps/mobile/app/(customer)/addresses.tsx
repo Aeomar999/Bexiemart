@@ -190,7 +190,7 @@ export default function AddressesScreen() {
             <Pressable
               style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
               key={address.id}
-              className={`bg-card rounded-2xl p-5 border shadow-lg ${address.isDefault ? "border-primary bg-primary-subtle/20" : "border-border"}`}
+              className={`bg-card rounded-2xl p-5 border ${address.isDefault ? "border-primary bg-primary-subtle/20" : "border-border"}`}
               onPress={() => handleSetDefault(address.id)}
             >
               <View className="flex-row justify-between items-start mb-3">
@@ -201,7 +201,7 @@ export default function AddressesScreen() {
                     <Icon
                       name={getIcon(address.type)}
                       size={14}
-                      color={address.isDefault ? tokens.primary : "#64748b"}
+                      color={address.isDefault ? tokens.primary : tokens.textMuted}
                     />
                   </View>
                   <Text className="text-body-md font-heading font-bold text-foreground uppercase tracking-wider">
@@ -223,7 +223,7 @@ export default function AddressesScreen() {
                     onPress={() => handleDelete(address.id)}
                     className="w-6 h-6 items-center justify-center bg-rose-50 rounded-full border border-rose-100"
                   >
-                    <Icon name="trash-2" size={12} color="#ef4444" />
+                    <Icon name="trash-2" size={12} color={tokens.error} />
                   </Pressable>
                 </View>
               </View>
@@ -284,10 +284,7 @@ export default function AddressesScreen() {
 
       {/* Address Form Modal */}
       {isModalVisible && (
-        <View
-          className="absolute inset-0 z-50 flex-1 justify-end bg-black/50"
-          style={{ elevation: 100 }}
-        >
+        <View className="absolute inset-0 z-50 flex-1 justify-end bg-black/50">
           <KeyboardAvoidingView
             behavior={Platform.OS === "ios" ? "padding" : "height"}
             className="flex-1 justify-end"
@@ -307,7 +304,7 @@ export default function AddressesScreen() {
                   onPress={() => setIsModalVisible(false)}
                   className="w-8 h-8 rounded-full bg-muted items-center justify-center"
                 >
-                  <Icon name="x" size={16} color="#64748b" />
+                  <Icon name="x" size={16} color={tokens.textMuted} />
                 </Pressable>
               </View>
 
@@ -323,7 +320,7 @@ export default function AddressesScreen() {
                       <Icon
                         name={getIcon(type)}
                         size={18}
-                        color={formData.type === type ? tokens.primary : "#64748b"}
+                        color={formData.type === type ? tokens.primary : tokens.textMuted}
                       />
                       <Text
                         className={`text-body-sm mt-1 font-bold ${formData.type === type ? "text-primary-hover" : "text-muted-foreground"}`}

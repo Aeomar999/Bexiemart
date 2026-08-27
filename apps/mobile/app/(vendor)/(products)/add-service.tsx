@@ -1,3 +1,4 @@
+import { tokens } from "@/theme/tokens";
 import { BackButton } from "@/components/ui/BackButton";
 import { View, Text, ScrollView, Alert, Pressable, Switch } from "react-native";
 import { useRouter, useLocalSearchParams } from "expo-router";
@@ -95,7 +96,7 @@ export default function AddServiceScreen() {
           className="w-full h-48 bg-muted rounded-2xl items-center justify-center border-2 border-dashed border-border mb-8"
         >
           <View className="w-14 h-14 bg-card rounded-full items-center justify-center mb-3">
-            <Icon name="camera" size={24} color="#64748b" />
+            <Icon name="camera" size={24} color={tokens.textMuted} />
           </View>
           <Text className="text-body-md font-bold text-muted-foreground">Add Cover Photo</Text>
           <Text className="text-body-sm text-muted-foreground mt-1">

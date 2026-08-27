@@ -1,3 +1,4 @@
+import { tokens } from "@/theme/tokens";
 import { BackButton } from "@/components/ui/BackButton";
 import { View, Text, ScrollView, Pressable } from "react-native";
 import { useLocalSearchParams, useRouter } from "expo-router";
@@ -97,7 +98,7 @@ export default function RestaurantScreen() {
           <View className="flex-row justify-between">
             <View className="items-center">
               <View className="flex-row items-center">
-                <Icon name="map-pin" size={16} color="#64748b" />
+                <Icon name="map-pin" size={16} color={tokens.textMuted} />
                 <Text className="text-body-lg font-bold text-foreground ml-1">
                   {restaurant.city ?? restaurant.address ?? "Accra"}
                 </Text>
@@ -107,7 +108,7 @@ export default function RestaurantScreen() {
             <View className="w-[1px] bg-secondary" />
             <View className="items-center">
               <View className="flex-row items-center">
-                <Icon name="shopping-bag" size={16} color="#64748b" />
+                <Icon name="shopping-bag" size={16} color={tokens.textMuted} />
                 <Text className="text-body-lg font-bold text-foreground ml-1">
                   {restaurant._count?.foodItems ??
                     menuGroups.reduce((sum: number, g: any) => sum + g.items.length, 0)}
@@ -118,7 +119,7 @@ export default function RestaurantScreen() {
             <View className="w-[1px] bg-secondary" />
             <View className="items-center">
               <View className="flex-row items-center">
-                <Icon name="clock" size={16} color="#64748b" />
+                <Icon name="clock" size={16} color={tokens.textMuted} />
                 <Text className="text-body-lg font-bold text-foreground ml-1">
                   {restaurant.hours?.length > 0
                     ? `${restaurant.hours[0].openTime ?? "09:00"}-${restaurant.hours[0].closeTime ?? "17:00"}`
@@ -189,14 +190,14 @@ export default function RestaurantScreen() {
 
                     <View className="items-end">
                       <View className="w-20 h-20 bg-muted rounded-xl mb-3 items-center justify-center overflow-hidden">
-                        <Icon name="image" size={24} color="#cbd5e1" />
+                        <Icon name="image" size={24} color={tokens.textDisabled} />
                       </View>
                       <Pressable
                         style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
                         className="bg-orange-50 px-4 py-1.5 rounded-full flex-row items-center gap-1"
                         onPress={() => handleAddToCart(item)}
                       >
-                        <Icon name="plus" size={14} color="#ea580c" />
+                        <Icon name="plus" size={14} color={tokens.warning} />
                         <Text className="text-sm font-bold text-orange-600">Add</Text>
                       </Pressable>
                     </View>
@@ -210,7 +211,7 @@ export default function RestaurantScreen() {
 
       {/* Floating Cart Footer */}
       {cartItemCount > 0 && (
-        <View className="absolute bottom-0 left-0 right-0 bg-card border-t border-border p-4 pb-8 shadow-2xl">
+        <View className="absolute bottom-0 left-0 right-0 bg-card border-t border-border p-4 pb-8">
           <Pressable
             style={({ pressed }) => [{ opacity: pressed ? 0.9 : 1 }]}
             className="bg-primary rounded-2xl flex-row justify-between items-center px-5 py-4"

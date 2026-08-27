@@ -1,3 +1,4 @@
+import { tokens } from "@/theme/tokens";
 import { BackButton } from "@/components/ui/BackButton";
 import {
   View,
@@ -88,7 +89,7 @@ export default function TransactionsScreen() {
           <View className="flex-row items-center gap-3">
             <BackButton
               className="w-10 h-10 rounded-full bg-background items-center justify-center"
-              color="#0f172a"
+              color={tokens.textPrimary}
             />
             <Text className="text-display-sm font-heading font-black text-foreground">
               Transactions

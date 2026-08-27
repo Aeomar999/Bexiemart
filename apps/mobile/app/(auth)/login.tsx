@@ -88,7 +88,7 @@ export default function LoginScreen() {
             value={email}
             onChangeText={(text) => setEmail(text.replace(/[^a-zA-Z0-9@._+-]/g, ""))}
             error={errors.email}
-            leftIcon={<FontAwesome5 name="envelope" size={16} color="#94A3B8" solid />}
+            leftIcon={<FontAwesome5 name="envelope" size={16} color={tokens.textMuted} solid />}
           />
 
           <Input
@@ -98,7 +98,7 @@ export default function LoginScreen() {
             value={password}
             onChangeText={setPassword}
             error={errors.password}
-            leftIcon={<FontAwesome5 name="lock" size={16} color="#94A3B8" solid />}
+            leftIcon={<FontAwesome5 name="lock" size={16} color={tokens.textMuted} solid />}
           />
 
           <View className="self-end -mt-2">
@@ -125,7 +125,7 @@ export default function LoginScreen() {
                 className="p-5"
               >
                 <View className="flex-row items-center gap-4 mb-5">
-                  <View className="w-14 h-14 bg-white rounded-full shadow-sm items-center justify-center border border-border">
+                  <View className="w-14 h-14 bg-white rounded-full items-center justify-center border border-border">
                     <FontAwesome5 name="envelope-open-text" size={22} color={tokens.primary} />
                   </View>
                   <View className="flex-1">
@@ -164,7 +164,7 @@ export default function LoginScreen() {
                   </Text>
                 ) : resendVerification.isSuccess && countdown > 0 ? (
                   <View className="flex-row items-center justify-center gap-2 mb-4">
-                    <FontAwesome5 name="check-circle" size={14} color="#16A34A" />
+                    <FontAwesome5 name="check-circle" size={14} color={tokens.success} />
                     <Text className="text-sm font-bold text-success">
                       Link sent! Check your email.
                     </Text>

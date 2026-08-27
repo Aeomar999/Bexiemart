@@ -1,4 +1,5 @@
-﻿import { BackButton } from "@/components/ui/BackButton";
+﻿import { tokens } from "@/theme/tokens";
+import { BackButton } from "@/components/ui/BackButton";
 import {
   View,
   Text,
@@ -98,27 +99,27 @@ const ReelItem = ({
       <View className="absolute right-4 bottom-32 items-center gap-6 z-20">
         <Pressable className="items-center" onPress={() => onToggleLike(item.id)}>
           <View className="w-12 h-12 rounded-full bg-black/40 items-center justify-center mb-1">
-            <Icon name="heart" size={24} color={isLiked ? "#ef4444" : "#fff"} />
+            <Icon name="heart" size={24} color={isLiked ? tokens.error : tokens.primaryText} />
           </View>
-          <Text className="text-white font-bold text-body-sm shadow-sm">
+          <Text className="text-white font-bold text-body-sm">
             {formatNumber(item.likesCount ?? 0)}
           </Text>
         </Pressable>
 
         <Pressable className="items-center" onPress={() => onOpenComments(item)}>
           <View className="w-12 h-12 rounded-full bg-black/40 items-center justify-center mb-1">
-            <Icon name="message-circle" size={24} color="#fff" />
+            <Icon name="message-circle" size={24} color={tokens.primaryText} />
           </View>
-          <Text className="text-white font-bold text-body-sm shadow-sm">
+          <Text className="text-white font-bold text-body-sm">
             {formatNumber(item.commentsCount ?? 0)}
           </Text>
         </Pressable>
 
         <Pressable className="items-center" onPress={() => onShare(item)}>
           <View className="w-12 h-12 rounded-full bg-black/40 items-center justify-center mb-1">
-            <Icon name="share-2" size={24} color="#fff" />
+            <Icon name="share-2" size={24} color={tokens.primaryText} />
           </View>
-          <Text className="text-white font-bold text-body-sm shadow-sm">
+          <Text className="text-white font-bold text-body-sm">
             {formatNumber(item.shares ?? 0)}
           </Text>
         </Pressable>
@@ -131,9 +132,9 @@ const ReelItem = ({
       >
         <View className="flex-row items-center gap-3 mb-3">
           <View className="w-10 h-10 rounded-full bg-secondary border-2 border-card items-center justify-center overflow-hidden">
-            <Icon name="user" size={20} color="#94a3b8" />
+            <Icon name="user" size={20} color={tokens.textMuted} />
           </View>
-          <Text className="text-white font-bold text-body-lg shadow-sm">
+          <Text className="text-white font-bold text-body-lg">
             @{vendorName.replace(/\s+/g, "")}
           </Text>
           <Pressable
@@ -152,7 +153,7 @@ const ReelItem = ({
           </Pressable>
         </View>
 
-        <Text className="text-white font-body text-body-md mb-4 shadow-sm w-4/5" numberOfLines={2}>
+        <Text className="text-white font-body text-body-md mb-4 w-4/5" numberOfLines={2}>
           {item.caption}
         </Text>
 
@@ -163,7 +164,7 @@ const ReelItem = ({
         >
           <View className="flex-row items-center gap-3 flex-1">
             <View className="w-12 h-12 bg-card rounded-xl items-center justify-center">
-              <Icon name="shopping-bag" size={20} color="#0f172a" />
+              <Icon name="shopping-bag" size={20} color={tokens.textPrimary} />
             </View>
             <View className="flex-1 pr-2">
               <Text className="text-white font-bold text-body-md" numberOfLines={1}>
@@ -261,7 +262,7 @@ export default function ReelsScreen() {
   if (isLoading) {
     return (
       <View className="flex-1 bg-black items-center justify-center">
-        <ActivityIndicator size="large" color="#fff" />
+        <ActivityIndicator size="large" color={tokens.primaryText} />
       </View>
     );
   }
@@ -301,7 +302,7 @@ export default function ReelsScreen() {
         ListFooterComponent={
           isFetchingNextPage ? (
             <View className="py-4 items-center bg-black">
-              <ActivityIndicator color="#fff" />
+              <ActivityIndicator color={tokens.primaryText} />
             </View>
           ) : null
         }
@@ -315,11 +316,9 @@ export default function ReelsScreen() {
       >
         <BackButton
           className="w-10 h-10 rounded-full bg-black/40 items-center justify-center backdrop-blur-md"
-          color="#fff"
+          color={tokens.primaryText}
         />
-        <Text className="text-heading-md font-heading font-bold text-white shadow-sm">
-          Discover
-        </Text>
+        <Text className="text-heading-md font-heading font-bold text-white">Discover</Text>
         <View className="w-10 h-10" />
       </View>
 
@@ -352,7 +351,7 @@ export default function ReelsScreen() {
                 onPress={() => setCommentModalVisible(false)}
                 className="w-8 h-8 rounded-full bg-muted items-center justify-center"
               >
-                <Icon name="x" size={16} color="#64748b" />
+                <Icon name="x" size={16} color={tokens.textMuted} />
               </Pressable>
             </View>
 
@@ -364,7 +363,7 @@ export default function ReelsScreen() {
               ListEmptyComponent={
                 commentsLoading ? (
                   <View className="items-center justify-center py-10">
-                    <ActivityIndicator color="#64748b" />
+                    <ActivityIndicator color={tokens.textMuted} />
                   </View>
                 ) : (
                   <View className="items-center justify-center py-10">
@@ -413,7 +412,11 @@ export default function ReelsScreen() {
                 className={`w-10 h-10 rounded-full items-center justify-center ${newComment.trim() ? "bg-primary" : "bg-secondary"}`}
                 onPress={handlePostComment}
               >
-                <Icon name="send" size={16} color={newComment.trim() ? "#fff" : "#94a3b8"} />
+                <Icon
+                  name="send"
+                  size={16}
+                  color={newComment.trim() ? tokens.primaryText : tokens.textMuted}
+                />
               </Pressable>
             </View>
           </View>
