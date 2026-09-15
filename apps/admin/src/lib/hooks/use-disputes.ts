@@ -1,5 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
+import { getUserFriendlyErrorMessage } from "@/lib/error-utils";
 import { getAdminDisputes, getAdminDispute, resolveDispute } from "../api/admin";
 
 export const useDisputes = (params?: Record<string, any>) => {
@@ -29,7 +30,7 @@ export const useResolveDispute = () => {
       toast.success(`Dispute successfully resolved via ${action}`);
     },
     onError: (error: any) => {
-      toast.error(error?.response?.data?.message || "Failed to resolve dispute");
+      toast.error(getUserFriendlyErrorMessage(error, "We couldn't close this dispute. Please try again."));
     }
   });
 };

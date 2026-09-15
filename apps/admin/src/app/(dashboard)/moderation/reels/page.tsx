@@ -26,7 +26,7 @@ export default function ReelsModerationPage() {
         toast.success(`Reel has been ${currentlyActive ? 'hidden' : 'published'}`);
       },
       onError: () => {
-        toast.error("Failed to update reel status");
+        toast.error("We couldn't update this reel's status. Please try again.");
       }
     });
   };

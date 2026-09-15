@@ -1,5 +1,6 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
+import { getUserFriendlyErrorMessage } from "@/lib/error-utils";
 import { updateProfile, updatePassword, uploadFile } from "../api/auth";
 
 export const useUpdateProfile = () => {
@@ -12,7 +13,7 @@ export const useUpdateProfile = () => {
       toast.success("Profile updated successfully");
     },
     onError: (error: any) => {
-      toast.error(error?.response?.data?.message || "Failed to update profile");
+      toast.error(getUserFriendlyErrorMessage(error, "We couldn't save your profile changes. Please try again."));
     }
   });
 };
@@ -24,7 +25,7 @@ export const useUpdatePassword = () => {
       toast.success("Password updated successfully");
     },
     onError: (error: any) => {
-      toast.error(error?.response?.data?.message || "Failed to update password");
+      toast.error(getUserFriendlyErrorMessage(error, "We couldn't update your password. Please try again."));
     }
   });
 };
@@ -36,7 +37,7 @@ export const useUploadAvatar = () => {
       toast.success("Avatar uploaded successfully");
     },
     onError: (error: any) => {
-      toast.error(error?.response?.data?.message || "Failed to upload avatar");
+      toast.error(getUserFriendlyErrorMessage(error, "Your photo couldn't be uploaded. Please try a smaller image file."));
     }
   });
 };

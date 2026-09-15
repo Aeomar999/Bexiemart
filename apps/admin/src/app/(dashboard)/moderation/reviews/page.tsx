@@ -28,7 +28,7 @@ export default function ReviewsModerationPage() {
           toast.success("Review deleted successfully");
         },
         onError: () => {
-          toast.error("Failed to delete review");
+          toast.error("We couldn't remove this review. Please try again.");
         }
       });
     }

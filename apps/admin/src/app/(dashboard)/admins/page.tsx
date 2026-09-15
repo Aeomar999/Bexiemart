@@ -20,6 +20,7 @@ import { Button } from "../../../components/ui/Button";
 import { Input } from "../../../components/ui/Input";
 import { ShieldCheck, Plus, Lock } from "lucide-react";
 import { toast } from "sonner";
+import { getUserFriendlyErrorMessage } from "@/lib/error-utils";
 
 const EMPTY_FORM = { name: "", email: "", password: "" };
 
@@ -36,7 +37,7 @@ export default function AdminsPage() {
   const handleCreate = (e: React.FormEvent) => {
     e.preventDefault();
     if (!formData.name || !formData.email || !formData.password) {
-      toast.error("Please fill all fields");
+      toast.error("Please fill in all the required details.");
       return;
     }
     if (formData.password.length < 8) {
@@ -51,7 +52,7 @@ export default function AdminsPage() {
         toast.success("Admin account created");
       },
       onError: (err: any) => {
-        toast.error(err?.response?.data?.message || "Failed to create admin");
+        toast.error(getUserFriendlyErrorMessage(err, "We couldn't create this admin account right now. Please try again."));
       },
     });
   };

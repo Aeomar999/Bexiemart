@@ -1,5 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
+import { getUserFriendlyErrorMessage } from "@/lib/error-utils";
 import { getConfig, updateConfig } from "../api/admin";
 
 export const useConfig = () => {
@@ -19,7 +20,7 @@ export const useUpdateConfig = () => {
       toast.success("Platform settings updated successfully");
     },
     onError: (error: any) => {
-      toast.error(error?.response?.data?.message || "Failed to update settings");
+      toast.error(getUserFriendlyErrorMessage(error, "Your changes couldn't be saved. Please try again."));
     }
   });
 };

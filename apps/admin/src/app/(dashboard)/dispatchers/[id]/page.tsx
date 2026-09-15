@@ -47,7 +47,7 @@ export default function DispatcherDetailsPage() {
       { id, status: newStatus },
       {
         onSuccess: () => toast.success(`Dispatcher status updated to ${newStatus}`),
-        onError: () => toast.error("Failed to update status"),
+        onError: () => toast.error("We couldn't change this dispatcher's status. Please try again."),
       }
     );
   };

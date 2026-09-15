@@ -40,7 +40,7 @@ export default function CouponsPage() {
   const handleCreate = (e: React.FormEvent) => {
     e.preventDefault();
     if (!formData.code || !formData.discountValue || !formData.endDate) {
-      toast.error("Please fill all required fields");
+      toast.error("Please fill in all the required details to create a coupon.");
       return;
     }
     

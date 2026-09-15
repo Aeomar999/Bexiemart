@@ -1,5 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
+import { getUserFriendlyErrorMessage } from "@/lib/error-utils";
 import { getAdminUsers, getAdminUser, updateUserRole } from "../api/admin";
 
 export const useUsers = (params?: Record<string, any>) => {
@@ -28,7 +29,7 @@ export const useUpdateUserRole = () => {
       toast.success(`User role successfully updated to ${role}`);
     },
     onError: (error: any) => {
-      toast.error(error?.response?.data?.message || "Failed to update user role");
+      toast.error(getUserFriendlyErrorMessage(error, "We couldn't change this user's role. Please try again."));
     }
   });
 };
