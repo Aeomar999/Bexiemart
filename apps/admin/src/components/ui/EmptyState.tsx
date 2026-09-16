@@ -1,5 +1,6 @@
 import React from "react";
-import { FolderOpen } from "lucide-react";
+import { HugeiconsIcon } from "@hugeicons/react";
+import { FolderOpenIcon } from "@hugeicons/core-free-icons";
 import { cn } from "../../lib/utils";
 
 interface EmptyStateProps {
@@ -13,7 +14,7 @@ interface EmptyStateProps {
 export function EmptyState({ 
   title, 
   description, 
-  icon = <FolderOpen className="h-10 w-10 text-[var(--color-text-muted)]" />, 
+  icon = <HugeiconsIcon icon={FolderOpenIcon} className="h-10 w-10 text-[var(--color-text-muted)]" />, 
   action, 
   className 
 }: EmptyStateProps) {

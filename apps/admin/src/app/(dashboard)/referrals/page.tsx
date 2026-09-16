@@ -6,7 +6,8 @@ import { Pagination } from "../../../components/ui/Pagination";
 import { DashboardLayout } from "../../../components/layout/DashboardLayout";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../../../components/ui/Table";
 import { Card, CardContent, CardHeader, CardTitle } from "../../../components/ui/Card";
-import { Ticket, Users } from "lucide-react";
+import { HugeiconsIcon } from "@hugeicons/react";
+import { TicketIcon, UsersIcon } from "@hugeicons/core-free-icons";
 import { TableSkeleton } from "../../../components/ui/Skeleton";
 import { EmptyState } from "../../../components/ui/EmptyState";
 import { Badge } from "../../../components/ui/Badge";
@@ -54,7 +55,7 @@ export default function ReferralsPage() {
               <div className="py-8"><TableSkeleton rows={5} columns={4} /></div>
             ) : referrals.length === 0 ? (
               <EmptyState 
-                icon={<Ticket className="h-10 w-10 text-[var(--color-text-muted)]" />}
+                icon={<HugeiconsIcon icon={TicketIcon} className="h-10 w-10 text-[var(--color-text-muted)]" />}
                 title="No referrals found"
                 description="The referral program hasn't generated any invites yet."
               />
@@ -82,7 +83,7 @@ export default function ReferralsPage() {
                       </TableCell>
                       <TableCell>
                         <div className="flex items-center gap-2">
-                          <Users className="h-4 w-4 text-[var(--color-text-muted)]" />
+                          <HugeiconsIcon icon={UsersIcon} className="h-4 w-4 text-[var(--color-text-muted)]" />
                           <span>{referral._count?.referredUsers || 0}</span>
                         </div>
                       </TableCell>

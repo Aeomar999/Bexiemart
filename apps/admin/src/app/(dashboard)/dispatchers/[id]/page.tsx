@@ -9,7 +9,8 @@ import { Badge } from "../../../../components/ui/Badge";
 import { Card, CardContent, CardHeader, CardTitle } from "../../../../components/ui/Card";
 import { Button } from "../../../../components/ui/Button";
 import { toast } from "sonner";
-import { ArrowLeft, User, Bike, MapPin, Navigation } from "lucide-react";
+import { HugeiconsIcon } from "@hugeicons/react";
+import { ArrowLeftIcon, UserIcon, BikeIcon, MapPinIcon, NavigationIcon } from "@hugeicons/core-free-icons";
 
 export default function DispatcherDetailsPage() {
   const params = useParams();
@@ -35,7 +36,7 @@ export default function DispatcherDetailsPage() {
         <div className="flex h-64 flex-col items-center justify-center space-y-4">
           <p className="text-lg font-medium text-[var(--color-text-muted)]">Dispatcher not found</p>
           <Button variant="outline" onClick={() => router.push("/dispatchers")}>
-            <ArrowLeft className="mr-2 h-4 w-4" /> Back to Dispatchers
+            <HugeiconsIcon icon={ArrowLeftIcon} className="mr-2 h-4 w-4" /> Back to Dispatchers
           </Button>
         </div>
       </DashboardLayout>
@@ -57,7 +58,7 @@ export default function DispatcherDetailsPage() {
       <div className="flex flex-col space-y-6">
         <div className="flex items-center space-x-4">
           <Button variant="outline" size="sm" onClick={() => router.push("/dispatchers")}>
-            <ArrowLeft className="mr-2 h-4 w-4" /> Back
+            <HugeiconsIcon icon={ArrowLeftIcon} className="mr-2 h-4 w-4" /> Back
           </Button>
           <h1 className="text-2xl font-bold tracking-tight text-[var(--color-text)]">
             Dispatcher Details
@@ -77,7 +78,7 @@ export default function DispatcherDetailsPage() {
           <Card className="md:col-span-1">
             <CardHeader>
               <CardTitle className="flex items-center">
-                <User className="mr-2 h-5 w-5 text-[var(--color-primary)]" />
+                <HugeiconsIcon icon={UserIcon} className="mr-2 h-5 w-5 text-[var(--color-primary)]" />
                 Driver Profile
               </CardTitle>
             </CardHeader>
@@ -137,7 +138,7 @@ export default function DispatcherDetailsPage() {
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center">
-                  <Bike className="mr-2 h-5 w-5 text-[var(--color-primary)]" />
+                  <HugeiconsIcon icon={BikeIcon} className="mr-2 h-5 w-5 text-[var(--color-primary)]" />
                   Vehicle & Earnings
                 </CardTitle>
               </CardHeader>
@@ -166,7 +167,7 @@ export default function DispatcherDetailsPage() {
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center">
-                  <Navigation className="mr-2 h-5 w-5 text-[var(--color-primary)]" />
+                  <HugeiconsIcon icon={NavigationIcon} className="mr-2 h-5 w-5 text-[var(--color-primary)]" />
                   Trip Statistics
                 </CardTitle>
               </CardHeader>
@@ -187,7 +188,7 @@ export default function DispatcherDetailsPage() {
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center">
-                  <MapPin className="mr-2 h-5 w-5 text-[var(--color-primary)]" />
+                  <HugeiconsIcon icon={MapPinIcon} className="mr-2 h-5 w-5 text-[var(--color-primary)]" />
                   Last Known Location
                 </CardTitle>
               </CardHeader>

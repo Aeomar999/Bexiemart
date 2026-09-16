@@ -3,26 +3,8 @@
 import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { 
-  LayoutDashboard, 
-  Users, 
-  Store, 
-  ShoppingBag, 
-  AlertTriangle, 
-  FileText, 
-  Settings, 
-  LogOut,
-  Bike,
-  Truck,
-  Pizza,
-  Wrench,
-  Megaphone,
-  ShieldAlert,
-  ShieldCheck,
-  Ticket,
-  ChevronDown,
-  ChevronRight
-} from "lucide-react";
+import { HugeiconsIcon } from "@hugeicons/react";
+import { LayoutDashboardIcon, UsersIcon, StoreIcon, ShoppingBagIcon, AlertTriangleIcon, FileTextIcon, SettingsIcon, LogOutIcon, BikeIcon, TruckIcon, PizzaIcon, WrenchIcon, MegaphoneIcon, ShieldAlertIcon, ShieldCheckIcon, TicketIcon, ChevronDownIcon, ChevronRightIcon } from "@hugeicons/core-free-icons";
 import { cn } from "../../lib/utils";
 import { useUiStore } from "../../lib/stores/ui-store";
 import { useAuthStore } from "../../lib/stores/auth-store";
@@ -251,9 +233,9 @@ export function Sidebar() {
                               </span>
                             )}
                             {isExpanded ? (
-                              <ChevronDown className="h-4 w-4 text-[var(--color-text-muted)]" />
+                              <HugeiconsIcon icon={ChevronDownIcon} className="h-4 w-4 text-[var(--color-text-muted)]" />
                             ) : (
-                              <ChevronRight className="h-4 w-4 text-[var(--color-text-muted)]" />
+                              <HugeiconsIcon icon={ChevronRightIcon} className="h-4 w-4 text-[var(--color-text-muted)]" />
                             )}
                           </div>
                         )}
@@ -299,7 +281,7 @@ export function Sidebar() {
           )}
           title={!isSidebarOpen ? "Logout" : undefined}
         >
-          <LogOut
+          <HugeiconsIcon icon={LogOutIcon}
             className={cn(
               "flex-shrink-0 transition-colors",
               isSidebarOpen ? "mr-3 h-5 w-5" : "h-6 w-6"

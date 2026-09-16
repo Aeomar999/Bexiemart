@@ -6,7 +6,8 @@ import { Pagination } from "../../../../components/ui/Pagination";
 import { DashboardLayout } from "../../../../components/layout/DashboardLayout";
 import { Badge } from "../../../../components/ui/Badge";
 import { Card, CardContent, CardHeader, CardTitle } from "../../../../components/ui/Card";
-import { ShieldAlert, PlayCircle, EyeOff, Eye } from "lucide-react";
+import { HugeiconsIcon } from "@hugeicons/react";
+import { ShieldAlertIcon, PlayCircleIcon, EyeOffIcon, EyeIcon } from "@hugeicons/core-free-icons";
 import { Button } from "../../../../components/ui/Button";
 import { EmptyState } from "../../../../components/ui/EmptyState";
 import { toast } from "sonner";
@@ -49,7 +50,7 @@ export default function ReelsModerationPage() {
               </div>
             ) : reels.length === 0 ? (
               <EmptyState 
-                icon={<ShieldAlert className="h-10 w-10 text-[var(--color-text-muted)]" />}
+                icon={<HugeiconsIcon icon={ShieldAlertIcon} className="h-10 w-10 text-[var(--color-text-muted)]" />}
                 title="No reels found"
                 description="No video content has been uploaded yet."
               />
@@ -59,7 +60,7 @@ export default function ReelsModerationPage() {
                   <div key={reel.id} className="group relative overflow-hidden rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] transition-all hover:shadow-md">
                     {/* Video Thumbnail Placeholder */}
                     <div className="aspect-[9/16] bg-gray-900 relative flex items-center justify-center">
-                      <PlayCircle className="h-12 w-12 text-white/50" />
+                      <HugeiconsIcon icon={PlayCircleIcon} className="h-12 w-12 text-white/50" />
                       <div className="absolute top-2 right-2">
                         <Badge variant={reel.isActive ? "success" : "error"}>
                           {reel.isActive ? "LIVE" : "HIDDEN"}
@@ -81,12 +82,12 @@ export default function ReelsModerationPage() {
                       >
                         {reel.isActive ? (
                           <>
-                            <EyeOff className="h-4 w-4" />
+                            <HugeiconsIcon icon={EyeOffIcon} className="h-4 w-4" />
                             Take Down
                           </>
                         ) : (
                           <>
-                            <Eye className="h-4 w-4" />
+                            <HugeiconsIcon icon={EyeIcon} className="h-4 w-4" />
                             Restore
                           </>
                         )}

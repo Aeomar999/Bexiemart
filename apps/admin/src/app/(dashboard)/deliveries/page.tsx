@@ -14,7 +14,8 @@ import {
 } from "../../../components/ui/Table";
 import { Badge } from "../../../components/ui/Badge";
 import { Card, CardContent, CardHeader, CardTitle } from "../../../components/ui/Card";
-import { Truck } from "lucide-react";
+import { HugeiconsIcon } from "@hugeicons/react";
+import { TruckIcon } from "@hugeicons/core-free-icons";
 import { TableSkeleton } from "../../../components/ui/Skeleton";
 import { EmptyState } from "../../../components/ui/EmptyState";
 
@@ -45,7 +46,7 @@ export default function DeliveriesPage() {
               </div>
             ) : deliveries.length === 0 ? (
               <EmptyState 
-                icon={<Truck className="h-10 w-10 text-[var(--color-text-muted)]" />}
+                icon={<HugeiconsIcon icon={TruckIcon} className="h-10 w-10 text-[var(--color-text-muted)]" />}
                 title="No deliveries found"
                 description="There are currently no active deliveries or rides on the platform."
               />

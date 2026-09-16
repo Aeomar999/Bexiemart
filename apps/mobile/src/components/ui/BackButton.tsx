@@ -1,7 +1,8 @@
 import { TouchableOpacity, TouchableOpacityProps } from "react-native";
 import { router } from "expo-router";
 // @ts-expect-error
-import { FontAwesome5 } from "@expo/vector-icons";
+import { HugeiconsIcon } from "@hugeicons/react-native";
+import { ArrowLeft01Icon } from "@hugeicons/core-free-icons";
 
 interface BackButtonProps extends TouchableOpacityProps {
   onPress?: () => void;
@@ -40,7 +41,7 @@ export function BackButton({
       className={`w-10 h-10 rounded-full bg-card border border-border items-center justify-center ${className}`}
       {...props}
     >
-      <FontAwesome5 name="arrow-left" size={16} color={finalIconColor} />
+      <HugeiconsIcon icon={ArrowLeft01Icon} size={16} color={finalIconColor} />
     </TouchableOpacity>
   );
 }

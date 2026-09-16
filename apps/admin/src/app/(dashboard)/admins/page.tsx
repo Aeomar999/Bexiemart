@@ -18,7 +18,8 @@ import { TableSkeleton } from "../../../components/ui/Skeleton";
 import { EmptyState } from "../../../components/ui/EmptyState";
 import { Button } from "../../../components/ui/Button";
 import { Input } from "../../../components/ui/Input";
-import { ShieldCheck, Plus, Lock } from "lucide-react";
+import { HugeiconsIcon } from "@hugeicons/react";
+import { ShieldCheckIcon, PlusIcon, LockIcon } from "@hugeicons/core-free-icons";
 import { toast } from "sonner";
 import { getUserFriendlyErrorMessage } from "@/lib/error-utils";
 
@@ -63,7 +64,7 @@ export default function AdminsPage() {
     return (
       <DashboardLayout>
         <EmptyState
-          icon={<Lock className="h-10 w-10 text-[var(--color-text-muted)]" />}
+          icon={<HugeiconsIcon icon={LockIcon} className="h-10 w-10 text-[var(--color-text-muted)]" />}
           title="Super admin access required"
           description="Only super admins can manage the admin team."
         />
@@ -77,7 +78,7 @@ export default function AdminsPage() {
         <div className="flex items-center justify-between">
           <h1 className="text-2xl font-bold tracking-tight text-[var(--color-text)]">Admin Team</h1>
           <Button className="flex items-center gap-2" onClick={() => setIsModalOpen(true)}>
-            <Plus className="h-4 w-4" />
+            <HugeiconsIcon icon={PlusIcon} className="h-4 w-4" />
             Add Admin
           </Button>
         </div>
@@ -143,7 +144,7 @@ export default function AdminsPage() {
               </div>
             ) : !admins || admins.length === 0 ? (
               <EmptyState
-                icon={<ShieldCheck className="h-10 w-10 text-[var(--color-text-muted)]" />}
+                icon={<HugeiconsIcon icon={ShieldCheckIcon} className="h-10 w-10 text-[var(--color-text-muted)]" />}
                 title="No admins found"
                 description="Add an admin to grant portal access."
                 action={<Button onClick={() => setIsModalOpen(true)}>Add Admin</Button>}

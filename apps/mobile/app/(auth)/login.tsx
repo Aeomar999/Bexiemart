@@ -10,7 +10,16 @@ import { Button } from "../../src/components/ui/Button";
 import { Announcement } from "../../src/components/ui/Announcement";
 import { useLogin, useResendVerification } from "../../src/lib/hooks/use-auth";
 // @ts-expect-error
-import { FontAwesome5 } from "@expo/vector-icons";
+import { HugeiconsIcon } from "@hugeicons/react-native";
+import {
+  Store01Icon,
+  TickCircleIcon,
+  MailOpen01Icon,
+  Mail01Icon,
+  LockIcon,
+  InformationIcon,
+  Clock01Icon,
+} from "@hugeicons/core-free-icons";
 import { SocialLogins } from "../../src/components/auth/SocialLogins";
 import { LinearGradient } from "expo-linear-gradient";
 
@@ -69,7 +78,7 @@ export default function LoginScreen() {
       <View className="flex-1 justify-center py-12">
         <View className="mb-10 items-center">
           <View className="w-16 h-16 rounded-2xl bg-primary-subtle items-center justify-center mb-6">
-            <FontAwesome5 name="store" size={28} color={tokens.primary} />
+            <HugeiconsIcon icon={Store01Icon} size={28} color={tokens.primary} />
           </View>
           <Text className="text-display-md font-heading font-bold text-foreground mb-2 text-center">
             Welcome back
@@ -88,7 +97,7 @@ export default function LoginScreen() {
             value={email}
             onChangeText={(text) => setEmail(text.replace(/[^a-zA-Z0-9@._+-]/g, ""))}
             error={errors.email}
-            leftIcon={<FontAwesome5 name="envelope" size={16} color={tokens.textMuted} solid />}
+            leftIcon={<HugeiconsIcon icon={Mail01Icon} size={16} color={tokens.textMuted} solid />}
           />
 
           <Input
@@ -98,7 +107,7 @@ export default function LoginScreen() {
             value={password}
             onChangeText={setPassword}
             error={errors.password}
-            leftIcon={<FontAwesome5 name="lock" size={16} color={tokens.textMuted} solid />}
+            leftIcon={<HugeiconsIcon icon={LockIcon} size={16} color={tokens.textMuted} solid />}
           />
 
           <View className="self-end -mt-2">
@@ -126,7 +135,7 @@ export default function LoginScreen() {
               >
                 <View className="flex-row items-center gap-4 mb-5">
                   <View className="w-14 h-14 bg-white rounded-full items-center justify-center border border-border">
-                    <FontAwesome5 name="envelope-open-text" size={22} color={tokens.primary} />
+                    <HugeiconsIcon icon={MailOpen01Icon} size={22} color={tokens.primary} />
                   </View>
                   <View className="flex-1">
                     <Text className="text-heading-md font-heading font-black text-foreground mb-1">
@@ -143,8 +152,8 @@ export default function LoginScreen() {
                     Tap the verification link in your email before signing in.
                   </Text>
                   <View className="mt-2 flex-row items-start gap-2 bg-primary-subtle p-3 rounded-xl border border-border">
-                    <FontAwesome5
-                      name="info-circle"
+                    <HugeiconsIcon
+                      icon={InformationIcon}
                       size={14}
                       color={tokens.primary}
                       style={{ marginTop: 2 }}
@@ -164,7 +173,7 @@ export default function LoginScreen() {
                   </Text>
                 ) : resendVerification.isSuccess && countdown > 0 ? (
                   <View className="flex-row items-center justify-center gap-2 mb-4">
-                    <FontAwesome5 name="check-circle" size={14} color={tokens.success} />
+                    <HugeiconsIcon icon={TickCircleIcon} size={14} color={tokens.success} />
                     <Text className="text-sm font-bold text-success">
                       Link sent! Check your email.
                     </Text>
@@ -173,7 +182,7 @@ export default function LoginScreen() {
 
                 {countdown > 0 ? (
                   <View className="bg-white/80 border border-border py-3.5 px-4 rounded-full flex-row items-center justify-center gap-2">
-                    <FontAwesome5 name="clock" size={14} color={tokens.primary} />
+                    <HugeiconsIcon icon={Clock01Icon} size={14} color={tokens.primary} />
                     <Text className="text-body-md font-bold text-foreground">
                       Resend available in {Math.floor(countdown / 60)}:
                       {(countdown % 60).toString().padStart(2, "0")}

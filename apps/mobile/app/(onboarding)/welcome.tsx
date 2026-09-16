@@ -6,7 +6,8 @@ import { useAuthStore } from "../../src/lib/stores/auth-store";
 import { useAuthEnabled } from "../../src/lib/feature-flags";
 import { Button } from "../../src/components/ui/Button";
 // @ts-expect-error
-import { FontAwesome5 } from "@expo/vector-icons";
+import { HugeiconsIcon } from "@hugeicons/react-native";
+import { Store01Icon } from "@hugeicons/core-free-icons";
 
 export default function WelcomeScreen() {
   const router = useRouter();
@@ -29,7 +30,7 @@ export default function WelcomeScreen() {
     <View className="flex-1 bg-white items-center px-6">
       <View className="flex-1 w-full items-center justify-center pt-20">
         <View className="w-24 h-24 rounded-3xl bg-primary items-center justify-center mb-8">
-          <FontAwesome5 name="store" size={42} color={tokens.primaryText} solid />
+          <HugeiconsIcon icon={Store01Icon} size={42} color={tokens.primaryText} solid />
         </View>
         <Text className="text-[40px] font-heading font-black text-foreground text-center mb-2 leading-[48px]">
           Bexie<Text className="text-primary">Mart</Text>

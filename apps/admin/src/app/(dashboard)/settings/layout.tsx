@@ -3,7 +3,8 @@
 import { DashboardLayout } from "../../../components/layout/DashboardLayout";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Settings, Truck, User, Lock, Bell } from "lucide-react";
+import { HugeiconsIcon } from "@hugeicons/react";
+import { SettingsIcon, TruckIcon, UserIcon, LockIcon, BellIcon } from "@hugeicons/core-free-icons";
 
 export default function SettingsLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();

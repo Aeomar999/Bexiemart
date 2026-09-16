@@ -20,7 +20,13 @@ import {
   useVerifyEmailOtp,
 } from "../../src/lib/hooks/use-auth";
 // @ts-expect-error
-import { FontAwesome5 } from "@expo/vector-icons";
+import { HugeiconsIcon } from "@hugeicons/react-native";
+import {
+  HourglassIcon,
+  TickCircleIcon,
+  AlertCircleIcon,
+  MailOpen01Icon,
+} from "@hugeicons/core-free-icons";
 
 export default function VerifyEmailScreen() {
   const { token, email, phoneVerified } = useLocalSearchParams<{
@@ -97,7 +103,7 @@ export default function VerifyEmailScreen() {
         {status === "verifying" && (
           <View className="items-center">
             <View className="w-16 h-16 rounded-2xl bg-yellow-100 items-center justify-center mb-6">
-              <FontAwesome5 name="hourglass-half" size={28} color={tokens.warning} />
+              <HugeiconsIcon icon={HourglassIcon} size={28} color={tokens.warning} />
             </View>
             <Text className="text-display-md font-heading font-bold text-foreground mb-2 text-center">
               Verifying your email
@@ -111,7 +117,7 @@ export default function VerifyEmailScreen() {
         {status === "success" && (
           <View className="items-center">
             <View className="w-16 h-16 rounded-2xl bg-green-100 items-center justify-center mb-6">
-              <FontAwesome5 name="check-circle" size={28} color={tokens.success} />
+              <HugeiconsIcon icon={TickCircleIcon} size={28} color={tokens.success} />
             </View>
             <Text className="text-display-md font-heading font-bold text-foreground mb-2 text-center">
               Email verified!
@@ -128,7 +134,7 @@ export default function VerifyEmailScreen() {
         {status === "error" && (
           <View className="items-center">
             <View className="w-16 h-16 rounded-2xl bg-red-100 items-center justify-center mb-6">
-              <FontAwesome5 name="exclamation-circle" size={28} color={tokens.error} />
+              <HugeiconsIcon icon={AlertCircleIcon} size={28} color={tokens.error} />
             </View>
             <Text className="text-display-md font-heading font-bold text-foreground mb-2 text-center">
               Verification failed
@@ -168,7 +174,7 @@ export default function VerifyEmailScreen() {
         {status === "idle" && !token && (
           <View className="items-center">
             <View className="w-16 h-16 rounded-2xl bg-primary-subtle items-center justify-center mb-6">
-              <FontAwesome5 name="envelope-open-text" size={28} color={tokens.primary} />
+              <HugeiconsIcon icon={MailOpen01Icon} size={28} color={tokens.primary} />
             </View>
             <Text className="text-display-md font-heading font-bold text-foreground mb-2 text-center">
               {phoneVerified === "true" ? "Phone verified! 🎉" : "Check your email"}

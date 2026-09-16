@@ -9,7 +9,14 @@ import { useRegister, useCheckAvailability } from "../../src/lib/hooks/use-auth"
 import { useState } from "react";
 import { useAuthStore } from "../../src/lib/stores/auth-store";
 // @ts-expect-error
-import { FontAwesome5 } from "@expo/vector-icons";
+import { HugeiconsIcon } from "@hugeicons/react-native";
+import {
+  Store01Icon,
+  UserIcon,
+  Mail01Icon,
+  SmartPhone01Icon,
+  LockIcon,
+} from "@hugeicons/core-free-icons";
 import { SocialLogins } from "../../src/components/auth/SocialLogins";
 
 import { useFormValidation } from "../../src/lib/hooks/use-form-validation";
@@ -217,8 +224,8 @@ export default function RegisterScreen() {
                         }
                   }
                 >
-                  <FontAwesome5
-                    name="shopping-bag"
+                  <HugeiconsIcon
+                    icon={AppsIcon}
                     size={14}
                     color={role === "customer" ? tokens.primary : tokens.textMuted}
                   />
@@ -247,8 +254,8 @@ export default function RegisterScreen() {
                         }
                   }
                 >
-                  <FontAwesome5
-                    name="store"
+                  <HugeiconsIcon
+                    icon={Store01Icon}
                     size={14}
                     color={role === "vendor" ? tokens.primary : tokens.textMuted}
                   />
@@ -269,7 +276,7 @@ export default function RegisterScreen() {
               value={name}
               onChangeText={(text) => setName(text.replace(/[^a-zA-Z\s\-']/g, ""))}
               error={errors1.name}
-              leftIcon={<FontAwesome5 name="user" size={16} color={tokens.textMuted} solid />}
+              leftIcon={<HugeiconsIcon icon={UserIcon} size={16} color={tokens.textMuted} solid />}
             />
           </View>
         )}
@@ -288,7 +295,9 @@ export default function RegisterScreen() {
               }}
               onBlur={handleEmailBlur}
               error={errors2.email || emailCheckError}
-              leftIcon={<FontAwesome5 name="envelope" size={16} color={tokens.textMuted} solid />}
+              leftIcon={
+                <HugeiconsIcon icon={Mail01Icon} size={16} color={tokens.textMuted} solid />
+              }
             />
 
             <Input
@@ -302,7 +311,9 @@ export default function RegisterScreen() {
               }}
               onBlur={handlePhoneBlur}
               error={errors2.phone || phoneCheckError}
-              leftIcon={<FontAwesome5 name="phone" size={16} color={tokens.textMuted} solid />}
+              leftIcon={
+                <HugeiconsIcon icon={SmartPhone01Icon} size={16} color={tokens.textMuted} solid />
+              }
             />
           </View>
         )}
@@ -316,7 +327,7 @@ export default function RegisterScreen() {
               value={password}
               onChangeText={setPassword}
               error={errors3.password}
-              leftIcon={<FontAwesome5 name="lock" size={16} color={tokens.textMuted} solid />}
+              leftIcon={<HugeiconsIcon icon={LockIcon} size={16} color={tokens.textMuted} solid />}
             />
 
             <Input
@@ -326,7 +337,7 @@ export default function RegisterScreen() {
               value={confirmPassword}
               onChangeText={setConfirmPassword}
               error={errors3.confirmPassword}
-              leftIcon={<FontAwesome5 name="lock" size={16} color={tokens.textMuted} solid />}
+              leftIcon={<HugeiconsIcon icon={LockIcon} size={16} color={tokens.textMuted} solid />}
             />
           </View>
         )}

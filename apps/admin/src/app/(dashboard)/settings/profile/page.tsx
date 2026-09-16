@@ -7,7 +7,8 @@ import { Button } from "../../../../components/ui/Button";
 import { Input } from "../../../../components/ui/Input";
 import { useAuthStore } from "../../../../lib/stores/auth-store";
 import { useUpdateProfile, useUploadAvatar } from "../../../../lib/hooks/use-profile";
-import { User, Upload, Loader2 } from "lucide-react";
+import { HugeiconsIcon } from "@hugeicons/react";
+import { UserIcon, UploadIcon, Loader2Icon } from "@hugeicons/core-free-icons";
 import { Skeleton } from "../../../../components/ui/Skeleton";
 
 export default function ProfileSettingsPage() {
@@ -76,18 +77,18 @@ function ProfileSettingsForm({ user }: { user: any }) {
                 {image ? (
                   <Image src={image} alt="Avatar" width={96} height={96} className="h-full w-full object-cover" unoptimized />
                 ) : (
-                  <User className="h-10 w-10 text-(--color-text-muted)" />
+                  <HugeiconsIcon icon={UserIcon} className="h-10 w-10 text-(--color-text-muted)" />
                 )}
                 
                 {isUploading && (
                   <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
-                    <Loader2 className="h-6 w-6 text-white animate-spin" />
+                    <HugeiconsIcon icon={Loader2Icon} className="h-6 w-6 text-white animate-spin" />
                   </div>
                 )}
                 
                 {!isUploading && (
                   <div className="absolute inset-0 bg-black/50 flex flex-col items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                    <Upload className="h-5 w-5 text-white mb-1" />
+                    <HugeiconsIcon icon={UploadIcon} className="h-5 w-5 text-white mb-1" />
                     <span className="text-white text-[10px] font-medium">Change</span>
                   </div>
                 )}

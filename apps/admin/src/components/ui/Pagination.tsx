@@ -1,5 +1,6 @@
 import { Button } from "./Button";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { HugeiconsIcon } from "@hugeicons/react";
+import { ChevronLeftIcon, ChevronRightIcon } from "@hugeicons/core-free-icons";
 
 interface PaginationProps {
   page: number;
@@ -36,7 +37,7 @@ export function Pagination({ page, totalPages, total, onPageChange }: Pagination
               onClick={() => onPageChange(page - 1)}
             >
               <span className="sr-only">Previous</span>
-              <ChevronLeft className="h-4 w-4" aria-hidden="true" />
+              <HugeiconsIcon icon={ChevronLeftIcon} className="h-4 w-4" aria-hidden="true" />
             </Button>
             
             {/* Show page numbers - simple version for now (just previous, current, next if available) */}
@@ -82,7 +83,7 @@ export function Pagination({ page, totalPages, total, onPageChange }: Pagination
               onClick={() => onPageChange(page + 1)}
             >
               <span className="sr-only">Next</span>
-              <ChevronRight className="h-4 w-4" aria-hidden="true" />
+              <HugeiconsIcon icon={ChevronRightIcon} className="h-4 w-4" aria-hidden="true" />
             </Button>
           </nav>
         </div>

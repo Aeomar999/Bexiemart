@@ -6,7 +6,8 @@ import { Pagination } from "../../../../components/ui/Pagination";
 import { DashboardLayout } from "../../../../components/layout/DashboardLayout";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../../../../components/ui/Table";
 import { Card, CardContent, CardHeader, CardTitle } from "../../../../components/ui/Card";
-import { MessageSquareWarning, Trash2, Star } from "lucide-react";
+import { HugeiconsIcon } from "@hugeicons/react";
+import { MessageSquareWarningIcon, Trash2Icon, StarIcon } from "@hugeicons/core-free-icons";
 import { TableSkeleton } from "../../../../components/ui/Skeleton";
 import { EmptyState } from "../../../../components/ui/EmptyState";
 import { Button } from "../../../../components/ui/Button";
@@ -48,7 +49,7 @@ export default function ReviewsModerationPage() {
               <div className="py-8"><TableSkeleton rows={5} columns={5} /></div>
             ) : reviews.length === 0 ? (
               <EmptyState 
-                icon={<MessageSquareWarning className="h-10 w-10 text-[var(--color-text-muted)]" />}
+                icon={<HugeiconsIcon icon={MessageSquareWarningIcon} className="h-10 w-10 text-[var(--color-text-muted)]" />}
                 title="No reviews found"
                 description="There are currently no reviews on the platform."
               />
@@ -77,7 +78,7 @@ export default function ReviewsModerationPage() {
                       </TableCell>
                       <TableCell>
                         <div className="flex items-center gap-1">
-                          <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
+                          <HugeiconsIcon icon={StarIcon} className="h-4 w-4 fill-yellow-400 text-yellow-400" />
                           <span className="font-medium">{review.rating}</span>
                         </div>
                       </TableCell>
@@ -92,7 +93,7 @@ export default function ReviewsModerationPage() {
                           onClick={() => handleDelete(review.id)}
                           disabled={isPending}
                         >
-                          <Trash2 className="h-4 w-4" />
+                          <HugeiconsIcon icon={Trash2Icon} className="h-4 w-4" />
                         </Button>
                       </TableCell>
                     </TableRow>

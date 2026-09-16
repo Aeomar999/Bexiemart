@@ -1,6 +1,7 @@
 "use client";
 
-import { Menu, Bell } from "lucide-react";
+import { HugeiconsIcon } from "@hugeicons/react";
+import { MenuIcon, BellIcon } from "@hugeicons/core-free-icons";
 import { useUiStore } from "../../lib/stores/ui-store";
 import { useUser } from "../../lib/hooks/use-auth";
 
@@ -17,7 +18,7 @@ export function Header() {
         onClick={toggleSidebar}
       >
         <span className="sr-only">Toggle sidebar</span>
-        <Menu className="h-6 w-6" aria-hidden="true" />
+        <HugeiconsIcon icon={MenuIcon} className="h-6 w-6" aria-hidden="true" />
       </button>
 
       {/* Separator */}
@@ -27,7 +28,7 @@ export function Header() {
         <div className="flex items-center gap-x-4 lg:gap-x-6">
           <button type="button" className="-m-2.5 p-2.5 text-[var(--color-text-secondary)] hover:text-[var(--color-text)]">
             <span className="sr-only">View notifications</span>
-            <Bell className="h-6 w-6" aria-hidden="true" />
+            <HugeiconsIcon icon={BellIcon} className="h-6 w-6" aria-hidden="true" />
           </button>
 
           {/* Separator */}

@@ -1,3 +1,4 @@
+import { LinearGradient } from "expo-linear-gradient";
 import { tokens } from "@/theme/tokens";
 import { View, Text, ScrollView, Alert, Pressable, TextInput } from "react-native";
 import { useRouter } from "expo-router";
@@ -145,10 +146,6 @@ export default function CartScreen() {
   }
 
   type GroupedVendor = { vendorId: string; vendor: string; items: CartItemData[] };
-
-  import { LinearGradient } from "expo-linear-gradient";
-
-  // ... skipping to JSX
 
   return (
     <View className="flex-1 bg-background">

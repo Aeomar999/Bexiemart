@@ -17,7 +17,8 @@ import {
 import { Badge } from "../../../components/ui/Badge";
 import { Card, CardContent, CardHeader, CardTitle } from "../../../components/ui/Card";
 import { Input } from "../../../components/ui/Input";
-import { Search, Users } from "lucide-react";
+import { HugeiconsIcon } from "@hugeicons/react";
+import { SearchIcon, UsersIcon } from "@hugeicons/core-free-icons";
 import { TableSkeleton } from "../../../components/ui/Skeleton";
 import { EmptyState } from "../../../components/ui/EmptyState";
 
@@ -48,7 +49,7 @@ export default function UsersPage() {
           <CardContent>
             <div className="flex items-center space-x-2 pb-4">
               <div className="relative w-64">
-                <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-[var(--color-text-muted)]" />
+                <HugeiconsIcon icon={SearchIcon} className="absolute left-2.5 top-2.5 h-4 w-4 text-[var(--color-text-muted)]" />
                 <Input
                   placeholder="Search users..."
                   className="pl-8"
@@ -67,7 +68,7 @@ export default function UsersPage() {
               </div>
             ) : users.length === 0 ? (
               <EmptyState 
-                icon={<Users className="h-10 w-10 text-[var(--color-text-muted)]" />}
+                icon={<HugeiconsIcon icon={UsersIcon} className="h-10 w-10 text-[var(--color-text-muted)]" />}
                 title="No users found"
                 description={debouncedSearch ? "We couldn't find any users matching your search." : "No users have registered yet."}
               />
