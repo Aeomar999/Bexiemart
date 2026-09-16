@@ -1,6 +1,7 @@
 import { View, Text, TouchableOpacity, ActivityIndicator, Alert } from "react-native";
 // @ts-expect-error FontAwesome5 may not be exported from @expo/vector-icons
-import { FontAwesome5 } from "@expo/vector-icons";
+import { HugeiconsIcon } from "@hugeicons/react-native";
+import { GoogleIcon } from "@hugeicons/core-free-icons";
 import { tokens } from "@/theme/tokens";
 import { useState } from "react";
 import { authClient } from "../../lib/api/better-auth";
@@ -66,7 +67,7 @@ export function SocialLogins({ roleIntent }: SocialLoginsProps) {
           <ActivityIndicator size="small" color={tokens.error} />
         ) : (
           <>
-            <FontAwesome5 name="google" size={20} color={tokens.error} />
+            <HugeiconsIcon icon={GoogleIcon} size={20} color={tokens.error} />
             <Text className="text-body font-semibold text-foreground">Continue with Google</Text>
           </>
         )}

@@ -19,7 +19,8 @@ import { Badge } from "../../../components/ui/Badge";
 import { Card, CardContent, CardHeader, CardTitle } from "../../../components/ui/Card";
 import { Button } from "../../../components/ui/Button";
 import { Input } from "../../../components/ui/Input";
-import { Search, AlertTriangle } from "lucide-react";
+import { HugeiconsIcon } from "@hugeicons/react";
+import { SearchIcon, AlertTriangleIcon } from "@hugeicons/core-free-icons";
 import { TableSkeleton } from "../../../components/ui/Skeleton";
 import { EmptyState } from "../../../components/ui/EmptyState";
 
@@ -50,7 +51,7 @@ export default function DisputesPage() {
           <CardContent>
             <div className="flex items-center space-x-2 pb-4">
               <div className="relative w-64">
-                <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-[var(--color-text-muted)]" />
+                <HugeiconsIcon icon={SearchIcon} className="absolute left-2.5 top-2.5 h-4 w-4 text-[var(--color-text-muted)]" />
                 <Input
                   placeholder="Search disputes (ID, reason)..."
                   className="pl-8"
@@ -69,7 +70,7 @@ export default function DisputesPage() {
               </div>
             ) : disputes.length === 0 ? (
               <EmptyState 
-                icon={<AlertTriangle className="h-10 w-10 text-[var(--color-text-muted)]" />}
+                icon={<HugeiconsIcon icon={AlertTriangleIcon} className="h-10 w-10 text-[var(--color-text-muted)]" />}
                 title="No disputes found"
                 description={debouncedSearch ? "We couldn't find any disputes matching your search." : "There are currently no active disputes."}
               />

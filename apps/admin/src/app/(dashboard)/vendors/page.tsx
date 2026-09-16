@@ -17,7 +17,8 @@ import { Badge } from "../../../components/ui/Badge";
 import { Card, CardContent, CardHeader, CardTitle } from "../../../components/ui/Card";
 import { Button } from "../../../components/ui/Button";
 import { Input } from "../../../components/ui/Input";
-import { Search, Store } from "lucide-react";
+import { HugeiconsIcon } from "@hugeicons/react";
+import { SearchIcon, StoreIcon } from "@hugeicons/core-free-icons";
 import { TableSkeleton } from "../../../components/ui/Skeleton";
 import { EmptyState } from "../../../components/ui/EmptyState";
 import { Pagination } from "../../../components/ui/Pagination";
@@ -55,7 +56,7 @@ export default function VendorsPage() {
           <CardContent>
             <div className="flex items-center space-x-2 pb-4">
               <div className="relative w-64">
-                <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-[var(--color-text-muted)]" />
+                <HugeiconsIcon icon={SearchIcon} className="absolute left-2.5 top-2.5 h-4 w-4 text-[var(--color-text-muted)]" />
                 <Input
                   placeholder="Search vendors..."
                   className="pl-8"
@@ -74,7 +75,7 @@ export default function VendorsPage() {
               </div>
             ) : vendors.length === 0 ? (
               <EmptyState 
-                icon={<Store className="h-10 w-10 text-[var(--color-text-muted)]" />}
+                icon={<HugeiconsIcon icon={StoreIcon} className="h-10 w-10 text-[var(--color-text-muted)]" />}
                 title="No vendors found"
                 description={debouncedSearch ? "We couldn't find any vendors matching your search." : "No vendors have registered yet."}
               />

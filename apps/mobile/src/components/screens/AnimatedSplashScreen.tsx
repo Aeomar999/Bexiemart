@@ -16,7 +16,8 @@ import Animated, {
 } from "react-native-reanimated";
 import { tokens } from "@/theme/tokens";
 // @ts-expect-error
-import { FontAwesome5 } from "@expo/vector-icons";
+import { HugeiconsIcon } from "@hugeicons/react-native";
+import { Store01Icon } from "@hugeicons/core-free-icons";
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
 
@@ -194,7 +195,7 @@ export function AnimatedSplashScreen({ onAnimationComplete }: AnimatedSplashScre
               justifyContent: "center",
             }}
           >
-            <FontAwesome5 name="store" size={42} color={tokens.primaryText} solid />
+            <HugeiconsIcon icon={Store01Icon} size={42} color={tokens.primaryText} solid />
           </View>
         </Animated.View>
 

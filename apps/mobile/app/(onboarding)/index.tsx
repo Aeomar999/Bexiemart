@@ -14,7 +14,8 @@ import { Image } from "expo-image";
 import { useAuthStore } from "../../src/lib/stores/auth-store";
 import { useAuthEnabled } from "../../src/lib/feature-flags";
 import { Button } from "../../src/components/ui/Button";
-import { ArrowLeft } from "lucide-react-native";
+import { HugeiconsIcon } from "@hugeicons/react-native";
+import { ArrowLeftIcon } from "@hugeicons/core-free-icons";
 
 const { width, height } = Dimensions.get("window");
 
@@ -225,7 +226,7 @@ export default function OnboardingScreen() {
             onPress={handleBack}
             className="w-10 h-10 rounded-full bg-primary-subtle items-center justify-center"
           >
-            <ArrowLeft color={tokens.primary} size={20} />
+            <HugeiconsIcon icon={ArrowLeftIcon} color={tokens.primary} size={20} />
           </TouchableOpacity>
         ) : (
           <View className="w-10 h-10" /> /* Spacer */

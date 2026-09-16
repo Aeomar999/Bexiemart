@@ -17,7 +17,8 @@ import { Input } from "../../src/components/ui/Input";
 import { SegmentedOtpInput } from "../../src/components/ui/SegmentedOtpInput";
 import { authClient } from "../../src/lib/api/better-auth";
 // @ts-expect-error
-import { FontAwesome5 } from "@expo/vector-icons";
+import { HugeiconsIcon } from "@hugeicons/react-native";
+import { Tick01Icon } from "@hugeicons/core-free-icons";
 
 export default function VerifyPhoneScreen() {
   const { phone, email } = useLocalSearchParams<{ phone: string; email: string }>();
@@ -138,7 +139,7 @@ export default function VerifyPhoneScreen() {
         {status === "success" ? (
           <View className="items-center justify-center">
             <View className="w-20 h-20 rounded-full bg-green-50 items-center justify-center mb-6 border border-green-100">
-              <FontAwesome5 name="check" size={32} color={tokens.success} />
+              <HugeiconsIcon icon={Tick01Icon} size={32} color={tokens.success} />
             </View>
             <Text className="text-display-sm font-heading font-black text-foreground text-center">
               Verified

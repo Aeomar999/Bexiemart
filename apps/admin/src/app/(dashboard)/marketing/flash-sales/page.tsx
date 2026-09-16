@@ -7,7 +7,8 @@ import { DashboardLayout } from "../../../../components/layout/DashboardLayout";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../../../../components/ui/Table";
 import { Badge } from "../../../../components/ui/Badge";
 import { Card, CardContent, CardHeader, CardTitle } from "../../../../components/ui/Card";
-import { Zap, Plus } from "lucide-react";
+import { HugeiconsIcon } from "@hugeicons/react";
+import { ZapIcon, PlusIcon } from "@hugeicons/core-free-icons";
 import { TableSkeleton } from "../../../../components/ui/Skeleton";
 import { EmptyState } from "../../../../components/ui/EmptyState";
 import { Button } from "../../../../components/ui/Button";
@@ -60,7 +61,7 @@ export default function FlashSalesPage() {
         <div className="flex items-center justify-between">
           <h1 className="text-2xl font-bold tracking-tight text-[var(--color-text)]">Flash Sales</h1>
           <Button className="flex items-center gap-2" onClick={() => setIsModalOpen(true)}>
-            <Plus className="h-4 w-4" />
+            <HugeiconsIcon icon={PlusIcon} className="h-4 w-4" />
             Create Campaign
           </Button>
         </div>
@@ -130,7 +131,7 @@ export default function FlashSalesPage() {
               <div className="py-8"><TableSkeleton rows={4} columns={5} /></div>
             ) : flashSales.length === 0 ? (
               <EmptyState 
-                icon={<Zap className="h-10 w-10 text-[var(--color-text-muted)]" />}
+                icon={<HugeiconsIcon icon={ZapIcon} className="h-10 w-10 text-[var(--color-text-muted)]" />}
                 title="No active flash sales"
                 description="There are currently no flash sales running."
                 action={<Button onClick={() => setIsModalOpen(true)}>Create Campaign</Button>}

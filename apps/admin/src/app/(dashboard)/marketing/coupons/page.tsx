@@ -7,7 +7,8 @@ import { DashboardLayout } from "../../../../components/layout/DashboardLayout";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../../../../components/ui/Table";
 import { Badge } from "../../../../components/ui/Badge";
 import { Card, CardContent, CardHeader, CardTitle } from "../../../../components/ui/Card";
-import { Ticket, Plus } from "lucide-react";
+import { HugeiconsIcon } from "@hugeicons/react";
+import { TicketIcon, PlusIcon } from "@hugeicons/core-free-icons";
 import { TableSkeleton } from "../../../../components/ui/Skeleton";
 import { EmptyState } from "../../../../components/ui/EmptyState";
 import { Button } from "../../../../components/ui/Button";
@@ -68,7 +69,7 @@ export default function CouponsPage() {
         <div className="flex items-center justify-between">
           <h1 className="text-2xl font-bold tracking-tight text-[var(--color-text)]">Discount Coupons</h1>
           <Button className="flex items-center gap-2" onClick={() => setIsModalOpen(true)}>
-            <Plus className="h-4 w-4" />
+            <HugeiconsIcon icon={PlusIcon} className="h-4 w-4" />
             Create Coupon
           </Button>
         </div>
@@ -146,7 +147,7 @@ export default function CouponsPage() {
               <div className="py-8"><TableSkeleton rows={5} columns={5} /></div>
             ) : coupons.length === 0 ? (
               <EmptyState 
-                icon={<Ticket className="h-10 w-10 text-[var(--color-text-muted)]" />}
+                icon={<HugeiconsIcon icon={TicketIcon} className="h-10 w-10 text-[var(--color-text-muted)]" />}
                 title="No coupons found"
                 description="There are currently no active discount codes."
                 action={<Button onClick={() => setIsModalOpen(true)}>Create Coupon</Button>}

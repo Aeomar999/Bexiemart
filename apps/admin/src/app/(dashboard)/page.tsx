@@ -1,7 +1,8 @@
 "use client";
 
 import dynamic from "next/dynamic";
-import { Users, Store, ShoppingBag, DollarSign } from "lucide-react";
+import { HugeiconsIcon } from "@hugeicons/react";
+import { UsersIcon, StoreIcon, ShoppingBagIcon, DollarSignIcon } from "@hugeicons/core-free-icons";
 import { DashboardLayout } from "../../components/layout/DashboardLayout";
 import { Stat } from "../../components/ui/Stat";
 import { Card, CardHeader, CardTitle, CardContent } from "../../components/ui/Card";
@@ -49,25 +50,25 @@ export default function DashboardPage() {
           <Stat
             title="Total Revenue"
             value={formatCurrency(displayStats.totalRevenue)}
-            icon={<DollarSign className="h-6 w-6" />}
+            icon={<HugeiconsIcon icon={DollarSignIcon} className="h-6 w-6" />}
             trend={{ value: 12.5, isPositive: true }}
           />
           <Stat
             title="Active Vendors"
             value={displayStats.activeVendors}
-            icon={<Store className="h-6 w-6" />}
+            icon={<HugeiconsIcon icon={StoreIcon} className="h-6 w-6" />}
             trend={{ value: 4.3, isPositive: true }}
           />
           <Stat
             title="Total Orders"
             value={displayStats.totalOrders}
-            icon={<ShoppingBag className="h-6 w-6" />}
+            icon={<HugeiconsIcon icon={ShoppingBagIcon} className="h-6 w-6" />}
             trend={{ value: 8.2, isPositive: true }}
           />
           <Stat
             title="Total Users"
             value={displayStats.totalUsers}
-            icon={<Users className="h-6 w-6" />}
+            icon={<HugeiconsIcon icon={UsersIcon} className="h-6 w-6" />}
             trend={{ value: 2.1, isPositive: true }}
           />
         </div>

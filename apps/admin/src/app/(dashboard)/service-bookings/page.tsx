@@ -7,7 +7,8 @@ import { DashboardLayout } from "../../../components/layout/DashboardLayout";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../../../components/ui/Table";
 import { Badge } from "../../../components/ui/Badge";
 import { Card, CardContent, CardHeader, CardTitle } from "../../../components/ui/Card";
-import { Wrench } from "lucide-react";
+import { HugeiconsIcon } from "@hugeicons/react";
+import { WrenchIcon } from "@hugeicons/core-free-icons";
 import { TableSkeleton } from "../../../components/ui/Skeleton";
 import { EmptyState } from "../../../components/ui/EmptyState";
 
@@ -34,7 +35,7 @@ export default function ServiceBookingsPage() {
               <div className="py-8"><TableSkeleton rows={5} columns={5} /></div>
             ) : bookings.length === 0 ? (
               <EmptyState 
-                icon={<Wrench className="h-10 w-10 text-[var(--color-text-muted)]" />}
+                icon={<HugeiconsIcon icon={WrenchIcon} className="h-10 w-10 text-[var(--color-text-muted)]" />}
                 title="No service bookings found"
                 description="There are currently no service appointments booked."
               />

@@ -6,7 +6,8 @@ import { Pagination } from "../../../components/ui/Pagination";
 import { DashboardLayout } from "../../../components/layout/DashboardLayout";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../../../components/ui/Table";
 import { Card, CardContent, CardHeader, CardTitle } from "../../../components/ui/Card";
-import { Store } from "lucide-react";
+import { HugeiconsIcon } from "@hugeicons/react";
+import { StoreIcon } from "@hugeicons/core-free-icons";
 import { TableSkeleton } from "../../../components/ui/Skeleton";
 import { EmptyState } from "../../../components/ui/EmptyState";
 
@@ -33,7 +34,7 @@ export default function ServiceVendorsPage() {
               <div className="py-8"><TableSkeleton rows={5} columns={3} /></div>
             ) : vendors.length === 0 ? (
               <EmptyState 
-                icon={<Store className="h-10 w-10 text-[var(--color-text-muted)]" />}
+                icon={<HugeiconsIcon icon={StoreIcon} className="h-10 w-10 text-[var(--color-text-muted)]" />}
                 title="No service providers found"
                 description="No vendors have added services yet."
               />
