@@ -149,24 +149,28 @@ export default function ProductDetailsScreen() {
               accessibilityLabel="Share product"
               hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
               style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
-              className="w-10 h-10 rounded-full bg-card/90 items-center justify-center shadow-md"
+              className="w-10 h-10 rounded-full bg-card/90 items-center justify-center"
               onPress={() =>
                 Share.share({
                   message: `Check out ${product.name} on Bexiemart! Only GHS ${product.price.toFixed(2)}`,
                 })
               }
             >
-              <Icon name="share-2" size={18} color="#1e293b" />
+              <Icon name="share-2" size={18} color={tokens.textPrimary} />
             </Pressable>
             <Pressable
               accessibilityRole="button"
               accessibilityLabel="Toggle favorite"
               hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
               style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
-              className="w-10 h-10 rounded-full bg-card/90 items-center justify-center shadow-md"
+              className="w-10 h-10 rounded-full bg-card/90 items-center justify-center"
               onPress={() => setIsFavorited(!isFavorited)}
             >
-              <Icon name="heart" size={18} color={isFavorited ? "#ef4444" : "#1e293b"} />
+              <Icon
+                name="heart"
+                size={18}
+                color={isFavorited ? tokens.error : tokens.textPrimary}
+              />
             </Pressable>
           </View>
 
@@ -226,7 +230,7 @@ export default function ProductDetailsScreen() {
                     key={star}
                     name="star"
                     size={14}
-                    color={star <= Math.round(product.rating) ? "#f59e0b" : "#e2e8f0"}
+                    color={star <= Math.round(product.rating) ? tokens.warning : tokens.border}
                   />
                 ))}
               </View>
@@ -299,7 +303,7 @@ export default function ProductDetailsScreen() {
                 {product.seller.name}
               </Text>
               <View className="flex-row items-center gap-2 mt-0.5">
-                <Icon name="star" size={11} color="#f59e0b" />
+                <Icon name="star" size={11} color={tokens.warning} />
                 <Text className="text-caption text-muted-foreground font-body">
                   {product.seller.rating} {product.seller.products} products
                 </Text>
@@ -319,7 +323,7 @@ export default function ProductDetailsScreen() {
                   })
                 }
               >
-                <Icon name="message-circle" size={18} color="#475569" />
+                <Icon name="message-circle" size={18} color={tokens.textSecondary} />
               </Pressable>
             </View>
           </View>
@@ -337,7 +341,7 @@ export default function ProductDetailsScreen() {
                 className="flex-row items-center gap-4 bg-card rounded-2xl p-5 border border-border mb-3"
               >
                 <View className="w-10 h-10 rounded-full bg-background items-center justify-center">
-                  <Icon name={option.icon} size={18} color="#475569" />
+                  <Icon name={option.icon} size={18} color={tokens.textSecondary} />
                 </View>
                 <View className="flex-1">
                   <Text className="text-body-md font-bold text-foreground font-body">
@@ -397,7 +401,7 @@ export default function ProductDetailsScreen() {
                             key={star}
                             name="star"
                             size={10}
-                            color={star <= review.rating ? "#f59e0b" : "#e2e8f0"}
+                            color={star <= review.rating ? tokens.warning : tokens.border}
                           />
                         ))}
                       </View>
@@ -426,7 +430,7 @@ export default function ProductDetailsScreen() {
       </ScrollView>
 
       {/* ===== STICKY BOTTOM BAR ===== */}
-      <View className="absolute bottom-0 left-0 right-0 bg-card border-t border-border px-4 pt-3 pb-8 shadow-2xl">
+      <View className="absolute bottom-0 left-0 right-0 bg-card border-t border-border px-4 pt-3 pb-8">
         <View className="flex-row items-center gap-3">
           {/* Quantity Selector */}
           <View className="flex-row items-center bg-background rounded-full border border-border">
@@ -437,7 +441,11 @@ export default function ProductDetailsScreen() {
               className="w-11 h-11 items-center justify-center"
               onPress={() => setQuantity(Math.max(1, quantity - 1))}
             >
-              <Icon name="minus" size={18} color={quantity <= 1 ? "#cbd5e1" : "#475569"} />
+              <Icon
+                name="minus"
+                size={18}
+                color={quantity <= 1 ? tokens.textDisabled : tokens.textSecondary}
+              />
             </Pressable>
             <Text className="text-body-md font-bold text-foreground font-body w-8 text-center">
               {quantity}
@@ -452,7 +460,7 @@ export default function ProductDetailsScreen() {
               <Icon
                 name="plus"
                 size={18}
-                color={quantity >= product.stock ? "#cbd5e1" : "#475569"}
+                color={quantity >= product.stock ? tokens.textDisabled : tokens.textSecondary}
               />
             </Pressable>
           </View>
@@ -467,7 +475,11 @@ export default function ProductDetailsScreen() {
             disabled={addedToCart}
           >
             <View className="flex-row items-center gap-2">
-              <Icon name={addedToCart ? "check-circle" : "shopping-bag"} size={18} color="#fff" />
+              <Icon
+                name={addedToCart ? "check-circle" : "shopping-bag"}
+                size={18}
+                color={tokens.primaryText}
+              />
               <Text className="text-body-md font-bold text-white font-body">
                 {addedToCart ? "Added to Cart" : "Add to Cart"}
               </Text>
@@ -482,7 +494,7 @@ export default function ProductDetailsScreen() {
           onPress={handleBuyNow}
         >
           <View className="flex-row items-center gap-2">
-            <Icon name="zap" size={16} color="#fff" />
+            <Icon name="zap" size={16} color={tokens.primaryText} />
             <Text className="text-body-md font-bold text-white font-body">
               Buy Now GHS {(product.price * quantity).toFixed(2)}
             </Text>

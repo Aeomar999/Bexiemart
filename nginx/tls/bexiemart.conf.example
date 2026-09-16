@@ -1,0 +1,94 @@
+# TLS virtual-host template for BexieMart self-hosted deployments.
+#
+# Usage:
+#   1. Obtain certificates (see README.md in this directory).
+#   2. Copy this file to bexiemart.conf and set your domain + cert paths below.
+#   3. Restart nginx: docker compose restart nginx
+#
+# The main nginx.conf includes /etc/nginx/tls/*.conf, so any .conf file dropped
+# here activates automatically. While this directory contains no .conf files,
+# the stack runs HTTP-only on port 80.
+
+# --- HTTPS -> redirect for your domain -------------------------------------
+server {
+    listen 80;
+    listen [::]:80;
+    server_name bexiemart.example.com;
+
+    return 301 https://$host$request_uri;
+}
+
+# --- Primary TLS listener ----------------------------------------------------
+server {
+    listen 443 ssl;
+    listen [::]:443 ssl;
+    http2 on;
+    server_name bexiemart.example.com;
+
+    ssl_certificate     /etc/nginx/certs/fullchain.pem;
+    ssl_certificate_key /etc/nginx/certs/privkey.pem;
+
+    # Modern TLS only
+    ssl_protocols TLSv1.2 TLSv1.3;
+    ssl_ciphers ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384;
+    ssl_prefer_server_ciphers off;
+    ssl_session_cache shared:SSL:10m;
+    ssl_session_timeout 1d;
+    ssl_session_tickets off;
+
+    add_header Strict-Transport-Security "max-age=63072000; includeSubDomains; preload" always;
+    add_header X-Frame-Options "SAMEORIGIN" always;
+    add_header X-Content-Type-Options "nosniff" always;
+    add_header Referrer-Policy "strict-origin-when-cross-origin" always;
+    add_header Permissions-Policy "camera=(), microphone=(), geolocation=(), payment=(self), usb=(), magnetometer=(), gyroscope=()" always;
+    add_header Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: blob: https://res.cloudinary.com https://*.cloudinary.com; connect-src 'self' https://*.sentry.io wss: ws:; frame-ancestors 'self'; form-action 'self';" always;
+
+    client_max_body_size 50M;
+
+    proxy_set_header Host $host;
+    proxy_set_header X-Real-IP $remote_addr;
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    proxy_set_header X-Forwarded-Proto $proxy_x_forwarded_proto;
+
+    location ~ ^/api/v1/auth/ {
+        limit_req zone=auth_limit burst=10 nodelay;
+        proxy_pass http://backend;
+        proxy_http_version 1.1;
+        proxy_set_header Connection "";
+    }
+
+    location /api/ {
+        limit_req zone=api_limit burst=50 nodelay;
+        proxy_pass http://backend;
+        proxy_http_version 1.1;
+        proxy_set_header Connection "";
+    }
+
+    location /socket.io/ {
+        proxy_pass http://backend;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection "upgrade";
+        proxy_read_timeout 86400;
+    }
+
+    location /uploads/ {
+        proxy_pass http://backend;
+        proxy_http_version 1.1;
+        proxy_set_header Connection "";
+        expires 7d;
+        add_header Cache-Control "public, no-transform";
+        add_header Strict-Transport-Security "max-age=63072000; includeSubDomains; preload" always;
+        add_header X-Frame-Options "SAMEORIGIN" always;
+        add_header X-Content-Type-Options "nosniff" always;
+        add_header Referrer-Policy "strict-origin-when-cross-origin" always;
+        add_header Permissions-Policy "camera=(), microphone=(), geolocation=(), payment=(self), usb=(), magnetometer=(), gyroscope=()" always;
+        add_header Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: blob: https://res.cloudinary.com https://*.cloudinary.com; connect-src 'self' https://*.sentry.io wss: ws:; frame-ancestors 'self'; form-action 'self';" always;
+    }
+
+    location / {
+        proxy_pass http://admin;
+        proxy_http_version 1.1;
+        proxy_set_header Connection "";
+    }
+}

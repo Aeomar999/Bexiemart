@@ -1,4 +1,5 @@
 import { tokens } from "@/theme/tokens";
+import { getUserFriendlyErrorMessage } from "@/lib/error-utils";
 import { BackButton } from "@/components/ui/BackButton";
 import {
   View,
@@ -61,7 +62,10 @@ export default function AddReelScreen() {
       showPopup({
         type: "error",
         title: "Upload failed",
-        message: e?.message ?? "Try a shorter clip.",
+        message: getUserFriendlyErrorMessage(
+          e,
+          "We couldn't upload your video. Please ensure it's a supported format and try again."
+        ),
       });
     } finally {
       setIsUploading(false);
@@ -81,7 +85,7 @@ export default function AddReelScreen() {
       showPopup({
         type: "error",
         title: "Product Required",
-        message: "Tag a product to make this reel shoppable.",
+        message: "Please tag at least one product so shoppers can buy from your reel.",
       });
       return;
     }
@@ -145,7 +149,7 @@ export default function AddReelScreen() {
               { aspectRatio: 9 / 16 },
             ]}
             onPress={() => setUploadModalVisible(true)}
-            className="w-full bg-background rounded-3xl overflow-hidden items-center justify-center relative shadow-lg"
+            className="w-full bg-background rounded-3xl overflow-hidden items-center justify-center relative"
           >
             {videoUrl ? (
               <>
@@ -156,18 +160,28 @@ export default function AddReelScreen() {
                 />
                 <View className="absolute inset-0 items-center justify-center bg-black/20">
                   <View className="w-16 h-16 rounded-full bg-white/20 backdrop-blur-xl items-center justify-center border border-white/30">
-                    <Icon name="play" size={24} color="#fff" style={{ marginLeft: 4 }} />
+                    <Icon
+                      name="play"
+                      size={24}
+                      color={tokens.primaryText}
+                      style={{ marginLeft: 4 }}
+                    />
                   </View>
                 </View>
                 <View className="absolute top-4 right-4 bg-black/50 backdrop-blur-md px-4 py-2 rounded-full flex-row items-center border border-white/10">
-                  <Icon name="camera" size={14} color="#fff" style={{ marginRight: 6 }} />
+                  <Icon
+                    name="camera"
+                    size={14}
+                    color={tokens.primaryText}
+                    style={{ marginRight: 6 }}
+                  />
                   <Text className="text-white font-bold text-body-sm">Replace</Text>
                 </View>
               </>
             ) : (
               <View className="items-center justify-center p-6 w-full h-full border-[3px] border-dashed border-border rounded-3xl m-1">
                 <View className="w-20 h-20 rounded-full bg-primary/20 items-center justify-center mb-5">
-                  <Icon name="video" size={32} color="#38bdf8" />
+                  <Icon name="video" size={32} color={tokens.secondary} />
                 </View>
                 <Text className="text-display-sm font-heading font-black text-white mb-2 tracking-tight">
                   Upload Video
@@ -181,11 +195,11 @@ export default function AddReelScreen() {
         </View>
 
         {/* Details Section */}
-        <View className="bg-white rounded-2xl border border-border p-1 mb-6 shadow-sm">
+        <View className="bg-white rounded-2xl border border-border p-1 mb-6">
           <TextInput
             className="p-5 font-body text-body-lg text-foreground min-h-[120px]"
             placeholder="Write a catchy caption... #trending #fashion"
-            placeholderTextColor="#94a3b8"
+            placeholderTextColor={tokens.textMuted}
             value={description}
             onChangeText={setDescription}
             multiline
@@ -204,7 +218,7 @@ export default function AddReelScreen() {
         >
           {linkedProduct ? (
             <>
-              <View className="w-14 h-14 bg-white rounded-xl items-center justify-center border border-border shadow-sm">
+              <View className="w-14 h-14 bg-white rounded-xl items-center justify-center border border-border">
                 <Icon name="shopping-bag" size={24} color={tokens.primary} />
               </View>
               <View className="ml-4 flex-1">
@@ -225,7 +239,7 @@ export default function AddReelScreen() {
           ) : (
             <>
               <View className="w-14 h-14 bg-muted rounded-xl items-center justify-center">
-                <Icon name="tag" size={24} color="#64748b" />
+                <Icon name="tag" size={24} color={tokens.textMuted} />
               </View>
               <View className="ml-4 flex-1">
                 <Text className="text-body-lg font-bold text-foreground mb-0.5 tracking-tight">
@@ -235,7 +249,7 @@ export default function AddReelScreen() {
                   Allow customers to buy while watching
                 </Text>
               </View>
-              <Icon name="chevron-right" size={20} color="#94a3b8" />
+              <Icon name="chevron-right" size={20} color={tokens.textMuted} />
             </>
           )}
         </Pressable>
@@ -252,7 +266,7 @@ export default function AddReelScreen() {
           loading={isPublishing}
           disabled={!videoUrl || isPublishing}
           onPress={handlePublish}
-          className="w-full shadow-lg"
+          className="w-full"
         />
       </View>
 
@@ -295,8 +309,8 @@ export default function AddReelScreen() {
                     className="flex-row items-center p-5 bg-background border border-border rounded-2xl"
                     onPress={() => handleUploadOption("camera")}
                   >
-                    <View className="w-14 h-14 bg-white rounded-full items-center justify-center shadow-sm">
-                      <Icon name="camera" size={24} color="#0f172a" />
+                    <View className="w-14 h-14 bg-white rounded-full items-center justify-center">
+                      <Icon name="camera" size={24} color={tokens.textPrimary} />
                     </View>
                     <View className="ml-4 flex-1">
                       <Text className="text-body-lg font-bold text-foreground mb-1 tracking-tight">
@@ -306,7 +320,7 @@ export default function AddReelScreen() {
                         Use camera to capture content
                       </Text>
                     </View>
-                    <Icon name="chevron-right" size={20} color="#cbd5e1" />
+                    <Icon name="chevron-right" size={20} color={tokens.textDisabled} />
                   </Pressable>
 
                   <Pressable
@@ -314,8 +328,8 @@ export default function AddReelScreen() {
                     className="flex-row items-center p-5 bg-primary-subtle border border-border rounded-2xl"
                     onPress={() => handleUploadOption("library")}
                   >
-                    <View className="w-14 h-14 bg-primary rounded-full items-center justify-center shadow-md">
-                      <Icon name="image" size={24} color="#fff" />
+                    <View className="w-14 h-14 bg-primary rounded-full items-center justify-center">
+                      <Icon name="image" size={24} color={tokens.primaryText} />
                     </View>
                     <View className="ml-4 flex-1">
                       <Text className="text-body-lg font-bold text-foreground mb-1 tracking-tight">
@@ -360,17 +374,17 @@ export default function AddReelScreen() {
                 onPress={() => setProductModalVisible(false)}
                 className="w-10 h-10 rounded-full bg-muted items-center justify-center"
               >
-                <Icon name="x" size={20} color="#0f172a" />
+                <Icon name="x" size={20} color={tokens.textPrimary} />
               </Pressable>
             </View>
 
             <View className="p-5 border-b border-border">
               <View className="flex-row items-center bg-muted rounded-full px-4 h-12">
-                <Icon name="search" size={20} color="#64748b" />
+                <Icon name="search" size={20} color={tokens.textMuted} />
                 <TextInput
                   placeholder="Search your products..."
                   className="flex-1 ml-3 font-body text-body-lg text-foreground"
-                  placeholderTextColor="#94a3b8"
+                  placeholderTextColor={tokens.textMuted}
                 />
               </View>
             </View>
@@ -386,7 +400,7 @@ export default function AddReelScreen() {
                   className={`flex-row items-center p-4 mb-3 rounded-2xl border ${selectedProductId === product.id ? "bg-primary-subtle border-border" : "bg-background border-border"}`}
                 >
                   <View className="w-16 h-16 bg-muted rounded-lg items-center justify-center">
-                    <Icon name="package" size={24} color="#94a3b8" />
+                    <Icon name="package" size={24} color={tokens.textMuted} />
                   </View>
                   <View className="ml-4 flex-1">
                     <Text
@@ -406,7 +420,7 @@ export default function AddReelScreen() {
                     className={`w-6 h-6 rounded-full items-center justify-center border-2 ${selectedProductId === product.id ? "bg-primary border-primary" : "bg-transparent border-border"}`}
                   >
                     {selectedProductId === product.id && (
-                      <Icon name="check" size={12} color="#fff" />
+                      <Icon name="check" size={12} color={tokens.primaryText} />
                     )}
                   </View>
                 </Pressable>

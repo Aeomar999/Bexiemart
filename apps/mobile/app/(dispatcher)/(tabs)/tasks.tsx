@@ -59,7 +59,7 @@ export default function DispatcherTasks() {
       return (
         <View className="items-center justify-center py-20">
           <View className="w-20 h-20 bg-slate-100 rounded-full items-center justify-center mb-4">
-            <Icon name="package" size={32} color="#94a3b8" />
+            <Icon name="package" size={32} color={tokens.textMuted} />
           </View>
           <Text className="text-heading-md font-bold font-heading text-foreground mb-2">
             No Available Tasks
@@ -117,7 +117,7 @@ export default function DispatcherTasks() {
                       style={{ width: "100%", height: "100%" }}
                     />
                   ) : (
-                    <Icon name="user" size={16} color="#94a3b8" />
+                    <Icon name="user" size={16} color={tokens.textMuted} />
                   )}
                 </View>
                 <Text className="font-bold font-body text-foreground">{ride.customer?.name}</Text>
@@ -174,7 +174,7 @@ export default function DispatcherTasks() {
             No Active Tasks
           </Text>
           <Text className="text-muted-foreground font-body text-center">
-            You don't have any ongoing deliveries right now.
+            You don&apos;t have any ongoing deliveries right now.
           </Text>
         </View>
       );
@@ -185,7 +185,7 @@ export default function DispatcherTasks() {
         {rides.map((ride: any) => (
           <View
             key={ride.id}
-            className="bg-card rounded-2xl p-4 border border-border border-l-4 border-l-primary shadow-sm"
+            className="bg-card rounded-2xl p-4 border border-border border-l-4 border-l-primary"
           >
             <View className="flex-row items-center justify-between mb-3">
               <View>
@@ -227,7 +227,7 @@ export default function DispatcherTasks() {
                 router.replace("/(dispatcher)/(tabs)/(home)");
               }}
             >
-              <Icon name="map" size={16} color="#0f172a" />
+              <Icon name="map" size={16} color={tokens.textPrimary} />
               <Text className="font-bold text-foreground font-body">View on Map</Text>
             </Pressable>
           </View>
@@ -247,7 +247,7 @@ export default function DispatcherTasks() {
       return (
         <View className="items-center justify-center py-20">
           <View className="w-20 h-20 bg-slate-100 rounded-full items-center justify-center mb-4">
-            <Icon name="check-circle" size={32} color="#94a3b8" />
+            <Icon name="check-circle" size={32} color={tokens.textMuted} />
           </View>
           <Text className="text-heading-md font-bold font-heading text-foreground mb-2">
             No History Yet
@@ -274,7 +274,7 @@ export default function DispatcherTasks() {
                 <Icon
                   name={ride.status === "DELIVERED" ? "check" : "x"}
                   size={20}
-                  color={ride.status === "DELIVERED" ? "#10b981" : "#e11d48"}
+                  color={ride.status === "DELIVERED" ? tokens.success : tokens.error}
                 />
               </View>
               <View className="flex-1">
@@ -335,11 +335,6 @@ export default function DispatcherTasks() {
                   paddingVertical: 10,
                   borderRadius: 8,
                   backgroundColor: isActive ? "white" : "transparent",
-                  shadowColor: isActive ? "#000" : "transparent",
-                  shadowOffset: { width: 0, height: 1 },
-                  shadowOpacity: isActive ? 0.05 : 0,
-                  shadowRadius: 2,
-                  elevation: isActive ? 1 : 0,
                 }}
               >
                 <Text

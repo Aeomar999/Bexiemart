@@ -261,29 +261,34 @@ export class PaymentsService {
         return { received: true };
       }
 
-      // Idempotency check
-      if (transaction.status !== "PENDING") {
+      if (event === "transfer.success") {
+        // Atomic claim so duplicate deliveries can't re-complete the txn.
+        await this.prisma.transaction.updateMany({
+          where: { id: transaction.id, status: "PENDING" },
+          data: { status: "COMPLETED" },
+        });
         return { received: true };
       }
 
-      if (event === "transfer.success") {
-        await this.prisma.transaction.update({
-          where: { id: transaction.id },
-          data: { status: "COMPLETED" },
-        });
-      } else {
-        // Failed or reversed: Refund the amount + fee back to the wallet
-        await this.prisma.$transaction([
-          this.prisma.transaction.update({
-            where: { id: transaction.id },
+      // Failed or reversed: refund amount + fee back to the wallet. The CAS
+      // flip (PENDING -> terminal) and the balance increment happen inside one
+      // Serializable transaction, so a duplicate webhook can only win the claim
+      // once — no double refunds.
+      await this.prisma.$transaction(
+        async (tx) => {
+          const claim = await tx.transaction.updateMany({
+            where: { id: transaction.id, status: "PENDING" },
             data: { status: event === "transfer.failed" ? "FAILED" : "REVERSED" },
-          }),
-          this.prisma.wallet.update({
+          });
+          if (claim.count === 0) return;
+
+          await tx.wallet.update({
             where: { id: transaction.walletId },
             data: { balance: { increment: transaction.amount } }, // refund the total deducted
-          }),
-        ]);
-      }
+          });
+        },
+        { isolationLevel: "Serializable" }
+      );
       return { received: true };
     }
 
@@ -297,18 +302,23 @@ export class PaymentsService {
         where: { reference },
       });
       if (transaction && transaction.status === "PENDING") {
-        // Simple lock mechanism could be added here, using prisma updateMany for atomic check
-        const updated = await this.prisma.transaction.updateMany({
-          where: { id: transaction.id, status: "PENDING" },
-          data: { status: "COMPLETED" },
-        });
+        // The CAS flip and the wallet credit are one atomic unit: a crash
+        // between them previously lost the deposit with nothing to reconcile.
+        await this.prisma.$transaction(
+          async (tx) => {
+            const updated = await tx.transaction.updateMany({
+              where: { id: transaction.id, status: "PENDING" },
+              data: { status: "COMPLETED" },
+            });
+            if (updated.count === 0) return;
 
-        if (updated.count > 0) {
-          await this.prisma.wallet.update({
-            where: { id: transaction.walletId },
-            data: { balance: { increment: transaction.amount } },
-          });
-        }
+            await tx.wallet.update({
+              where: { id: transaction.walletId },
+              data: { balance: { increment: transaction.amount } },
+            });
+          },
+          { isolationLevel: "Serializable" }
+        );
       }
       return { received: true };
     }

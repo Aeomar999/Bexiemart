@@ -47,7 +47,7 @@ export function EmptyState({
           accessibilityRole="button"
           accessibilityLabel={actionLabel}
           style={({ pressed }) => [{ opacity: pressed ? 0.8 : 1 }]}
-          className="bg-primary px-8 py-4 rounded-full flex-row items-center justify-center shadow-md"
+          className="bg-primary px-8 py-4 rounded-full flex-row items-center justify-center"
         >
           <Text className="text-white font-heading font-bold text-body-lg">{actionLabel}</Text>
         </Pressable>

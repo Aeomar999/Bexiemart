@@ -2,6 +2,7 @@ import { View, Text, Pressable } from "react-native";
 import { Icon } from "./Icon";
 import { Image } from "expo-image";
 import { Card } from "./Card";
+import { tokens } from "@/theme/tokens";
 
 interface ProductCardProps {
   id: string;
@@ -52,7 +53,7 @@ export function ProductCard({
                 contentFit="cover"
               />
             ) : (
-              <Icon name="image" size={28} color="#cbd5e1" />
+              <Icon name="image" size={28} color={tokens.textDisabled} />
             )}
           </View>
           <View className="flex-row justify-between items-center px-1">
@@ -60,7 +61,9 @@ export function ProductCard({
               <Text className="text-body-sm font-bold text-foreground">
                 GHS {numericPrice.toFixed(0)}
               </Text>
-              {rating && <Icon name="star" size={10} color="#f59e0b" style={{ marginLeft: 4 }} />}
+              {rating && (
+                <Icon name="star" size={10} color={tokens.warning} style={{ marginLeft: 4 }} />
+              )}
             </View>
             {rating && <Text className="text-caption text-muted-foreground">{rating}</Text>}
           </View>
@@ -88,7 +91,7 @@ export function ProductCard({
                 contentFit="cover"
               />
             ) : (
-              <Icon name="image" size={24} color="#cbd5e1" />
+              <Icon name="image" size={24} color={tokens.textDisabled} />
             )}
           </View>
           <View className="flex-1 justify-center">
@@ -109,7 +112,11 @@ export function ProductCard({
                   hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
                   className="p-1"
                 >
-                  <Icon name="heart" size={16} color={isFavorite ? "#ef4444" : "#cbd5e1"} />
+                  <Icon
+                    name="heart"
+                    size={16}
+                    color={isFavorite ? tokens.error : tokens.textDisabled}
+                  />
                 </Pressable>
               )}
             </View>
@@ -131,7 +138,7 @@ export function ProductCard({
               </View>
               {rating && (
                 <View className="flex-row items-center bg-background px-1.5 py-0.5 rounded-full">
-                  <Icon name="star" size={10} color="#f59e0b" />
+                  <Icon name="star" size={10} color={tokens.warning} />
                   <Text className="text-caption font-bold text-muted-foreground ml-1">
                     {rating}
                   </Text>
@@ -166,7 +173,7 @@ export function ProductCard({
               contentFit="cover"
             />
           ) : (
-            <Icon name="image" size={32} color="#cbd5e1" />
+            <Icon name="image" size={32} color={tokens.textDisabled} />
           )}
           {onFavoriteToggle && (
             <Pressable
@@ -178,7 +185,7 @@ export function ProductCard({
               className="absolute top-2 right-2 w-8 h-8 rounded-full bg-card/90 items-center justify-center"
               onPress={onFavoriteToggle}
             >
-              <Icon name="heart" size={15} color={isFavorite ? "#ef4444" : "#64748b"} />
+              <Icon name="heart" size={15} color={isFavorite ? tokens.error : tokens.textMuted} />
             </Pressable>
           )}
         </View>

@@ -71,7 +71,7 @@ export function ProductCardSkeleton() {
 
 export function CartItemSkeleton() {
   return (
-    <Animated.View className="flex-row bg-card rounded-2xl p-4 border border-border gap-3 mb-3 shadow-[0_4px_10px_rgba(0,0,0,0.02)]">
+    <Animated.View className="flex-row bg-card rounded-2xl p-4 border border-border gap-3 mb-3">
       <Skeleton width={22} height={22} borderRadius={6} />
       <Skeleton width={84} height={84} borderRadius={16} />
       <Animated.View className="flex-1 py-1 justify-between">

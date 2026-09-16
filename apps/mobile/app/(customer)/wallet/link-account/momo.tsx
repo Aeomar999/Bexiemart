@@ -1,3 +1,4 @@
+import { tokens } from "@/theme/tokens";
 import { BackButton } from "@/components/ui/BackButton";
 import {
   View,
@@ -128,7 +129,7 @@ export default function AddMomoAccountScreen() {
                   style={
                     isSelected
                       ? { borderWidth: 3, borderColor: provider.gradient[0] }
-                      : { borderWidth: 1, borderColor: "#e5e7eb" }
+                      : { borderWidth: 1, borderColor: tokens.border }
                   }
                 >
                   <LinearGradient
@@ -143,7 +144,7 @@ export default function AddMomoAccountScreen() {
                       <Icon
                         name="smartphone"
                         size={24}
-                        color={isSelected ? provider.textColor : "#6b7280"}
+                        color={isSelected ? provider.textColor : tokens.textSecondary}
                       />
                     </View>
                     <View className="flex-1">
@@ -174,18 +175,18 @@ export default function AddMomoAccountScreen() {
 
         {/* Form */}
         <View className="px-5">
-          <View className="bg-white rounded-3xl p-5 border border-gray-100 shadow-sm">
+          <View className="bg-white rounded-3xl p-5 border border-gray-100">
             {/* Phone Number */}
             <View className="mb-5">
               <Text className="text-gray-500 text-xs font-bold uppercase tracking-wider mb-2 ml-1">
                 Phone Number
               </Text>
               <View className="bg-gray-50 flex-row items-center rounded-2xl px-4 border border-gray-200">
-                <Icon name="phone" size={18} color="#9ca3af" />
+                <Icon name="phone" size={18} color={tokens.textMuted} />
                 <TextInput
                   className="flex-1 py-4 px-3 text-gray-900 font-medium font-mono"
                   placeholder="e.g. 0241234567"
-                  placeholderTextColor="#9ca3af"
+                  placeholderTextColor={tokens.textMuted}
                   keyboardType="phone-pad"
                   maxLength={10}
                   value={phoneNumber}
@@ -200,11 +201,11 @@ export default function AddMomoAccountScreen() {
                 Account Name
               </Text>
               <View className="bg-gray-50 flex-row items-center rounded-2xl px-4 border border-gray-200">
-                <Icon name="user" size={18} color="#9ca3af" />
+                <Icon name="user" size={18} color={tokens.textMuted} />
                 <TextInput
                   className="flex-1 py-4 px-3 text-gray-900 font-medium"
                   placeholder="e.g. Kofi Mensah"
-                  placeholderTextColor="#9ca3af"
+                  placeholderTextColor={tokens.textMuted}
                   autoCapitalize="words"
                   value={accountName}
                   onChangeText={setAccountName}
@@ -223,27 +224,30 @@ export default function AddMomoAccountScreen() {
                 isValid && !linkMomoAccount.isPending
                   ? {
                       backgroundColor: selectedProvider?.gradient[0] || "#2563EB",
-                      shadowColor: selectedProvider?.gradient[0] || "#2563EB",
-                      shadowOffset: { width: 0, height: 4 },
-                      shadowOpacity: 0.3,
-                      shadowRadius: 8,
-                      elevation: 5,
                     }
                   : {}
               }
             >
               {linkMomoAccount.isPending ? (
-                <ActivityIndicator color="#fff" />
+                <ActivityIndicator color={tokens.primaryText} />
               ) : (
                 <>
                   <Icon
                     name="link"
                     size={18}
-                    color={isValid ? selectedProvider?.textColor || "#fff" : "#fff"}
+                    color={
+                      isValid
+                        ? selectedProvider?.textColor || tokens.primaryText
+                        : tokens.primaryText
+                    }
                   />
                   <Text
                     className="font-bold text-base ml-2 tracking-wide"
-                    style={{ color: isValid ? selectedProvider?.textColor || "#fff" : "#fff" }}
+                    style={{
+                      color: isValid
+                        ? selectedProvider?.textColor || tokens.primaryText
+                        : tokens.primaryText,
+                    }}
                   >
                     Link {selectedProvider?.shortName || "Mobile Money"}
                   </Text>

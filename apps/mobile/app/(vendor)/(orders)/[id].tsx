@@ -1,3 +1,4 @@
+import { tokens } from "@/theme/tokens";
 import { BackButton } from "@/components/ui/BackButton";
 import { View, Text, ScrollView, Alert, Pressable } from "react-native";
 import { useLocalSearchParams, useRouter } from "expo-router";
@@ -113,7 +114,7 @@ export default function OrderDetailsScreen() {
         <View className="flex-row items-center">
           <BackButton
             className="w-10 h-10 rounded-full bg-background items-center justify-center mr-3"
-            color="#0f172a"
+            color={tokens.textPrimary}
           />
           <View>
             <Text className="text-body-md text-muted-foreground font-bold mb-0.5">
@@ -139,7 +140,7 @@ export default function OrderDetailsScreen() {
           <Text className="text-body-lg font-bold text-foreground mb-4">Customer Info</Text>
           <View className="flex-row items-center mb-4">
             <View className="w-12 h-12 rounded-full bg-muted items-center justify-center mr-3">
-              <Icon name="user" size={20} color="#64748b" />
+              <Icon name="user" size={20} color={tokens.textMuted} />
             </View>
             <View className="flex-1">
               <Text className="text-body-lg font-bold text-foreground">{order.customer.name}</Text>
@@ -153,7 +154,7 @@ export default function OrderDetailsScreen() {
               hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
               className="w-10 h-10 rounded-full bg-green-50 items-center justify-center"
             >
-              <Icon name="phone" size={18} color="#16a34a" />
+              <Icon name="phone" size={18} color={tokens.success} />
             </Pressable>
           </View>
 
@@ -161,7 +162,7 @@ export default function OrderDetailsScreen() {
             <Icon
               name="map-pin"
               size={16}
-              color="#64748b"
+              color={tokens.textMuted}
               style={{ marginTop: 2, marginRight: 8 }}
             />
             <View className="flex-1">

@@ -48,4 +48,6 @@ const MapView = React.forwardRef(({ children }: any, ref) => {
   );
 });
 
+MapView.displayName = "MapView";
+
 export default MapView;

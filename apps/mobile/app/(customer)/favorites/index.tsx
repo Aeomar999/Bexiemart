@@ -164,7 +164,9 @@ export default function FavoritesScreen() {
                 <Icon
                   name="folder"
                   size={14}
-                  color={activeCollectionId === collection.id ? "#fff" : "#94a3b8"}
+                  color={
+                    activeCollectionId === collection.id ? tokens.primaryText : tokens.textMuted
+                  }
                 />
                 <Text
                   className={`text-sm font-bold ${activeCollectionId === collection.id ? "text-white" : "text-muted-foreground"}`}
@@ -208,7 +210,7 @@ export default function FavoritesScreen() {
           return (
             <Pressable
               style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
-              className="flex-1 bg-card rounded-2xl overflow-hidden shadow-lg border border-border pb-3"
+              className="flex-1 bg-card rounded-2xl overflow-hidden border border-border pb-3"
               onPress={() => router.push(`/(customer)/product/${item.id}`)}
             >
               <View
@@ -222,7 +224,7 @@ export default function FavoritesScreen() {
                     contentFit="cover"
                   />
                 ) : (
-                  <Icon name="image" size={32} color="#cbd5e1" />
+                  <Icon name="image" size={32} color={tokens.textDisabled} />
                 )}
                 {activeCollectionId === "all" && collections.length > 0 && (
                   <Pressable
@@ -230,7 +232,7 @@ export default function FavoritesScreen() {
                     accessibilityRole="button"
                     accessibilityLabel="Add to collection"
                     hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
-                    className="absolute top-2 right-12 w-8 h-8 rounded-full bg-card/90 items-center justify-center shadow-sm"
+                    className="absolute top-2 right-12 w-8 h-8 rounded-full bg-card/90 items-center justify-center"
                     onPress={() => handleShowAddMenu(item.id)}
                   >
                     <Icon name="folder-plus" size={15} color={tokens.primary} />
@@ -245,13 +247,13 @@ export default function FavoritesScreen() {
                   }
                   hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
                   style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
-                  className="absolute top-2 right-2 w-8 h-8 rounded-full bg-card/90 items-center justify-center shadow-sm"
+                  className="absolute top-2 right-2 w-8 h-8 rounded-full bg-card/90 items-center justify-center"
                   onPress={() => handleRemove(item.id)}
                 >
                   <Icon
                     name={activeCollectionId === "all" ? "heart" : "x"}
                     size={15}
-                    color="#ef4444"
+                    color={tokens.error}
                   />
                 </Pressable>
               </View>
@@ -271,7 +273,7 @@ export default function FavoritesScreen() {
                       GHS {Number(item.price).toFixed(2)}
                     </Text>
                     <View className="flex-row items-center gap-1 mt-0.5">
-                      <Icon name="star" size={10} color="#f59e0b" />
+                      <Icon name="star" size={10} color={tokens.warning} />
                       <Text className="text-caption text-muted-foreground font-body">
                         {item.rating || "0.0"}
                       </Text>
@@ -285,7 +287,11 @@ export default function FavoritesScreen() {
                     className={`w-9 h-9 rounded-full ${wasAdded ? "bg-emerald-500" : "bg-primary"} items-center justify-center active:scale-95`}
                     onPress={() => handleAddToCart(item)}
                   >
-                    <Icon name={wasAdded ? "check-circle" : "plus"} size={16} color="#fff" />
+                    <Icon
+                      name={wasAdded ? "check-circle" : "plus"}
+                      size={16}
+                      color={tokens.primaryText}
+                    />
                   </Pressable>
                 </View>
               </View>

@@ -113,7 +113,11 @@ export default function WithdrawFundsScreen() {
     setShowPinModal(false);
     const selected = methods.find((m) => m.id === effectiveSelectedMethod);
     if (!selected) {
-      showPopup({ type: "error", title: "No account", message: "Add a payout account first." });
+      showPopup({
+        type: "error",
+        title: "Where should we send your money?",
+        message: "Please add a payout account first.",
+      });
       return;
     }
     withdrawMutation.mutate(
@@ -167,7 +171,7 @@ export default function WithdrawFundsScreen() {
 
       {methods.length === 0 ? (
         <View className="m-5 p-5 bg-card border border-border rounded-2xl items-center">
-          <Icon name="credit-card" size={28} color="#94a3b8" />
+          <Icon name="credit-card" size={28} color={tokens.textMuted} />
           <Text className="text-body-lg font-bold text-foreground mt-3 mb-1">
             No payout account
           </Text>
@@ -181,7 +185,7 @@ export default function WithdrawFundsScreen() {
         </View>
       ) : !pinStatus?.hasPin ? (
         <View className="m-5 p-5 bg-card border border-border rounded-2xl items-center">
-          <Icon name="lock" size={28} color="#94a3b8" />
+          <Icon name="lock" size={28} color={tokens.textMuted} />
           <Text className="text-body-lg font-bold text-foreground mt-3 mb-1">
             Set a withdrawal PIN
           </Text>
@@ -202,7 +206,7 @@ export default function WithdrawFundsScreen() {
             showsVerticalScrollIndicator={false}
           >
             {/* Amount Input Card */}
-            <View className="bg-white rounded-3xl p-6 mb-8 border border-border shadow-sm shadow-sm/50 mt-4">
+            <View className="bg-white rounded-3xl p-6 mb-8 border border-border mt-4">
               <View className="flex-row justify-between items-center mb-6">
                 <View className="flex-row items-center bg-primary-subtle px-3 py-1.5 rounded-full border border-border">
                   <Icon name="info" size={14} color={tokens.primary} style={{ marginRight: 6 }} />
@@ -231,7 +235,7 @@ export default function WithdrawFundsScreen() {
               <Text className="text-body-md font-bold text-muted-foreground mb-4 ml-2 uppercase tracking-wider">
                 Transfer To
               </Text>
-              <View className="bg-white rounded-2xl border border-border p-2 shadow-sm shadow-sm/30">
+              <View className="bg-white rounded-2xl border border-border p-2">
                 {methods.map((method, index) => {
                   const isSelected = effectiveSelectedMethod === method.id;
 
@@ -252,7 +256,7 @@ export default function WithdrawFundsScreen() {
                         <Icon
                           name={method.icon}
                           size={24}
-                          color={isSelected ? "#fff" : "#64748b"}
+                          color={isSelected ? tokens.primaryText : tokens.textMuted}
                         />
                       </View>
                       <View className="flex-1">
@@ -270,7 +274,7 @@ export default function WithdrawFundsScreen() {
                       <View
                         className={`w-6 h-6 rounded-full border-2 items-center justify-center ${isSelected ? "border-primary bg-primary" : "border-border bg-transparent"}`}
                       >
-                        {isSelected && <Icon name="check" size={12} color="#ffffff" />}
+                        {isSelected && <Icon name="check" size={12} color={tokens.primaryText} />}
                       </View>
                     </Pressable>
                   );
@@ -292,7 +296,7 @@ export default function WithdrawFundsScreen() {
               <Text className="text-body-md font-bold text-muted-foreground mb-4 ml-2 uppercase tracking-wider">
                 Summary
               </Text>
-              <View className="bg-white rounded-2xl border border-border p-6 shadow-sm shadow-sm/30">
+              <View className="bg-white rounded-2xl border border-border p-6">
                 <View className="flex-row justify-between items-center mb-4">
                   <Text className="text-body-lg font-body text-muted-foreground">Amount</Text>
                   <Text className="text-body-lg font-bold text-foreground">
@@ -331,7 +335,7 @@ export default function WithdrawFundsScreen() {
               loading={withdrawMutation.isPending}
               onPress={handleWithdrawRequest}
               disabled={numAmount <= 0}
-              className="w-full shadow-lg shadow-none"
+              className="w-full"
             />
           </View>
         </>
@@ -351,7 +355,7 @@ export default function WithdrawFundsScreen() {
           className="flex-1 justify-end backdrop-blur-sm"
           style={{ backgroundColor: "rgba(0,0,0,0.6)" }}
         >
-          <View className="bg-white rounded-t-[40px] p-8 pb-12 h-[85%] shadow-2xl">
+          <View className="bg-white rounded-t-[40px] p-8 pb-12 h-[85%]">
             <View className="flex-row justify-between items-center mb-8">
               <Text className="text-display-md font-heading font-black text-foreground tracking-tight">
                 Enter PIN
@@ -366,7 +370,7 @@ export default function WithdrawFundsScreen() {
                   setPin("");
                 }}
               >
-                <Icon name="x" size={20} color="#0f172a" />
+                <Icon name="x" size={20} color={tokens.textPrimary} />
               </Pressable>
             </View>
 
@@ -390,7 +394,7 @@ export default function WithdrawFundsScreen() {
               {[1, 2, 3, 4, 5, 6, 7, 8, 9].map((num) => (
                 <Pressable
                   key={num}
-                  className="w-[28%] items-center justify-center rounded-full bg-background border border-border shadow-sm shadow-sm/50"
+                  className="w-[28%] items-center justify-center rounded-full bg-background border border-border"
                   style={({ pressed }) => [
                     {
                       aspectRatio: 1,
@@ -407,7 +411,7 @@ export default function WithdrawFundsScreen() {
               ))}
               <View className="w-[28%]" style={{ aspectRatio: 1 }} />
               <Pressable
-                className="w-[28%] items-center justify-center rounded-full bg-background border border-border shadow-sm shadow-sm/50"
+                className="w-[28%] items-center justify-center rounded-full bg-background border border-border"
                 style={({ pressed }) => [
                   {
                     aspectRatio: 1,
@@ -426,7 +430,7 @@ export default function WithdrawFundsScreen() {
                 style={({ pressed }) => [{ aspectRatio: 1, opacity: pressed ? 0.5 : 1 }]}
                 onPress={handlePinDelete}
               >
-                <Icon name="delete" size={32} color="#64748b" />
+                <Icon name="delete" size={32} color={tokens.textMuted} />
               </Pressable>
             </View>
           </View>

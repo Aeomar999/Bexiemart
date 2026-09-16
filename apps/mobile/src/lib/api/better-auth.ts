@@ -48,7 +48,7 @@ export const authClient = createAuthClient({
     }),
     phoneNumberClient(),
     twoFactorClient(),
-    dashClient(),
+    dashClient() as unknown as ReturnType<typeof twoFactorClient>,
     sentinelNativeClient({
       identifyUrl: process.env.EXPO_PUBLIC_BETTER_AUTH_KV_URL || "https://kv.better-auth.com",
       autoSolveChallenge: true,

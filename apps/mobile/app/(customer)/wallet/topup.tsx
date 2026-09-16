@@ -1,15 +1,14 @@
 import { tokens } from "@/theme/tokens";
 import { BackButton } from "@/components/ui/BackButton";
 import { logger } from "@/lib/logger";
-import { View, Text, ScrollView, TextInput, Keyboard, Pressable } from "react-native";
+import { View, Text, ScrollView, TextInput, Keyboard, Pressable, Linking } from "react-native";
 import { useState } from "react";
 import { useRouter } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Icon } from "@/components/ui/Icon";
 import { Button } from "@/components/ui/Button";
 import Toast from "@/lib/toast-polyfill";
-import { useWallet } from "@/lib/hooks/use-wallet";
-import { useTopUp } from "@/lib/hooks/use-wallet";
+import { useTopUp, useWallet } from "@/lib/hooks/use-wallet";
 import { MoneyInput } from "@/components/ui/MoneyInput";
 import { formatMoney } from "@/lib/money";
 
@@ -59,6 +58,20 @@ export default function TopUpScreen() {
     setSelectedMethod(methodId);
   };
 
+  const handleOpenPaymentPage = async () => {
+    if (!payUrl) return;
+    try {
+      await Linking.openURL(payUrl);
+    } catch (error) {
+      logger.error("Failed to open Paystack payment page", error);
+      Toast.show({
+        type: "error",
+        text1: "Unable to open",
+        text2: "Could not open the payment page. Please try again.",
+      });
+    }
+  };
+
   if (isSuccess) {
     return (
       <View
@@ -66,7 +79,7 @@ export default function TopUpScreen() {
         style={{ paddingTop: insets.top }}
       >
         <View className="w-20 h-20 bg-card rounded-full items-center justify-center mb-6">
-          <Icon name="check" size={40} color="#10b981" />
+          <Icon name="check" size={40} color={tokens.success} />
         </View>
         <Text className="text-display-lg font-black text-white font-heading text-center mb-2">
           Top-Up Initiated!
@@ -79,9 +92,7 @@ export default function TopUpScreen() {
             title="Complete Payment"
             variant="primary"
             className="w-full bg-card border-0 mb-3"
-            onPress={() =>
-              Toast.show({ type: "info", text1: "Pay", text2: "Opening payment page..." })
-            }
+            onPress={handleOpenPaymentPage}
           />
         ) : null}
         <Button
@@ -162,13 +173,13 @@ export default function TopUpScreen() {
                     alignItems: "center",
                     justifyContent: "center",
                     marginRight: 16,
-                    backgroundColor: isSelected ? "#ffffff" : "#e2e8f0",
+                    backgroundColor: isSelected ? tokens.primaryText : "#e2e8f0",
                   }}
                 >
                   <Icon
                     name={method.icon}
                     size={18}
-                    color={isSelected ? tokens.primary : "#64748b"}
+                    color={isSelected ? tokens.primary : tokens.textMuted}
                   />
                 </View>
                 <Text
@@ -187,13 +198,13 @@ export default function TopUpScreen() {
                     height: 22,
                     borderRadius: 11,
                     borderWidth: 2,
-                    borderColor: isSelected ? "#3b82f6" : "#cbd5e1",
+                    borderColor: isSelected ? "#3b82f6" : tokens.textDisabled,
                     backgroundColor: isSelected ? "#3b82f6" : "transparent",
                     alignItems: "center",
                     justifyContent: "center",
                   }}
                 >
-                  {isSelected && <Icon name="check" size={10} color="#fff" />}
+                  {isSelected && <Icon name="check" size={10} color={tokens.primaryText} />}
                 </View>
               </Pressable>
             );
@@ -206,7 +217,7 @@ export default function TopUpScreen() {
           paddingHorizontal: 20,
           paddingTop: 16,
           paddingBottom: Math.max(insets.bottom, 20),
-          backgroundColor: "#ffffff",
+          backgroundColor: tokens.primaryText,
           borderTopWidth: 1,
           borderTopColor: "#f1f5f9",
         }}

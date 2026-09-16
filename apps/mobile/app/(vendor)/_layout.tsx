@@ -4,7 +4,7 @@ import { View, Text, TouchableOpacity } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Icon } from "../../src/components/ui/Icon";
 
-function TabIcon({ name, color }: { name: string; color: string }) {
+function TabIcon({ name, color }: { name: string; color: any }) {
   return <Icon name={name} color={color} size={24} />;
 }
 

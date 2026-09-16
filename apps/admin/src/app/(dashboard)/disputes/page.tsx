@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useDisputes } from "../../../lib/hooks/use-disputes";
 import { useDebounce } from "../../../lib/hooks/use-debounce";

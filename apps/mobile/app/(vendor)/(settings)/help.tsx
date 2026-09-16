@@ -41,7 +41,7 @@ export default function VendorHelpScreen() {
         <View className="mb-6">
           <Input
             placeholder="Search articles..."
-            leftIcon={<Icon name="search" size={20} color="#94a3b8" />}
+            leftIcon={<Icon name="search" size={20} color={tokens.textMuted} />}
           />
         </View>
 

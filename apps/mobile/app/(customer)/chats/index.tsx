@@ -1,3 +1,4 @@
+import { tokens } from "@/theme/tokens";
 import { View, Text, FlatList, Pressable } from "react-native";
 import { useRouter } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -109,7 +110,7 @@ export default function ChatListScreen() {
         onRefresh={refetch}
         ListEmptyComponent={
           <View className="flex-1 items-center justify-center py-20 px-5">
-            <Icon name="message-square" size={64} color="#cbd5e1" />
+            <Icon name="message-square" size={64} color={tokens.textDisabled} />
             <Text className="text-foreground font-heading font-bold text-heading-md mt-4 text-center">
               No messages yet
             </Text>

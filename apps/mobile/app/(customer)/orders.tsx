@@ -12,10 +12,10 @@ import { ErrorState } from "@/components/ui/ErrorState";
 import { useOrders } from "@/lib/hooks/use-orders";
 
 const statusConfig: Record<string, { label: string; color: string; bg: string; icon: string }> = {
-  processing: { label: "Processing", color: "#d97706", bg: "#fef3c7", icon: "loader" },
+  processing: { label: "Processing", color: tokens.warning, bg: "#fef3c7", icon: "loader" },
   shipped: { label: "Shipped", color: tokens.primary, bg: "#e0e7ff", icon: "truck" },
-  delivered: { label: "Delivered", color: "#059669", bg: "#d1fae5", icon: "check-circle" },
-  cancelled: { label: "Cancelled", color: "#ef4444", bg: "#fee2e2", icon: "x-circle" },
+  delivered: { label: "Delivered", color: tokens.success, bg: "#d1fae5", icon: "check-circle" },
+  cancelled: { label: "Cancelled", color: tokens.error, bg: "#fee2e2", icon: "x-circle" },
 };
 
 export default function OrdersScreen() {
@@ -102,7 +102,7 @@ export default function OrdersScreen() {
             return (
               <Pressable
                 style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
-                className="bg-card p-5 rounded-2xl border border-border shadow-lg mb-4"
+                className="bg-card p-5 rounded-2xl border border-border mb-4"
                 onPress={() => {
                   if (item.status !== "delivered" && item.status !== "cancelled") {
                     router.push("/(customer)/track-order");

@@ -2,6 +2,7 @@ const path = require("path");
 
 module.exports = {
   preset: "jest-expo",
+  testTimeout: 20000,
   setupFilesAfterEnv: ["./jest.setup.js"],
   transform: {
     "\\.(js|jsx|ts|tsx|mjs|cjs)$": [
@@ -29,11 +30,16 @@ module.exports = {
     "!src/**/index.{ts,tsx}",
     "!src/types/**",
   ],
+  // Floor set ~5-6pts under measured actuals (65.5 stmts / 62.4 branches /
+  // 66.2 lines as of 2026-08) so the gate catches real regressions without
+  // blocking normal churn. This file is the single source of truth — CI no
+  // longer overrides it inline.
   coverageThreshold: {
     global: {
-      lines: 30,
-      branches: 25,
-      statements: 30,
+      statements: 60,
+      branches: 55,
+      functions: 55,
+      lines: 60,
     },
   },
 };

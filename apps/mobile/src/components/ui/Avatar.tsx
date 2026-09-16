@@ -1,6 +1,7 @@
 import { View, Text, Pressable } from "react-native";
 import { Image } from "expo-image";
 import { Icon } from "./Icon";
+import { tokens } from "@/theme/tokens";
 
 export interface AvatarProps {
   uri?: string | null;
@@ -34,7 +35,7 @@ export function Avatar({
     }
 
     if (fallback === "icon") {
-      return <Icon name={iconName} size={size * 0.4} color="#64748b" />;
+      return <Icon name={iconName} size={size * 0.4} color={tokens.textMuted} />;
     }
 
     // Default to initials
@@ -49,7 +50,7 @@ export function Avatar({
   const content = (
     <View
       style={{ width: size, height: size, borderRadius: size / 2 }}
-      className="bg-primary-subtle items-center justify-center border-4 border-card shadow-sm overflow-hidden relative"
+      className="bg-primary-subtle items-center justify-center border-4 border-card overflow-hidden relative"
     >
       {uri ? (
         <Image source={{ uri }} style={{ width: "100%", height: "100%" }} contentFit="cover" />
@@ -59,7 +60,7 @@ export function Avatar({
 
       {editable && (
         <View className="absolute inset-0 bg-black/40 items-center justify-center">
-          <Icon name="camera" size={size * 0.3} color="#ffffff" />
+          <Icon name="camera" size={size * 0.3} color={tokens.primaryText} />
         </View>
       )}
     </View>

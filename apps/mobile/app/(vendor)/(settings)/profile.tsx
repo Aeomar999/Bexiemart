@@ -1,3 +1,4 @@
+import { tokens } from "@/theme/tokens";
 import { BackButton } from "@/components/ui/BackButton";
 import { View, Text, ScrollView, Pressable, Alert, Modal } from "react-native";
 import { useRouter } from "expo-router";
@@ -148,7 +149,7 @@ export default function VendorProfileScreen() {
               imageUrl={bannerUrl || null}
               height={128}
               fallbackIcon="camera"
-              fallbackIconColor="#64748b"
+              fallbackIconColor={tokens.textMuted}
             />
           </Pressable>
 
@@ -158,7 +159,7 @@ export default function VendorProfileScreen() {
               setPhotoTarget("logo");
               setPhotoModalVisible(true);
             }}
-            className="w-[100px] h-[100px] rounded-full bg-card items-center justify-center border-4 border-card shadow-sm overflow-hidden z-10 relative"
+            className="w-[100px] h-[100px] rounded-full bg-card items-center justify-center border-4 border-card overflow-hidden z-10 relative"
           >
             {logoUrl ? (
               <Image
@@ -174,7 +175,7 @@ export default function VendorProfileScreen() {
               </View>
             )}
             <View className="absolute bottom-0 right-0 left-0 h-1/3 bg-black/30 items-center justify-center">
-              <Icon name="camera" size={14} color="#ffffff" />
+              <Icon name="camera" size={14} color={tokens.primaryText} />
             </View>
           </Pressable>
         </View>
@@ -262,7 +263,7 @@ export default function VendorProfileScreen() {
                   onPress={() => handlePhotoOption("camera")}
                 >
                   <View className="w-12 h-12 bg-card rounded-full items-center justify-center border border-border">
-                    <Icon name="camera" size={20} color="#0f172a" />
+                    <Icon name="camera" size={20} color={tokens.textPrimary} />
                   </View>
                   <View className="ml-4 flex-1">
                     <Text className="text-body-lg font-bold text-foreground mb-0.5">
@@ -278,7 +279,7 @@ export default function VendorProfileScreen() {
                   onPress={() => handlePhotoOption("library")}
                 >
                   <View className="w-12 h-12 bg-card rounded-full items-center justify-center border border-border">
-                    <Icon name="image" size={20} color="#0f172a" />
+                    <Icon name="image" size={20} color={tokens.textPrimary} />
                   </View>
                   <View className="ml-4 flex-1">
                     <Text className="text-body-lg font-bold text-foreground mb-0.5">
@@ -300,7 +301,7 @@ export default function VendorProfileScreen() {
                     }}
                   >
                     <View className="w-12 h-12 bg-card rounded-full items-center justify-center border border-rose-100">
-                      <Icon name="trash-2" size={20} color="#ef4444" />
+                      <Icon name="trash-2" size={20} color={tokens.error} />
                     </View>
                     <View className="ml-4 flex-1">
                       <Text className="text-body-lg font-bold text-error mb-0.5">Remove Logo</Text>

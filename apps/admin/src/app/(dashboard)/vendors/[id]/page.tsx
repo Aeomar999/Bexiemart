@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import { useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { useVendor, useApproveVendor, useSuspendVendor } from "../../../../lib/hooks/use-vendors";
 import { DashboardLayout } from "../../../../components/layout/DashboardLayout";

@@ -1,3 +1,4 @@
+import { tokens } from "@/theme/tokens";
 import { BackButton } from "@/components/ui/BackButton";
 import {
   View,
@@ -91,9 +92,9 @@ export default function TwoFactorScreen() {
           message: "Two-factor authentication has been turned off.",
         });
       } else if (pendingAction === "regenerate") {
-        const codes = await regenerateMutation.mutateAsync(password);
-        setBackupCodes(codes || []);
-        setBackupCodeCount(codes?.length || 10);
+        const res = await regenerateMutation.mutateAsync(password);
+        setBackupCodes(res.backupCodes || []);
+        setBackupCodeCount(res.backupCodes?.length || 10);
         setPassword("");
         setActiveModal("backupCodes");
       }
@@ -159,7 +160,11 @@ export default function TwoFactorScreen() {
               is2FAEnabled ? "bg-green-100" : "bg-secondary"
             }`}
           >
-            <Icon name="shield" size={40} color={is2FAEnabled ? "#10b981" : "#94a3b8"} />
+            <Icon
+              name="shield"
+              size={40}
+              color={is2FAEnabled ? tokens.success : tokens.textMuted}
+            />
           </View>
           <Text className="text-display-sm font-heading font-black text-foreground mb-2">
             {isStatusLoading
@@ -178,7 +183,7 @@ export default function TwoFactorScreen() {
           <View className="flex-row justify-between items-center">
             <View className="flex-row items-center flex-1">
               <View className="w-10 h-10 rounded-full bg-muted items-center justify-center mr-3">
-                <Icon name="smartphone" size={20} color="#64748b" />
+                <Icon name="smartphone" size={20} color={tokens.textMuted} />
               </View>
               <View className="flex-1 pr-4">
                 <Text className="text-body-lg font-bold text-foreground">Authenticator App</Text>
@@ -188,12 +193,12 @@ export default function TwoFactorScreen() {
               </View>
             </View>
             {isStatusLoading ? (
-              <ActivityIndicator size="small" color="#10b981" />
+              <ActivityIndicator size="small" color={tokens.success} />
             ) : (
               <Switch
                 value={is2FAEnabled}
                 onValueChange={handleToggleSwitch}
-                trackColor={{ true: "#10b981" }}
+                trackColor={{ true: tokens.success }}
                 testID="2fa-toggle-switch"
               />
             )}
@@ -211,7 +216,7 @@ export default function TwoFactorScreen() {
               >
                 <View className="flex-row items-center flex-1">
                   <View className="w-10 h-10 rounded-full bg-muted items-center justify-center mr-3">
-                    <Icon name="file-text" size={20} color="#64748b" />
+                    <Icon name="file-text" size={20} color={tokens.textMuted} />
                   </View>
                   <View className="flex-1 pr-4">
                     <Text className="text-body-lg font-bold text-foreground">Recovery Codes</Text>
@@ -220,7 +225,7 @@ export default function TwoFactorScreen() {
                     </Text>
                   </View>
                 </View>
-                <Icon name="chevron-right" size={20} color="#cbd5e1" />
+                <Icon name="chevron-right" size={20} color={tokens.textDisabled} />
               </Pressable>
             </View>
           </>
@@ -256,7 +261,7 @@ export default function TwoFactorScreen() {
                 value={password}
                 onChangeText={setPassword}
                 placeholder="Account password"
-                placeholderTextColor="#94a3b8"
+                placeholderTextColor={tokens.textMuted}
                 secureTextEntry
                 className="text-body-lg text-foreground"
                 autoCapitalize="none"
@@ -272,7 +277,11 @@ export default function TwoFactorScreen() {
                 testID="password-submit-button"
               >
                 {isPending ? (
-                  <ActivityIndicator size="small" color="#ffffff" style={{ marginRight: 8 }} />
+                  <ActivityIndicator
+                    size="small"
+                    color={tokens.primaryText}
+                    style={{ marginRight: 8 }}
+                  />
                 ) : null}
                 <Text className="text-body-lg font-bold text-primary-foreground">Continue</Text>
               </Pressable>
@@ -335,7 +344,11 @@ export default function TwoFactorScreen() {
                 testID="verify-code-button"
               >
                 {verifyMutation.isPending ? (
-                  <ActivityIndicator size="small" color="#ffffff" style={{ marginRight: 8 }} />
+                  <ActivityIndicator
+                    size="small"
+                    color={tokens.primaryText}
+                    style={{ marginRight: 8 }}
+                  />
                 ) : null}
                 <Text className="text-body-lg font-bold text-primary-foreground">
                   Verify & Activate

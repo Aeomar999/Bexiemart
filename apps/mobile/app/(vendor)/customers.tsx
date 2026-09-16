@@ -46,7 +46,7 @@ export default function VendorCustomersScreen() {
           <Icon
             name="search"
             size={20}
-            color="#94a3b8"
+            color={tokens.textMuted}
             style={{ marginLeft: 12, marginRight: 8 }}
           />
           <TextInput
@@ -110,7 +110,7 @@ export default function VendorCustomersScreen() {
                     <Icon
                       name="shopping-bag"
                       size={16}
-                      color="#64748b"
+                      color={tokens.textMuted}
                       style={{ marginRight: 6 }}
                     />
                     <Text className="text-sm font-bold text-muted-foreground">View Orders</Text>

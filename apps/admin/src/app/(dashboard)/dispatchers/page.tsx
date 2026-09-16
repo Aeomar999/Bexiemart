@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useDispatchers } from "../../../lib/hooks/use-dispatchers";
 import { DashboardLayout } from "../../../components/layout/DashboardLayout";

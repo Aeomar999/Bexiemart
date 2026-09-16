@@ -20,8 +20,10 @@ export function createWrapper() {
   });
 
   // React Testing Library expects a component with a `children` prop
-  return ({ children }: { children: React.ReactNode }) =>
+  const TestWrapper = ({ children }: { children: React.ReactNode }) =>
     React.createElement(QueryClientProvider, { client: queryClient }, children);
+  TestWrapper.displayName = "TestWrapper";
+  return TestWrapper;
 }
 
 /**

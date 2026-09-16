@@ -1,6 +1,5 @@
 "use client";
 
-import React from "react";
 import { Menu, Bell } from "lucide-react";
 import { useUiStore } from "../../lib/stores/ui-store";
 import { useUser } from "../../lib/hooks/use-auth";

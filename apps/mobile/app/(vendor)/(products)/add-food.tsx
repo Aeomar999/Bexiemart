@@ -95,7 +95,7 @@ export default function AddFoodScreen() {
           className="w-full h-48 bg-muted rounded-2xl items-center justify-center border-2 border-dashed border-border mb-8"
         >
           <View className="w-14 h-14 bg-card rounded-full items-center justify-center mb-3">
-            <Icon name="camera" size={24} color="#64748b" />
+            <Icon name="camera" size={24} color={tokens.textMuted} />
           </View>
           <Text className="text-body-md font-bold text-muted-foreground">
             Add Mouthwatering Photos
@@ -192,7 +192,9 @@ export default function AddFoodScreen() {
                     name={tag.icon}
                     size={14}
                     color={
-                      dietaryTags[tag.id as keyof typeof dietaryTags] ? tokens.primary : "#64748b"
+                      dietaryTags[tag.id as keyof typeof dietaryTags]
+                        ? tokens.primary
+                        : tokens.textMuted
                     }
                   />
                   <Text
@@ -212,12 +214,7 @@ export default function AddFoodScreen() {
             <View className="flex-row bg-muted p-1 rounded-xl">
               <Pressable
                 onPress={() => setStatus("available")}
-                className={`flex-1 py-3 items-center justify-center rounded-lg ${status === "available" ? "bg-card border border-border shadow-sm" : ""}`}
-                style={
-                  status === "available"
-                    ? { elevation: 2, shadowColor: "#000", shadowOpacity: 0.05, shadowRadius: 5 }
-                    : {}
-                }
+                className={`flex-1 py-3 items-center justify-center rounded-lg ${status === "available" ? "bg-card border border-border" : ""}`}
               >
                 <Text
                   className={`text-body-md font-bold ${status === "available" ? "text-green-600" : "text-muted-foreground"}`}
@@ -227,12 +224,7 @@ export default function AddFoodScreen() {
               </Pressable>
               <Pressable
                 onPress={() => setStatus("sold_out")}
-                className={`flex-1 py-3 items-center justify-center rounded-lg ${status === "sold_out" ? "bg-card border border-border shadow-sm" : ""}`}
-                style={
-                  status === "sold_out"
-                    ? { elevation: 2, shadowColor: "#000", shadowOpacity: 0.05, shadowRadius: 5 }
-                    : {}
-                }
+                className={`flex-1 py-3 items-center justify-center rounded-lg ${status === "sold_out" ? "bg-card border border-border" : ""}`}
               >
                 <Text
                   className={`text-body-md font-bold ${status === "sold_out" ? "text-error" : "text-muted-foreground"}`}

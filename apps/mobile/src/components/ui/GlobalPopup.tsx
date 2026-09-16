@@ -1,12 +1,13 @@
 import React, { useEffect, useRef, useState } from "react";
 import { View, Text, Pressable, Animated, Platform } from "react-native";
 import { usePopupStore } from "@/lib/stores/popup-store";
+import { tokens } from "@/theme/tokens";
 import { Icon } from "./Icon";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useReducedMotion } from "@/hooks/useReducedMotion";
 
 export function GlobalPopup() {
-  const { isVisible, type, title, message, hidePopup } = usePopupStore();
+  const { isVisible, type, title, message, action, hidePopup } = usePopupStore();
   const translateY = useRef(new Animated.Value(100)).current;
   const opacity = useRef(new Animated.Value(0)).current;
   const [renderComponent, setRenderComponent] = useState(isVisible);
@@ -35,9 +36,12 @@ export function GlobalPopup() {
         ]).start();
       }
 
-      const timer = setTimeout(() => {
-        closeModal();
-      }, 4000);
+      const timer = setTimeout(
+        () => {
+          closeModal();
+        },
+        action ? 6000 : 4000
+      );
       return () => clearTimeout(timer);
     } else if (reducedMotion) {
       opacity.setValue(0);
@@ -91,23 +95,28 @@ export function GlobalPopup() {
       case "success":
         return {
           name: "check-circle",
-          color: "#10B981",
+          color: tokens.success,
           bgColor: "#ECFDF5",
           borderColor: "#A7F3D0",
         };
       case "error":
         return {
           name: "alert-circle",
-          color: "#EF4444",
+          color: tokens.error,
           bgColor: "#FEF2F2",
           borderColor: "#FECACA",
         };
       case "info":
-        return { name: "info", color: "#3B82F6", bgColor: "#EFF6FF", borderColor: "#BFDBFE" };
+        return {
+          name: "info",
+          color: tokens.secondary,
+          bgColor: "#EFF6FF",
+          borderColor: "#BFDBFE",
+        };
       default:
         return {
           name: "check-circle",
-          color: "#10B981",
+          color: tokens.success,
           bgColor: "#ECFDF5",
           borderColor: "#A7F3D0",
         };
@@ -132,18 +141,13 @@ export function GlobalPopup() {
       <Animated.View
         style={{
           width: "100%",
-          backgroundColor: "#ffffff",
+          backgroundColor: tokens.primaryText,
           borderRadius: 16,
           padding: 16,
           flexDirection: "row",
           alignItems: "center",
           opacity: opacity,
           transform: [{ translateY }],
-          shadowColor: "#000",
-          shadowOffset: { width: 0, height: 8 },
-          shadowOpacity: 0.1,
-          shadowRadius: 16,
-          elevation: 5,
           borderLeftWidth: 4,
           borderLeftColor: styleProps.color,
           borderWidth: 1,
@@ -172,7 +176,7 @@ export function GlobalPopup() {
           <Text
             style={{
               fontSize: 15,
-              color: "#0F172A",
+              color: tokens.textPrimary,
               fontFamily: "Nunito_700Bold",
               marginBottom: message ? 2 : 0,
             }}
@@ -184,7 +188,7 @@ export function GlobalPopup() {
             <Text
               style={{
                 fontSize: 13,
-                color: "#64748B",
+                color: tokens.textMuted,
                 fontFamily: "Nunito_500Medium",
               }}
               numberOfLines={2}
@@ -202,9 +206,25 @@ export function GlobalPopup() {
           style={{ padding: 8, marginLeft: 4 }}
           hitSlop={{ top: 10, right: 10, bottom: 10, left: 10 }}
         >
-          <Icon name="x" size={18} color="#94A3B8" />
+          <Icon name="x" size={18} color={tokens.textMuted} />
         </Pressable>
       </Animated.View>
+
+      {action ? (
+        <Pressable
+          accessibilityRole="button"
+          accessibilityLabel={action.label}
+          onPress={() => {
+            hidePopup();
+            action.onPress();
+          }}
+          className="mt-3 self-end bg-primary rounded-full px-5 py-2"
+        >
+          <Text style={{ color: tokens.primaryText, fontFamily: "Nunito_700Bold", fontSize: 13 }}>
+            {action.label}
+          </Text>
+        </Pressable>
+      ) : null}
     </View>
   );
 }

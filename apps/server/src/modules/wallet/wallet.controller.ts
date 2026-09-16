@@ -110,11 +110,10 @@ export class WalletController {
     return this.walletService.verifyPin(req.user.id, body.pin);
   }
 
-  @Post("pin/reset")
-  @ApiOperation({ summary: "Reset PIN failure count" })
-  resetPinFailures(@Req() req: AuthenticatedRequest) {
-    return this.walletService.resetPinFailures(req.user.id);
-  }
+  // NOTE: there is intentionally no "reset PIN failures" endpoint. Clearing the
+  // failure counter without re-authenticating would turn the 5-attempt lockout
+  // into an unlimited brute-force loop against a 4-digit PIN. Locked users wait
+  // out the 30-minute window or change their PIN with the current one.
 
   @Get("pin/status")
   @ApiOperation({ summary: "Get wallet PIN status" })

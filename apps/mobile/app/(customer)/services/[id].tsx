@@ -1,3 +1,4 @@
+import { tokens } from "@/theme/tokens";
 import { BackButton } from "@/components/ui/BackButton";
 import {
   View,
@@ -109,7 +110,7 @@ export default function ProviderDetailsScreen() {
       </View>
       <ScrollView className="flex-1" showsVerticalScrollIndicator={false}>
         {/* Header / Cover */}
-        <View className="bg-card pb-6 rounded-b-3xl shadow-sm">
+        <View className="bg-card pb-6 rounded-b-3xl">
           <View
             className="px-5 flex-row items-center justify-between z-10 mb-6"
             style={{ paddingTop: 12 }}
@@ -122,13 +123,13 @@ export default function ProviderDetailsScreen() {
               style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
               className="w-10 h-10 rounded-full bg-muted items-center justify-center"
             >
-              <Icon name="heart" size={20} color="#0f172a" />
+              <Icon name="heart" size={20} color={tokens.textPrimary} />
             </Pressable>
           </View>
 
           <View className="px-5 items-center">
             <View className="w-24 h-24 bg-muted rounded-2xl items-center justify-center mb-4">
-              <Icon name="user" size={40} color="#94a3b8" />
+              <Icon name="user" size={40} color={tokens.textMuted} />
             </View>
             <Text className="text-display-md font-heading font-black text-foreground text-center mb-1">
               {service.vendor?.shopName ?? service.name}
@@ -138,7 +139,7 @@ export default function ProviderDetailsScreen() {
             <View className="flex-row items-center justify-center gap-6">
               <View className="items-center">
                 <View className="flex-row items-center mb-1">
-                  <Icon name="star" size={16} color="#f59e0b" />
+                  <Icon name="star" size={16} color={tokens.warning} />
                   <Text className="text-body-lg font-bold text-foreground ml-1">
                     {Number(service.rating).toFixed(1)}
                   </Text>
@@ -178,7 +179,7 @@ export default function ProviderDetailsScreen() {
               })
             }
           >
-            <Icon name="message-circle" size={18} color="#0284c7" />
+            <Icon name="message-circle" size={18} color={tokens.secondaryHover} />
             <Text className="text-primary-hover font-bold text-body-md">Chat</Text>
           </Pressable>
           <Pressable
@@ -190,7 +191,11 @@ export default function ProviderDetailsScreen() {
               }
             }}
           >
-            <Icon name="phone" size={18} color={service.vendor?.phone ? "#0284c7" : "#94a3b8"} />
+            <Icon
+              name="phone"
+              size={18}
+              color={service.vendor?.phone ? tokens.secondaryHover : tokens.textMuted}
+            />
             <Text
               className={`font-bold text-body-md ${service.vendor?.phone ? "text-primary-hover" : "text-muted-foreground"}`}
             >
@@ -277,7 +282,7 @@ export default function ProviderDetailsScreen() {
 
       {/* Bottom Booking Footer */}
       <View
-        className="absolute bottom-0 left-0 right-0 bg-card border-t border-border p-5 rounded-t-3xl shadow-lg"
+        className="absolute bottom-0 left-0 right-0 bg-card border-t border-border p-5 rounded-t-3xl"
         style={{ paddingBottom: Math.max(insets.bottom, 20) }}
       >
         <View className="flex-row items-center justify-between mb-4">
@@ -292,13 +297,13 @@ export default function ProviderDetailsScreen() {
               <Text className="text-body-md font-bold text-foreground mr-2" numberOfLines={1}>
                 {selectedAddress ? selectedAddress.name : "Select Address"}
               </Text>
-              <Icon name="chevron-down" size={16} color="#64748b" />
+              <Icon name="chevron-down" size={16} color={tokens.textMuted} />
             </Pressable>
           </View>
         </View>
 
         <Pressable
-          className={`h-14 rounded-full flex-row items-center justify-center shadow-sm ${isFormValid ? "bg-primary" : "bg-secondary"}`}
+          className={`h-14 rounded-full flex-row items-center justify-center ${isFormValid ? "bg-primary" : "bg-secondary"}`}
           disabled={!isFormValid}
           onPress={handleBook}
         >
@@ -336,7 +341,7 @@ export default function ProviderDetailsScreen() {
                 onPress={() => setAddressModalVisible(false)}
                 className="w-8 h-8 rounded-full bg-muted items-center justify-center"
               >
-                <Icon name="x" size={16} color="#64748b" />
+                <Icon name="x" size={16} color={tokens.textMuted} />
               </Pressable>
             </View>
 
@@ -360,7 +365,7 @@ export default function ProviderDetailsScreen() {
                             : "map-pin"
                       }
                       size={18}
-                      color={selectedAddress?.id === addr.id ? "#3b82f6" : "#64748b"}
+                      color={selectedAddress?.id === addr.id ? tokens.primary : tokens.textMuted}
                     />
                     <Text
                       className={`font-bold ml-2 ${selectedAddress?.id === addr.id ? "text-primary-hover" : "text-foreground"}`}

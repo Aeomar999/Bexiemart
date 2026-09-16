@@ -1,5 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
+import { getUserFriendlyErrorMessage } from "@/lib/error-utils";
 import { getAdminVendors, getAdminVendor, approveVendor, suspendVendor } from "../api/admin";
 
 export const useVendors = (params?: Record<string, any>) => {
@@ -28,7 +29,7 @@ export const useApproveVendor = () => {
       toast.success("Vendor successfully approved!");
     },
     onError: (error: any) => {
-      toast.error(error?.response?.data?.message || "Failed to approve vendor");
+      toast.error(getUserFriendlyErrorMessage(error, "We couldn't update this vendor's account status. Please try again."));
     }
   });
 };
@@ -44,7 +45,7 @@ export const useSuspendVendor = () => {
       toast.success("Vendor has been suspended.");
     },
     onError: (error: any) => {
-      toast.error(error?.response?.data?.message || "Failed to suspend vendor");
+      toast.error(getUserFriendlyErrorMessage(error, "We couldn't update this vendor's account status. Please try again."));
     }
   });
 };

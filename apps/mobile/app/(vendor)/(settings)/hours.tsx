@@ -120,7 +120,7 @@ export default function OperatingHoursScreen() {
           contentContainerClassName="pb-12 pt-6 gap-6"
           showsVerticalScrollIndicator={false}
         >
-          <View className="bg-card rounded-2xl border border-border overflow-hidden shadow-lg">
+          <View className="bg-card rounded-2xl border border-border overflow-hidden">
             {DAYS_OF_WEEK.map((day, idx) => {
               const isLast = idx === DAYS_OF_WEEK.length - 1;
               const data = hours[day.id] || { isOpen: false, open: "08:00 AM", close: "06:00 PM" };
@@ -137,7 +137,7 @@ export default function OperatingHoursScreen() {
                       value={data.isOpen}
                       onValueChange={() => toggleDay(day.id)}
                       trackColor={{ false: "#e2e8f0", true: tokens.primary }}
-                      thumbColor={"#ffffff"}
+                      thumbColor={tokens.primaryText}
                     />
                   </View>
 
@@ -162,7 +162,7 @@ export default function OperatingHoursScreen() {
                           <Text className="text-body-lg font-bold text-foreground">
                             {data.open}
                           </Text>
-                          <Icon name="chevron-down" size={16} color="#64748b" />
+                          <Icon name="chevron-down" size={16} color={tokens.textMuted} />
                         </View>
                       </Pressable>
                       <View className="px-3">
@@ -187,7 +187,7 @@ export default function OperatingHoursScreen() {
                           <Text className="text-body-lg font-bold text-foreground">
                             {data.close}
                           </Text>
-                          <Icon name="chevron-down" size={16} color="#64748b" />
+                          <Icon name="chevron-down" size={16} color={tokens.textMuted} />
                         </View>
                       </Pressable>
                     </View>

@@ -7,6 +7,7 @@ import { Icon } from "./Icon";
 import { Skeleton } from "./Skeleton";
 import { useBanners } from "@/lib/hooks/use-banners";
 import { Banner, BannerPlacement } from "@/lib/api/banners";
+import { tokens } from "@/theme/tokens";
 
 interface PromoBannerProps {
   /** Which screen's banners to load (HOME | FOOD | SERVICES). */
@@ -126,7 +127,7 @@ function BannerCard({ banner, onPress }: { banner: Banner; onPress?: () => void 
           {banner.ctaLabel ? (
             <View className="bg-card self-start flex-row items-center rounded-full px-4 py-2">
               <Text className="text-foreground font-bold text-caption mr-1">{banner.ctaLabel}</Text>
-              <Icon name="arrow-right" size={14} color="#0f172a" />
+              <Icon name="arrow-right" size={14} color={tokens.textPrimary} />
             </View>
           ) : null}
         </View>

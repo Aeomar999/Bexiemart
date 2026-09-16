@@ -131,7 +131,7 @@ export default function ChatDetailScreen() {
     >
       {/* Header */}
       <View
-        className="px-5 bg-card pb-3 border-b border-border flex-row items-center shadow-sm z-10"
+        className="px-5 bg-card pb-3 border-b border-border flex-row items-center z-10"
         style={{ paddingTop: (insets.top || 12) + 12 }}
       >
         <BackButton className="w-10 h-10 items-start justify-center active:opacity-70" />
@@ -192,7 +192,7 @@ export default function ChatDetailScreen() {
           {isUploading ? (
             <ActivityIndicator size="small" color={tokens.primary} />
           ) : (
-            <Icon name="image" size={20} color="#64748b" />
+            <Icon name="image" size={20} color={tokens.textMuted} />
           )}
         </Pressable>
 
@@ -200,7 +200,7 @@ export default function ChatDetailScreen() {
           <TextInput
             className="flex-1 text-body-lg font-body text-foreground p-0 m-0 leading-tight"
             placeholder="Message..."
-            placeholderTextColor="#94a3b8"
+            placeholderTextColor={tokens.textMuted}
             multiline
             value={content}
             onChangeText={(text) => {
@@ -218,7 +218,11 @@ export default function ChatDetailScreen() {
           onPress={handleSendText}
           disabled={!content.trim()}
         >
-          <Icon name="send" size={18} color={content.trim() ? "#fff" : "#94a3b8"} />
+          <Icon
+            name="send"
+            size={18}
+            color={content.trim() ? tokens.primaryText : tokens.textMuted}
+          />
         </Pressable>
       </View>
     </KeyboardAvoidingView>

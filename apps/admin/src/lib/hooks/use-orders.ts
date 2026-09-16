@@ -1,5 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
+import { getUserFriendlyErrorMessage } from "@/lib/error-utils";
 import { getAdminOrders, getAdminOrder, updateOrderStatus } from "../api/admin";
 
 export const useOrders = (params?: Record<string, any>) => {
@@ -28,7 +29,7 @@ export const useUpdateOrderStatus = () => {
       toast.success(`Order status updated to ${status}`);
     },
     onError: (error: any) => {
-      toast.error(error?.response?.data?.message || "Failed to update order status");
+      toast.error(getUserFriendlyErrorMessage(error, "We couldn't update the order status. Please refresh and try again."));
     }
   });
 };

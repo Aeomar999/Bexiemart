@@ -58,7 +58,7 @@ export class ErrorBoundary extends React.Component<ErrorBoundaryProps, State> {
             }}
           >
             <View className="h-24 w-24 rounded-full bg-destructive/10 items-center justify-center mb-8">
-              <Icon name="alert-circle" size={48} color="#ef4444" />
+              <Icon name="alert-circle" size={48} color={tokens.error} />
             </View>
 
             <Text className="text-3xl font-bold text-foreground mb-4 text-center">
@@ -66,8 +66,8 @@ export class ErrorBoundary extends React.Component<ErrorBoundaryProps, State> {
             </Text>
 
             <Text className="text-muted-foreground text-center mb-10 text-base leading-relaxed">
-              We're sorry, but something unexpected happened. You can try restarting the app to get
-              back on track.
+              We&apos;re sorry, but something unexpected happened. You can try restarting the app to
+              get back on track.
             </Text>
 
             <Pressable

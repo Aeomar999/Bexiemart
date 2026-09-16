@@ -1,5 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
+import { getUserFriendlyErrorMessage } from "@/lib/error-utils";
 import { bannersApi, BannerPayload, BannerPlacement } from "../api/banners";
 
 const BANNERS_KEY = "banners";
@@ -20,7 +21,7 @@ export function useCreateBanner() {
       toast.success("Banner created");
     },
     onError: (error: any) => {
-      toast.error(error?.response?.data?.message || "Failed to create banner");
+      toast.error(getUserFriendlyErrorMessage(error, "We couldn't save this banner. Please check your connection and try again."));
     },
   });
 }
@@ -35,7 +36,7 @@ export function useUpdateBanner() {
       toast.success("Banner updated");
     },
     onError: (error: any) => {
-      toast.error(error?.response?.data?.message || "Failed to update banner");
+      toast.error(getUserFriendlyErrorMessage(error, "We couldn't save this banner. Please check your connection and try again."));
     },
   });
 }
@@ -49,7 +50,7 @@ export function useDeleteBanner() {
       toast.success("Banner deleted");
     },
     onError: (error: any) => {
-      toast.error(error?.response?.data?.message || "Failed to delete banner");
+      toast.error(getUserFriendlyErrorMessage(error, "We couldn't save this banner. Please check your connection and try again."));
     },
   });
 }

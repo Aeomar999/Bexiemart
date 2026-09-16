@@ -1,3 +1,4 @@
+import { tokens } from "@/theme/tokens";
 import { BackButton } from "@/components/ui/BackButton";
 import {
   View,
@@ -55,7 +56,11 @@ export function EditProfileScreen() {
 
   const handleSave = () => {
     if (!name.trim() || !email.trim()) {
-      Toast.show({ type: "error", text1: "Missing Fields", text2: "Name and Email are required." });
+      Toast.show({
+        type: "error",
+        text1: "Almost there!",
+        text2: "Please provide both your name and email address to save changes.",
+      });
       return;
     }
 
@@ -174,7 +179,7 @@ export function EditProfileScreen() {
                 <TextInput
                   className="text-body-lg font-body text-foreground flex-1"
                   placeholder="Tell us a bit about yourself..."
-                  placeholderTextColor="#94a3b8"
+                  placeholderTextColor={tokens.textMuted}
                   multiline
                   textAlignVertical="top"
                   value={bio}

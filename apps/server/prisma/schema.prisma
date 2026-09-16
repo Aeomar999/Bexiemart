@@ -368,6 +368,7 @@ model OrderItem {
   quantity    Int
   total       Decimal
   imageUrl    String?
+  flashSaleItemId String?
 
   @@index([orderId])
   @@index([productId])
@@ -642,6 +643,7 @@ enum OrderStatus {
   shipped
   delivered
   cancelled
+  refund_requested
   refunded
 }
 

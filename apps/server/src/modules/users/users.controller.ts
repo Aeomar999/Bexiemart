@@ -3,6 +3,7 @@ import { ApiTags, ApiOperation, ApiBody, ApiBearerAuth } from "@nestjs/swagger";
 import { AuthGuard } from "../../guards/auth.guard";
 import { UsersService } from "./users.service";
 import { UpdateProfileDto } from "./dto/update-profile.dto";
+import { UpdatePushTokenDto } from "./dto/update-push-token.dto";
 import { AuthenticatedRequest } from "../../types/request.types";
 
 @ApiBearerAuth()
@@ -23,5 +24,12 @@ export class UsersController {
   @Patch("profile")
   updateProfile(@Req() req: AuthenticatedRequest, @Body() dto: UpdateProfileDto) {
     return this.usersService.updateProfile(req.user.id, dto);
+  }
+
+  @ApiOperation({ summary: "Update push token for notifications" })
+  @ApiBody({ type: UpdatePushTokenDto })
+  @Patch("push-token")
+  updatePushToken(@Req() req: AuthenticatedRequest, @Body() dto: UpdatePushTokenDto) {
+    return this.usersService.updatePushToken(req.user.id, dto.token);
   }
 }

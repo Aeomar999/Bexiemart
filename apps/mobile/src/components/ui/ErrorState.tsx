@@ -1,5 +1,6 @@
 import React from "react";
 import { View, Text, Pressable } from "react-native";
+import { tokens } from "@/theme/tokens";
 import { Icon } from "./Icon";
 
 interface ErrorStateProps {
@@ -21,7 +22,7 @@ export function ErrorState({
       style={fullScreen ? { flex: 1, justifyContent: "center", alignItems: "center" } : undefined}
     >
       <View className="h-20 w-20 rounded-full bg-rose-50 items-center justify-center mb-6">
-        <Icon name="alert-triangle" size={32} color="#ef4444" />
+        <Icon name="alert-triangle" size={32} color={tokens.error} />
       </View>
 
       <Text className="text-display-md font-heading font-black text-foreground mb-3 text-center">
@@ -38,7 +39,7 @@ export function ErrorState({
           accessibilityRole="button"
           accessibilityLabel="Try Again"
           style={({ pressed }) => [{ opacity: pressed ? 0.8 : 1 }]}
-          className="bg-error px-8 py-4 rounded-full flex-row items-center justify-center shadow-md"
+          className="bg-error px-8 py-4 rounded-full flex-row items-center justify-center"
         >
           <View className="mr-2">
             <Icon name="refresh-cw" size={18} color="white" />

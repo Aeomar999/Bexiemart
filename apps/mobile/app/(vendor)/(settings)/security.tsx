@@ -92,7 +92,7 @@ export default function SecurityScreen() {
                 Last changed 3 months ago
               </Text>
             </View>
-            <Icon name="chevron-right" size={20} color="#cbd5e1" />
+            <Icon name="chevron-right" size={20} color={tokens.textDisabled} />
           </Pressable>
           <Pressable
             className="p-4 flex-row justify-between items-center"
@@ -105,7 +105,7 @@ export default function SecurityScreen() {
                 Used for withdrawals
               </Text>
             </View>
-            <Icon name="chevron-right" size={20} color="#cbd5e1" />
+            <Icon name="chevron-right" size={20} color={tokens.textDisabled} />
           </Pressable>
         </View>
 
@@ -127,11 +127,11 @@ export default function SecurityScreen() {
                 <Text className="text-sm text-green-600 font-bold mt-0.5">Enabled</Text>
               </View>
             </View>
-            <Icon name="chevron-right" size={20} color="#cbd5e1" />
+            <Icon name="chevron-right" size={20} color={tokens.textDisabled} />
           </View>
           <Text className="text-sm text-muted-foreground leading-relaxed">
-            We'll ask for a code from your authenticator app when you log in from an unrecognized
-            device or withdraw funds.
+            We&apos;ll ask for a code from your authenticator app when you log in from an
+            unrecognized device or withdraw funds.
           </Text>
         </Pressable>
 
@@ -176,7 +176,7 @@ export default function SecurityScreen() {
                   <Icon
                     name={isMobile ? "smartphone" : "monitor"}
                     size={24}
-                    color="#64748b"
+                    color={tokens.textMuted}
                     style={{ marginRight: 16 }}
                   />
                   <View className="flex-1 mr-2">
@@ -188,7 +188,7 @@ export default function SecurityScreen() {
                     </Text>
                   </View>
                   {isCurrent ? <View className="w-2 h-2 rounded-full bg-green-500 mr-2" /> : null}
-                  <Icon name="more-vertical" size={20} color="#cbd5e1" />
+                  <Icon name="more-vertical" size={20} color={tokens.textDisabled} />
                 </Pressable>
               );
             })
@@ -222,7 +222,7 @@ export default function SecurityScreen() {
                       : "smartphone"
                   }
                   size={32}
-                  color="#64748b"
+                  color={tokens.textMuted}
                 />
               </View>
               <Text className="text-display-sm font-heading font-bold text-foreground">
@@ -241,9 +241,9 @@ export default function SecurityScreen() {
                 disabled={revokeSession.isPending}
               >
                 {revokeSession.isPending ? (
-                  <ActivityIndicator size="small" color="#ef4444" style={{ marginRight: 8 }} />
+                  <ActivityIndicator size="small" color={tokens.error} style={{ marginRight: 8 }} />
                 ) : (
-                  <Icon name="log-out" size={20} color="#ef4444" style={{ marginRight: 8 }} />
+                  <Icon name="log-out" size={20} color={tokens.error} style={{ marginRight: 8 }} />
                 )}
                 <Text className="text-body-lg font-bold text-error">
                   {selectedDevice?.token === currentToken

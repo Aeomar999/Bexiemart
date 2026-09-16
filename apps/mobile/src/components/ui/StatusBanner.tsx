@@ -33,7 +33,7 @@ const VARIANTS: Record<
   primary: {
     wrap: "bg-primary border-primary-hover",
     iconCircle: "bg-card/20",
-    iconColor: "#ffffff",
+    iconColor: tokens.primaryText,
     title: "text-white",
     subtitle: "text-white/80",
     pill: "bg-card/20",
@@ -51,7 +51,7 @@ const VARIANTS: Record<
   critical: {
     wrap: "bg-error border-error",
     iconCircle: "bg-card/20",
-    iconColor: "#ffffff",
+    iconColor: tokens.primaryText,
     title: "text-white",
     subtitle: "text-white/80",
     pill: "bg-card/20",
@@ -76,9 +76,7 @@ export function StatusBanner({
   const v = VARIANTS[variant];
 
   const content = (
-    <View
-      className={`${v.wrap} rounded-2xl p-4 flex-row items-center justify-between shadow-sm border`}
-    >
+    <View className={`${v.wrap} rounded-2xl p-4 flex-row items-center justify-between border`}>
       <View className="flex-row items-center gap-3 flex-1">
         <View className={`w-10 h-10 ${v.iconCircle} rounded-full items-center justify-center`}>
           <Icon name={icon} size={20} color={v.iconColor} />

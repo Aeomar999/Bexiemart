@@ -1,4 +1,5 @@
 import { View, Text, Pressable } from "react-native";
+import { tokens } from "@/theme/tokens";
 import { Icon } from "./Icon";
 import { Image } from "expo-image";
 import { Card } from "./Card";
@@ -47,7 +48,7 @@ export function CategoryCard({
                   contentFit="cover"
                 />
               ) : (
-                <Icon name="image" size={16} color="#cbd5e1" />
+                <Icon name="image" size={16} color={tokens.textDisabled} />
               )}
             </View>
           ))}

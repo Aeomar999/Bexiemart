@@ -37,7 +37,11 @@ export default function ReferralsScreen() {
         text2: "Your referral code is ready!",
       });
     } catch {
-      Toast.show({ type: "error", text1: "Error", text2: "Could not generate referral code." });
+      Toast.show({
+        type: "error",
+        text1: "Oops!",
+        text2: "We couldn't create your referral code right now. Please try again later.",
+      });
     } finally {
       setIsGenerating(false);
     }
@@ -70,12 +74,12 @@ export default function ReferralsScreen() {
 
       <ScrollView className="flex-1" contentContainerStyle={{ padding: 20 }}>
         {/* Banner */}
-        <View className="bg-amber-100 rounded-3xl p-8 items-center border border-amber-200 mb-6 shadow-sm relative overflow-hidden">
+        <View className="bg-amber-100 rounded-3xl p-8 items-center border border-amber-200 mb-6 relative overflow-hidden">
           <View className="absolute top-[-20px] right-[-20px] opacity-10">
-            <Icon name="gift" size={120} color="#d97706" />
+            <Icon name="gift" size={120} color={tokens.warning} />
           </View>
-          <View className="w-20 h-20 bg-amber-500 rounded-full items-center justify-center mb-4 border-4 border-card shadow-lg">
-            <Icon name="gift" size={36} color="#fff" />
+          <View className="w-20 h-20 bg-amber-500 rounded-full items-center justify-center mb-4 border-4 border-card">
+            <Icon name="gift" size={36} color={tokens.primaryText} />
           </View>
           <Text className="text-display-md font-heading font-black text-amber-900 text-center mb-2">
             Get 50 BexieCoins
@@ -86,7 +90,7 @@ export default function ReferralsScreen() {
         </View>
 
         {/* Code Sharing */}
-        <View className="bg-card rounded-2xl p-5 border border-border shadow-sm mb-6">
+        <View className="bg-card rounded-2xl p-5 border border-border mb-6">
           <Text className="text-body-md font-bold text-foreground font-heading mb-4">
             Your Referral Code
           </Text>
@@ -143,7 +147,7 @@ export default function ReferralsScreen() {
         </Text>
         <View className="flex-row gap-4 mb-6">
           <View className="flex-1 bg-card p-5 rounded-2xl border border-border items-center">
-            <Icon name="users" size={24} color="#64748b" />
+            <Icon name="users" size={24} color={tokens.textMuted} />
             <Text className="text-display-md font-heading font-black text-foreground mt-2">
               {referredCount}
             </Text>
@@ -152,7 +156,7 @@ export default function ReferralsScreen() {
             </Text>
           </View>
           <View className="flex-1 bg-card p-5 rounded-2xl border border-border items-center">
-            <Icon name="award" size={24} color="#f59e0b" />
+            <Icon name="award" size={24} color={tokens.warning} />
             <Text className="text-display-md font-heading font-black text-amber-500 mt-2">
               {rewardsEarned}
             </Text>

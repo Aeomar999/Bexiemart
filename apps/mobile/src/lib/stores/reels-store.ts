@@ -15,6 +15,7 @@ export interface ReelProduct {
   id: string; // product ID to link to
   name: string;
   price: number;
+  stock: number;
 }
 
 export interface Reel {

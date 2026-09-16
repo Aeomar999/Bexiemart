@@ -9,8 +9,8 @@ const KEY = process.env.EXPO_PUBLIC_PAYSTACK_PUBLIC_KEY ?? "";
  * it must never ship silently.
  */
 export function PaymentTestModeBanner() {
-  if (!KEY.startsWith("pk_test_")) return null;
   const insets = useSafeAreaInsets();
+  if (!KEY.startsWith("pk_test_")) return null;
   return (
     <View
       accessibilityRole="alert"

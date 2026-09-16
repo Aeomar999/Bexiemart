@@ -79,7 +79,7 @@ export default function VendorPromotionsScreen() {
             <View className="absolute top-0 right-0 w-32 h-32 bg-card/10 rounded-full -mr-10 -mt-10" />
             <View className="flex-row items-center justify-between mb-2">
               <View className="flex-row items-center">
-                <Icon name="zap" size={20} color="#fcd34d" style={{ marginRight: 8 }} />
+                <Icon name="zap" size={20} color={tokens.warning} style={{ marginRight: 8 }} />
                 <Text className="text-heading-md font-heading font-black text-white">
                   BexieMart Flash Sales
                 </Text>
@@ -87,8 +87,8 @@ export default function VendorPromotionsScreen() {
               <Switch
                 value={false}
                 onValueChange={() => {}}
-                trackColor={{ false: "rgba(255,255,255,0.3)", true: "#10b981" }}
-                thumbColor={"#ffffff"}
+                trackColor={{ false: "rgba(255,255,255,0.3)", true: tokens.success }}
+                thumbColor={tokens.primaryText}
               />
             </View>
             <Text className="text-body-md text-white/80 leading-relaxed">
@@ -116,7 +116,7 @@ export default function VendorPromotionsScreen() {
                 className="bg-card rounded-xl border border-border p-4 flex-row items-center"
               >
                 <View className="w-12 h-12 rounded-full bg-background items-center justify-center mr-4 border border-border border-dashed">
-                  <Icon name="tag" size={20} color="#64748b" />
+                  <Icon name="tag" size={20} color={tokens.textMuted} />
                 </View>
                 <View className="flex-1">
                   <View className="flex-row items-center mb-1">
@@ -141,7 +141,7 @@ export default function VendorPromotionsScreen() {
                   value={promo.active}
                   onValueChange={() => toggleCoupon.mutate(promo.id)}
                   trackColor={{ false: "#e2e8f0", true: tokens.primary }}
-                  thumbColor={"#ffffff"}
+                  thumbColor={tokens.primaryText}
                 />
               </View>
             ))}

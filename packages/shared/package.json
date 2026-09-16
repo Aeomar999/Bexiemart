@@ -4,6 +4,17 @@
   "private": true,
   "main": "./src/schemas.ts",
   "types": "./src/schemas.ts",
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "test": "jest"
+  },
+  "devDependencies": {
+    "@types/jest": "^29.5.13",
+    "jest": "^29.7.0",
+    "ts-jest": "^29.2.5",
+    "typescript": "^5.6.3",
+    "zod": "^3.23.8"
+  },
   "peerDependencies": {
     "zod": "^3.0.0 || ^4.0.0"
   }

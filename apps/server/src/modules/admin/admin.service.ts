@@ -5,17 +5,22 @@ import {
   ConflictException,
   BadRequestException,
   Inject,
+  Logger,
 } from "@nestjs/common";
 import { UserRole } from "@prisma/client";
 import { PrismaService } from "../../prisma/prisma.service";
 import { AUTH } from "../../auth/auth.constants";
 import { UpdateConfigDto } from "./dto/update-config.dto";
 import { CreateAdminDto } from "./dto/create-admin.dto";
+import { NotificationsService } from "../notifications/notifications.service";
 
 @Injectable()
 export class AdminService {
+  private readonly logger = new Logger("AdminService");
+
   constructor(
     private readonly prisma: PrismaService,
+    private readonly notifications: NotificationsService,
     @Inject(AUTH) private readonly auth: any
   ) {}
 
@@ -305,9 +310,30 @@ export class AdminService {
   }
 
   async updateOrderStatus(id: string, status: string) {
-    const order = await this.prisma.order.findUnique({ where: { id } });
-    if (!order) throw new NotFoundException("Order not found");
-    return this.prisma.order.update({ where: { id }, data: { status: status as any } });
+    const order = await this.prisma.order.update({
+      where: { id },
+      data: { status: status as any },
+    });
+
+    // Trigger push notification if shipped or delivered
+    if (status === "shipped" || status === "delivered") {
+      try {
+        const title = status === "shipped" ? "Order Shipped!" : "Order Delivered!";
+        const body =
+          status === "shipped"
+            ? `Your order #${order.orderNumber} has been shipped and is on its way.`
+            : `Your order #${order.orderNumber} has been successfully delivered. Enjoy!`;
+
+        await this.notifications.sendPushNotification(order.userId, title, body, {
+          orderId: order.id,
+          status,
+        });
+      } catch (err) {
+        this.logger.error(`Failed to send push notification for order ${id}:`, err);
+      }
+    }
+
+    return order;
   }
 
   // ─── Disputes ──────────────────────────────────────────────────────────────────
@@ -371,68 +397,92 @@ export class AdminService {
       });
       if (!vendorWallet) throw new NotFoundException("Vendor wallet not found");
 
-      return this.prisma.$transaction(async (tx) => {
-        const txn = await tx.transaction.create({
-          data: {
-            walletId: vendorWallet.id,
-            type: "EARNINGS",
-            status: "COMPLETED",
-            amount: escrow.amount,
-            fee: Number(escrow.commission),
-            netAmount: Number(escrow.netAmount),
-            reference,
-            description: `Admin dispute resolution (RELEASE): ${reason}`,
-            counterpartyWalletId: escrow.buyerWalletId,
-          },
-        });
+      return this.prisma.$transaction(
+        async (tx) => {
+          // Claim the escrow atomically BEFORE moving money. Two concurrent
+          // resolvers (or an admin racing a user-side release/refund) can never
+          // both pass this guard, so the payout happens exactly once. If any
+          // later statement fails, the claim rolls back with the rest.
+          const claim = await tx.escrow.updateMany({
+            where: { id, status: "DISPUTED" },
+            data: { status: "RELEASED" },
+          });
+          if (claim.count === 0) {
+            throw new ConflictException("Escrow has already been resolved");
+          }
 
-        await tx.wallet.update({
-          where: { id: vendorWallet.id },
-          data: { balance: { increment: Number(escrow.netAmount) } },
-        });
+          const txn = await tx.transaction.create({
+            data: {
+              walletId: vendorWallet.id,
+              type: "EARNINGS",
+              status: "COMPLETED",
+              amount: escrow.amount,
+              fee: Number(escrow.commission),
+              netAmount: Number(escrow.netAmount),
+              reference,
+              description: `Admin dispute resolution (RELEASE): ${reason}`,
+              counterpartyWalletId: escrow.buyerWalletId,
+            },
+          });
 
-        return tx.escrow.update({
-          where: { id },
-          data: {
-            status: "RELEASED",
-            releasedAt: new Date(),
-            releasedTxnId: txn.id,
-            vendorWalletId: vendorWallet.id,
-            reason: `Admin resolved: RELEASED - ${reason}`,
-          },
-        });
-      });
+          await tx.wallet.update({
+            where: { id: vendorWallet.id },
+            data: { balance: { increment: Number(escrow.netAmount) } },
+          });
+
+          return tx.escrow.update({
+            where: { id },
+            data: {
+              releasedAt: new Date(),
+              releasedTxnId: txn.id,
+              vendorWalletId: vendorWallet.id,
+              reason: `Admin resolved: RELEASED - ${reason}`,
+            },
+          });
+        },
+        { isolationLevel: "Serializable" }
+      );
     } else {
-      return this.prisma.$transaction(async (tx) => {
-        const txn = await tx.transaction.create({
-          data: {
-            walletId: escrow.buyerWalletId,
-            type: "REVERSAL",
-            status: "COMPLETED",
-            amount: escrow.amount,
-            fee: 0,
-            netAmount: Number(escrow.amount),
-            reference,
-            description: `Admin dispute resolution (REFUND): ${reason}`,
-            counterpartyWalletId: escrow.vendorWalletId,
-          },
-        });
+      return this.prisma.$transaction(
+        async (tx) => {
+          const claim = await tx.escrow.updateMany({
+            where: { id, status: "DISPUTED" },
+            data: { status: "REFUNDED" },
+          });
+          if (claim.count === 0) {
+            throw new ConflictException("Escrow has already been resolved");
+          }
 
-        await tx.wallet.update({
-          where: { id: escrow.buyerWalletId },
-          data: { balance: { increment: Number(escrow.amount) } },
-        });
+          const txn = await tx.transaction.create({
+            data: {
+              walletId: escrow.buyerWalletId,
+              type: "REVERSAL",
+              status: "COMPLETED",
+              amount: escrow.amount,
+              fee: 0,
+              netAmount: Number(escrow.amount),
+              reference,
+              description: `Admin dispute resolution (REFUND): ${reason}`,
+              counterpartyWalletId: escrow.vendorWalletId,
+            },
+          });
 
-        return tx.escrow.update({
-          where: { id },
-          data: {
-            status: "REFUNDED",
-            refundedAt: new Date(),
-            refundedTxnId: txn.id,
-            reason: `Admin resolved: REFUNDED - ${reason}`,
-          },
-        });
-      });
+          await tx.wallet.update({
+            where: { id: escrow.buyerWalletId },
+            data: { balance: { increment: Number(escrow.amount) } },
+          });
+
+          return tx.escrow.update({
+            where: { id },
+            data: {
+              refundedAt: new Date(),
+              refundedTxnId: txn.id,
+              reason: `Admin resolved: REFUNDED - ${reason}`,
+            },
+          });
+        },
+        { isolationLevel: "Serializable" }
+      );
     }
   }
 

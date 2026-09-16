@@ -36,7 +36,7 @@ export default function ForgotPasswordScreen() {
       {sent ? (
         <View className="flex-1 items-center justify-start">
           <View className="w-24 h-24 rounded-full bg-success-light items-center justify-center mb-6 border border-success/10">
-            <FontAwesome5 name="check-circle" size={40} color="#00D084" solid />
+            <FontAwesome5 name="check-circle" size={40} color={tokens.success} solid />
           </View>
           <Text className="text-display-sm font-heading font-bold text-foreground text-center mb-3">
             Check your email
@@ -63,7 +63,7 @@ export default function ForgotPasswordScreen() {
             Forgot password?
           </Text>
           <Text className="text-body-lg text-muted-foreground font-body mb-8">
-            Enter your email and we'll send you a reset link
+            Enter your email and we&apos;ll send you a reset link
           </Text>
 
           <View className="bg-card p-6 rounded-3xl border border-border gap-5">
@@ -74,7 +74,7 @@ export default function ForgotPasswordScreen() {
               autoCapitalize="none"
               value={email}
               onChangeText={setEmail}
-              leftIcon={<FontAwesome5 name="envelope" size={16} color="#94A3B8" solid />}
+              leftIcon={<FontAwesome5 name="envelope" size={16} color={tokens.textMuted} solid />}
             />
 
             <View className="w-full mt-2">

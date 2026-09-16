@@ -12,6 +12,7 @@ export const MOCK_USER = {
   name: "Test User",
   role: "CUSTOMER",
   phoneNumber: "0240000000",
+  emailVerified: true,
 };
 
 export const MOCK_VENDOR_PROFILE = {

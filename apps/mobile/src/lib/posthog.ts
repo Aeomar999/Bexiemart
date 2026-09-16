@@ -10,13 +10,8 @@ if (process.env.EXPO_PUBLIC_POSTHOG_API_KEY && process.env.EXPO_PUBLIC_POSTHOG_H
     host: process.env.EXPO_PUBLIC_POSTHOG_HOST,
     enableSessionReplay: false, // Session replay disabled on mobile normally
     captureAppLifecycleEvents: true, // Auto-capture app opens/backgrounds
-    captureDeepLinks: true, // Auto-capture deep links
     bootstrap: {
       distinctId: Device.osBuildId || Application.applicationId || "anonymous",
-    },
-    customCoreProperties: {
-      appVersion: Application.nativeApplicationVersion || "dev",
-      buildNumber: Application.nativeBuildVersion || "dev",
     },
   });
 }

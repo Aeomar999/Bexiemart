@@ -3,6 +3,9 @@ dotenv.config();
 
 import { PrismaClient, BannerPlacement, Prisma } from "@prisma/client";
 import { PrismaPg } from "@prisma/adapter-pg";
+import { Logger } from "@nestjs/common";
+
+const logger = new Logger("SeedBanners");
 
 const adapter = new PrismaPg({ connectionString: process.env.DATABASE_URL });
 const prisma = new PrismaClient({ adapter });
@@ -97,7 +100,7 @@ const BANNERS: Prisma.BannerCreateInput[] = [
 ];
 
 async function main() {
-  console.log(`Seeding ${BANNERS.length} promotional banners...`);
+  logger.log(`Seeding ${BANNERS.length} promotional banners...`);
   try {
     for (const banner of BANNERS) {
       const { id, ...rest } = banner;
@@ -107,9 +110,9 @@ async function main() {
         create: banner,
       });
     }
-    console.log(`Banners ready: ${BANNERS.map((b) => b.id).join(", ")}`);
+    logger.log(`Banners ready: ${BANNERS.map((b) => b.id).join(", ")}`);
   } catch (error) {
-    console.error("Failed to seed banners:", error);
+    logger.error("Failed to seed banners:", error as Error);
     process.exit(1);
   } finally {
     await prisma.$disconnect();

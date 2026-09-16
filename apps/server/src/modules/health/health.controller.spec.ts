@@ -13,9 +13,7 @@ describe("HealthController", () => {
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       controllers: [HealthController],
-      providers: [
-        { provide: HealthService, useValue: mockService },
-      ],
+      providers: [{ provide: HealthService, useValue: mockService }],
     }).compile();
 
     controller = module.get<HealthController>(HealthController);
@@ -32,7 +30,7 @@ describe("HealthController", () => {
 
   describe("check", () => {
     it("should call service.checkDatabase and return health status", async () => {
-      const dbResult = { connected: true };
+      const dbResult = { status: "healthy", latencyMs: 12 };
       mockService.checkDatabase.mockResolvedValue(dbResult);
 
       const result = await controller.check();

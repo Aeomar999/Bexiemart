@@ -60,7 +60,7 @@ export default function HelpCenterScreen() {
             </View>
             <View className="bg-primary px-3.5 py-2 rounded-xl flex-row items-center gap-1">
               <Text className="text-caption font-bold text-white">View</Text>
-              <Icon name="chevron-right" size={14} color="#ffffff" />
+              <Icon name="chevron-right" size={14} color={tokens.primaryText} />
             </View>
           </Pressable>
 
@@ -73,7 +73,7 @@ export default function HelpCenterScreen() {
             return (
               <Pressable
                 key={i}
-                className={`bg-card p-5 rounded-2xl border ${isExpanded ? "border-border shadow-sm" : "border-border"}`}
+                className={`bg-card p-5 rounded-2xl border border-border`}
                 onPress={() => setExpandedIndex(isExpanded ? null : i)}
               >
                 <View className="flex-row justify-between items-center">
@@ -83,7 +83,7 @@ export default function HelpCenterScreen() {
                   <Icon
                     name={isExpanded ? "chevron-up" : "chevron-down"}
                     size={20}
-                    color={isExpanded ? tokens.primary : "#64748b"}
+                    color={isExpanded ? tokens.primary : tokens.textMuted}
                   />
                 </View>
                 {isExpanded && (

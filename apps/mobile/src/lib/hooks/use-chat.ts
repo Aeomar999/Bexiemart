@@ -1,6 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import { useSocketStore } from "../stores/socket-store";
+import { socketService } from "../socket";
 import { useAuthStore } from "../stores/auth-store";
 import { chatApi } from "../api/chat";
 
@@ -45,8 +46,7 @@ export function useCreateConversation() {
 export function useMarkAsRead() {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: (conversationId: string) =>
-      chatApi.markAsRead(conversationId).then((r) => r.data),
+    mutationFn: (conversationId: string) => chatApi.markAsRead(conversationId).then((r) => r.data),
     onSuccess: () => qc.invalidateQueries({ queryKey: CHAT_KEYS.conversations }),
   });
 }
@@ -54,7 +54,8 @@ export function useMarkAsRead() {
 export function useChatMessages(conversationId: string, page = 1) {
   const qc = useQueryClient();
   const { user } = useAuthStore();
-  const { socket, isConnected, enqueueMessage } = useSocketStore();
+  const { isConnected, enqueueMessage } = useSocketStore();
+  const socket = socketService.get();
   const [typingUsers, setTypingUsers] = useState<Record<string, boolean>>({});
 
   const messagesQuery = useMessages(conversationId, page);
@@ -62,13 +63,13 @@ export function useChatMessages(conversationId: string, page = 1) {
   useEffect(() => {
     if (!socket || !conversationId) return;
 
-    socket.emit('join_conversation', { conversationId });
+    socket.emit("join_conversation", { conversationId });
 
     const handleNewMessage = (message: any) => {
       qc.setQueryData(CHAT_KEYS.messages(conversationId, page), (oldData: any) => {
         if (!oldData) return oldData;
-        const messages = Array.isArray(oldData) ? oldData : (oldData.messages || oldData.data || []);
-        
+        const messages = Array.isArray(oldData) ? oldData : oldData.messages || oldData.data || [];
+
         const exists = messages.find((m: any) => m.id === message.id);
         if (exists) return oldData;
 
@@ -81,34 +82,38 @@ export function useChatMessages(conversationId: string, page = 1) {
 
     const handleTyping = (data: { conversationId: string; userId: string; isTyping: boolean }) => {
       if (data.conversationId === conversationId && data.userId !== user?.id) {
-        setTypingUsers(prev => ({ ...prev, [data.userId]: data.isTyping }));
+        setTypingUsers((prev) => ({ ...prev, [data.userId]: data.isTyping }));
       }
     };
 
-    socket.on('new_message', handleNewMessage);
-    socket.on('typing', handleTyping);
+    socket.on("new_message", handleNewMessage);
+    socket.on("typing", handleTyping);
 
     return () => {
-      socket.emit('leave_conversation', { conversationId });
-      socket.off('new_message', handleNewMessage);
-      socket.off('typing', handleTyping);
+      socket.emit("leave_conversation", { conversationId });
+      socket.off("new_message", handleNewMessage);
+      socket.off("typing", handleTyping);
     };
-  }, [socket, conversationId, page, qc, user?.id]);
+  }, [socket, isConnected, conversationId, page, qc, user?.id]);
 
   const sendMessage = useMutation({
-    mutationFn: async (payload: { content?: string; type: 'TEXT' | 'IMAGE'; mediaUrl?: string }) => {
+    mutationFn: async (payload: {
+      content?: string;
+      type: "TEXT" | "IMAGE";
+      mediaUrl?: string;
+    }) => {
       const message = {
         conversationId,
         senderId: user?.id,
         ...payload,
-        id: 'temp-' + Date.now(),
+        id: "temp-" + Date.now(),
         createdAt: new Date().toISOString(),
-        status: 'PENDING'
+        status: "PENDING",
       };
 
       qc.setQueryData(CHAT_KEYS.messages(conversationId, page), (oldData: any) => {
         if (!oldData) return oldData;
-        const messages = Array.isArray(oldData) ? oldData : (oldData.messages || oldData.data || []);
+        const messages = Array.isArray(oldData) ? oldData : oldData.messages || oldData.data || [];
         if (!Array.isArray(oldData)) {
           return { ...oldData, data: [message, ...messages] };
         }
@@ -116,17 +121,17 @@ export function useChatMessages(conversationId: string, page = 1) {
       });
 
       if (isConnected && socket) {
-        socket.emit('send_message', { conversationId, ...payload });
+        socket.emit("send_message", { conversationId, ...payload });
       } else {
         enqueueMessage({ conversationId, ...payload });
       }
       return message;
-    }
+    },
   });
 
   const sendTypingEvent = (isTyping: boolean) => {
     if (socket && isConnected) {
-      socket.emit('typing', { conversationId, isTyping });
+      socket.emit("typing", { conversationId, isTyping });
     }
   };
 

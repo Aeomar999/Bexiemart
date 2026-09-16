@@ -95,7 +95,7 @@ export default function PaymentMethodsScreen() {
     ) {
       Toast.show({
         type: "error",
-        text1: "Missing Fields",
+        text1: "Almost there!",
         text2: "Please fill out all required fields.",
       });
       return;
@@ -156,7 +156,7 @@ export default function PaymentMethodsScreen() {
             <Pressable
               style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
               key={method.id}
-              className={`bg-card rounded-2xl p-5 border shadow-lg ${method.isDefault ? "border-primary bg-primary-subtle/20" : "border-border"}`}
+              className={`bg-card rounded-2xl p-5 border ${method.isDefault ? "border-primary bg-primary-subtle/20" : "border-border"}`}
               onPress={() => handleSetDefault(method.id)}
             >
               <View className="flex-row justify-between items-start mb-4">
@@ -205,7 +205,7 @@ export default function PaymentMethodsScreen() {
                     }}
                     className="w-6 h-6 items-center justify-center bg-rose-50 rounded-full border border-rose-100"
                   >
-                    <Icon name="trash-2" size={12} color="#ef4444" />
+                    <Icon name="trash-2" size={12} color={tokens.error} />
                   </Pressable>
                 </View>
               </View>
@@ -261,10 +261,7 @@ export default function PaymentMethodsScreen() {
 
       {/* Payment Method Form Modal Overlay */}
       {isModalVisible && (
-        <View
-          className="absolute inset-0 z-50 flex-1 justify-end bg-black/50"
-          style={{ elevation: 100 }}
-        >
+        <View className="absolute inset-0 z-50 flex-1 justify-end bg-black/50">
           <KeyboardAvoidingView
             behavior={Platform.OS === "ios" ? "padding" : "height"}
             className="flex-1 justify-end"
@@ -284,7 +281,7 @@ export default function PaymentMethodsScreen() {
                   onPress={() => setIsModalVisible(false)}
                   className="w-8 h-8 rounded-full bg-muted items-center justify-center"
                 >
-                  <Icon name="x" size={16} color="#64748b" />
+                  <Icon name="x" size={16} color={tokens.textMuted} />
                 </Pressable>
               </View>
 
@@ -309,7 +306,7 @@ export default function PaymentMethodsScreen() {
                       <Icon
                         name={opt.icon}
                         size={18}
-                        color={formData.type === opt.type ? tokens.primary : "#64748b"}
+                        color={formData.type === opt.type ? tokens.primary : tokens.textMuted}
                       />
                       <Text
                         className={`text-body-sm mt-1 font-bold ${formData.type === opt.type ? "text-primary-hover" : "text-muted-foreground"}`}

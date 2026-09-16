@@ -1,5 +1,6 @@
 import React from "react";
 import { View, Text, Pressable, Alert } from "react-native";
+import { tokens } from "@/theme/tokens";
 import { Image } from "expo-image";
 import { Icon } from "@/components/ui/Icon";
 import * as ImagePicker from "expo-image-picker";
@@ -76,7 +77,7 @@ export function PhotoPicker({
                 onPress={() => removeImage(idx)}
                 className="absolute top-1 right-1 w-6 h-6 bg-black/50 rounded-full items-center justify-center"
               >
-                <Icon name="x" size={14} color="#fff" />
+                <Icon name="x" size={14} color={tokens.primaryText} />
               </Pressable>
             </View>
           ))}
@@ -88,7 +89,7 @@ export function PhotoPicker({
               className="w-[30%] bg-muted rounded-xl items-center justify-center border-2 border-dashed border-border"
               style={{ aspectRatio: 1 }}
             >
-              <Icon name="plus" size={24} color="#64748b" />
+              <Icon name="plus" size={24} color={tokens.textMuted} />
             </Pressable>
           )}
         </View>
@@ -101,7 +102,7 @@ export function PhotoPicker({
           className="w-full h-48 bg-muted rounded-2xl items-center justify-center border-2 border-dashed border-border mb-8"
         >
           <View className="w-14 h-14 bg-card rounded-full items-center justify-center mb-3">
-            <Icon name="camera" size={24} color="#64748b" />
+            <Icon name="camera" size={24} color={tokens.textMuted} />
           </View>
           <Text className="text-body-md font-bold text-muted-foreground">Add Photos</Text>
           <Text className="text-body-sm text-muted-foreground mt-1">

@@ -113,7 +113,7 @@ export default function TaxesDocumentsScreen() {
               <Icon
                 name="shield"
                 size={20}
-                color="#2563eb"
+                color={tokens.secondary}
                 style={{ marginRight: 12, marginTop: 2 }}
               />
               <View className="flex-1">
@@ -130,7 +130,7 @@ export default function TaxesDocumentsScreen() {
               <Icon
                 name="alert-circle"
                 size={20}
-                color="#d97706"
+                color={tokens.warning}
                 style={{ marginRight: 12, marginTop: 2 }}
               />
               <View className="flex-1">
@@ -138,8 +138,8 @@ export default function TaxesDocumentsScreen() {
                   Verification Required
                 </Text>
                 <Text className="text-sm text-amber-700 leading-relaxed">
-                  Please complete your KYC to increase your withdrawal limits and get the "Verified
-                  Vendor" badge.
+                  Please complete your KYC to increase your withdrawal limits and get the
+                  &quot;Verified Vendor&quot; badge.
                 </Text>
               </View>
             </View>
@@ -205,7 +205,7 @@ export default function TaxesDocumentsScreen() {
               onPress={() => setUploadModalVisible(true)}
               className="border-2 border-dashed border-border rounded-xl p-6 items-center justify-center bg-primary-subtle"
             >
-              <View className="w-12 h-12 rounded-full bg-card items-center justify-center mb-3 shadow-sm border border-border">
+              <View className="w-12 h-12 rounded-full bg-card items-center justify-center mb-3 border border-border">
                 <Icon name="upload-cloud" size={20} color={tokens.primary} />
               </View>
               <Text className="text-body-lg font-bold text-primary-hover mb-1">Tap to Upload</Text>
@@ -221,7 +221,7 @@ export default function TaxesDocumentsScreen() {
                   >
                     <View className="flex-row items-center flex-1 pr-2">
                       <View className="w-8 h-8 rounded-full bg-secondary items-center justify-center mr-3">
-                        <Icon name="file-text" size={14} color="#64748b" />
+                        <Icon name="file-text" size={14} color={tokens.textMuted} />
                       </View>
                       <View className="flex-1">
                         <Text className="text-sm font-bold text-foreground" numberOfLines={1}>
@@ -242,7 +242,7 @@ export default function TaxesDocumentsScreen() {
                       onPress={() => removeDocument(doc.id)}
                       className="w-8 h-8 items-center justify-center rounded-full bg-rose-50"
                     >
-                      <Icon name="x" size={16} color="#ef4444" />
+                      <Icon name="x" size={16} color={tokens.error} />
                     </Pressable>
                   </View>
                 ))}
@@ -293,7 +293,7 @@ export default function TaxesDocumentsScreen() {
                   onPress={() => handleUploadOption("photo")}
                 >
                   <View className="w-12 h-12 bg-card rounded-full items-center justify-center border border-border">
-                    <Icon name="camera" size={20} color="#0f172a" />
+                    <Icon name="camera" size={20} color={tokens.textPrimary} />
                   </View>
                   <View className="ml-4 flex-1">
                     <Text className="text-body-lg font-bold text-foreground mb-0.5">
@@ -311,7 +311,7 @@ export default function TaxesDocumentsScreen() {
                   onPress={() => handleUploadOption("library")}
                 >
                   <View className="w-12 h-12 bg-card rounded-full items-center justify-center border border-border">
-                    <Icon name="image" size={20} color="#0f172a" />
+                    <Icon name="image" size={20} color={tokens.textPrimary} />
                   </View>
                   <View className="ml-4 flex-1">
                     <Text className="text-body-lg font-bold text-foreground mb-0.5">
@@ -329,7 +329,7 @@ export default function TaxesDocumentsScreen() {
                   onPress={() => handleUploadOption("file")}
                 >
                   <View className="w-12 h-12 bg-card rounded-full items-center justify-center border border-border">
-                    <Icon name="file" size={20} color="#0f172a" />
+                    <Icon name="file" size={20} color={tokens.textPrimary} />
                   </View>
                   <View className="ml-4 flex-1">
                     <Text className="text-body-lg font-bold text-foreground mb-0.5">

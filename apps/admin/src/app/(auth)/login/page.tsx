@@ -6,6 +6,7 @@ import { useLogin } from "../../../lib/hooks/use-auth";
 import { Button } from "../../../components/ui/Button";
 import { Input } from "../../../components/ui/Input";
 import { toast } from "sonner";
+import { getUserFriendlyErrorMessage } from "@/lib/error-utils";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -32,7 +33,7 @@ export default function LoginPage() {
           }
         },
         onError: (err: any) => {
-          toast.error(err.response?.data?.message || err.message || "Failed to login");
+          toast.error(getUserFriendlyErrorMessage(err, "We couldn't log you in. Please check your credentials and try again."));
         },
       }
     );
@@ -41,7 +42,7 @@ export default function LoginPage() {
   const handleVerifyTotp = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!totpCode || totpCode.length < 6) {
-      toast.error("Please enter a valid 6-digit verification code");
+      toast.error("Please enter a valid 6-digit code.");
       return;
     }
     setIsVerifying(true);
@@ -58,7 +59,7 @@ export default function LoginPage() {
       toast.success("Successfully logged in");
       router.push("/");
     } catch (err: any) {
-      toast.error(err.message || "Failed to verify 2FA code");
+      toast.error(getUserFriendlyErrorMessage(err, "The code you entered didn't work. Please request a new one or try again."));
     } finally {
       setIsVerifying(false);
     }

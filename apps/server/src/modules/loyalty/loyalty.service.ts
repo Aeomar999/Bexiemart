@@ -44,28 +44,39 @@ export class LoyaltyService {
     if (coins % COINS_PER_GHS !== 0)
       throw new BadRequestException(`Convert in multiples of ${COINS_PER_GHS} coins`);
 
-    return this.prisma.$transaction(async (tx) => {
-      const wallet = await tx.wallet.findUnique({ where: { userId } });
-      if (!wallet) throw new NotFoundException("Wallet not found");
-      if (wallet.bexieCoins < coins) throw new BadRequestException("Not enough coins");
+    return this.prisma.$transaction(
+      async (tx) => {
+        const wallet = await tx.wallet.findUnique({ where: { userId } });
+        if (!wallet) throw new NotFoundException("Wallet not found");
 
-      const cash = coins / COINS_PER_GHS;
-      const updated = await tx.wallet.update({
-        where: { id: wallet.id },
-        data: { bexieCoins: { decrement: coins }, balance: { increment: cash } },
-      });
-      await tx.transaction.create({
-        data: {
-          walletId: wallet.id,
-          type: "TOPUP",
-          status: "COMPLETED",
-          amount: cash,
-          netAmount: cash,
-          reference: `coins_${wallet.id.substring(0, 8)}_${coins}_${wallet.bexieCoins}`,
-          description: `Converted ${coins} BexieCoins`,
-        },
-      });
-      return { coinsBalance: updated.bexieCoins, walletBalance: Number(updated.balance) };
-    });
+        // Guarded atomic decrement: two concurrent conversions can never both
+        // pass, so the coin balance can't go negative and cash can't be minted
+        // twice from the same coins.
+        const claim = await tx.wallet.updateMany({
+          where: { id: wallet.id, bexieCoins: { gte: coins } },
+          data: { bexieCoins: { decrement: coins } },
+        });
+        if (claim.count === 0) throw new BadRequestException("Not enough coins");
+
+        const cash = coins / COINS_PER_GHS;
+        const updated = await tx.wallet.update({
+          where: { id: wallet.id },
+          data: { balance: { increment: cash } },
+        });
+        await tx.transaction.create({
+          data: {
+            walletId: wallet.id,
+            type: "TOPUP",
+            status: "COMPLETED",
+            amount: cash,
+            netAmount: cash,
+            reference: `coins_${wallet.id.substring(0, 8)}_${coins}_${Date.now()}`,
+            description: `Converted ${coins} BexieCoins`,
+          },
+        });
+        return { coinsBalance: updated.bexieCoins, walletBalance: Number(updated.balance) };
+      },
+      { isolationLevel: "Serializable" }
+    );
   }
 }

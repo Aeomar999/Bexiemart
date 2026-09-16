@@ -1,3 +1,4 @@
+import { tokens } from "@/theme/tokens";
 import { BackButton } from "@/components/ui/BackButton";
 import {
   View,
@@ -135,7 +136,7 @@ export default function AddBankAccountScreen() {
         {/* Info Banner */}
         <View className="mx-5 mb-6 bg-blue-50 rounded-2xl p-4 flex-row items-start">
           <View className="w-8 h-8 rounded-full bg-blue-100 items-center justify-center mr-3 mt-0.5">
-            <Icon name="shield" size={16} color="#2563EB" />
+            <Icon name="shield" size={16} color={tokens.primary} />
           </View>
           <View className="flex-1">
             <Text className="text-blue-900 font-bold text-sm mb-0.5">Secure & Verified</Text>
@@ -146,7 +147,7 @@ export default function AddBankAccountScreen() {
         </View>
 
         <View className="px-5">
-          <View className="bg-white rounded-3xl p-5 border border-gray-100 shadow-sm">
+          <View className="bg-white rounded-3xl p-5 border border-gray-100">
             {/* Bank Selector */}
             <View className="mb-5">
               <Text className="text-gray-500 text-xs font-bold uppercase tracking-wider mb-2 ml-1">
@@ -157,7 +158,7 @@ export default function AddBankAccountScreen() {
                 className="bg-gray-50 flex-row items-center justify-between rounded-2xl px-4 py-4 border border-gray-200"
               >
                 <View className="flex-row items-center">
-                  <Icon name="building" size={18} color="#9ca3af" />
+                  <Icon name="building" size={18} color={tokens.textMuted} />
                   <Text
                     className={`ml-3 font-medium ${selectedBank ? "text-gray-900" : "text-gray-400"}`}
                   >
@@ -167,7 +168,7 @@ export default function AddBankAccountScreen() {
                 <Icon
                   name={showBankPicker ? "chevron-up" : "chevron-down"}
                   size={18}
-                  color="#9ca3af"
+                  color={tokens.textMuted}
                 />
               </Pressable>
 
@@ -213,17 +214,17 @@ export default function AddBankAccountScreen() {
                 Account Number
               </Text>
               <View className="bg-gray-50 flex-row items-center rounded-2xl px-4 border border-gray-200">
-                <Icon name="hash" size={18} color="#9ca3af" />
+                <Icon name="hash" size={18} color={tokens.textMuted} />
                 <TextInput
                   className="flex-1 py-4 px-3 text-gray-900 font-medium font-mono"
                   placeholder="Enter account number"
-                  placeholderTextColor="#9ca3af"
+                  placeholderTextColor={tokens.textMuted}
                   keyboardType="number-pad"
                   maxLength={16}
                   value={accountNumber}
                   onChangeText={setAccountNumber}
                 />
-                {resolving && <ActivityIndicator size="small" color="#2563EB" />}
+                {resolving && <ActivityIndicator size="small" color={tokens.primary} />}
               </View>
             </View>
 
@@ -231,7 +232,7 @@ export default function AddBankAccountScreen() {
             {resolvedName ? (
               <View className="mb-5 bg-green-50 rounded-2xl p-4 flex-row items-center border border-green-100">
                 <View className="w-10 h-10 rounded-full bg-green-100 items-center justify-center mr-3">
-                  <Icon name="check-circle" size={20} color="#059669" />
+                  <Icon name="check-circle" size={20} color={tokens.success} />
                 </View>
                 <View className="flex-1">
                   <Text className="text-green-800 text-xs font-bold uppercase tracking-wider mb-0.5">
@@ -243,7 +244,7 @@ export default function AddBankAccountScreen() {
             ) : resolveError ? (
               <View className="mb-5 bg-red-50 rounded-2xl p-4 flex-row items-center border border-red-100">
                 <View className="w-10 h-10 rounded-full bg-red-100 items-center justify-center mr-3">
-                  <Icon name="x-circle" size={20} color="#DC2626" />
+                  <Icon name="x-circle" size={20} color={tokens.error} />
                 </View>
                 <View className="flex-1">
                   <Text className="text-red-700 text-sm">{resolveError}</Text>
@@ -258,23 +259,12 @@ export default function AddBankAccountScreen() {
               className={`w-full rounded-2xl py-4 flex-row justify-center items-center ${
                 !resolvedName || linkBankAccount.isPending ? "bg-gray-300" : "bg-blue-600"
               }`}
-              style={
-                resolvedName
-                  ? {
-                      shadowColor: "#2563EB",
-                      shadowOffset: { width: 0, height: 4 },
-                      shadowOpacity: 0.3,
-                      shadowRadius: 8,
-                      elevation: 5,
-                    }
-                  : {}
-              }
             >
               {linkBankAccount.isPending ? (
-                <ActivityIndicator color="#fff" />
+                <ActivityIndicator color={tokens.primaryText} />
               ) : (
                 <>
-                  <Icon name="link" size={18} color="#fff" />
+                  <Icon name="link" size={18} color={tokens.primaryText} />
                   <Text className="text-white font-bold text-base ml-2 tracking-wide">
                     Link Bank Account
                   </Text>

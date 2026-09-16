@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useMemo } from "react";
+import { useMemo } from "react";
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from "recharts";
 import { useUsersReport } from "../../lib/hooks/use-reports";
 import { Skeleton } from "../ui/Skeleton";

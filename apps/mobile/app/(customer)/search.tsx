@@ -1,7 +1,8 @@
 import { tokens } from "@/theme/tokens";
 import { BackButton } from "@/components/ui/BackButton";
-import { View, Text, TextInput, ScrollView, Pressable } from "react-native";
+import { View, Text, TextInput, ScrollView, Pressable, ActivityIndicator } from "react-native";
 import { Image } from "expo-image";
+import { FlashList } from "@shopify/flash-list";
 import { useState, useMemo } from "react";
 import { useRouter } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -31,6 +32,9 @@ export default function SearchScreen() {
     isPending,
     isError,
     refetch,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
   } = useProducts({ search: query || undefined });
   const rawResults = productsData?.pages?.flatMap((page: any) => page.data) ?? [];
 
@@ -88,11 +92,11 @@ export default function SearchScreen() {
         <BackButton />
 
         <View className="flex-1 flex-row items-center bg-background h-12 rounded-xl px-4 border border-border focus:border-primary">
-          <Icon name="search" size={18} color="#64748b" />
+          <Icon name="search" size={18} color={tokens.textMuted} />
           <TextInput
             className="flex-1 ml-2 text-body-lg font-body text-foreground h-full"
             placeholder="Search Bexiemart..."
-            placeholderTextColor="#94a3b8"
+            placeholderTextColor={tokens.textMuted}
             value={query}
             onChangeText={setQuery}
           />
@@ -103,7 +107,7 @@ export default function SearchScreen() {
               style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
               onPress={() => setQuery("")}
             >
-              <Icon name="x-circle" size={18} color="#94a3b8" />
+              <Icon name="x-circle" size={18} color={tokens.textMuted} />
             </Pressable>
           )}
         </View>
@@ -115,89 +119,111 @@ export default function SearchScreen() {
           className={`w-12 h-12 rounded-xl items-center justify-center ${showFilters ? "bg-primary-subtle border border-border" : "bg-background border border-border"}`}
           onPress={() => setShowFilters(!showFilters)}
         >
-          <Icon name="sliders" size={20} color={showFilters ? tokens.primary : "#0f172a"} />
+          <Icon
+            name="sliders"
+            size={20}
+            color={showFilters ? tokens.primary : tokens.textPrimary}
+          />
         </Pressable>
       </View>
 
-      <ScrollView className="flex-1" showsVerticalScrollIndicator={false}>
-        {query.length === 0 ? (
-          <View className="p-5">
-            {/* Recent Searches */}
-            <View className="mb-8">
-              <View className="flex-row justify-between items-center mb-4">
-                <Text className="text-body-lg font-heading font-bold text-foreground">
-                  Recent Searches
-                </Text>
+      {query.length === 0 ? (
+        <ScrollView className="flex-1 p-5" showsVerticalScrollIndicator={false}>
+          {/* Recent Searches */}
+          <View className="mb-8">
+            <View className="flex-row justify-between items-center mb-4">
+              <Text className="text-body-lg font-heading font-bold text-foreground">
+                Recent Searches
+              </Text>
+              <Pressable
+                style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
+                onPress={() => setRecentSearches([])}
+              >
+                <Text className="text-sm font-bold text-muted-foreground">Clear</Text>
+              </Pressable>
+            </View>
+            <View className="gap-0">
+              {recentSearches.map((item, idx) => (
                 <Pressable
                   style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
-                  onPress={() => setRecentSearches([])}
+                  key={idx}
+                  className="flex-row items-center py-3 border-b border-border"
+                  onPress={() => setQuery(item)}
                 >
-                  <Text className="text-sm font-bold text-muted-foreground">Clear</Text>
+                  <Icon name="clock" size={16} color={tokens.textMuted} />
+                  <Text className="ml-3 text-body-lg font-body text-muted-foreground flex-1">
+                    {item}
+                  </Text>
+                  <Icon name="arrow-up-left" size={16} color={tokens.textDisabled} />
                 </Pressable>
-              </View>
-              <View className="gap-0">
-                {recentSearches.map((item, idx) => (
-                  <Pressable
-                    style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
-                    key={idx}
-                    className="flex-row items-center py-3 border-b border-border"
-                    onPress={() => setQuery(item)}
-                  >
-                    <Icon name="clock" size={16} color="#94a3b8" />
-                    <Text className="ml-3 text-body-lg font-body text-muted-foreground flex-1">
-                      {item}
-                    </Text>
-                    <Icon name="arrow-up-left" size={16} color="#cbd5e1" />
-                  </Pressable>
-                ))}
-              </View>
-            </View>
-
-            {/* Trending Tags */}
-            <View>
-              <Text className="text-body-lg font-heading font-bold text-foreground mb-4">
-                Trending Now
-              </Text>
-              <View className="flex-row flex-wrap gap-2">
-                {TRENDING_TAGS.map((tag, idx) => (
-                  <Pressable
-                    style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
-                    key={idx}
-                    className="px-4 py-2 bg-primary-subtle rounded-full border border-border"
-                    onPress={() => setQuery(tag)}
-                  >
-                    <Text className="text-sm font-bold text-primary font-body">{tag}</Text>
-                  </Pressable>
-                ))}
-              </View>
+              ))}
             </View>
           </View>
-        ) : (
-          <View className="p-5">
-            <Text className="text-body-md font-bold text-muted-foreground font-heading mb-4 px-1">
-              {isPending ? "Searching..." : `${results.length} Results for "${query}"`}
-            </Text>
 
-            {isPending && rawResults.length === 0 ? (
-              <View className="py-10">
-                <LoadingState type="grid" message="Finding the best products for you..." />
-              </View>
-            ) : results.length === 0 ? (
-              <View className="py-10">
-                <EmptyState
-                  title="No results found"
-                  description={`We couldn't find any products matching "${query}".`}
-                  iconName="search"
-                  fullScreen={false}
-                />
-              </View>
-            ) : (
-              <View className="gap-4">
-                {results.map((item: any) => (
+          {/* Trending Tags */}
+          <View>
+            <Text className="text-body-lg font-heading font-bold text-foreground mb-4">
+              Trending Now
+            </Text>
+            <View className="flex-row flex-wrap gap-2">
+              {TRENDING_TAGS.map((tag, idx) => (
+                <Pressable
+                  style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
+                  key={idx}
+                  className="px-4 py-2 bg-primary-subtle rounded-full border border-border"
+                  onPress={() => setQuery(tag)}
+                >
+                  <Text className="text-sm font-bold text-primary font-body">{tag}</Text>
+                </Pressable>
+              ))}
+            </View>
+          </View>
+        </ScrollView>
+      ) : (
+        <View className="flex-1">
+          {isPending && rawResults.length === 0 ? (
+            <View className="py-10">
+              <LoadingState type="grid" message="Finding the best products for you..." />
+            </View>
+          ) : results.length === 0 ? (
+            <View className="py-10">
+              <EmptyState
+                title="No results found"
+                description={`We couldn't find any products matching "${query}".`}
+                iconName="search"
+                fullScreen={false}
+              />
+            </View>
+          ) : (
+            <>
+              {/* @ts-ignore */}
+              <FlashList
+                data={results}
+                estimatedItemSize={120}
+                contentContainerStyle={{ padding: 20 }}
+                onEndReached={() => {
+                  if (hasNextPage && !isFetchingNextPage) {
+                    fetchNextPage();
+                  }
+                }}
+                onEndReachedThreshold={0.5}
+                ListHeaderComponent={
+                  <Text className="text-body-md font-bold text-muted-foreground font-heading mb-4 px-1">
+                    {`${results.length} Results for "${query}"`}
+                  </Text>
+                }
+                ListFooterComponent={
+                  isFetchingNextPage ? (
+                    <View className="py-4 items-center">
+                      <ActivityIndicator size="small" color={tokens.primary} />
+                    </View>
+                  ) : null
+                }
+                ItemSeparatorComponent={() => <View className="h-4" />}
+                renderItem={({ item }) => (
                   <Pressable
                     style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
-                    key={item.id}
-                    className="flex-row items-center bg-card rounded-2xl p-4 border border-border shadow-lg"
+                    className="flex-row items-center bg-card rounded-2xl p-4 border border-border"
                     onPress={() => router.push(`/(customer)/product/${item.id}` as any)}
                   >
                     <View className="w-20 h-20 rounded-xl bg-muted items-center justify-center overflow-hidden">
@@ -208,7 +234,7 @@ export default function SearchScreen() {
                           contentFit="cover"
                         />
                       ) : (
-                        <Icon name="image" size={24} color="#cbd5e1" />
+                        <Icon name="image" size={24} color={tokens.textDisabled} />
                       )}
                     </View>
                     <View className="flex-1 ml-4 justify-center">
@@ -223,7 +249,7 @@ export default function SearchScreen() {
                           GHS {item.price.toFixed(2)}
                         </Text>
                         <View className="flex-row items-center gap-1">
-                          <Icon name="star" size={12} color="#f59e0b" />
+                          <Icon name="star" size={12} color={tokens.warning} />
                           <Text className="text-body-sm font-bold text-muted-foreground">
                             {item.rating}
                           </Text>
@@ -231,18 +257,18 @@ export default function SearchScreen() {
                       </View>
                     </View>
                   </Pressable>
-                ))}
-              </View>
-            )}
-          </View>
-        )}
-      </ScrollView>
+                )}
+              />
+            </>
+          )}
+        </View>
+      )}
 
       {/* Filter Bottom Sheet */}
       {showFilters && (
         <View className="absolute inset-0 bg-black/40 justify-end z-50">
           <View
-            className="bg-card rounded-t-3xl p-6 shadow-2xl"
+            className="bg-card rounded-t-3xl p-6"
             style={{ paddingBottom: Math.max(insets.bottom, 24) }}
           >
             <View className="flex-row justify-between items-center mb-6">
@@ -257,7 +283,7 @@ export default function SearchScreen() {
                 onPress={() => setShowFilters(false)}
                 className="w-8 h-8 rounded-full bg-muted items-center justify-center"
               >
-                <Icon name="x" size={16} color="#0f172a" />
+                <Icon name="x" size={16} color={tokens.textPrimary} />
               </Pressable>
             </View>
 
@@ -269,7 +295,7 @@ export default function SearchScreen() {
                 <TextInput
                   className="text-body-lg font-body text-foreground"
                   placeholder="Min"
-                  placeholderTextColor="#94a3b8"
+                  placeholderTextColor={tokens.textMuted}
                   keyboardType="numeric"
                   value={minPrice}
                   onChangeText={setMinPrice}
@@ -279,7 +305,7 @@ export default function SearchScreen() {
                 <TextInput
                   className="text-body-lg font-body text-foreground"
                   placeholder="Max"
-                  placeholderTextColor="#94a3b8"
+                  placeholderTextColor={tokens.textMuted}
                   keyboardType="numeric"
                   value={maxPrice}
                   onChangeText={setMaxPrice}

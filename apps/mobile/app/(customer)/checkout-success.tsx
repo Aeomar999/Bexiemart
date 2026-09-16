@@ -1,3 +1,4 @@
+import { tokens } from "@/theme/tokens";
 import { View, Text } from "react-native";
 import { useRouter, useLocalSearchParams } from "expo-router";
 import { useState } from "react";
@@ -62,7 +63,7 @@ export default function CheckoutSuccessScreen() {
         style={{ paddingTop: insets.top }}
       >
         <View className="w-24 h-24 rounded-full bg-rose-50 items-center justify-center mb-8">
-          <Icon name="alert-circle" size={48} color="#ef4444" />
+          <Icon name="alert-circle" size={48} color={tokens.error} />
         </View>
         <Text className="text-display-sm font-heading font-bold text-foreground text-center mb-3">
           Payment Failed
@@ -101,7 +102,7 @@ export default function CheckoutSuccessScreen() {
         <BackButton onPress={() => router.replace("/(customer)/orders")} />
       </View>
       <View className="w-24 h-24 rounded-full bg-emerald-50 items-center justify-center mb-8">
-        <Icon name="check-circle" size={48} color="#10b981" />
+        <Icon name="check-circle" size={48} color={tokens.success} />
       </View>
       <Text className="text-display-sm font-heading font-bold text-foreground text-center mb-3">
         Payment Successful

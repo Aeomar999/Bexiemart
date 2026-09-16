@@ -1,5 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
+import { getUserFriendlyErrorMessage } from "@/lib/error-utils";
 import { listCoupons, createCoupon } from "../api/admin";
 
 export const useCoupons = (params?: Record<string, any>) => {
@@ -19,7 +20,7 @@ export const useCreateCoupon = () => {
       toast.success("Coupon created successfully");
     },
     onError: (error: any) => {
-      toast.error(error?.response?.data?.message || "Failed to create coupon");
+      toast.error(getUserFriendlyErrorMessage(error, "We couldn't create the coupon. Please double-check the details."));
     }
   });
 };

@@ -1,3 +1,4 @@
+import { tokens } from "@/theme/tokens";
 import { BackButton } from "@/components/ui/BackButton";
 import { View, Text, Pressable, ScrollView, Alert } from "react-native";
 import { useRouter } from "expo-router";
@@ -68,7 +69,7 @@ export default function LinkAccountScreen() {
             paddingVertical: 12,
             borderRadius: 12,
             alignItems: "center",
-            backgroundColor: activeTab === "bank" ? "#fff" : "transparent",
+            backgroundColor: activeTab === "bank" ? tokens.primaryText : "transparent",
           }}
         >
           <View className="flex-row items-center">
@@ -92,7 +93,7 @@ export default function LinkAccountScreen() {
             paddingVertical: 12,
             borderRadius: 12,
             alignItems: "center",
-            backgroundColor: activeTab === "momo" ? "#fff" : "transparent",
+            backgroundColor: activeTab === "momo" ? tokens.primaryText : "transparent",
           }}
         >
           <View className="flex-row items-center">
@@ -146,7 +147,7 @@ export default function LinkAccountScreen() {
                   <View
                     key={account.id}
                     style={{
-                      backgroundColor: "#fff",
+                      backgroundColor: tokens.primaryText,
                       borderRadius: 16,
                       padding: 16,
                       marginBottom: 12,
@@ -173,7 +174,7 @@ export default function LinkAccountScreen() {
                             marginRight: 16,
                           }}
                         >
-                          <Icon name="home" size={22} color="#2563EB" />
+                          <Icon name="home" size={22} color={tokens.primary} />
                         </View>
                         <View style={{ flex: 1 }}>
                           <Text
@@ -192,7 +193,7 @@ export default function LinkAccountScreen() {
                           >
                             {account.accountNumber}
                           </Text>
-                          <Text style={{ color: "#9ca3af", fontSize: 12, marginTop: 2 }}>
+                          <Text style={{ color: tokens.textMuted, fontSize: 12, marginTop: 2 }}>
                             {account.accountName}
                           </Text>
                         </View>
@@ -218,7 +219,7 @@ export default function LinkAccountScreen() {
                           onPress={() => handleDeleteBank(account.id, account.bankName)}
                           style={{ padding: 8, borderRadius: 999, backgroundColor: "#FEF2F2" }}
                         >
-                          <Icon name="trash-2" size={16} color="#EF4444" />
+                          <Icon name="trash-2" size={16} color={tokens.error} />
                         </Pressable>
                       </View>
                     </View>
@@ -238,7 +239,7 @@ export default function LinkAccountScreen() {
                     marginBottom: 16,
                   }}
                 >
-                  <Icon name="home" size={36} color="#2563EB" />
+                  <Icon name="home" size={36} color={tokens.primary} />
                 </View>
                 <Text
                   style={{ color: "#111827", fontWeight: "700", fontSize: 18, marginBottom: 4 }}
@@ -261,7 +262,7 @@ export default function LinkAccountScreen() {
             <Pressable
               onPress={() => router.push("/(customer)/wallet/link-account/bank")}
               style={{
-                backgroundColor: "#fff",
+                backgroundColor: tokens.primaryText,
                 borderRadius: 16,
                 padding: 16,
                 borderWidth: 2,
@@ -283,7 +284,7 @@ export default function LinkAccountScreen() {
                     marginRight: 12,
                   }}
                 >
-                  <Icon name="plus" size={20} color="#2563EB" />
+                  <Icon name="plus" size={20} color={tokens.primary} />
                 </View>
                 <Text style={{ color: "#2563EB", fontWeight: "700", fontSize: 15 }}>
                   Add Bank Account
@@ -407,7 +408,7 @@ export default function LinkAccountScreen() {
                     marginBottom: 16,
                   }}
                 >
-                  <Icon name="smartphone" size={36} color="#F59E0B" />
+                  <Icon name="smartphone" size={36} color={tokens.warning} />
                 </View>
                 <Text
                   style={{ color: "#111827", fontWeight: "700", fontSize: 18, marginBottom: 4 }}
@@ -430,7 +431,7 @@ export default function LinkAccountScreen() {
             <Pressable
               onPress={() => router.push("/(customer)/wallet/link-account/momo")}
               style={{
-                backgroundColor: "#fff",
+                backgroundColor: tokens.primaryText,
                 borderRadius: 16,
                 padding: 16,
                 borderWidth: 2,
@@ -452,7 +453,7 @@ export default function LinkAccountScreen() {
                     marginRight: 12,
                   }}
                 >
-                  <Icon name="plus" size={20} color="#F59E0B" />
+                  <Icon name="plus" size={20} color={tokens.warning} />
                 </View>
                 <Text style={{ color: "#D97706", fontWeight: "700", fontSize: 15 }}>
                   Add Mobile Money

@@ -6,11 +6,11 @@ import { useCartStore } from "@/lib/stores/cart-store";
 import { Badge } from "@/components/ui/Badge";
 import { Icon } from "@/components/ui/Icon";
 
-function TabIcon({ name, color }: { name: string; color: string }) {
+function TabIcon({ name, color }: { name: string; color: any }) {
   return <Icon name={name} color={color} size={24} />;
 }
 
-function CartTabIcon({ color }: { color: string }) {
+function CartTabIcon({ color }: { color: any }) {
   const itemCount = useCartStore((s) => s.itemCount);
   return (
     <View>
@@ -29,17 +29,12 @@ function CustomTabBar({ state, descriptors, navigation }: any) {
         paddingBottom: insets.bottom + 16,
         paddingTop: 16,
         paddingHorizontal: 20,
-        backgroundColor: "#FFFFFF",
+        backgroundColor: tokens.surface,
         borderTopWidth: 1,
-        borderTopColor: "#F8FAFC",
+        borderTopColor: tokens.background,
         flexDirection: "row",
         justifyContent: "space-between",
         alignItems: "center",
-        shadowColor: "#000",
-        shadowOffset: { width: 0, height: -2 },
-        shadowOpacity: 0.05,
-        shadowRadius: 10,
-        elevation: 10,
       }}
     >
       {state.routes.map((route: any, index: number) => {
@@ -76,11 +71,11 @@ function CustomTabBar({ state, descriptors, navigation }: any) {
               borderRadius: 9999,
               paddingHorizontal: 16,
               paddingVertical: 12,
-              backgroundColor: isFocused ? "#eff6ff" : "transparent",
+              backgroundColor: isFocused ? tokens.primarySubtle : "transparent",
             }}
           >
             {options.tabBarIcon &&
-              options.tabBarIcon({ color: isFocused ? tokens.primary : "#94A3B8" })}
+              options.tabBarIcon({ color: isFocused ? tokens.primary : tokens.textMuted })}
             {isFocused && (
               <Text
                 style={{

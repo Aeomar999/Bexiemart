@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import { useState } from "react";
 import { useReels, useToggleReelStatus } from "../../../../lib/hooks/use-moderation";
 import { Pagination } from "../../../../components/ui/Pagination";
 import { DashboardLayout } from "../../../../components/layout/DashboardLayout";
@@ -26,7 +26,7 @@ export default function ReelsModerationPage() {
         toast.success(`Reel has been ${currentlyActive ? 'hidden' : 'published'}`);
       },
       onError: () => {
-        toast.error("Failed to update reel status");
+        toast.error("We couldn't update this reel's status. Please try again.");
       }
     });
   };

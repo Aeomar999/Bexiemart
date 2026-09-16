@@ -28,9 +28,9 @@ const RIDER_TYPES: {
   time: string;
   color: string;
 }[] = [
-  { id: "bike", label: "Motorbike", icon: "truck", time: "10-15 min", color: "#059669" },
+  { id: "bike", label: "Motorbike", icon: "truck", time: "10-15 min", color: tokens.success },
   { id: "car", label: "Car", icon: "car", time: "5-10 min", color: tokens.primary },
-  { id: "van", label: "Van", icon: "package", time: "15-20 min", color: "#7c3aed" },
+  { id: "van", label: "Van", icon: "package", time: "15-20 min", color: tokens.primary },
 ];
 
 export default function BookRiderScreen() {
@@ -220,7 +220,7 @@ export default function BookRiderScreen() {
             onPress={() => setSelectingField("pickup")}
             className="flex-row items-center bg-background rounded-xl px-4 h-12 border border-border mb-4"
           >
-            <Icon name="map-pin" size={16} color="#059669" />
+            <Icon name="map-pin" size={16} color={tokens.success} />
             <Text
               className={`flex-1 ml-2 font-body text-body-lg ${pickup ? "text-foreground" : "text-muted-foreground"}`}
               numberOfLines={1}
@@ -236,7 +236,7 @@ export default function BookRiderScreen() {
             onPress={() => setSelectingField("dropoff")}
             className="flex-row items-center bg-background rounded-xl px-4 h-12 border border-border"
           >
-            <Icon name="map-pin" size={16} color="#ef4444" />
+            <Icon name="map-pin" size={16} color={tokens.error} />
             <Text
               className={`flex-1 ml-2 font-body text-body-lg ${dropoff ? "text-foreground" : "text-muted-foreground"}`}
               numberOfLines={1}
@@ -277,7 +277,7 @@ export default function BookRiderScreen() {
                   </Text>
                 </View>
                 {quoting ? (
-                  <ActivityIndicator size="small" color="#94a3b8" />
+                  <ActivityIndicator size="small" color={tokens.textMuted} />
                 ) : (
                   <Text
                     className={`text-body-lg font-bold font-heading ${isSelected ? "text-primary-hover" : "text-foreground"}`}
@@ -303,7 +303,7 @@ export default function BookRiderScreen() {
           disabled={booking || !quotes}
         >
           {booking ? (
-            <ActivityIndicator color="#fff" />
+            <ActivityIndicator color={tokens.primaryText} />
           ) : (
             <Text className="text-white font-bold text-body-lg">
               {selectedFare != null
@@ -332,7 +332,7 @@ export default function BookRiderScreen() {
                 onPress={() => setSelectingField(null)}
                 className="p-2 bg-muted rounded-full"
               >
-                <Icon name="x" size={20} color="#64748b" />
+                <Icon name="x" size={20} color={tokens.textMuted} />
               </Pressable>
             </View>
 
@@ -376,7 +376,7 @@ export default function BookRiderScreen() {
                             : "map-pin"
                       }
                       size={18}
-                      color="#64748b"
+                      color={tokens.textMuted}
                     />
                   </View>
                   <View className="flex-1">

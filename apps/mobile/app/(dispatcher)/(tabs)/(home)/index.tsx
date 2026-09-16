@@ -38,7 +38,10 @@ export default function DispatcherMap() {
   // Sync online status with backend + connect the live dispatch socket.
   useEffect(() => {
     dispatcherApi.updateStatus(isOnline ? "ONLINE" : "OFFLINE").catch(() => {
-      Toast.show({ type: "error", text1: "Failed to update online status" });
+      Toast.show({
+        type: "error",
+        text1: "We couldn't update your online status. Please check your connection.",
+      });
     });
     if (isOnline) deliverySocketService.connect();
   }, [isOnline]);
@@ -119,7 +122,10 @@ export default function DispatcherMap() {
       activeRide?.id
     );
     dispatcherApi.updateLocation(userLocation.latitude, userLocation.longitude).catch(() => {
-      Toast.show({ type: "error", text1: "Failed to update location" });
+      Toast.show({
+        type: "error",
+        text1: "We're having trouble updating your location. Please check your GPS settings.",
+      });
     });
   }, [isOnline, userLocation?.latitude, userLocation?.longitude, activeRide?.id]);
 
@@ -146,7 +152,10 @@ export default function DispatcherMap() {
   const handleCall = () => {
     if (displayRide?.customer?.phoneNumber) {
       Linking.openURL(`tel:${displayRide.customer.phoneNumber}`).catch(() => {
-        Toast.show({ type: "error", text1: "Unable to open phone app" });
+        Toast.show({
+          type: "error",
+          text1: "We couldn't open your phone's dialer. Please try calling manually.",
+        });
       });
     }
   };
@@ -167,15 +176,15 @@ export default function DispatcherMap() {
       <>
         {/* Pickup Marker */}
         <Marker coordinate={pickupCoords} title="Pickup">
-          <View className="w-8 h-8 bg-error rounded-full items-center justify-center border-2 border-white shadow-sm">
-            <Icon name="package" size={16} color="white" />
+          <View className="w-8 h-8 bg-error rounded-full items-center justify-center border-2 border-white">
+            <Icon name="package" size={16} color={tokens.primaryText} />
           </View>
         </Marker>
 
         {/* Dropoff Marker */}
         <Marker coordinate={dropoffCoords} title="Dropoff">
-          <View className="w-8 h-8 bg-emerald-500 rounded-full items-center justify-center border-2 border-white shadow-sm">
-            <Icon name="map-pin" size={16} color="white" />
+          <View className="w-8 h-8 bg-emerald-500 rounded-full items-center justify-center border-2 border-white">
+            <Icon name="map-pin" size={16} color={tokens.primaryText} />
           </View>
         </Marker>
 
@@ -192,7 +201,7 @@ export default function DispatcherMap() {
         {/* Route from Pickup to Dropoff */}
         <Polyline
           coordinates={[pickupCoords, dropoffCoords]}
-          strokeColor={taskStatus === "delivering" ? tokens.primary : "#94a3b8"}
+          strokeColor={taskStatus === "delivering" ? tokens.primary : tokens.textMuted}
           strokeWidth={taskStatus === "delivering" ? 4 : 3}
           lineDashPattern={taskStatus === "delivering" ? undefined : [5, 5]} // Solid if delivering, dashed otherwise
         />
@@ -204,11 +213,11 @@ export default function DispatcherMap() {
     if (!isOnline && !activeRide) {
       return (
         <View
-          className="absolute bottom-0 w-full bg-card rounded-t-3xl border-t border-border p-6 shadow-lg items-center"
+          className="absolute bottom-0 w-full bg-card rounded-t-3xl border-t border-border p-6 items-center"
           style={{ paddingBottom: Math.max(insets.bottom, 20) + 24 }}
         >
           <View className="w-16 h-16 bg-slate-100 rounded-full items-center justify-center mb-4">
-            <Icon name="moon" size={24} color="#64748b" />
+            <Icon name="moon" size={24} color={tokens.textMuted} />
           </View>
           <Text className="text-foreground font-bold text-heading-md font-heading mb-2">
             You are offline
@@ -223,14 +232,14 @@ export default function DispatcherMap() {
     if (taskStatus === "idle") {
       return (
         <View
-          className="absolute bottom-0 w-full bg-card rounded-t-3xl border-t border-border p-6 shadow-lg items-center"
+          className="absolute bottom-0 w-full bg-card rounded-t-3xl border-t border-border p-6 items-center"
           style={{ paddingBottom: Math.max(insets.bottom, 20) + 24 }}
         >
           {loadingAvailable ? (
             <ListSkeleton />
           ) : (
             <View className="w-16 h-16 bg-emerald-50 rounded-full items-center justify-center mb-4 border border-emerald-100">
-              <Icon name="radio" size={24} color="#10b981" />
+              <Icon name="radio" size={24} color={tokens.success} />
             </View>
           )}
           <Text className="text-foreground font-bold text-heading-md font-heading mb-2">
@@ -246,7 +255,7 @@ export default function DispatcherMap() {
     if (taskStatus === "available" && displayRide) {
       return (
         <View
-          className="absolute bottom-0 w-full bg-card rounded-t-3xl border-t border-border shadow-lg"
+          className="absolute bottom-0 w-full bg-card rounded-t-3xl border-t border-border"
           style={{ paddingBottom: Math.max(insets.bottom, 20) }}
         >
           <View className="w-12 h-1.5 bg-slate-200 rounded-full self-center my-3" />
@@ -328,7 +337,7 @@ export default function DispatcherMap() {
     if (displayRide) {
       return (
         <View
-          className="absolute bottom-0 w-full bg-card rounded-t-3xl border-t border-border shadow-lg"
+          className="absolute bottom-0 w-full bg-card rounded-t-3xl border-t border-border"
           style={{ paddingBottom: Math.max(insets.bottom, 20) }}
         >
           <View className="w-12 h-1.5 bg-slate-200 rounded-full self-center my-3" />
@@ -345,7 +354,7 @@ export default function DispatcherMap() {
                       contentFit="cover"
                     />
                   ) : (
-                    <Icon name="user" size={20} color="#94a3b8" />
+                    <Icon name="user" size={20} color={tokens.textMuted} />
                   )}
                 </View>
                 <View>
@@ -353,7 +362,7 @@ export default function DispatcherMap() {
                     {displayRide.customer?.name || "Customer"}
                   </Text>
                   <View className="flex-row items-center gap-1">
-                    <Icon name="star" size={12} color="#f59e0b" />
+                    <Icon name="star" size={12} color={tokens.warning} />
                     <Text className="text-muted-foreground text-sm font-body">4.9</Text>
                   </View>
                 </View>
@@ -365,7 +374,7 @@ export default function DispatcherMap() {
                   hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
                   className="w-10 h-10 rounded-full bg-slate-100 items-center justify-center"
                 >
-                  <Icon name="message-circle" size={18} color="#0f172a" />
+                  <Icon name="message-circle" size={18} color={tokens.textPrimary} />
                 </Pressable>
                 <Pressable
                   accessibilityRole="button"
@@ -378,7 +387,7 @@ export default function DispatcherMap() {
                   <Icon
                     name="phone"
                     size={18}
-                    color={displayRide?.customer?.phoneNumber ? tokens.primary : "#94a3b8"}
+                    color={displayRide?.customer?.phoneNumber ? tokens.primary : tokens.textMuted}
                   />
                 </Pressable>
               </View>
@@ -389,7 +398,7 @@ export default function DispatcherMap() {
               {taskStatus === "accepted" ? (
                 <View className="flex-row items-center gap-3">
                   <View className="bg-rose-100 p-2 rounded-full">
-                    <Icon name="map-pin" size={16} color="#e11d48" />
+                    <Icon name="map-pin" size={16} color={tokens.error} />
                   </View>
                   <View>
                     <Text className="text-muted-foreground text-body-sm font-body">
@@ -403,7 +412,7 @@ export default function DispatcherMap() {
               ) : (
                 <View className="flex-row items-center gap-3">
                   <View className="bg-emerald-100 p-2 rounded-full">
-                    <Icon name="navigation" size={16} color="#10b981" />
+                    <Icon name="navigation" size={16} color={tokens.success} />
                   </View>
                   <View>
                     <Text className="text-muted-foreground text-body-sm font-body">
@@ -421,7 +430,7 @@ export default function DispatcherMap() {
             {taskStatus === "accepted" && (
               <SwipeButton
                 text={updateStatus.isPending ? "Updating..." : "Slide to Arrive"}
-                buttonColor="#f59e0b"
+                buttonColor={tokens.warning}
                 iconName="map-pin"
                 onComplete={() => {
                   updateStatus.mutate({ taskId: displayRide.id, status: "ARRIVED_PICKUP" });
@@ -432,7 +441,7 @@ export default function DispatcherMap() {
             {taskStatus === "arrived" && (
               <SwipeButton
                 text={updateStatus.isPending ? "Updating..." : "Confirm Pickup"}
-                buttonColor="#10b981"
+                buttonColor={tokens.success}
                 iconName="package"
                 onComplete={() => {
                   updateStatus.mutate({
@@ -486,8 +495,8 @@ export default function DispatcherMap() {
         {userLocation && (
           <Marker coordinate={userLocation} title="You" zIndex={999}>
             <View className="w-10 h-10 bg-primary-subtle rounded-full items-center justify-center border border-border">
-              <View className="w-6 h-6 bg-primary rounded-full border-2 border-white items-center justify-center shadow-lg">
-                <Icon name="truck" size={12} color="white" />
+              <View className="w-6 h-6 bg-primary rounded-full border-2 border-white items-center justify-center">
+                <Icon name="truck" size={12} color={tokens.primaryText} />
               </View>
             </View>
           </Marker>
@@ -496,7 +505,7 @@ export default function DispatcherMap() {
 
       {/* Floating Header */}
       <View className="absolute w-full px-5 z-10" style={{ top: Math.max(insets.top, 12) + 12 }}>
-        <View className="bg-card rounded-2xl p-4 flex-row items-center justify-between border border-border shadow-sm">
+        <View className="bg-card rounded-2xl p-4 flex-row items-center justify-between border border-border">
           <View className="flex-row items-center gap-3">
             <View
               className={`w-3 h-3 rounded-full ${isOnline ? "bg-emerald-500" : "bg-slate-400"}`}
@@ -508,8 +517,8 @@ export default function DispatcherMap() {
           <Switch
             value={isOnline}
             onValueChange={setIsOnline}
-            trackColor={{ false: "#334155", true: "#10b981" }}
-            thumbColor="#ffffff"
+            trackColor={{ false: "#334155", true: tokens.success }}
+            thumbColor={tokens.primaryText}
             disabled={!!activeRide} // Prevent going offline while on a task
           />
         </View>
@@ -532,7 +541,7 @@ export default function DispatcherMap() {
             );
           }
         }}
-        className="absolute right-5 bg-card p-3 rounded-full shadow-md border border-border"
+        className="absolute right-5 bg-card p-3 rounded-full border border-border"
         style={{ top: Math.max(insets.top, 12) + 90 }}
       >
         <Icon name="navigation" size={20} color={tokens.primary} />

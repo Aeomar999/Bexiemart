@@ -30,7 +30,7 @@ export default function LoginScreen() {
   const [countdown, setCountdown] = useState(0);
 
   useEffect(() => {
-    let interval: NodeJS.Timeout;
+    let interval: ReturnType<typeof setInterval>;
     if (countdown > 0) {
       interval = setInterval(() => {
         setCountdown((c) => c - 1);
@@ -88,7 +88,7 @@ export default function LoginScreen() {
             value={email}
             onChangeText={(text) => setEmail(text.replace(/[^a-zA-Z0-9@._+-]/g, ""))}
             error={errors.email}
-            leftIcon={<FontAwesome5 name="envelope" size={16} color="#94A3B8" solid />}
+            leftIcon={<FontAwesome5 name="envelope" size={16} color={tokens.textMuted} solid />}
           />
 
           <Input
@@ -98,7 +98,7 @@ export default function LoginScreen() {
             value={password}
             onChangeText={setPassword}
             error={errors.password}
-            leftIcon={<FontAwesome5 name="lock" size={16} color="#94A3B8" solid />}
+            leftIcon={<FontAwesome5 name="lock" size={16} color={tokens.textMuted} solid />}
           />
 
           <View className="self-end -mt-2">
@@ -125,7 +125,7 @@ export default function LoginScreen() {
                 className="p-5"
               >
                 <View className="flex-row items-center gap-4 mb-5">
-                  <View className="w-14 h-14 bg-white rounded-full shadow-sm items-center justify-center border border-border">
+                  <View className="w-14 h-14 bg-white rounded-full items-center justify-center border border-border">
                     <FontAwesome5 name="envelope-open-text" size={22} color={tokens.primary} />
                   </View>
                   <View className="flex-1">
@@ -150,9 +150,10 @@ export default function LoginScreen() {
                       style={{ marginTop: 2 }}
                     />
                     <Text className="flex-1 text-body-sm text-primary-hover leading-tight">
-                      <Text className="font-bold">Testing locally?</Text> Phone browsers can't open
-                      "localhost" links. Copy the link to your PC browser, or update your .env to
-                      use your local IP address (e.g., 192.168.x.x) instead of localhost.
+                      <Text className="font-bold">Testing locally?</Text> Phone browsers can&apos;t
+                      open &quot;localhost&quot; links. Copy the link to your PC browser, or update
+                      your .env to use your local IP address (e.g., 192.168.x.x) instead of
+                      localhost.
                     </Text>
                   </View>
                 </View>
@@ -163,7 +164,7 @@ export default function LoginScreen() {
                   </Text>
                 ) : resendVerification.isSuccess && countdown > 0 ? (
                   <View className="flex-row items-center justify-center gap-2 mb-4">
-                    <FontAwesome5 name="check-circle" size={14} color="#16A34A" />
+                    <FontAwesome5 name="check-circle" size={14} color={tokens.success} />
                     <Text className="text-sm font-bold text-success">
                       Link sent! Check your email.
                     </Text>
@@ -210,7 +211,7 @@ export default function LoginScreen() {
 
         <View className="flex-row justify-center mt-10 gap-2">
           <Text className="text-body-md text-muted-foreground font-body">
-            Don't have an account?
+            Don&apos;t have an account?
           </Text>
           <TouchableOpacity onPress={() => router.push("/(auth)/register")}>
             <Text className="text-body-md text-primary font-bold font-body">Create one</Text>

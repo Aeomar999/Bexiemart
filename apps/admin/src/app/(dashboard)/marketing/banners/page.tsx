@@ -100,7 +100,7 @@ export default function BannersPage() {
       const result = await uploadFile(file);
       if (result?.url) setForm((f) => ({ ...f, imageUrl: result.url }));
     } catch {
-      toast.error("Image upload failed");
+      toast.error("We couldn't upload your image. Please ensure it's a valid format and try again.");
     } finally {
       setIsUploading(false);
     }
@@ -109,7 +109,7 @@ export default function BannersPage() {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!form.title || !form.imageUrl) {
-      toast.error("Title and image are required");
+      toast.error("Please provide both a title and an image for your banner.");
       return;
     }
     // Drop empty optional strings so they persist as null rather than "".
@@ -224,13 +224,14 @@ export default function BannersPage() {
                       <TableCell>{banner.sortOrder}</TableCell>
                       <TableCell>
                         <div className="flex items-center justify-end gap-2">
-                          <Button variant="ghost" size="icon" onClick={() => openEdit(banner)}>
+                          <Button variant="ghost" size="icon" onClick={() => openEdit(banner)} aria-label="Edit banner">
                             <Pencil className="h-4 w-4" />
                           </Button>
                           <Button
                             variant="ghost"
                             size="icon"
                             onClick={() => setDeleteTarget(banner)}
+                            aria-label="Delete banner"
                           >
                             <Trash2 className="h-4 w-4 text-[var(--color-error)]" />
                           </Button>

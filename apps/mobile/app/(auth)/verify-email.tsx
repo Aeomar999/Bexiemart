@@ -41,6 +41,9 @@ export default function VerifyEmailScreen() {
   const [resendError, setResendError] = useState("");
   const [code, setCode] = useState("");
 
+  const otpStatus = status === "error" ? "error" : status === "verifying" ? "verifying" : "idle";
+  const otpDisabled = status === "verifying";
+
   useEffect(() => {
     if (token) {
       verifyEmail.mutate(token, {
@@ -94,7 +97,7 @@ export default function VerifyEmailScreen() {
         {status === "verifying" && (
           <View className="items-center">
             <View className="w-16 h-16 rounded-2xl bg-yellow-100 items-center justify-center mb-6">
-              <FontAwesome5 name="hourglass-half" size={28} color="#D97706" />
+              <FontAwesome5 name="hourglass-half" size={28} color={tokens.warning} />
             </View>
             <Text className="text-display-md font-heading font-bold text-foreground mb-2 text-center">
               Verifying your email
@@ -108,7 +111,7 @@ export default function VerifyEmailScreen() {
         {status === "success" && (
           <View className="items-center">
             <View className="w-16 h-16 rounded-2xl bg-green-100 items-center justify-center mb-6">
-              <FontAwesome5 name="check-circle" size={28} color="#16A34A" />
+              <FontAwesome5 name="check-circle" size={28} color={tokens.success} />
             </View>
             <Text className="text-display-md font-heading font-bold text-foreground mb-2 text-center">
               Email verified!
@@ -125,7 +128,7 @@ export default function VerifyEmailScreen() {
         {status === "error" && (
           <View className="items-center">
             <View className="w-16 h-16 rounded-2xl bg-red-100 items-center justify-center mb-6">
-              <FontAwesome5 name="exclamation-circle" size={28} color="#DC2626" />
+              <FontAwesome5 name="exclamation-circle" size={28} color={tokens.error} />
             </View>
             <Text className="text-display-md font-heading font-bold text-foreground mb-2 text-center">
               Verification failed
@@ -184,8 +187,8 @@ export default function VerifyEmailScreen() {
             <SegmentedOtpInput
               code={code}
               onChangeCode={setCode}
-              status={status === "error" ? "error" : status === "verifying" ? "verifying" : "idle"}
-              disabled={status === "verifying"}
+              status={otpStatus}
+              disabled={otpDisabled}
             />
             <Text className="text-body-sm text-muted-foreground font-body text-center mb-6">
               Enter the code from your email, or click the verification link.

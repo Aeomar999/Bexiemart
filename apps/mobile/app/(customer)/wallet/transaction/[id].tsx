@@ -1,3 +1,4 @@
+import { tokens } from "@/theme/tokens";
 import { BackButton } from "@/components/ui/BackButton";
 import { View, Text, ScrollView, Alert, Pressable } from "react-native";
 import { useLocalSearchParams, useRouter } from "expo-router";
@@ -57,7 +58,7 @@ export default function TransactionReceiptScreen() {
       </View>
 
       <ScrollView className="flex-1 px-5 pt-6 pb-20">
-        <View className="bg-card rounded-2xl p-6 items-center shadow-lg border border-border mb-6">
+        <View className="bg-card rounded-2xl p-6 items-center border border-border mb-6">
           <View
             className="w-16 h-16 rounded-full items-center justify-center mb-4"
             style={{ backgroundColor: colors.bg }}
@@ -84,7 +85,7 @@ export default function TransactionReceiptScreen() {
           </View>
         </View>
 
-        <View className="bg-card rounded-2xl p-6 shadow-lg border border-border">
+        <View className="bg-card rounded-2xl p-6 border border-border">
           <View className="flex-row justify-between py-4 border-b border-border">
             <Text className="text-body-lg text-muted-foreground font-body">Transaction ID</Text>
             <Text className="text-body-lg text-foreground font-bold">{tx.reference || tx.id}</Text>
@@ -113,7 +114,7 @@ export default function TransactionReceiptScreen() {
           variant="outline"
           className="mt-6 border-border"
           textClassName="text-muted-foreground"
-          leftIcon={<Icon name="share-2" size={18} color="#64748b" />}
+          leftIcon={<Icon name="share-2" size={18} color={tokens.textMuted} />}
           onPress={() => Alert.alert("Share", "Receipt sharing functionality mock")}
         />
       </ScrollView>

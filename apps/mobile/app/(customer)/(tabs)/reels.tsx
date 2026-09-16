@@ -1,3 +1,4 @@
+﻿import { tokens } from "@/theme/tokens";
 import { BackButton } from "@/components/ui/BackButton";
 import {
   View,
@@ -18,6 +19,9 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Icon } from "@/components/ui/Icon";
 import { useState, useRef, useCallback, useEffect } from "react";
 import { usePopupStore } from "@/lib/stores/popup-store";
+import { useRequireAuth } from "@/lib/hooks/use-require-auth";
+import { useAddToCart } from "@/lib/hooks/use-cart";
+import { logger } from "@/lib/logger";
 import {
   useReels,
   useToggleReelLike,
@@ -42,6 +46,7 @@ const ReelItem = ({
   onToggleLike,
   onOpenComments,
   onShare,
+  onAddToCart,
   insetsBottom,
 }: {
   item: any;
@@ -49,6 +54,7 @@ const ReelItem = ({
   onToggleLike: (id: string) => void;
   onOpenComments: (reel: any) => void;
   onShare: (reel: any) => void;
+  onAddToCart: (productId: string, quantity: number) => void;
   insetsBottom: number;
 }) => {
   const router = useRouter();
@@ -66,12 +72,16 @@ const ReelItem = ({
     }
   }, [isActive, player]);
 
+  const [quantity, setQuantity] = useState(1);
+
   const vendorName = item.user?.name ?? "Vendor";
   const productName = item.product?.name ?? "Product";
   const productPrice = item.product?.price ?? 0;
   const productId = item.product?.id;
   const isLiked = item.liked ?? false;
   const isFollowing = item.isFollowing ?? false;
+  const stock = item.product?.stock ?? 0;
+  const outOfStock = stock <= 0;
 
   return (
     <View
@@ -97,27 +107,27 @@ const ReelItem = ({
       <View className="absolute right-4 bottom-32 items-center gap-6 z-20">
         <Pressable className="items-center" onPress={() => onToggleLike(item.id)}>
           <View className="w-12 h-12 rounded-full bg-black/40 items-center justify-center mb-1">
-            <Icon name="heart" size={24} color={isLiked ? "#ef4444" : "#fff"} />
+            <Icon name="heart" size={24} color={isLiked ? tokens.error : tokens.primaryText} />
           </View>
-          <Text className="text-white font-bold text-body-sm shadow-sm">
+          <Text className="text-white font-bold text-body-sm">
             {formatNumber(item.likesCount ?? 0)}
           </Text>
         </Pressable>
 
         <Pressable className="items-center" onPress={() => onOpenComments(item)}>
           <View className="w-12 h-12 rounded-full bg-black/40 items-center justify-center mb-1">
-            <Icon name="message-circle" size={24} color="#fff" />
+            <Icon name="message-circle" size={24} color={tokens.primaryText} />
           </View>
-          <Text className="text-white font-bold text-body-sm shadow-sm">
+          <Text className="text-white font-bold text-body-sm">
             {formatNumber(item.commentsCount ?? 0)}
           </Text>
         </Pressable>
 
         <Pressable className="items-center" onPress={() => onShare(item)}>
           <View className="w-12 h-12 rounded-full bg-black/40 items-center justify-center mb-1">
-            <Icon name="share-2" size={24} color="#fff" />
+            <Icon name="share-2" size={24} color={tokens.primaryText} />
           </View>
-          <Text className="text-white font-bold text-body-sm shadow-sm">
+          <Text className="text-white font-bold text-body-sm">
             {formatNumber(item.shares ?? 0)}
           </Text>
         </Pressable>
@@ -130,9 +140,9 @@ const ReelItem = ({
       >
         <View className="flex-row items-center gap-3 mb-3">
           <View className="w-10 h-10 rounded-full bg-secondary border-2 border-card items-center justify-center overflow-hidden">
-            <Icon name="user" size={20} color="#94a3b8" />
+            <Icon name="user" size={20} color={tokens.textMuted} />
           </View>
-          <Text className="text-white font-bold text-body-lg shadow-sm">
+          <Text className="text-white font-bold text-body-lg">
             @{vendorName.replace(/\s+/g, "")}
           </Text>
           <Pressable
@@ -151,7 +161,7 @@ const ReelItem = ({
           </Pressable>
         </View>
 
-        <Text className="text-white font-body text-body-md mb-4 shadow-sm w-4/5" numberOfLines={2}>
+        <Text className="text-white font-body text-body-md mb-4 w-4/5" numberOfLines={2}>
           {item.caption}
         </Text>
 
@@ -162,7 +172,7 @@ const ReelItem = ({
         >
           <View className="flex-row items-center gap-3 flex-1">
             <View className="w-12 h-12 bg-card rounded-xl items-center justify-center">
-              <Icon name="shopping-bag" size={20} color="#0f172a" />
+              <Icon name="shopping-bag" size={20} color={tokens.textPrimary} />
             </View>
             <View className="flex-1 pr-2">
               <Text className="text-white font-bold text-body-md" numberOfLines={1}>
@@ -173,17 +183,41 @@ const ReelItem = ({
               </Text>
             </View>
           </View>
+          <View className="flex-row items-center gap-2">
+            <Pressable
+              className="w-9 h-9 rounded-full bg-card/20 border border-card/30 items-center justify-center"
+              accessibilityRole="button"
+              accessibilityLabel="Decrease quantity"
+              hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+              onPress={() => setQuantity((q) => Math.max(1, q - 1))}
+            >
+              <Icon name="minus" size={14} color={tokens.textPrimary} />
+            </Pressable>
+            <Text className="text-white font-bold text-body-md min-w-[24px] text-center">
+              {quantity}
+            </Text>
+            <Pressable
+              className="w-9 h-9 rounded-full bg-card/20 border border-card/30 items-center justify-center"
+              accessibilityRole="button"
+              accessibilityLabel="Increase quantity"
+              hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+              onPress={() => setQuantity((q) => Math.max(1, Math.min(stock, q + 1)))}
+            >
+              <Icon name="plus" size={14} color={tokens.textPrimary} />
+            </Pressable>
+          </View>
+
           <Pressable
             className="bg-primary px-5 py-2.5 rounded-full"
+            disabled={outOfStock}
+            style={({ pressed }) => [{ opacity: outOfStock ? 0.5 : pressed ? 0.8 : 1 }]}
             onPress={() => {
-              showPopup({
-                type: "success",
-                title: "Added to Cart",
-                message: `${productName} added to your cart.`,
-              });
+              if (productId) onAddToCart(productId, quantity);
             }}
           >
-            <Text className="text-white font-bold text-sm">Buy</Text>
+            <Text className="text-white font-bold text-sm">
+              {outOfStock ? "Out of Stock" : "Buy"}
+            </Text>
           </Pressable>
         </Pressable>
       </View>
@@ -200,6 +234,8 @@ export default function ReelsScreen() {
   const toggleLike = useToggleReelLike();
   const incrementView = useIncrementReelView();
   const showPopup = usePopupStore((s) => s.showPopup);
+  const requireAuth = useRequireAuth();
+  const addToCartMutation = useAddToCart();
 
   const [activeReelIndex, setActiveReelIndex] = useState(0);
   const [commentModalVisible, setCommentModalVisible] = useState(false);
@@ -236,7 +272,7 @@ export default function ReelsScreen() {
         message: `Check out this reel from ${reel.user?.name || "vendor"} on Bexiemart!`,
       });
     } catch (error) {
-      logger.error(error);
+      logger.error("Failed to share reel", error);
     }
   };
 
@@ -260,7 +296,7 @@ export default function ReelsScreen() {
   if (isLoading) {
     return (
       <View className="flex-1 bg-black items-center justify-center">
-        <ActivityIndicator size="large" color="#fff" />
+        <ActivityIndicator size="large" color={tokens.primaryText} />
       </View>
     );
   }
@@ -275,6 +311,25 @@ export default function ReelsScreen() {
         setCommentModalVisible(true);
       }}
       onShare={handleShare}
+      onAddToCart={(productId, quantity) => {
+        if (!requireAuth()) return;
+        addToCartMutation.mutate(
+          { productId, quantity },
+          {
+            onSuccess: () => {
+              showPopup({
+                type: "success",
+                title: "Added to Cart",
+                message: `${quantity} item${quantity > 1 ? "s" : ""} added to your cart.`,
+                action: {
+                  label: "View Cart",
+                  onPress: () => router.push("/(customer)/cart"),
+                },
+              });
+            },
+          }
+        );
+      }}
       insetsBottom={insets.bottom}
     />
   );
@@ -289,7 +344,6 @@ export default function ReelsScreen() {
         showsVerticalScrollIndicator={false}
         snapToAlignment="start"
         decelerationRate="fast"
-        estimatedItemSize={height}
         onViewableItemsChanged={onViewableItemsChanged}
         viewabilityConfig={viewabilityConfig}
         onEndReached={() => {
@@ -301,7 +355,7 @@ export default function ReelsScreen() {
         ListFooterComponent={
           isFetchingNextPage ? (
             <View className="py-4 items-center bg-black">
-              <ActivityIndicator color="#fff" />
+              <ActivityIndicator color={tokens.primaryText} />
             </View>
           ) : null
         }
@@ -315,11 +369,9 @@ export default function ReelsScreen() {
       >
         <BackButton
           className="w-10 h-10 rounded-full bg-black/40 items-center justify-center backdrop-blur-md"
-          color="#fff"
+          color={tokens.primaryText}
         />
-        <Text className="text-heading-md font-heading font-bold text-white shadow-sm">
-          Discover
-        </Text>
+        <Text className="text-heading-md font-heading font-bold text-white">Discover</Text>
         <View className="w-10 h-10" />
       </View>
 
@@ -352,7 +404,7 @@ export default function ReelsScreen() {
                 onPress={() => setCommentModalVisible(false)}
                 className="w-8 h-8 rounded-full bg-muted items-center justify-center"
               >
-                <Icon name="x" size={16} color="#64748b" />
+                <Icon name="x" size={16} color={tokens.textMuted} />
               </Pressable>
             </View>
 
@@ -361,11 +413,10 @@ export default function ReelsScreen() {
               data={comments}
               keyExtractor={(item: any) => item.id}
               className="flex-1 px-5 pt-4"
-              estimatedItemSize={60}
               ListEmptyComponent={
                 commentsLoading ? (
                   <View className="items-center justify-center py-10">
-                    <ActivityIndicator color="#64748b" />
+                    <ActivityIndicator color={tokens.textMuted} />
                   </View>
                 ) : (
                   <View className="items-center justify-center py-10">
@@ -414,7 +465,11 @@ export default function ReelsScreen() {
                 className={`w-10 h-10 rounded-full items-center justify-center ${newComment.trim() ? "bg-primary" : "bg-secondary"}`}
                 onPress={handlePostComment}
               >
-                <Icon name="send" size={16} color={newComment.trim() ? "#fff" : "#94a3b8"} />
+                <Icon
+                  name="send"
+                  size={16}
+                  color={newComment.trim() ? tokens.primaryText : tokens.textMuted}
+                />
               </Pressable>
             </View>
           </View>

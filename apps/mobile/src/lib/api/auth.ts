@@ -1,12 +1,12 @@
 import { apiClient } from "./client";
 import { authClient } from "./better-auth";
 
-interface LoginParams {
+export interface LoginParams {
   email: string;
   password: string;
 }
 
-interface RegisterParams {
+export interface RegisterParams {
   email: string;
   password: string;
   name: string;

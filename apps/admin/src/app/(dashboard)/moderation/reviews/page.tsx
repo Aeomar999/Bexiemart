@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import { useState } from "react";
 import { useReviews, useDeleteReview } from "../../../../lib/hooks/use-moderation";
 import { Pagination } from "../../../../components/ui/Pagination";
 import { DashboardLayout } from "../../../../components/layout/DashboardLayout";
@@ -28,7 +28,7 @@ export default function ReviewsModerationPage() {
           toast.success("Review deleted successfully");
         },
         onError: () => {
-          toast.error("Failed to delete review");
+          toast.error("We couldn't remove this review. Please try again.");
         }
       });
     }

@@ -129,7 +129,6 @@ export default function WalletScreen() {
                   width: "92%",
                   height: 130,
                   zIndex: 10,
-                  elevation: 10,
                 }}
               >
                 <LinearGradient
@@ -190,11 +189,6 @@ export default function WalletScreen() {
                 width: "100%",
                 height: 178,
                 zIndex: 20,
-                shadowColor: "#2d1b73",
-                shadowOffset: { width: 0, height: -6 },
-                shadowOpacity: 0.6,
-                shadowRadius: 20,
-                elevation: 15,
               }}
             >
               <LinearGradient
@@ -240,7 +234,7 @@ export default function WalletScreen() {
                     onPress={() => router.push("/(customer)/wallet/link-account")}
                     className="bg-white/20 px-6 py-3.5 rounded-full flex-row items-center border border-white/10"
                   >
-                    <Icon name="link" size={18} color="#fff" />
+                    <Icon name="link" size={18} color={tokens.primaryText} />
                     <Text className="text-white font-bold ml-2 tracking-wide">Link Account</Text>
                   </Pressable>
 
@@ -251,7 +245,7 @@ export default function WalletScreen() {
                       className="bg-white/15 w-12 h-12 rounded-full items-center justify-center border border-white/10"
                       onPress={onRefresh}
                     >
-                      <Icon name="refresh-cw" size={18} color="#fff" />
+                      <Icon name="refresh-cw" size={18} color={tokens.primaryText} />
                     </Pressable>
                     <Pressable
                       accessibilityRole="button"
@@ -259,7 +253,11 @@ export default function WalletScreen() {
                       className="bg-white/15 w-12 h-12 rounded-full items-center justify-center border border-white/10"
                       onPress={() => setShowBalance(!showBalance)}
                     >
-                      <Icon name={showBalance ? "eye-off" : "eye"} size={18} color="#fff" />
+                      <Icon
+                        name={showBalance ? "eye-off" : "eye"}
+                        size={18}
+                        color={tokens.primaryText}
+                      />
                     </Pressable>
                   </View>
                 </View>
@@ -292,7 +290,7 @@ export default function WalletScreen() {
                     backgroundColor: action.color,
                   }}
                 >
-                  <Icon name={action.icon} size={24} color="#ffffff" />
+                  <Icon name={action.icon} size={24} color={tokens.primaryText} />
                 </View>
                 <Text className="text-body-sm font-bold text-foreground font-body">
                   {action.label}
@@ -306,7 +304,7 @@ export default function WalletScreen() {
             onPress={() => router.push("/(customer)/wallet/rewards")}
             className="mb-8"
           >
-            <View className="rounded-2xl shadow-sm overflow-hidden">
+            <View className="rounded-2xl overflow-hidden">
               <LinearGradient
                 colors={["#f59e0b", "#d97706"]}
                 start={{ x: 0, y: 0 }}
@@ -314,7 +312,7 @@ export default function WalletScreen() {
                 style={{ padding: 20, position: "relative" }}
               >
                 <View className="absolute right-[-20px] top-[-20px] opacity-10">
-                  <Icon name="award" size={120} color="#fff" />
+                  <Icon name="award" size={120} color={tokens.primaryText} />
                 </View>
                 <View className="flex-row justify-between items-center mb-3">
                   <Text className="text-body-md font-heading font-bold text-white/90 uppercase tracking-wider">

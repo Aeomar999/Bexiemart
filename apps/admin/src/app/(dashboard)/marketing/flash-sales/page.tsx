@@ -36,7 +36,7 @@ export default function FlashSalesPage() {
   const handleCreate = (e: React.FormEvent) => {
     e.preventDefault();
     if (!formData.name || !formData.discountPercentage || !formData.endDate) {
-      toast.error("Please fill all required fields");
+      toast.error("Please fill in all the required details to create a flash sale.");
       return;
     }
     

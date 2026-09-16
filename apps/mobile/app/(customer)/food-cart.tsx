@@ -138,7 +138,8 @@ export default function FoodCartScreen() {
       showPopup({
         type: "error",
         title: "Location Error",
-        message: "Could not fetch your current location.",
+        message:
+          "We couldn't find your exact location. Please check your device settings or enter it manually.",
       });
     } finally {
       setIsLocating(false);
@@ -173,7 +174,8 @@ export default function FoodCartScreen() {
         showPopup({
           type: "error",
           title: "Order Failed",
-          message: "Could not place your order. Please try again.",
+          message:
+            "We couldn't place your order right now. Don't worry, you haven't been charged. Please try again.",
         });
       });
   };
@@ -210,13 +212,13 @@ export default function FoodCartScreen() {
         </View>
         <View className="flex-1 items-center justify-center p-5">
           <View className="w-24 h-24 bg-secondary rounded-full items-center justify-center mb-4">
-            <Icon name="shopping-bag" size={40} color="#94a3b8" />
+            <Icon name="shopping-bag" size={40} color={tokens.textMuted} />
           </View>
           <Text className="text-display-sm font-heading font-bold text-foreground mb-2">
             Your cart is empty
           </Text>
           <Text className="text-body-md font-body text-muted-foreground text-center mb-6">
-            Looks like you haven't added any food yet.
+            Looks like you haven&apos;t added any food yet.
           </Text>
           <Pressable
             style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
@@ -279,7 +281,7 @@ export default function FoodCartScreen() {
                     onPress={() => removeItem.mutate(item.id)}
                     className="p-2"
                   >
-                    <Icon name="trash-2" size={18} color="#ef4444" />
+                    <Icon name="trash-2" size={18} color={tokens.error} />
                   </Pressable>
                 </View>
 
@@ -296,7 +298,7 @@ export default function FoodCartScreen() {
                       <Icon
                         name="minus"
                         size={16}
-                        color={item.quantity <= 1 ? "#cbd5e1" : "#475569"}
+                        color={item.quantity <= 1 ? tokens.textDisabled : tokens.textSecondary}
                       />
                     </Pressable>
                     <Text className="text-body-lg font-bold text-foreground w-6 text-center">
@@ -310,7 +312,7 @@ export default function FoodCartScreen() {
                       className="w-10 h-10 items-center justify-center"
                       onPress={() => handleUpdateQty(item.id, item.quantity + 1)}
                     >
-                      <Icon name="plus" size={16} color="#475569" />
+                      <Icon name="plus" size={16} color={tokens.textSecondary} />
                     </Pressable>
                   </View>
                   <Text className="text-body-lg font-bold text-foreground">
@@ -345,7 +347,7 @@ export default function FoodCartScreen() {
                 </Text>
               )}
             </View>
-            <Icon name="chevron-right" size={18} color="#94a3b8" />
+            <Icon name="chevron-right" size={18} color={tokens.textMuted} />
           </Pressable>
         </View>
 
@@ -421,7 +423,7 @@ export default function FoodCartScreen() {
                 onPress={() => setSelectingAddress(false)}
                 className="p-2 bg-muted rounded-full"
               >
-                <Icon name="x" size={20} color="#64748b" />
+                <Icon name="x" size={20} color={tokens.textMuted} />
               </Pressable>
             </View>
 
@@ -467,7 +469,7 @@ export default function FoodCartScreen() {
                             : "map-pin"
                       }
                       size={18}
-                      color="#64748b"
+                      color={tokens.textMuted}
                     />
                   </View>
                   <View className="flex-1">

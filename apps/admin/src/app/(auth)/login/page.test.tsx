@@ -1,5 +1,7 @@
-import React from "react";
-import { render, screen, fireEvent, waitFor } from "@testing-library/react";
+/**
+ * @jest-environment jsdom
+ */
+import { render, screen, fireEvent } from "@testing-library/react";
 import LoginPage from "./page";
 import { useLogin } from "../../../lib/hooks/use-auth";
 import { useRouter } from "next/navigation";

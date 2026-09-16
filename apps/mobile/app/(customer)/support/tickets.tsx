@@ -17,11 +17,11 @@ const statusColors: Record<string, { bg: string; text: string; label: string }> 
   ASSIGNED: { bg: "#fef3c7", text: "#d97706", label: "Assigned" },
   IN_PROGRESS: { bg: "#e0e7ff", text: "#4f46e5", label: "In Progress" },
   RESOLVED: { bg: "#d1fae5", text: "#059669", label: "Resolved" },
-  CLOSED: { bg: "#f1f5f9", text: "#64748b", label: "Closed" },
+  CLOSED: { bg: "#f1f5f9", text: tokens.textMuted, label: "Closed" },
 };
 
 const priorityColors: Record<string, { bg: string; text: string }> = {
-  LOW: { bg: "#f1f5f9", text: "#64748b" },
+  LOW: { bg: "#f1f5f9", text: tokens.textMuted },
   NORMAL: { bg: "#e0f2fe", text: "#0284c7" },
   HIGH: { bg: "#ffedd5", text: "#ea580c" },
   URGENT: { bg: "#fee2e2", text: "#dc2626" },
@@ -69,7 +69,7 @@ export default function SupportTicketsScreen() {
   const renderTicketItem = ({ item }: { item: any }) => {
     const status = statusColors[item.status] || {
       bg: "#f1f5f9",
-      text: "#64748b",
+      text: tokens.textMuted,
       label: item.status,
     };
     const priority = priorityColors[item.priority] || priorityColors.NORMAL;
@@ -123,7 +123,7 @@ export default function SupportTicketsScreen() {
 
           {item.rating ? (
             <View className="flex-row items-center gap-1 bg-amber-50 px-2 py-0.5 rounded-md border border-amber-200">
-              <Icon name="star" size={14} color="#f59e0b" />
+              <Icon name="star" size={14} color={tokens.warning} />
               <Text className="text-caption font-bold text-amber-700">{item.rating}/5 Rated</Text>
             </View>
           ) : canRate ? (
@@ -162,7 +162,7 @@ export default function SupportTicketsScreen() {
           onPress={() => router.push("/(customer)/support/create-ticket")}
           className="bg-primary px-3.5 py-2 rounded-xl flex-row items-center gap-1.5"
         >
-          <Icon name="plus" size={16} color="#ffffff" />
+          <Icon name="plus" size={16} color={tokens.primaryText} />
           <Text className="text-caption font-bold text-white">New Ticket</Text>
         </Pressable>
       </View>
@@ -198,7 +198,7 @@ export default function SupportTicketsScreen() {
       {/* Rating Modal */}
       <Modal visible={ratingModalVisible} transparent animationType="fade">
         <View className="flex-1 bg-black/50 justify-center items-center p-5">
-          <View className="bg-card w-full rounded-3xl p-6 border border-border shadow-lg">
+          <View className="bg-card w-full rounded-3xl p-6 border border-border">
             <Text className="text-heading-md font-bold text-foreground font-heading text-center">
               Rate Support Experience
             </Text>
@@ -216,7 +216,11 @@ export default function SupportTicketsScreen() {
                   onPress={() => setRating(star)}
                   className="p-2"
                 >
-                  <Icon name="star" size={36} color={star <= rating ? "#f59e0b" : "#e2e8f0"} />
+                  <Icon
+                    name="star"
+                    size={36}
+                    color={star <= rating ? tokens.warning : tokens.border}
+                  />
                 </Pressable>
               ))}
             </View>
@@ -226,7 +230,7 @@ export default function SupportTicketsScreen() {
               value={comment}
               onChangeText={setComment}
               placeholder="Tell us what went well or how we can improve..."
-              placeholderTextColor="#94a3b8"
+              placeholderTextColor={tokens.textMuted}
               multiline
               numberOfLines={4}
               textAlignVertical="top"
@@ -236,16 +240,16 @@ export default function SupportTicketsScreen() {
             <View className="flex-row gap-3">
               <Button
                 variant="outline"
-                label="Cancel"
+                title="Cancel"
                 onPress={() => setRatingModalVisible(false)}
                 className="flex-1"
               />
               <Button
                 variant="primary"
-                label="Submit"
+                title="Submit"
                 onPress={handleSubmitRating}
                 className="flex-1"
-                isLoading={rateMutation.isPending}
+                loading={rateMutation.isPending}
               />
             </View>
           </View>

@@ -1,3 +1,4 @@
+import { tokens } from "@/theme/tokens";
 import { BackButton } from "@/components/ui/BackButton";
 import {
   View,
@@ -169,7 +170,7 @@ export default function VendorChatScreen() {
           hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
           className="w-10 h-10 rounded-full bg-muted items-center justify-center"
         >
-          <Icon name="paperclip" size={20} color="#64748b" />
+          <Icon name="paperclip" size={20} color={tokens.textMuted} />
         </Pressable>
         <View className="flex-1 bg-muted rounded-2xl px-4 py-3 flex-row items-center">
           <TextInput
@@ -190,7 +191,7 @@ export default function VendorChatScreen() {
           <Icon
             name="send"
             size={20}
-            color={message.trim() ? "#ffffff" : "#94a3b8"}
+            color={message.trim() ? tokens.primaryText : tokens.textMuted}
             style={{ marginLeft: 4 }}
           />
         </Pressable>

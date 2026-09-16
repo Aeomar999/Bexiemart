@@ -14,7 +14,7 @@
         "applinks:bexiemart.com"
       ],
       "config": {
-        "googleMapsApiKey": "REPLACE_WITH_GOOGLE_MAPS_IOS_KEY"
+        "googleMapsApiKey": ""
       },
       "infoPlist": {
         "NSCameraUsageDescription": "Take photos of products to sell on BexieMart.",
@@ -30,7 +30,7 @@
       "package": "com.bexiemart.app",
       "config": {
         "googleMaps": {
-          "apiKey": "REPLACE_WITH_GOOGLE_MAPS_ANDROID_KEY"
+          "apiKey": ""
         }
       },
       "permissions": [
@@ -128,7 +128,11 @@
           "project": "bexiemart-mobile"
         }
       ],
-      "expo-video"
+      "expo-video",
+      "expo-image",
+      "expo-localization",
+      "expo-status-bar",
+      "expo-web-browser"
     ],
     "experiments": {
       "typedRoutes": true

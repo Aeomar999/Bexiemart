@@ -122,16 +122,16 @@ export default function StoreProfileScreen() {
             <CoverHeader
               imageUrl={store.banner}
               fallbackIcon="store"
-              fallbackIconColor="#3b82f6"
+              fallbackIconColor={tokens.primary}
               fallbackClassName="bg-primary-hover"
               imageOpacity={0.8}
             />
 
             {/* Profile Info Card */}
             <View className="px-5 -mt-16 relative z-10">
-              <View className="bg-card rounded-3xl p-5 shadow-md border border-border">
+              <View className="bg-card rounded-3xl p-5 border border-border">
                 <View className="flex-row justify-between items-start">
-                  <View className="w-20 h-20 rounded-2xl bg-background border-2 border-border overflow-hidden items-center justify-center -mt-10 shadow-sm">
+                  <View className="w-20 h-20 rounded-2xl bg-background border-2 border-border overflow-hidden items-center justify-center -mt-10">
                     {store.logo ? (
                       <Image
                         source={{ uri: store.logo }}
@@ -164,7 +164,7 @@ export default function StoreProfileScreen() {
 
                   {store.city && store.state && (
                     <View className="flex-row items-center gap-1.5 mt-1.5">
-                      <Icon name="map-pin" size={12} color="#64748b" />
+                      <Icon name="map-pin" size={12} color={tokens.textMuted} />
                       <Text className="text-caption text-muted-foreground font-body">
                         {store.city}, {store.state}
                       </Text>
@@ -191,7 +191,7 @@ export default function StoreProfileScreen() {
                   <View className="w-[1px] h-8 bg-border" />
                   <View className="items-center flex-1">
                     <Text className="text-heading-sm font-bold text-foreground font-heading flex-row items-center gap-1">
-                      {store.rating} <Icon name="star" size={12} color="#f59e0b" />
+                      {store.rating} <Icon name="star" size={12} color={tokens.warning} />
                     </Text>
                     <Text className="text-caption text-muted-foreground font-body uppercase tracking-wider mt-1">
                       Rating
@@ -251,7 +251,7 @@ export default function StoreProfileScreen() {
                     contentFit="cover"
                   />
                 ) : (
-                  <Icon name="image" size={32} color="#cbd5e1" />
+                  <Icon name="image" size={32} color={tokens.textDisabled} />
                 )}
                 {discount > 0 && (
                   <View className="absolute top-2 left-2 bg-error px-2 py-0.5 rounded-lg">
@@ -266,10 +266,10 @@ export default function StoreProfileScreen() {
                   accessibilityLabel={isFav ? "Remove from favorites" : "Add to favorites"}
                   accessibilityState={{ selected: isFav }}
                   hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
-                  className="absolute top-2 right-2 w-8 h-8 rounded-full bg-card/90 items-center justify-center shadow-sm active:opacity-70"
+                  className="absolute top-2 right-2 w-8 h-8 rounded-full bg-card/90 items-center justify-center active:opacity-70"
                   onPress={() => handleToggleFavorite(item.id)}
                 >
-                  <Icon name="heart" size={15} color={isFav ? "#ef4444" : "#64748b"} />
+                  <Icon name="heart" size={15} color={isFav ? tokens.error : tokens.textMuted} />
                 </Pressable>
               </View>
               <View className="p-3">
@@ -304,11 +304,11 @@ export default function StoreProfileScreen() {
                     className="w-9 h-9 rounded-full bg-primary items-center justify-center active:scale-95"
                     onPress={() => handleAddToCart(item)}
                   >
-                    <Icon name="plus" size={16} color="#fff" />
+                    <Icon name="plus" size={16} color={tokens.primaryText} />
                   </Pressable>
                 </View>
                 <View className="flex-row items-center gap-1 mt-2">
-                  <Icon name="star" size={10} color="#f59e0b" />
+                  <Icon name="star" size={10} color={tokens.warning} />
                   <Text className="text-caption text-muted-foreground font-body">
                     {item.rating}
                   </Text>
