@@ -19,7 +19,7 @@ import { TableSkeleton } from "../../../../components/ui/Skeleton";
 import { EmptyState } from "../../../../components/ui/EmptyState";
 import { ConfirmModal } from "../../../../components/ui/ConfirmModal";
 import { HugeiconsIcon } from "@hugeicons/react";
-import { ImageIcon, PlusIcon, PencilIcon, Trash2Icon, UploadIcon, Loader2Icon } from "@hugeicons/core-free-icons";
+import { ImageIcon, PlusIcon, PencilIcon, TrashIcon, UploadIcon, LoaderIcon } from "@hugeicons/core-free-icons";
 import { toast } from "sonner";
 import {
   useBanners,
@@ -234,7 +234,7 @@ export default function BannersPage() {
                             onClick={() => setDeleteTarget(banner)}
                             aria-label="Delete banner"
                           >
-                            <HugeiconsIcon icon={Trash2Icon} className="h-4 w-4 text-[var(--color-error)]" />
+                            <HugeiconsIcon icon={TrashIcon} className="h-4 w-4 text-[var(--color-error)]" />
                           </Button>
                         </div>
                       </TableCell>
@@ -272,7 +272,7 @@ export default function BannersPage() {
                   )}
                   {isUploading && (
                     <div className="absolute inset-0 flex items-center justify-center bg-black/50">
-                      <HugeiconsIcon icon={Loader2Icon} className="h-6 w-6 animate-spin text-white" />
+                      <HugeiconsIcon icon={LoaderIcon} className="h-6 w-6 animate-spin text-white" />
                     </div>
                   )}
                   <label className="absolute bottom-2 right-2 flex cursor-pointer items-center gap-1 rounded-md bg-[var(--color-primary)] px-3 py-1.5 text-xs font-medium text-white">

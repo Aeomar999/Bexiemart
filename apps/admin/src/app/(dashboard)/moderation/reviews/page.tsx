@@ -7,7 +7,7 @@ import { DashboardLayout } from "../../../../components/layout/DashboardLayout";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../../../../components/ui/Table";
 import { Card, CardContent, CardHeader, CardTitle } from "../../../../components/ui/Card";
 import { HugeiconsIcon } from "@hugeicons/react";
-import { MessageSquareWarningIcon, Trash2Icon, StarIcon } from "@hugeicons/core-free-icons";
+import { MessageSquareWarningIcon, TrashIcon, StarIcon } from "@hugeicons/core-free-icons";
 import { TableSkeleton } from "../../../../components/ui/Skeleton";
 import { EmptyState } from "../../../../components/ui/EmptyState";
 import { Button } from "../../../../components/ui/Button";
@@ -93,7 +93,7 @@ export default function ReviewsModerationPage() {
                           onClick={() => handleDelete(review.id)}
                           disabled={isPending}
                         >
-                          <HugeiconsIcon icon={Trash2Icon} className="h-4 w-4" />
+                          <HugeiconsIcon icon={TrashIcon} className="h-4 w-4" />
                         </Button>
                       </TableCell>
                     </TableRow>

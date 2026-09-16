@@ -8,7 +8,7 @@ import { Input } from "../../../../components/ui/Input";
 import { useAuthStore } from "../../../../lib/stores/auth-store";
 import { useUpdateProfile, useUploadAvatar } from "../../../../lib/hooks/use-profile";
 import { HugeiconsIcon } from "@hugeicons/react";
-import { UserIcon, UploadIcon, Loader2Icon } from "@hugeicons/core-free-icons";
+import { UserIcon, UploadIcon, LoaderIcon } from "@hugeicons/core-free-icons";
 import { Skeleton } from "../../../../components/ui/Skeleton";
 
 export default function ProfileSettingsPage() {
@@ -82,7 +82,7 @@ function ProfileSettingsForm({ user }: { user: any }) {
                 
                 {isUploading && (
                   <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
-                    <HugeiconsIcon icon={Loader2Icon} className="h-6 w-6 text-white animate-spin" />
+                    <HugeiconsIcon icon={LoaderIcon} className="h-6 w-6 text-white animate-spin" />
                   </div>
                 )}
                 
