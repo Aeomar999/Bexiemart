@@ -1,5 +1,5 @@
 import { HugeiconsIcon } from "@hugeicons/react";
-import { AlertTriangleIcon, XIcon } from "@hugeicons/core-free-icons";
+import { AlertTriangle, XIcon } from "@hugeicons/core-free-icons";
 import { Button } from "./Button";
 import { cn } from "../../lib/utils";
 
@@ -39,7 +39,7 @@ export function ConfirmModal({
               variant === "warning" ? "bg-orange-100 text-orange-600" :
               "bg-blue-100 text-blue-600"
             )}>
-              <HugeiconsIcon icon={AlertTriangleIcon} className="h-5 w-5" />
+              <HugeiconsIcon icon={AlertTriangle} className="h-5 w-5" />
             </div>
             <h2 className="text-lg font-semibold text-[var(--color-text)]">{title}</h2>
           </div>

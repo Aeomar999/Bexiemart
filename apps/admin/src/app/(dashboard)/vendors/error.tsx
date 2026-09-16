@@ -2,7 +2,7 @@
 
 import { useEffect } from "react";
 import { HugeiconsIcon } from "@hugeicons/react";
-import { AlertTriangleIcon, RefreshCwIcon } from "@hugeicons/core-free-icons";
+import { AlertTriangle, RefreshCwIcon } from "@hugeicons/core-free-icons";
 import * as Sentry from "@sentry/nextjs";
 
 interface ErrorPageProps {
@@ -18,7 +18,7 @@ export default function VendorsError({ error, reset }: ErrorPageProps) {
   return (
     <div className="flex min-h-[60vh] flex-col items-center justify-center px-4 text-center">
       <div className="rounded-full bg-red-50 p-4 dark:bg-red-950/20">
-        <HugeiconsIcon icon={AlertTriangleIcon} className="h-10 w-10 text-red-500" />
+        <HugeiconsIcon icon={AlertTriangle} className="h-10 w-10 text-red-500" />
       </div>
       <h2 className="mt-6 text-xl font-bold text-[var(--color-text)]">
         Failed to load vendors

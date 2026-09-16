@@ -20,7 +20,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "../../../components/ui
 import { Button } from "../../../components/ui/Button";
 import { Input } from "../../../components/ui/Input";
 import { HugeiconsIcon } from "@hugeicons/react";
-import { SearchIcon, AlertTriangleIcon } from "@hugeicons/core-free-icons";
+import { SearchIcon, AlertTriangle } from "@hugeicons/core-free-icons";
 import { TableSkeleton } from "../../../components/ui/Skeleton";
 import { EmptyState } from "../../../components/ui/EmptyState";
 
@@ -70,7 +70,7 @@ export default function DisputesPage() {
               </div>
             ) : disputes.length === 0 ? (
               <EmptyState 
-                icon={<HugeiconsIcon icon={AlertTriangleIcon} className="h-10 w-10 text-[var(--color-text-muted)]" />}
+                icon={<HugeiconsIcon icon={AlertTriangle} className="h-10 w-10 text-[var(--color-text-muted)]" />}
                 title="No disputes found"
                 description={debouncedSearch ? "We couldn't find any disputes matching your search." : "There are currently no active disputes."}
               />
