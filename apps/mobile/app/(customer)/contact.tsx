@@ -73,7 +73,11 @@ export default function ContactUsScreen() {
             className="bg-card p-5 rounded-2xl border border-border items-center gap-2"
             onPress={() =>
               Linking.openURL("tel:+233241234567").catch(() =>
-                Toast.show({ type: "error", text1: "Call failed", text2: "No phone app available" })
+                Toast.show({
+                  type: "error",
+                  text1: "Call failed",
+                  text2: "We couldn't open your phone's dialer. Please try calling manually.",
+                })
               )
             }
           >

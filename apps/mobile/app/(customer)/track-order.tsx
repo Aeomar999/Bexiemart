@@ -126,7 +126,7 @@ export default function TrackOrderScreen() {
       showPopup({
         type: "error",
         title: "Could not cancel",
-        message: "The ride may be in progress.",
+        message: "We couldn't cancel this request. It might already be on the way.",
       });
     } finally {
       setActioning(false);
@@ -291,7 +291,10 @@ export default function TrackOrderScreen() {
                   const phone = job.dispatcher?.user?.phoneNumber;
                   if (phone) {
                     Linking.openURL(`tel:${phone}`).catch(() => {
-                      Toast.show({ type: "error", text1: "Unable to open phone app" });
+                      Toast.show({
+                        type: "error",
+                        text1: "We couldn't open your phone's dialer. Please try calling manually.",
+                      });
                     });
                   }
                 }}

@@ -24,7 +24,11 @@ export default function BecomeDispatcherScreen() {
 
   const handleSubmit = async () => {
     if (!form.licensePlate || !form.licenseNumber) {
-      Toast.show({ type: "error", text1: "Missing Fields", text2: "Please fill all the details." });
+      Toast.show({
+        type: "error",
+        text1: "Almost there!",
+        text2: "Please fill in all the required fields to continue.",
+      });
       return;
     }
 

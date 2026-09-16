@@ -1,4 +1,5 @@
 import { tokens } from "@/theme/tokens";
+import { getUserFriendlyErrorMessage } from "@/lib/error-utils";
 import { BackButton } from "@/components/ui/BackButton";
 import {
   View,
@@ -61,7 +62,10 @@ export default function AddReelScreen() {
       showPopup({
         type: "error",
         title: "Upload failed",
-        message: e?.message ?? "Try a shorter clip.",
+        message: getUserFriendlyErrorMessage(
+          e,
+          "We couldn't upload your video. Please ensure it's a supported format and try again."
+        ),
       });
     } finally {
       setIsUploading(false);
@@ -81,7 +85,7 @@ export default function AddReelScreen() {
       showPopup({
         type: "error",
         title: "Product Required",
-        message: "Tag a product to make this reel shoppable.",
+        message: "Please tag at least one product so shoppers can buy from your reel.",
       });
       return;
     }

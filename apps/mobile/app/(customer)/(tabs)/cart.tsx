@@ -52,14 +52,18 @@ export default function CartScreen() {
 
   const handleApplyCoupon = () => {
     if (!couponCode.trim()) {
-      Toast.show({ type: "error", text1: "Enter Code", text2: "Please enter a coupon code." });
+      Toast.show({ type: "error", text1: "Oops!", text2: "You forgot to enter a coupon code." });
       return;
     }
     if (couponCode.toUpperCase() === "BEXIE10") {
       setCouponApplied(true);
       Toast.show({ type: "success", text1: "Applied", text2: "10% discount applied!" });
     } else {
-      Toast.show({ type: "error", text1: "Invalid", text2: "Coupon code not recognized." });
+      Toast.show({
+        type: "error",
+        text1: "Invalid Code",
+        text2: "We didn't recognize that coupon code. Please check it and try again.",
+      });
     }
   };
 

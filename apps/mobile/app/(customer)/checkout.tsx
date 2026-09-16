@@ -1,4 +1,5 @@
 import { tokens } from "@/theme/tokens";
+import { getUserFriendlyErrorMessage } from "@/lib/error-utils";
 import { BackButton } from "@/components/ui/BackButton";
 import { View, Text, ScrollView, Alert, Pressable } from "react-native";
 import { useRouter } from "expo-router";
@@ -149,7 +150,10 @@ export default function CheckoutScreen() {
           Toast.show({
             type: "error",
             text1: "Order Failed",
-            text2: err?.message ?? "Something went wrong.",
+            text2: getUserFriendlyErrorMessage(
+              err,
+              "We hit a snag placing your order. Please try again."
+            ),
           });
         },
       }

@@ -95,7 +95,7 @@ export default function PaymentMethodsScreen() {
     ) {
       Toast.show({
         type: "error",
-        text1: "Missing Fields",
+        text1: "Almost there!",
         text2: "Please fill out all required fields.",
       });
       return;

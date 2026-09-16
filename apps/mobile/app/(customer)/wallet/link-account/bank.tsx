@@ -259,7 +259,6 @@ export default function AddBankAccountScreen() {
               className={`w-full rounded-2xl py-4 flex-row justify-center items-center ${
                 !resolvedName || linkBankAccount.isPending ? "bg-gray-300" : "bg-blue-600"
               }`}
-              style={}
             >
               {linkBankAccount.isPending ? (
                 <ActivityIndicator color={tokens.primaryText} />

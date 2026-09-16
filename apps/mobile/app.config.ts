@@ -35,8 +35,8 @@ const iosConfig: Record<string, unknown> = {
   ...(googleMapsIOSKey ? { googleMapsApiKey: googleMapsIOSKey } : {}),
 };
 
-const iosRest = ((appJson.expo.ios ?? {}) as Record<string, unknown>) ?? {};
-const androidRest = ((appJson.expo.android ?? {}) as Record<string, unknown>) ?? {};
+const iosRest = (appJson.expo.ios as Record<string, unknown>) || {};
+const androidRest = (appJson.expo.android as Record<string, unknown>) || {};
 
 export default {
   expo: {

@@ -21,8 +21,8 @@ export default function ReviewModalScreen() {
     if (!productId) {
       Toast.show({
         type: "error",
-        text1: "Missing Product",
-        text2: "Cannot submit review without a product.",
+        text1: "Something went wrong",
+        text2: "We couldn't find the product to review.",
       });
       return;
     }
@@ -38,7 +38,11 @@ export default function ReviewModalScreen() {
           router.back();
         },
         onError: () => {
-          Toast.show({ type: "error", text1: "Submission Failed", text2: "Please try again." });
+          Toast.show({
+            type: "error",
+            text1: "Submission Failed",
+            text2: "We couldn't post your review. Please try again.",
+          });
         },
       }
     );

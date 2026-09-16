@@ -56,7 +56,11 @@ export function EditProfileScreen() {
 
   const handleSave = () => {
     if (!name.trim() || !email.trim()) {
-      Toast.show({ type: "error", text1: "Missing Fields", text2: "Name and Email are required." });
+      Toast.show({
+        type: "error",
+        text1: "Almost there!",
+        text2: "Please provide both your name and email address to save changes.",
+      });
       return;
     }
 

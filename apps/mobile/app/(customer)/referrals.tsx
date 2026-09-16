@@ -37,7 +37,11 @@ export default function ReferralsScreen() {
         text2: "Your referral code is ready!",
       });
     } catch {
-      Toast.show({ type: "error", text1: "Error", text2: "Could not generate referral code." });
+      Toast.show({
+        type: "error",
+        text1: "Oops!",
+        text2: "We couldn't create your referral code right now. Please try again later.",
+      });
     } finally {
       setIsGenerating(false);
     }

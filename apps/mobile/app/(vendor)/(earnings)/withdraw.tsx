@@ -113,7 +113,11 @@ export default function WithdrawFundsScreen() {
     setShowPinModal(false);
     const selected = methods.find((m) => m.id === effectiveSelectedMethod);
     if (!selected) {
-      showPopup({ type: "error", title: "No account", message: "Add a payout account first." });
+      showPopup({
+        type: "error",
+        title: "Where should we send your money?",
+        message: "Please add a payout account first.",
+      });
       return;
     }
     withdrawMutation.mutate(

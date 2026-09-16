@@ -1,7 +1,8 @@
 import { tokens } from "@/theme/tokens";
 import { BackButton } from "@/components/ui/BackButton";
-import { View, Text, TextInput, ScrollView, Pressable } from "react-native";
+import { View, Text, TextInput, ScrollView, Pressable, ActivityIndicator } from "react-native";
 import { Image } from "expo-image";
+import { FlashList } from "@shopify/flash-list";
 import { useState, useMemo } from "react";
 import { useRouter } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -31,6 +32,9 @@ export default function SearchScreen() {
     isPending,
     isError,
     refetch,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
   } = useProducts({ search: query || undefined });
   const rawResults = productsData?.pages?.flatMap((page: any) => page.data) ?? [];
 
@@ -123,84 +127,102 @@ export default function SearchScreen() {
         </Pressable>
       </View>
 
-      <ScrollView className="flex-1" showsVerticalScrollIndicator={false}>
-        {query.length === 0 ? (
-          <View className="p-5">
-            {/* Recent Searches */}
-            <View className="mb-8">
-              <View className="flex-row justify-between items-center mb-4">
-                <Text className="text-body-lg font-heading font-bold text-foreground">
-                  Recent Searches
-                </Text>
+      {query.length === 0 ? (
+        <ScrollView className="flex-1 p-5" showsVerticalScrollIndicator={false}>
+          {/* Recent Searches */}
+          <View className="mb-8">
+            <View className="flex-row justify-between items-center mb-4">
+              <Text className="text-body-lg font-heading font-bold text-foreground">
+                Recent Searches
+              </Text>
+              <Pressable
+                style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
+                onPress={() => setRecentSearches([])}
+              >
+                <Text className="text-sm font-bold text-muted-foreground">Clear</Text>
+              </Pressable>
+            </View>
+            <View className="gap-0">
+              {recentSearches.map((item, idx) => (
                 <Pressable
                   style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
-                  onPress={() => setRecentSearches([])}
+                  key={idx}
+                  className="flex-row items-center py-3 border-b border-border"
+                  onPress={() => setQuery(item)}
                 >
-                  <Text className="text-sm font-bold text-muted-foreground">Clear</Text>
+                  <Icon name="clock" size={16} color={tokens.textMuted} />
+                  <Text className="ml-3 text-body-lg font-body text-muted-foreground flex-1">
+                    {item}
+                  </Text>
+                  <Icon name="arrow-up-left" size={16} color={tokens.textDisabled} />
                 </Pressable>
-              </View>
-              <View className="gap-0">
-                {recentSearches.map((item, idx) => (
-                  <Pressable
-                    style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
-                    key={idx}
-                    className="flex-row items-center py-3 border-b border-border"
-                    onPress={() => setQuery(item)}
-                  >
-                    <Icon name="clock" size={16} color={tokens.textMuted} />
-                    <Text className="ml-3 text-body-lg font-body text-muted-foreground flex-1">
-                      {item}
-                    </Text>
-                    <Icon name="arrow-up-left" size={16} color={tokens.textDisabled} />
-                  </Pressable>
-                ))}
-              </View>
-            </View>
-
-            {/* Trending Tags */}
-            <View>
-              <Text className="text-body-lg font-heading font-bold text-foreground mb-4">
-                Trending Now
-              </Text>
-              <View className="flex-row flex-wrap gap-2">
-                {TRENDING_TAGS.map((tag, idx) => (
-                  <Pressable
-                    style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
-                    key={idx}
-                    className="px-4 py-2 bg-primary-subtle rounded-full border border-border"
-                    onPress={() => setQuery(tag)}
-                  >
-                    <Text className="text-sm font-bold text-primary font-body">{tag}</Text>
-                  </Pressable>
-                ))}
-              </View>
+              ))}
             </View>
           </View>
-        ) : (
-          <View className="p-5">
-            <Text className="text-body-md font-bold text-muted-foreground font-heading mb-4 px-1">
-              {isPending ? "Searching..." : `${results.length} Results for "${query}"`}
-            </Text>
 
-            {isPending && rawResults.length === 0 ? (
-              <View className="py-10">
-                <LoadingState type="grid" message="Finding the best products for you..." />
-              </View>
-            ) : results.length === 0 ? (
-              <View className="py-10">
-                <EmptyState
-                  title="No results found"
-                  description={`We couldn't find any products matching "${query}".`}
-                  iconName="search"
-                  fullScreen={false}
-                />
-              </View>
-            ) : (
-              <View className="gap-4">
-                {results.map((item: any) => (
+          {/* Trending Tags */}
+          <View>
+            <Text className="text-body-lg font-heading font-bold text-foreground mb-4">
+              Trending Now
+            </Text>
+            <View className="flex-row flex-wrap gap-2">
+              {TRENDING_TAGS.map((tag, idx) => (
+                <Pressable
+                  style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
+                  key={idx}
+                  className="px-4 py-2 bg-primary-subtle rounded-full border border-border"
+                  onPress={() => setQuery(tag)}
+                >
+                  <Text className="text-sm font-bold text-primary font-body">{tag}</Text>
+                </Pressable>
+              ))}
+            </View>
+          </View>
+        </ScrollView>
+      ) : (
+        <View className="flex-1">
+          {isPending && rawResults.length === 0 ? (
+            <View className="py-10">
+              <LoadingState type="grid" message="Finding the best products for you..." />
+            </View>
+          ) : results.length === 0 ? (
+            <View className="py-10">
+              <EmptyState
+                title="No results found"
+                description={`We couldn't find any products matching "${query}".`}
+                iconName="search"
+                fullScreen={false}
+              />
+            </View>
+          ) : (
+            <>
+              {/* @ts-ignore */}
+              <FlashList
+                data={results}
+                estimatedItemSize={120}
+                contentContainerStyle={{ padding: 20 }}
+                onEndReached={() => {
+                  if (hasNextPage && !isFetchingNextPage) {
+                    fetchNextPage();
+                  }
+                }}
+                onEndReachedThreshold={0.5}
+                ListHeaderComponent={
+                  <Text className="text-body-md font-bold text-muted-foreground font-heading mb-4 px-1">
+                    {`${results.length} Results for "${query}"`}
+                  </Text>
+                }
+                ListFooterComponent={
+                  isFetchingNextPage ? (
+                    <View className="py-4 items-center">
+                      <ActivityIndicator size="small" color={tokens.primary} />
+                    </View>
+                  ) : null
+                }
+                ItemSeparatorComponent={() => <View className="h-4" />}
+                renderItem={({ item }) => (
                   <Pressable
                     style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
-                    key={item.id}
                     className="flex-row items-center bg-card rounded-2xl p-4 border border-border"
                     onPress={() => router.push(`/(customer)/product/${item.id}` as any)}
                   >
@@ -235,12 +257,12 @@ export default function SearchScreen() {
                       </View>
                     </View>
                   </Pressable>
-                ))}
-              </View>
-            )}
-          </View>
-        )}
-      </ScrollView>
+                )}
+              />
+            </>
+          )}
+        </View>
+      )}
 
       {/* Filter Bottom Sheet */}
       {showFilters && (

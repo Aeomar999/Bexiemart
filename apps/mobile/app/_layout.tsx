@@ -18,6 +18,19 @@ import { ErrorBoundary } from "../src/components/ui/ErrorBoundary";
 import { AnimatedSplashScreen } from "../src/components/screens/AnimatedSplashScreen";
 import { ThemeController } from "../src/components/ThemeController";
 import * as SplashScreen from "expo-splash-screen";
+import * as Notifications from "expo-notifications";
+import { registerForPushNotificationsAsync } from "../src/lib/notifications";
+import { apiClient } from "../src/lib/api/client";
+
+Notifications.setNotificationHandler({
+  handleNotification: async () => ({
+    shouldShowAlert: true,
+    shouldPlaySound: true,
+    shouldSetBadge: false,
+    shouldShowBanner: false,
+    shouldShowList: false,
+  }),
+});
 
 // Prevent the native splash screen from auto-hiding
 SplashScreen.preventAutoHideAsync();
@@ -106,6 +119,18 @@ function RootLayout() {
       SplashScreen.hideAsync();
     }
   }, [fontsLoaded, isLoading]);
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      registerForPushNotificationsAsync().then((token) => {
+        if (token) {
+          apiClient.patch("/users/push-token", { token }).catch((err) => {
+            logger.error("Failed to save push token:", err);
+          });
+        }
+      });
+    }
+  }, [isAuthenticated]);
 
   useEffect(() => {
     // Wait until the root layout has mounted completely, fonts loaded, auth

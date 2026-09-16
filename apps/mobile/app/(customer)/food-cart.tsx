@@ -138,7 +138,8 @@ export default function FoodCartScreen() {
       showPopup({
         type: "error",
         title: "Location Error",
-        message: "Could not fetch your current location.",
+        message:
+          "We couldn't find your exact location. Please check your device settings or enter it manually.",
       });
     } finally {
       setIsLocating(false);
@@ -173,7 +174,8 @@ export default function FoodCartScreen() {
         showPopup({
           type: "error",
           title: "Order Failed",
-          message: "Could not place your order. Please try again.",
+          message:
+            "We couldn't place your order right now. Don't worry, you haven't been charged. Please try again.",
         });
       });
   };

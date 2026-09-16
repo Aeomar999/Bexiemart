@@ -6,11 +6,11 @@ import { useCartStore } from "@/lib/stores/cart-store";
 import { Badge } from "@/components/ui/Badge";
 import { Icon } from "@/components/ui/Icon";
 
-function TabIcon({ name, color }: { name: string; color: string }) {
+function TabIcon({ name, color }: { name: string; color: any }) {
   return <Icon name={name} color={color} size={24} />;
 }
 
-function CartTabIcon({ color }: { color: string }) {
+function CartTabIcon({ color }: { color: any }) {
   const itemCount = useCartStore((s) => s.itemCount);
   return (
     <View>
