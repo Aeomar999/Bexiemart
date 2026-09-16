@@ -226,7 +226,7 @@ export default function TopUpScreen() {
           title={isProcessing ? "Processing..." : `Top up ${formatMoney(amount)}`}
           size="lg"
           disabled={!isValidAmount || isProcessing}
-          className="w-full rounded-xl"
+          className="w-full rounded-full"
           onPress={handleTopUp}
         />
       </View>

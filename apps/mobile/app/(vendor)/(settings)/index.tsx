@@ -167,19 +167,16 @@ export default function VendorSettingsScreen() {
         </View>
 
         {/* Sections */}
-        {SETTINGS_SECTIONS.map((section, idx) => (
-          <View key={idx} className="mb-8">
-            <Text className="text-body-lg font-heading font-bold text-foreground mb-3 px-1">
-              {section.title}
-            </Text>
-            <View className="bg-card rounded-2xl border border-border overflow-hidden">
+        <View className="gap-6 mb-6">
+          {SETTINGS_SECTIONS.map((section, idx) => (
+            <View key={idx} className="bg-card rounded-2xl border border-border overflow-hidden">
               {section.items.map((item, itemIdx) => {
                 const isLast = itemIdx === section.items.length - 1;
                 return (
                   <Pressable
                     style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
                     key={item.id}
-                    className={`flex-row items-center justify-between p-4 ${!isLast ? "border-b border-border" : ""}`}
+                    className={`flex-row items-center justify-between h-[48px] px-4 ${!isLast ? "border-b border-border" : ""}`}
                     disabled={item.type === "toggle"}
                     onPress={() => {
                       if (item.route && item.route !== "#") {
@@ -189,14 +186,12 @@ export default function VendorSettingsScreen() {
                   >
                     <View className="flex-row items-center gap-3">
                       <View
-                        className="w-10 h-10 rounded-full items-center justify-center"
+                        className="w-8 h-8 rounded-full items-center justify-center"
                         style={{ backgroundColor: `${item.color}15` }}
                       >
-                        <Icon name={item.icon} size={18} color={item.color} />
+                        <Icon name={item.icon} size={16} color={item.color} />
                       </View>
-                      <Text className="text-body-lg font-body font-semibold text-foreground">
-                        {item.label}
-                      </Text>
+                      <Text className="text-[14px] font-bold text-foreground">{item.label}</Text>
                     </View>
 
                     <View className="flex-row items-center gap-2">
@@ -206,17 +201,18 @@ export default function VendorSettingsScreen() {
                           onValueChange={setIsDarkMode}
                           trackColor={{ false: "#e2e8f0", true: tokens.primary }}
                           thumbColor={tokens.primaryText}
+                          style={{ transform: [{ scaleX: 0.8 }, { scaleY: 0.8 }] }}
                         />
                       ) : (
-                        <Icon name="chevron-right" size={18} color={tokens.textDisabled} />
+                        <Icon name="chevron-right" size={16} color={tokens.textDisabled} />
                       )}
                     </View>
                   </Pressable>
                 );
               })}
             </View>
-          </View>
-        ))}
+          ))}
+        </View>
 
         {/* Logout Button */}
         <Pressable

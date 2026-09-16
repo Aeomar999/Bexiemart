@@ -24,11 +24,13 @@ export const lightTokens = {
   primaryActive: "#022d4d", // brand-900
   primarySubtle: "#f0f7fb", // brand-50
   primaryText: "#ffffff",
+  moneyGrad1: "#04365b", // brand-800
 
   // Secondary / accent
   secondary: "#0ea5e9", // accent-500
   secondaryHover: "#0284c7", // accent-600
   secondaryText: "#ffffff",
+  moneyGrad2: "#0369a1", // accent-700
 
   // Feedback
   success: "#00D084",
@@ -55,11 +57,13 @@ export const darkTokens: ThemeColors = {
   primaryActive: "#b9d5ea", // brand-200
   primarySubtle: "#022d4d", // brand-900
   primaryText: "#ffffff",
+  moneyGrad1: "#04365b", // brand-800 - dark mode can use same or matched
 
   // Secondary / accent
   secondary: "#38bdf8", // accent-400
   secondaryHover: "#7dd3fc", // accent-300
   secondaryText: "#ffffff",
+  moneyGrad2: "#0369a1", // accent-700
 
   // Feedback — read fine on dark, unchanged
   success: "#00D084",

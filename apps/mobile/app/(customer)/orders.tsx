@@ -1,5 +1,6 @@
 import { tokens } from "@/theme/tokens";
 import { BackButton } from "@/components/ui/BackButton";
+import { OrderCard } from "@/components/ui/OrderCard";
 import { View, Text, FlatList, ScrollView, Pressable, RefreshControl } from "react-native";
 import { useState, useCallback } from "react";
 import Toast from "@/lib/toast-polyfill";
@@ -91,102 +92,28 @@ export default function OrdersScreen() {
         <FlatList
           data={filteredOrders}
           keyExtractor={(item) => item.id}
-          contentContainerStyle={{ padding: 20, paddingBottom: 40 }}
+          contentContainerStyle={{ padding: 20, paddingBottom: 40, gap: 16 }}
           showsVerticalScrollIndicator={false}
           refreshControl={
             <RefreshControl refreshing={false} onRefresh={refetch} tintColor={tokens.primary} />
           }
-          renderItem={({ item }) => {
-            const status = statusConfig[item.status];
-
-            return (
-              <Pressable
-                style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
-                className="bg-card p-5 rounded-2xl border border-border mb-4"
-                onPress={() => {
-                  if (item.status !== "delivered" && item.status !== "cancelled") {
-                    router.push("/(customer)/track-order");
-                  } else {
-                    Toast.show({
-                      type: "info",
-                      text1: "Reorder",
-                      text2: "Reorder functionality coming soon.",
-                    });
-                  }
-                }}
-              >
-                {/* Order Header */}
-                <View className="flex-row justify-between items-center mb-4">
-                  <View>
-                    <Text className="text-body-md font-heading font-bold text-foreground">
-                      Order #{item.id}
-                    </Text>
-                    <Text className="text-body-sm font-body text-muted-foreground mt-0.5">
-                      {item.date}
-                    </Text>
-                  </View>
-                  <View
-                    className="flex-row items-center px-3 py-1.5 rounded-full"
-                    style={{ backgroundColor: status.bg }}
-                  >
-                    <Icon name={status.icon} size={12} color={status.color} />
-                    <Text className="text-body-sm font-bold ml-1.5" style={{ color: status.color }}>
-                      {status.label}
-                    </Text>
-                  </View>
-                </View>
-
-                {/* Items */}
-                <View className="bg-background p-4 rounded-xl mb-4">
-                  {item.items.map((cartItem: any, idx: number) => (
-                    <View
-                      key={idx}
-                      className={`flex-row justify-between items-center ${idx !== item.items.length - 1 ? "mb-2" : ""}`}
-                    >
-                      <Text
-                        className="text-body-md font-body font-medium text-muted-foreground flex-1"
-                        numberOfLines={1}
-                      >
-                        {cartItem.qty}x {cartItem.name}
-                      </Text>
-                    </View>
-                  ))}
-                </View>
-
-                {/* Footer */}
-                <View className="flex-row justify-between items-center pt-2">
-                  <View>
-                    <Text className="text-caption font-body text-muted-foreground mb-0.5">
-                      Total Amount
-                    </Text>
-                    <Text className="text-body-lg font-heading font-black text-primary">
-                      GHS {item.total.toFixed(2)}
-                    </Text>
-                  </View>
-
-                  <Pressable
-                    style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
-                    className="bg-primary-subtle px-5 py-2.5 rounded-full"
-                    onPress={() => {
-                      if (item.status !== "delivered" && item.status !== "cancelled") {
-                        router.push("/(customer)/track-order");
-                      } else {
-                        Toast.show({
-                          type: "info",
-                          text1: "Reorder",
-                          text2: "Reorder functionality coming soon.",
-                        });
-                      }
-                    }}
-                  >
-                    <Text className="text-body-md font-bold text-primary">
-                      {item.status === "delivered" ? "Reorder" : "Track"}
-                    </Text>
-                  </Pressable>
-                </View>
-              </Pressable>
-            );
-          }}
+          renderItem={({ item }) => (
+            <OrderCard
+              order={item}
+              variant="customer"
+              onPress={() => {
+                if (item.status !== "delivered" && item.status !== "cancelled") {
+                  router.push("/(customer)/track-order");
+                } else {
+                  Toast.show({
+                    type: "info",
+                    text1: "Reorder",
+                    text2: "Reorder functionality coming soon.",
+                  });
+                }
+              }}
+            />
+          )}
         />
       )}
     </View>

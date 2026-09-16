@@ -111,7 +111,7 @@ export default function RequestMoneyScreen() {
           title={`Request ${formatMoney(amount)}`}
           size="lg"
           disabled={!isValidAmount || !contact}
-          className="w-full rounded-xl"
+          className="w-full rounded-full"
           onPress={handleRequest}
         />
       </View>

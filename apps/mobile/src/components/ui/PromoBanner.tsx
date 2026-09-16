@@ -84,13 +84,15 @@ function handlePress(router: ReturnType<typeof useRouter>, banner: Banner) {
   return () => router.push(banner.ctaRoute as never);
 }
 
+import { LinearGradient } from "expo-linear-gradient";
+
 function BannerCard({ banner, onPress }: { banner: Banner; onPress?: () => void }) {
   const cardClass =
-    "w-full h-[180px] rounded-2xl overflow-hidden relative bg-surface-900" +
+    "w-full h-[128px] rounded-[16px] overflow-hidden relative shadow-elevation-2 bg-surface-900" +
     (onPress ? " active:opacity-70" : "");
 
   return (
-    <View style={{ width: SCREEN_WIDTH, paddingHorizontal: 20 }}>
+    <View style={{ width: SCREEN_WIDTH, paddingHorizontal: 20, paddingBottom: 16 }}>
       <Pressable
         className={cardClass}
         onPress={onPress}
@@ -103,31 +105,36 @@ function BannerCard({ banner, onPress }: { banner: Banner; onPress?: () => void 
           style={{ width: "100%", height: "100%", position: "absolute" }}
           contentFit="cover"
         />
-        <View className="absolute inset-0 bg-black/50" />
+        <LinearGradient
+          colors={[tokens.moneyGrad1, tokens.moneyGrad2]}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 0 }}
+          className="absolute inset-0 opacity-90"
+        />
 
-        <View className="flex-1 p-5 justify-center">
+        <View className="flex-1 p-4 justify-center">
           {banner.badge ? (
-            <View className="bg-success self-start px-2 py-1 rounded-md mb-2">
+            <View className="bg-success self-start px-2 py-1 rounded-md mb-1">
               <Text className="text-caption font-bold text-white uppercase tracking-wider">
                 {banner.badge}
               </Text>
             </View>
           ) : null}
 
-          <Text className="text-white text-display-md leading-[28px] font-heading font-black w-3/4 mb-1">
+          <Text className="text-white text-[24px] leading-[28px] font-heading font-black w-3/4 mb-0.5 tracking-[-0.01em]">
             {banner.title}
           </Text>
 
           {banner.subtitle ? (
-            <Text className="text-white/90 text-body-sm font-body mb-4">{banner.subtitle}</Text>
+            <Text className="text-white/90 text-[12px] font-body mb-2">{banner.subtitle}</Text>
           ) : (
-            <View className="mb-4" />
+            <View className="mb-2" />
           )}
 
           {banner.ctaLabel ? (
-            <View className="bg-card self-start flex-row items-center rounded-full px-4 py-2">
-              <Text className="text-foreground font-bold text-caption mr-1">{banner.ctaLabel}</Text>
-              <Icon name="arrow-right" size={14} color={tokens.textPrimary} />
+            <View className="bg-card self-start flex-row items-center rounded-full px-3 py-1.5">
+              <Text className="text-foreground font-bold text-[11px] mr-1">{banner.ctaLabel}</Text>
+              <Icon name="arrow-right" size={12} color={tokens.textPrimary} />
             </View>
           ) : null}
         </View>
