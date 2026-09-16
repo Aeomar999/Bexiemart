@@ -10,11 +10,11 @@ export default function SettingsLayout({ children }: { children: React.ReactNode
   const pathname = usePathname();
 
   const tabs = [
-    { name: "Platform", href: "/settings/platform", icon: Settings },
-    { name: "Delivery Pricing", href: "/settings/delivery", icon: Truck },
-    { name: "Profile", href: "/settings/profile", icon: User },
-    { name: "Security", href: "/settings/security", icon: Lock },
-    { name: "Notifications", href: "/settings/notifications", icon: Bell },
+    { name: "Platform", href: "/settings/platform", icon: SettingsIcon },
+    { name: "Delivery Pricing", href: "/settings/delivery", icon: TruckIcon },
+    { name: "Profile", href: "/settings/profile", icon: UserIcon },
+    { name: "Security", href: "/settings/security", icon: LockIcon },
+    { name: "Notifications", href: "/settings/notifications", icon: BellIcon },
   ];
 
   return (
@@ -27,7 +27,6 @@ export default function SettingsLayout({ children }: { children: React.ReactNode
           <aside className="w-full md:w-64 shrink-0">
             <nav className="flex flex-col space-y-1">
               {tabs.map((tab) => {
-                const Icon = tab.icon;
                 const isActive = pathname.startsWith(tab.href);
                 return (
                   <Link
@@ -39,7 +38,7 @@ export default function SettingsLayout({ children }: { children: React.ReactNode
                         : "text-[var(--color-text)] hover:bg-[var(--color-bg-hover)]"
                     }`}
                   >
-                    <Icon className={`mr-3 h-5 w-5 ${isActive ? "text-white" : "text-[var(--color-text-muted)]"}`} />
+                    <HugeiconsIcon icon={tab.icon} className={`mr-3 h-5 w-5 ${isActive ? "text-white" : "text-[var(--color-text-muted)]"}`} />
                     {tab.name}
                   </Link>
                 );
