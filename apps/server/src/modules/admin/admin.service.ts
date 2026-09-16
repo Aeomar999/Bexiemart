@@ -5,17 +5,22 @@ import {
   ConflictException,
   BadRequestException,
   Inject,
+  Logger,
 } from "@nestjs/common";
 import { UserRole } from "@prisma/client";
 import { PrismaService } from "../../prisma/prisma.service";
 import { AUTH } from "../../auth/auth.constants";
 import { UpdateConfigDto } from "./dto/update-config.dto";
 import { CreateAdminDto } from "./dto/create-admin.dto";
+import { NotificationsService } from "../notifications/notifications.service";
 
 @Injectable()
 export class AdminService {
+  private readonly logger = new Logger("AdminService");
+
   constructor(
     private readonly prisma: PrismaService,
+    private readonly notifications: NotificationsService,
     @Inject(AUTH) private readonly auth: any
   ) {}
 
@@ -305,9 +310,30 @@ export class AdminService {
   }
 
   async updateOrderStatus(id: string, status: string) {
-    const order = await this.prisma.order.findUnique({ where: { id } });
-    if (!order) throw new NotFoundException("Order not found");
-    return this.prisma.order.update({ where: { id }, data: { status: status as any } });
+    const order = await this.prisma.order.update({
+      where: { id },
+      data: { status: status as any },
+    });
+
+    // Trigger push notification if shipped or delivered
+    if (status === "shipped" || status === "delivered") {
+      try {
+        const title = status === "shipped" ? "Order Shipped!" : "Order Delivered!";
+        const body =
+          status === "shipped"
+            ? `Your order #${order.orderNumber} has been shipped and is on its way.`
+            : `Your order #${order.orderNumber} has been successfully delivered. Enjoy!`;
+
+        await this.notifications.sendPushNotification(order.userId, title, body, {
+          orderId: order.id,
+          status,
+        });
+      } catch (err) {
+        this.logger.error(`Failed to send push notification for order ${id}:`, err);
+      }
+    }
+
+    return order;
   }
 
   // ─── Disputes ──────────────────────────────────────────────────────────────────

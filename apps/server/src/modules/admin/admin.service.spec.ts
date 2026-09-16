@@ -65,11 +65,13 @@ describe("AdminService", () => {
   let prisma: ReturnType<typeof mockPrisma>;
 
   let auth: { api: { signUpEmail: jest.Mock } };
+  let notifications: { sendNotification: jest.Mock };
 
   beforeEach(() => {
     prisma = mockPrisma();
     auth = { api: { signUpEmail: jest.fn() } };
-    service = new AdminService(prisma as any, auth as any);
+    notifications = { sendNotification: jest.fn() };
+    service = new AdminService(prisma as any, notifications as any, auth as any);
   });
 
   describe("listUsers", () => {

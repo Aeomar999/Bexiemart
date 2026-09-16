@@ -50,6 +50,7 @@ import { CollectionsModule } from "./modules/collections/collections.module";
 import { LoyaltyModule } from "./modules/loyalty/loyalty.module";
 import { NotificationPreferencesModule } from "./modules/notification-preferences/notification-preferences.module";
 import { PostHogModule } from "./modules/posthog/posthog.module";
+import { VendorPayoutsModule } from "./modules/vendor-payouts/vendor-payouts.module";
 
 import { WinstonModule } from "nest-winston";
 import * as winston from "winston";
@@ -113,6 +114,7 @@ import * as winston from "winston";
     CollectionsModule,
     LoyaltyModule,
     NotificationPreferencesModule,
+    VendorPayoutsModule,
   ],
   providers: [{ provide: APP_GUARD, useClass: ThrottlerGuard }],
 })
