@@ -57,7 +57,7 @@ export default function DispatcherTasks() {
 
     if (rides.length === 0) {
       return (
-        <View className="items-center justify-center py-20">
+        <View className="items-center justify-center py-20 px-5">
           <View className="w-20 h-20 bg-slate-100 rounded-full items-center justify-center mb-4">
             <Icon name="package" size={32} color={tokens.textMuted} />
           </View>
@@ -72,56 +72,27 @@ export default function DispatcherTasks() {
     }
 
     return (
-      <View className="gap-4 pb-20">
+      <View className="pb-20">
         {rides.map((ride: any) => (
-          <View key={ride.id} className="bg-card rounded-2xl p-4 border border-border">
-            <View className="flex-row items-center justify-between mb-3">
-              <View className="flex-row items-center gap-2">
-                <View className="bg-primary-subtle p-2 rounded-full">
-                  <Icon name="package" size={16} color={tokens.primary} />
-                </View>
-                <Text className="font-bold text-foreground font-body">Ride Request</Text>
-              </View>
-              <Text className="font-black text-primary text-heading-md font-heading">
-                GH₵ {Number(ride.driverPayout).toFixed(2)}
+          <View
+            key={ride.id}
+            className="w-full h-[70px] px-5 bg-card border-b border-border flex-row items-center justify-between"
+          >
+            <View className="flex-1 justify-center pr-2">
+              <Text className="text-[14px] font-bold text-foreground mb-0.5" numberOfLines={1}>
+                {ride.customer?.name || "Ride Request"}
+              </Text>
+              <Text className="text-[11px] text-muted-foreground font-body" numberOfLines={1}>
+                {ride.pickupAddress || "Pickup"} • {ride.dropoffAddress || "Dropoff"}
               </Text>
             </View>
-
-            <View className="gap-2 mb-4">
-              <View className="flex-row items-center gap-3">
-                <View className="w-2 h-2 rounded-full bg-error" />
-                <Text
-                  className="text-muted-foreground text-body-md font-body flex-1"
-                  numberOfLines={1}
-                >
-                  {ride.pickupAddress || "Pickup Location"}
-                </Text>
-              </View>
-              <View className="flex-row items-center gap-3">
-                <View className="w-2 h-2 rounded-full bg-emerald-500" />
-                <Text
-                  className="text-muted-foreground text-body-md font-body flex-1"
-                  numberOfLines={1}
-                >
-                  {ride.dropoffAddress || "Dropoff Location"}
-                </Text>
-              </View>
-            </View>
-
-            <View className="flex-row items-center justify-between mt-2 pt-4 border-t border-border">
-              <View className="flex-row items-center gap-2">
-                <View className="w-8 h-8 rounded-full bg-slate-100 overflow-hidden">
-                  {ride.customer?.image ? (
-                    <Image
-                      source={{ uri: ride.customer.image }}
-                      style={{ width: "100%", height: "100%" }}
-                    />
-                  ) : (
-                    <Icon name="user" size={16} color={tokens.textMuted} />
-                  )}
-                </View>
-                <Text className="font-bold font-body text-foreground">{ride.customer?.name}</Text>
-              </View>
+            <View className="items-end justify-center">
+              <Text
+                className="text-[15px] font-black text-primary font-heading tracking-tight mb-1"
+                style={{ fontVariant: ["tabular-nums"] }}
+              >
+                GH₵ {Number(ride.driverPayout).toFixed(2)}
+              </Text>
               <Pressable
                 disabled={acceptTask.isPending}
                 onPress={() => {
@@ -146,9 +117,9 @@ export default function DispatcherTasks() {
                     }
                   );
                 }}
-                className="bg-primary px-4 py-2 rounded-full"
+                className="px-3 py-1 bg-primary rounded-full"
               >
-                <Text className="text-white font-bold font-body">Accept</Text>
+                <Text className="text-[10px] font-bold text-white uppercase">Accept</Text>
               </Pressable>
             </View>
           </View>
@@ -166,7 +137,7 @@ export default function DispatcherTasks() {
 
     if (rides.length === 0) {
       return (
-        <View className="items-center justify-center py-20">
+        <View className="items-center justify-center py-20 px-5">
           <View className="w-20 h-20 bg-primary-subtle rounded-full items-center justify-center mb-4">
             <Icon name="truck" size={32} color={tokens.primary} />
           </View>
@@ -181,55 +152,34 @@ export default function DispatcherTasks() {
     }
 
     return (
-      <View className="gap-4 pb-20">
+      <View className="pb-20">
         {rides.map((ride: any) => (
           <View
             key={ride.id}
-            className="bg-card rounded-2xl p-4 border border-border border-l-4 border-l-primary"
+            className="w-full h-[70px] px-5 bg-card border-b border-border flex-row items-center justify-between border-l-4 border-l-primary"
           >
-            <View className="flex-row items-center justify-between mb-3">
-              <View>
-                <Text className="font-bold text-foreground font-body">Active Ride</Text>
-                <Text className="text-primary font-bold text-body-sm uppercase tracking-wider">
-                  {ride.status}
-                </Text>
-              </View>
-              <Text className="font-black text-foreground text-heading-md font-heading">
-                GH₵ {Number(ride.driverPayout).toFixed(2)}
+            <View className="flex-1 justify-center pr-2">
+              <Text className="text-[14px] font-bold text-foreground mb-0.5" numberOfLines={1}>
+                Active Ride
+              </Text>
+              <Text className="text-[11px] text-muted-foreground font-body" numberOfLines={1}>
+                {ride.pickupAddress || "Pickup"} • {ride.dropoffAddress || "Dropoff"}
               </Text>
             </View>
-
-            <View className="gap-2 mb-4">
-              <View className="flex-row items-center gap-3">
-                <View className="w-2 h-2 rounded-full bg-error" />
-                <Text
-                  className="text-muted-foreground text-body-md font-body flex-1"
-                  numberOfLines={1}
-                >
-                  {ride.pickupAddress || "Pickup Location"}
-                </Text>
-              </View>
-              <View className="flex-row items-center gap-3">
-                <View className="w-2 h-2 rounded-full bg-emerald-500" />
-                <Text
-                  className="text-muted-foreground text-body-md font-body flex-1"
-                  numberOfLines={1}
-                >
-                  {ride.dropoffAddress || "Dropoff Location"}
-                </Text>
-              </View>
+            <View className="items-end justify-center">
+              <Text
+                className="text-[15px] font-black text-foreground font-heading tracking-tight mb-1"
+                style={{ fontVariant: ["tabular-nums"] }}
+              >
+                GH₵ {Number(ride.driverPayout).toFixed(2)}
+              </Text>
+              <Pressable
+                className="px-3 py-1 bg-slate-100 rounded-full"
+                onPress={() => router.replace("/(dispatcher)/(tabs)/(home)")}
+              >
+                <Text className="text-[10px] font-bold text-foreground uppercase">Map</Text>
+              </Pressable>
             </View>
-
-            <Pressable
-              className="bg-slate-100 p-3 rounded-xl flex-row items-center justify-center gap-2 mt-2"
-              onPress={() => {
-                // Navigate to Map View to see active route
-                router.replace("/(dispatcher)/(tabs)/(home)");
-              }}
-            >
-              <Icon name="map" size={16} color={tokens.textPrimary} />
-              <Text className="font-bold text-foreground font-body">View on Map</Text>
-            </Pressable>
           </View>
         ))}
       </View>
@@ -245,7 +195,7 @@ export default function DispatcherTasks() {
 
     if (rides.length === 0) {
       return (
-        <View className="items-center justify-center py-20">
+        <View className="items-center justify-center py-20 px-5">
           <View className="w-20 h-20 bg-slate-100 rounded-full items-center justify-center mb-4">
             <Icon name="check-circle" size={32} color={tokens.textMuted} />
           </View>
@@ -260,28 +210,32 @@ export default function DispatcherTasks() {
     }
 
     return (
-      <View className="gap-4 pb-20">
-        <Text className="font-bold font-heading text-muted-foreground mb-2">HISTORY</Text>
+      <View className="pb-20">
+        <View className="px-5 py-3 bg-muted">
+          <Text className="font-bold font-heading text-[11px] text-muted-foreground uppercase tracking-wider">
+            History
+          </Text>
+        </View>
         {rides.map((ride: any) => (
           <View
             key={ride.id}
-            className="bg-card border border-border p-4 rounded-2xl flex-row items-center justify-between opacity-80"
+            className="w-full h-[70px] px-5 bg-card border-b border-border flex-row items-center justify-between"
           >
-            <View className="flex-row items-center gap-3 flex-1 mr-4">
+            <View className="flex-row items-center gap-3 flex-1 pr-2">
               <View
-                className={`w-12 h-12 rounded-full items-center justify-center ${ride.status === "DELIVERED" ? "bg-emerald-100" : "bg-rose-100"}`}
+                className={`w-8 h-8 rounded-full items-center justify-center ${ride.status === "DELIVERED" ? "bg-emerald-100" : "bg-rose-100"}`}
               >
                 <Icon
                   name={ride.status === "DELIVERED" ? "check" : "x"}
-                  size={20}
+                  size={14}
                   color={ride.status === "DELIVERED" ? tokens.success : tokens.error}
                 />
               </View>
-              <View className="flex-1">
-                <Text className="font-bold text-foreground font-heading">
+              <View className="flex-1 justify-center">
+                <Text className="text-[14px] font-bold text-foreground mb-0.5" numberOfLines={1}>
                   Ride {ride.status === "DELIVERED" ? "Completed" : "Cancelled"}
                 </Text>
-                <Text className="text-muted-foreground text-sm font-body" numberOfLines={1}>
+                <Text className="text-[11px] text-muted-foreground font-body" numberOfLines={1}>
                   {new Date(ride.updatedAt).toLocaleTimeString([], {
                     hour: "2-digit",
                     minute: "2-digit",
@@ -290,11 +244,14 @@ export default function DispatcherTasks() {
                 </Text>
               </View>
             </View>
-            <Text
-              className={`font-black text-body-lg font-heading ${ride.status === "DELIVERED" ? "text-emerald-600" : "text-muted-foreground"}`}
-            >
-              {ride.status === "DELIVERED" ? "+" : ""}GH₵ {Number(ride.price).toFixed(2)}
-            </Text>
+            <View className="items-end justify-center">
+              <Text
+                className={`text-[15px] font-black font-heading tracking-tight ${ride.status === "DELIVERED" ? "text-emerald-600" : "text-muted-foreground"}`}
+                style={{ fontVariant: ["tabular-nums"] }}
+              >
+                {ride.status === "DELIVERED" ? "+" : ""}GH₵ {Number(ride.price).toFixed(2)}
+              </Text>
+            </View>
           </View>
         ))}
       </View>
@@ -349,7 +306,7 @@ export default function DispatcherTasks() {
       </View>
 
       <ScrollView
-        className="flex-1 p-5"
+        className="flex-1"
         refreshControl={
           <RefreshControl
             refreshing={isManualRefreshing}

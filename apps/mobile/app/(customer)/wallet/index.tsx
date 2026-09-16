@@ -333,16 +333,18 @@ export default function WalletScreen() {
           </Pressable>
         </View>
 
-        <View className="px-5">
+        <View className="px-5 pt-4">
           <View className="flex-row justify-between items-center mb-4">
-            <Text className="text-heading-md font-heading font-bold text-foreground">
+            <Text className="text-[12px] font-bold uppercase tracking-[0.1em] text-muted-foreground">
               Recent Activity
             </Text>
             <Pressable
               style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
               onPress={() => router.push("/(customer)/wallet/transactions")}
             >
-              <Text className="text-body-md font-bold text-primary font-body">View All</Text>
+              <Text className="text-[12px] font-bold text-primary tracking-[0.1em] uppercase">
+                View All
+              </Text>
             </Pressable>
           </View>
 

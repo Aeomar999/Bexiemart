@@ -1,4 +1,4 @@
-﻿import { tokens } from "@/theme/tokens";
+import { tokens } from "@/theme/tokens";
 import { View, Text, ActivityIndicator, TextInput, Modal, Pressable } from "react-native";
 import { FlashList } from "@shopify/flash-list";
 import { Image } from "expo-image";
@@ -143,10 +143,26 @@ export default function ShopScreen() {
 
   return (
     <View className="flex-1 bg-background">
+      import {ProductCard} from "@/components/ui/ProductCard"; // ... existing code ...
       <View
         className="px-5 pt-4 pb-4 bg-card border-b border-border"
         style={{ paddingTop: insets.top + 12 }}
       >
+        <View className="flex-row justify-between items-center mb-3">
+          <Text className="text-[11px] font-bold tracking-[0.1em] uppercase text-muted-foreground">
+            {filteredProducts.length} product{filteredProducts.length !== 1 ? "s" : ""}
+          </Text>
+          <Pressable
+            style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
+            className="flex-row items-center gap-1 active:opacity-70"
+            onPress={() => setShowSortModal(true)}
+          >
+            <Text className="text-[12px] font-bold text-muted-foreground">
+              {sortLabels[sortBy]}
+            </Text>
+            <Icon name="chevron-down" size={10} color={tokens.textMuted} />
+          </Pressable>
+        </View>
         <View className="flex-row items-center gap-3">
           <View className="flex-1 flex-row items-center gap-2 bg-muted rounded-full px-4 h-11 border border-border">
             <Icon name="search" size={16} color={tokens.textMuted} />
@@ -169,15 +185,6 @@ export default function ShopScreen() {
               </Pressable>
             )}
           </View>
-          <Pressable
-            accessibilityRole="button"
-            accessibilityLabel="Filters"
-            style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
-            className="w-11 h-11 rounded-full bg-card border border-border items-center justify-center active:opacity-70"
-            onPress={() => setShowSortModal(true)}
-          >
-            <Icon name="sliders-horizontal" size={18} color={tokens.textSecondary} />
-          </Pressable>
         </View>
         <FlashList<{ id: string; name: string }>
           data={categories}
@@ -206,26 +213,11 @@ export default function ShopScreen() {
           )}
         />
       </View>
-
-      <View className="px-5 pb-3 flex-row justify-between items-center">
-        <Text className="text-caption text-muted-foreground font-body font-medium">
-          {filteredProducts.length} product{filteredProducts.length !== 1 ? "s" : ""}
-        </Text>
-        <Pressable
-          style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
-          className="flex-row items-center gap-1 active:opacity-70"
-          onPress={() => setShowSortModal(true)}
-        >
-          <Text className="text-caption text-muted-foreground font-body">{sortLabels[sortBy]}</Text>
-          <Icon name="chevron-down" size={10} color={tokens.textMuted} />
-        </Pressable>
-      </View>
-
       <FlashList
         data={filteredProducts}
         numColumns={2}
         contentContainerStyle={[
-          { paddingHorizontal: 20, paddingBottom: 20, gap: 14 },
+          { paddingHorizontal: 20, paddingTop: 16, paddingBottom: 20, gap: 12 },
           filteredProducts.length === 0 && { flexGrow: 1 },
         ]}
         keyExtractor={(item) => item.id}
@@ -251,90 +243,22 @@ export default function ShopScreen() {
           />
         }
         renderItem={({ item }) => {
-          const isFav = isFavorite(item.id);
-          const discount =
-            item.oldPrice > item.price ? Math.round((1 - item.price / item.oldPrice) * 100) : 0;
           return (
-            <Pressable
-              style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
-              className="flex-1 bg-card rounded-2xl overflow-hidden border border-border pb-3"
-              onPress={() => router.push(`/(customer)/product/${item.id}`)}
-            >
-              <View
-                className="w-full bg-muted items-center justify-center relative overflow-hidden"
-                style={{ aspectRatio: 0.8 }}
-              >
-                {item.image ? (
-                  <Image
-                    source={{ uri: item.image }}
-                    style={{ width: "100%", height: "100%" }}
-                    contentFit="cover"
-                  />
-                ) : (
-                  <Icon name="image" size={32} color={tokens.textDisabled} />
-                )}
-                {discount > 0 && (
-                  <View className="absolute top-2 left-2 bg-error px-2 py-0.5 rounded-lg">
-                    <Text className="text-caption font-bold text-white font-body">
-                      -{discount}%
-                    </Text>
-                  </View>
-                )}
-                <Pressable
-                  style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
-                  accessibilityRole="button"
-                  accessibilityLabel={isFav ? "Remove from favorites" : "Add to favorites"}
-                  accessibilityState={{ selected: isFav }}
-                  hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
-                  className="absolute top-2 right-2 w-8 h-8 rounded-full bg-card/90 items-center justify-center active:opacity-70"
-                  onPress={() => handleToggleFavorite(item.id)}
-                >
-                  <Icon name="heart" size={15} color={isFav ? tokens.error : tokens.textMuted} />
-                </Pressable>
-              </View>
-              <View className="p-3">
-                <Text
-                  className="text-caption text-primary font-bold font-body uppercase tracking-wide"
-                  numberOfLines={1}
-                >
-                  {item.vendor}
-                </Text>
-                <Text
-                  className="text-body-sm font-semibold text-foreground font-body mt-1"
-                  numberOfLines={2}
-                >
-                  {item.name}
-                </Text>
-                <View className="flex-row items-center justify-between mt-3">
-                  <View>
-                    <Text className="text-heading-sm font-bold text-primary font-heading">
-                      GHS {item.price.toFixed(2)}
-                    </Text>
-                    {item.oldPrice > item.price && (
-                      <Text className="text-caption text-muted-foreground font-body line-through">
-                        GHS {item.oldPrice.toFixed(2)}
-                      </Text>
-                    )}
-                  </View>
-                  <Pressable
-                    accessibilityRole="button"
-                    accessibilityLabel="Add to cart"
-                    hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
-                    style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
-                    className="w-9 h-9 rounded-full bg-primary items-center justify-center active:scale-95"
-                    onPress={() => handleAddToCart(item)}
-                  >
-                    <Icon name="plus" size={16} color={tokens.primaryText} />
-                  </Pressable>
-                </View>
-                <View className="flex-row items-center gap-1 mt-2">
-                  <Icon name="star" size={10} color={tokens.warning} />
-                  <Text className="text-caption text-muted-foreground font-body">
-                    {item.rating}
-                  </Text>
-                </View>
-              </View>
-            </Pressable>
+            <View className="flex-1 px-1.5">
+              <ProductCard
+                id={item.id}
+                name={item.name}
+                price={item.price}
+                oldPrice={item.oldPrice}
+                imageUrl={item.image}
+                rating={item.rating}
+                subtitle={item.vendor}
+                isFavorite={isFavorite(item.id)}
+                onPress={() => router.push(`/(customer)/product/${item.id}`)}
+                onFavoriteToggle={() => handleToggleFavorite(item.id)}
+                variant="vertical"
+              />
+            </View>
           );
         }}
       />

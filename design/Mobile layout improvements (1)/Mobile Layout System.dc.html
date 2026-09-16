@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous" />
+<link href="https://fonts.googleapis.com/css2?family=Raleway:wght@500;600;700;800&family=Nunito:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+<style>
+  * { box-sizing: border-box; }
+  body { margin: 0; background: #F1F5F9; color: #0F172A; font-family: Nunito, sans-serif; -webkit-font-smoothing: antialiased; }
+  a { color: #06406b; text-decoration: none; }
+  a:hover { color: #04365b; }
+</style>
+</helmet>
+
+<div style="max-width:1120px;margin:0 auto;padding:48px 24px 96px;">
+
+  <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:8px;">
+    <div style="font-family:Nunito;font-size:12px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#06406b;">Bexiemart mobile · layout system v2</div>
+    <h1 style="margin:0;font-family:Raleway;font-size:40px;line-height:44px;font-weight:800;letter-spacing:-.02em;color:#0F172A;">Spacing, rhythm and hierarchy</h1>
+    <p style="margin:0;max-width:660px;font-size:16px;line-height:26px;color:#475569;text-wrap:pretty;">One spec for customer, vendor and rider screens. Tokens and gutters stay as they are in <span style="font-family:ui-monospace,monospace;font-size:14px;background:#fff;border:1px solid #E2E8F0;border-radius:4px;padding:1px 5px;">global.css</span>. What changes is which values a screen may use, how many, and — new in this revision — where depth is allowed.</p>
+  </div>
+
+  <div style="background:#fff;border:1px solid #E2E8F0;border-left:4px solid #06406b;border-radius:14px;padding:16px 20px;margin:28px 0 40px;max-width:660px;">
+    <div style="font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#06406b;margin-bottom:6px;">Revised after the wallet review</div>
+    <div style="font-size:15px;line-height:23px;color:#334155;">The wallet screens set the direction: gradient money surfaces, real depth, and a number as the loudest thing on the page. §8 of <span style="font-family:ui-monospace,monospace;font-size:13px;">DESIGN-SYSTEM.md</span> ("flat, zero shadow") is superseded by §04 below — depth is now permitted, but only on money and only at the levels defined here.</div>
+  </div>
+
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:12px;margin-bottom:48px;">
+    <div style="background:#fff;border:1px solid #E2E8F0;border-radius:16px;padding:16px;">
+      <div style="font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#94A3B8;margin-bottom:8px;">Section gaps</div>
+      <div style="font-family:Raleway;font-size:24px;font-weight:800;">4 → 3</div>
+      <div style="font-size:13px;line-height:18px;color:#475569;margin-top:4px;">mt-4/6/8/10 collapses to 16 / 24 / 32</div>
+    </div>
+    <div style="background:#fff;border:1px solid #E2E8F0;border-radius:16px;padding:16px;">
+      <div style="font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#94A3B8;margin-bottom:8px;">Surface types</div>
+      <div style="font-family:Raleway;font-size:24px;font-weight:800;">2</div>
+      <div style="font-size:13px;line-height:18px;color:#475569;margin-top:4px;">Flat data card · gradient money hero</div>
+    </div>
+    <div style="background:#fff;border:1px solid #E2E8F0;border-radius:16px;padding:16px;">
+      <div style="font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#94A3B8;margin-bottom:8px;">Elevation levels</div>
+      <div style="font-family:Raleway;font-size:24px;font-weight:800;">4, named</div>
+      <div style="font-size:13px;line-height:18px;color:#475569;margin-top:4px;">Hue-matched, from the wallet stack</div>
+    </div>
+    <div style="background:#fff;border:1px solid #E2E8F0;border-radius:16px;padding:16px;">
+      <div style="font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#94A3B8;margin-bottom:8px;">Money scale</div>
+      <div style="font-family:Raleway;font-size:24px;font-weight:800;">44 / 32 / 20</div>
+      <div style="font-size:13px;line-height:18px;color:#475569;margin-top:4px;">Hero · secondary · inline</div>
+    </div>
+  </div>
+
+  <section style="margin-bottom:56px;">
+    <div style="display:flex;align-items:baseline;gap:12px;margin-bottom:20px;">
+      <span style="font-family:Raleway;font-size:13px;font-weight:800;color:#06406b;">01</span>
+      <h2 style="margin:0;font-family:Raleway;font-size:24px;font-weight:700;letter-spacing:-.01em;">Vertical rhythm</h2>
+    </div>
+    <p style="margin:0 0 24px;max-width:620px;font-size:15px;line-height:24px;color:#475569;">Screens currently mix <span style="font-family:ui-monospace,monospace;font-size:13px;">mt-4</span>, <span style="font-family:ui-monospace,monospace;font-size:13px;">mt-6</span>, <span style="font-family:ui-monospace,monospace;font-size:13px;">mt-8</span> and <span style="font-family:ui-monospace,monospace;font-size:13px;">mt-10</span> between blocks, so nothing reads as grouped. Three gaps carry every relationship.</p>
+
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px;">
+      <div style="background:#fff;border:1px solid #E2E8F0;border-radius:16px;padding:20px;">
+        <div style="display:flex;align-items:baseline;gap:8px;margin-bottom:4px;"><span style="font-family:Raleway;font-size:28px;font-weight:800;">16</span><span style="font-size:13px;font-weight:700;color:#94A3B8;">px · space-4</span></div>
+        <div style="font-size:14px;font-weight:700;margin-bottom:12px;">Inside a block</div>
+        <div style="font-size:13px;line-height:20px;color:#475569;margin-bottom:16px;">Label to content, card to card in a list, row to row.</div>
+        <div style="display:flex;flex-direction:column;gap:16px;">
+          <div style="height:12px;background:#E2E8F0;border-radius:3px;"></div>
+          <div style="height:28px;background:#F1F5F9;border:1px solid #E2E8F0;border-radius:8px;"></div>
+          <div style="height:28px;background:#F1F5F9;border:1px solid #E2E8F0;border-radius:8px;"></div>
+        </div>
+      </div>
+      <div style="background:#fff;border:1px solid #E2E8F0;border-radius:16px;padding:20px;">
+        <div style="display:flex;align-items:baseline;gap:8px;margin-bottom:4px;"><span style="font-family:Raleway;font-size:28px;font-weight:800;">24</span><span style="font-size:13px;font-weight:700;color:#94A3B8;">px · space-6</span></div>
+        <div style="font-size:14px;font-weight:700;margin-bottom:12px;">Between blocks</div>
+        <div style="font-size:13px;line-height:20px;color:#475569;margin-bottom:16px;">The default. Every section on every screen.</div>
+        <div style="display:flex;flex-direction:column;gap:24px;">
+          <div style="display:flex;flex-direction:column;gap:8px;"><div style="height:10px;width:60px;background:#E2E8F0;border-radius:3px;"></div><div style="height:24px;background:#F1F5F9;border:1px solid #E2E8F0;border-radius:8px;"></div></div>
+          <div style="display:flex;flex-direction:column;gap:8px;"><div style="height:10px;width:44px;background:#E2E8F0;border-radius:3px;"></div><div style="height:24px;background:#F1F5F9;border:1px solid #E2E8F0;border-radius:8px;"></div></div>
+        </div>
+      </div>
+      <div style="background:#fff;border:1px solid #E2E8F0;border-radius:16px;padding:20px;">
+        <div style="display:flex;align-items:baseline;gap:8px;margin-bottom:4px;"><span style="font-family:Raleway;font-size:28px;font-weight:800;">32</span><span style="font-size:13px;font-weight:700;color:#94A3B8;">px · space-8</span></div>
+        <div style="font-size:14px;font-weight:700;margin-bottom:12px;">Between zones</div>
+        <div style="font-size:13px;line-height:20px;color:#475569;margin-bottom:16px;">Money hero to body, body to destructive actions. Twice per screen at most.</div>
+        <div style="display:flex;flex-direction:column;gap:32px;">
+          <div style="height:40px;border-radius:12px;background:linear-gradient(135deg,#04365b,#0369a1);box-shadow:0 10px 22px rgba(4,54,91,.26);"></div>
+          <div style="height:20px;background:#F1F5F9;border:1px solid #E2E8F0;border-radius:8px;"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section style="margin-bottom:56px;">
+    <div style="display:flex;align-items:baseline;gap:12px;margin-bottom:20px;">
+      <span style="font-family:Raleway;font-size:13px;font-weight:800;color:#06406b;">02</span>
+      <h2 style="margin:0;font-family:Raleway;font-size:24px;font-weight:700;letter-spacing:-.01em;">Type hierarchy</h2>
+    </div>
+    <p style="margin:0 0 24px;max-width:620px;font-size:15px;line-height:24px;color:#475569;">A page title (<span style="font-family:ui-monospace,monospace;font-size:13px;">display-sm</span> 700) and a section head (<span style="font-family:ui-monospace,monospace;font-size:13px;">heading-md</span> 700) are two steps apart on a screen full of bold text, so they read as one level. Section heads become uppercase labels, and — following the wallet — the number is the biggest thing on the page.</p>
+
+    <div style="background:#fff;border:1px solid #E2E8F0;border-radius:16px;overflow:hidden;">
+      <div style="display:grid;grid-template-columns:130px 1fr 210px;gap:16px;padding:12px 20px;background:#F8FAFC;border-bottom:1px solid #E2E8F0;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#94A3B8;">
+        <div>Level</div><div>Specimen</div><div>Spec</div>
+      </div>
+      <div style="display:grid;grid-template-columns:130px 1fr 210px;gap:16px;padding:20px;align-items:center;border-bottom:1px solid #E2E8F0;">
+        <div style="font-size:13px;font-weight:700;">Page title</div>
+        <div style="font-family:Raleway;font-size:24px;font-weight:700;letter-spacing:-.01em;">Earnings</div>
+        <div style="font-family:ui-monospace,monospace;font-size:12px;line-height:18px;color:#475569;">Raleway 24/28 · 700<br />display-md, tracking -1%</div>
+      </div>
+      <div style="display:grid;grid-template-columns:130px 1fr 210px;gap:16px;padding:20px;align-items:center;border-bottom:1px solid #E2E8F0;">
+        <div style="font-size:13px;font-weight:700;">Section label</div>
+        <div style="font-size:12px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#94A3B8;">Recent transactions</div>
+        <div style="font-family:ui-monospace,monospace;font-size:12px;line-height:18px;color:#475569;">Nunito 12/16 · 700<br />uppercase, +10% tracking, muted</div>
+      </div>
+      <div style="display:grid;grid-template-columns:130px 1fr 210px;gap:16px;padding:20px;align-items:center;border-bottom:1px solid #E2E8F0;background:linear-gradient(135deg,#04365b,#0369a1);">
+        <div style="font-size:13px;font-weight:700;color:#fff;">Money · hero</div>
+        <div style="font-family:Raleway;font-size:44px;line-height:48px;font-weight:800;letter-spacing:-.02em;font-variant-numeric:tabular-nums;color:#fff;">1,284<span style="font-size:18px;font-weight:700;margin-left:8px;color:rgba(255,255,255,.8);">GHS</span></div>
+        <div style="font-family:ui-monospace,monospace;font-size:12px;line-height:18px;color:rgba(255,255,255,.85);">Raleway 44 · 800<br />tracking -2%, tabular<br />currency 18px beside baseline</div>
+      </div>
+      <div style="display:grid;grid-template-columns:130px 1fr 210px;gap:16px;padding:20px;align-items:center;border-bottom:1px solid #E2E8F0;">
+        <div style="font-size:13px;font-weight:700;">Money · secondary</div>
+        <div style="font-family:Raleway;font-size:32px;font-weight:800;letter-spacing:-.02em;font-variant-numeric:tabular-nums;">GHS 342.00</div>
+        <div style="font-family:ui-monospace,monospace;font-size:12px;line-height:18px;color:#475569;">Raleway 32 · 800<br />balances inside a hero strip</div>
+      </div>
+      <div style="display:grid;grid-template-columns:130px 1fr 210px;gap:16px;padding:20px;align-items:center;border-bottom:1px solid #E2E8F0;">
+        <div style="font-size:13px;font-weight:700;">Money · inline</div>
+        <div style="font-family:Raleway;font-size:20px;font-weight:800;letter-spacing:-.01em;font-variant-numeric:tabular-nums;">+96.00</div>
+        <div style="font-family:ui-monospace,monospace;font-size:12px;line-height:18px;color:#475569;">Raleway 17–20 · 800<br />list rows, stat cards</div>
+      </div>
+      <div style="display:grid;grid-template-columns:130px 1fr 210px;gap:16px;padding:20px;align-items:center;border-bottom:1px solid #E2E8F0;">
+        <div style="font-size:13px;font-weight:700;">Card title</div>
+        <div style="font-size:15px;font-weight:600;">Order #BX-4471</div>
+        <div style="font-family:ui-monospace,monospace;font-size:12px;line-height:18px;color:#475569;">Nunito 15/22 · 600<br />never 700 — the number is the emphasis</div>
+      </div>
+      <div style="display:grid;grid-template-columns:130px 1fr 210px;gap:16px;padding:20px;align-items:center;">
+        <div style="font-size:13px;font-weight:700;">Meta</div>
+        <div style="font-size:12px;color:#94A3B8;">Today, 14:02 · Ayeduase gate</div>
+        <div style="font-family:ui-monospace,monospace;font-size:12px;line-height:18px;color:#475569;">Nunito 12/16 · 400<br />text-muted</div>
+      </div>
+    </div>
+  </section>
+
+  <section style="margin-bottom:56px;">
+    <div style="display:flex;align-items:baseline;gap:12px;margin-bottom:20px;">
+      <span style="font-family:Raleway;font-size:13px;font-weight:800;color:#06406b;">03</span>
+      <h2 style="margin:0;font-family:Raleway;font-size:24px;font-weight:700;letter-spacing:-.01em;">Two surfaces, and only two</h2>
+    </div>
+    <p style="margin:0 0 24px;max-width:620px;font-size:15px;line-height:24px;color:#475569;">Everything on a screen is either a flat bordered data card or the one gradient money hero. There is no third thing — no tinted half-panels, no card inside a card, no <span style="font-family:ui-monospace,monospace;font-size:13px;">Card padding="lg"</span>.</p>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:16px;">
+      <div style="background:#fff;border:1px solid #E2E8F0;border-radius:16px;padding:20px;">
+        <div style="font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#94A3B8;margin-bottom:16px;">Data card · flat · 16px pad, 16px radius</div>
+        <div style="background:#fff;border:1px solid #E2E8F0;border-radius:16px;padding:16px;">
+          <div style="display:flex;align-items:center;gap:12px;">
+            <div style="width:36px;height:36px;border-radius:10px;background:#f0f7fb;display:flex;align-items:center;justify-content:center;flex:none;">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#06406b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2h12l2 5H4zM4 7v13a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1V7M9 11a3 3 0 0 0 6 0" /></svg>
+            </div>
+            <div style="flex:1;min-width:0;">
+              <div style="font-size:15px;font-weight:600;">Total orders</div>
+              <div style="font-size:12px;color:#94A3B8;margin-top:2px;">Last 30 days</div>
+            </div>
+            <div style="font-family:Raleway;font-size:20px;font-weight:800;font-variant-numeric:tabular-nums;">148</div>
+          </div>
+        </div>
+        <div style="font-size:13px;line-height:20px;color:#475569;margin-top:16px;">Stat cards, list rows, order cards, transaction rows, settings groups. Border only — no shadow, no gradient, ever.</div>
+      </div>
+      <div style="background:#fff;border:1px solid #E2E8F0;border-radius:16px;padding:20px;">
+        <div style="font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#94A3B8;margin-bottom:16px;">Money hero · gradient + depth · 20px pad, 20px radius</div>
+        <div style="background:linear-gradient(135deg,#04365b,#0369a1);border-radius:20px;padding:20px;box-shadow:0 14px 30px rgba(4,54,91,.26);">
+          <div style="font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.65);">Available balance</div>
+          <div style="font-family:Raleway;font-size:36px;line-height:40px;font-weight:800;letter-spacing:-.02em;font-variant-numeric:tabular-nums;color:#fff;margin:4px 0 2px;">1,284.00<span style="font-size:16px;font-weight:700;margin-left:8px;color:rgba(255,255,255,.8);">GHS</span></div>
+          <div style="font-size:12px;color:rgba(255,255,255,.65);margin-bottom:16px;">GHS 420.00 pending clearance</div>
+          <div style="display:flex;gap:8px;">
+            <div style="flex:1;height:44px;border-radius:12px;background:#fff;display:flex;align-items:center;justify-content:center;font-family:Raleway;font-size:15px;font-weight:700;color:#06406b;">Withdraw</div>
+            <div style="width:44px;height:44px;border-radius:12px;background:rgba(255,255,255,.18);border:1px solid rgba(255,255,255,.12);display:flex;align-items:center;justify-content:center;">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20V10M18 20V4M6 20v-4" /></svg>
+            </div>
+          </div>
+        </div>
+        <div style="font-size:13px;line-height:20px;color:#475569;margin-top:16px;">One per screen, at the top. Balance, active order, active task, promo. Controls inside it are white fills and white/18 glass, as on the wallet.</div>
+      </div>
+    </div>
+  </section>
+
+  <section style="margin-bottom:56px;">
+    <div style="display:flex;align-items:baseline;gap:12px;margin-bottom:20px;">
+      <span style="font-family:Raleway;font-size:13px;font-weight:800;color:#06406b;">04</span>
+      <h2 style="margin:0;font-family:Raleway;font-size:24px;font-weight:700;letter-spacing:-.01em;">Depth and gradient</h2>
+    </div>
+    <p style="margin:0 0 24px;max-width:660px;font-size:15px;line-height:24px;color:#475569;">Taken from <span style="font-family:ui-monospace,monospace;font-size:13px;">wallet/index.tsx</span> and <span style="font-family:ui-monospace,monospace;font-size:13px;">wallet/rewards.tsx</span>, which already do this well. The rule they follow implicitly and everything else should follow explicitly: <strong>a shadow is tinted with its own surface's darkest stop</strong> — never neutral black on a coloured card.</p>
+
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px;margin-bottom:32px;">
+      <div style="background:#fff;border:1px solid #E2E8F0;border-radius:16px;padding:18px;">
+        <div style="font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#94A3B8;margin-bottom:10px;">Level 0 · flat</div>
+        <div style="height:44px;border-radius:12px;background:#fff;border:1px solid #E2E8F0;margin-bottom:12px;"></div>
+        <div style="font-family:ui-monospace,monospace;font-size:11px;line-height:17px;color:#475569;">border: 1px #E2E8F0<br />no shadow</div>
+        <div style="font-size:12px;line-height:18px;color:#94A3B8;margin-top:8px;">All data cards and rows.</div>
+      </div>
+      <div style="background:#fff;border:1px solid #E2E8F0;border-radius:16px;padding:18px;">
+        <div style="font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#94A3B8;margin-bottom:10px;">Level 1 · chrome</div>
+        <div style="height:44px;border-radius:12px;background:#fff;border:1px solid #E2E8F0;box-shadow:0 -4px 16px rgba(15,23,42,.08);margin-bottom:12px;"></div>
+        <div style="font-family:ui-monospace,monospace;font-size:11px;line-height:17px;color:#475569;">0 -4px 16px rgba(15,23,42,.08)</div>
+        <div style="font-size:12px;line-height:18px;color:#94A3B8;margin-top:8px;">Bottom bars, sheets, tab bar — upward only.</div>
+      </div>
+      <div style="background:#fff;border:1px solid #E2E8F0;border-radius:16px;padding:18px;">
+        <div style="font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#94A3B8;margin-bottom:10px;">Level 2 · money hero</div>
+        <div style="height:44px;border-radius:12px;background:linear-gradient(135deg,#04365b,#0369a1);box-shadow:0 14px 30px rgba(4,54,91,.26);margin-bottom:12px;"></div>
+        <div style="font-family:ui-monospace,monospace;font-size:11px;line-height:17px;color:#475569;">0 14px 30px &lt;stop-1&gt;/.26</div>
+        <div style="font-size:12px;line-height:18px;color:#94A3B8;margin-top:8px;">Balance, active order, promo.</div>
+      </div>
+      <div style="background:#fff;border:1px solid #E2E8F0;border-radius:16px;padding:18px;">
+        <div style="font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#94A3B8;margin-bottom:10px;">Level 3 · wallet stack</div>
+        <div style="height:44px;border-radius:12px;background:linear-gradient(135deg,#4f2ae8,#3013a5);box-shadow:0 -6px 20px rgba(45,27,115,.55);margin-bottom:12px;"></div>
+        <div style="font-family:ui-monospace,monospace;font-size:11px;line-height:17px;color:#475569;">0 -6px 20px rgba(45,27,115,.55)</div>
+        <div style="font-size:12px;line-height:18px;color:#94A3B8;margin-top:8px;">The wallet pocket only. Existing value, unchanged.</div>
+      </div>
+    </div>
+
+    <div style="font-size:12px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#94A3B8;margin-bottom:12px;">Gradient roles</div>
+    <div style="background:#fff;border:1px solid #E2E8F0;border-radius:16px;overflow:hidden;margin-bottom:24px;">
+      <div style="display:grid;grid-template-columns:120px 1fr 1.1fr;gap:16px;padding:14px 20px;align-items:center;border-bottom:1px solid #E2E8F0;">
+        <div style="height:40px;border-radius:10px;background:linear-gradient(135deg,#04365b,#0369a1);"></div>
+        <div>
+          <div style="font-size:15px;font-weight:700;">Money</div>
+          <div style="font-family:ui-monospace,monospace;font-size:11px;color:#64748B;margin-top:2px;">#04365b → #0369a1</div>
+        </div>
+        <div style="font-size:13px;line-height:20px;color:#475569;">brand-800 → accent-700. Every balance, in all three roles. New in this revision.</div>
+      </div>
+      <div style="display:grid;grid-template-columns:120px 1fr 1.1fr;gap:16px;padding:14px 20px;align-items:center;border-bottom:1px solid #E2E8F0;">
+        <div style="height:40px;border-radius:10px;background:linear-gradient(135deg,#4f2ae8,#3013a5);"></div>
+        <div>
+          <div style="font-size:15px;font-weight:700;">Wallet pocket</div>
+          <div style="font-family:ui-monospace,monospace;font-size:11px;color:#64748B;margin-top:2px;">#4f2ae8 → #3013a5</div>
+        </div>
+        <div style="font-size:13px;line-height:20px;color:#475569;">The customer wallet keeps its own identity. Used nowhere else.</div>
+      </div>
+      <div style="display:grid;grid-template-columns:120px 1fr 1.1fr;gap:16px;padding:14px 20px;align-items:center;border-bottom:1px solid #E2E8F0;">
+        <div style="height:40px;border-radius:10px;background:linear-gradient(90deg,#f59e0b,#d97706);"></div>
+        <div>
+          <div style="font-size:15px;font-weight:700;">Loyalty</div>
+          <div style="font-family:ui-monospace,monospace;font-size:11px;color:#64748B;margin-top:2px;">#f59e0b → #d97706</div>
+        </div>
+        <div style="font-size:13px;line-height:20px;color:#475569;">BexieCoins and tier. Already in use on rewards — kept as is.</div>
+      </div>
+      <div style="display:grid;grid-template-columns:120px 1fr 1.1fr;gap:16px;padding:14px 20px;align-items:center;">
+        <div style="display:flex;gap:3px;">
+          <div style="flex:1;height:40px;border-radius:6px;background:linear-gradient(135deg,#1a202c,#2d3748);"></div>
+          <div style="flex:1;height:40px;border-radius:6px;background:linear-gradient(135deg,#b91c1c,#f87171);"></div>
+          <div style="flex:1;height:40px;border-radius:6px;background:linear-gradient(135deg,#075985,#38bdf8);"></div>
+          <div style="flex:1;height:40px;border-radius:6px;background:linear-gradient(135deg,#064e3b,#34d399);"></div>
+          <div style="flex:1;height:40px;border-radius:6px;background:linear-gradient(135deg,#78350f,#fbbf24);"></div>
+          <div style="flex:1;height:40px;border-radius:6px;background:linear-gradient(135deg,#831843,#f472b6);"></div>
+        </div>
+        <div>
+          <div style="font-size:15px;font-weight:700;">Saved cards</div>
+          <div style="font-family:ui-monospace,monospace;font-size:11px;color:#64748B;margin-top:2px;">PREMIUM_GRADIENTS, hashed by id</div>
+        </div>
+        <div style="font-size:13px;line-height:20px;color:#475569;">Eight gradients so a card keeps its colour across sessions. Card surfaces only — never a screen background.</div>
+      </div>
+    </div>
+
+    <div style="background:#F8FAFC;border:1px dashed #CBD5E1;border-radius:14px;padding:16px 20px;max-width:660px;">
+      <div style="font-size:13px;line-height:21px;color:#475569;"><strong style="color:#0F172A;">Where gradient is not allowed:</strong> data cards, list rows, settings groups, chips, segmented controls, buttons that sit inside a gradient card, and any screen background. If two gradients would be visible at once on the same screen, one of them is wrong.</div>
+    </div>
+  </section>
+
+  <section style="margin-bottom:56px;">
+    <div style="display:flex;align-items:baseline;gap:12px;margin-bottom:20px;">
+      <span style="font-family:Raleway;font-size:13px;font-weight:800;color:#06406b;">05</span>
+      <h2 style="margin:0;font-family:Raleway;font-size:24px;font-weight:700;letter-spacing:-.01em;">Quick actions</h2>
+    </div>
+    <p style="margin:0 0 24px;max-width:660px;font-size:15px;line-height:24px;color:#475569;">Two languages exist today: 56px saturated circles on the wallet, 48px tinted tiles on home and the vendor dashboard. Split by job. <strong>Actions</strong> — top up, send, add item, withdraw — take the wallet's filled circle: a stronger tap target that survives a busy background. <strong>Navigation</strong> — the home Explore grid, category tiles — keeps the boxed tinted tile, because a grid of eight destinations reads better as a set of surfaces than as a row of buttons. What is retired is the near-white <span style="font-family:ui-monospace,monospace;font-size:13px;">#f8fafc</span> tile on a white card, which has no edge at all.</p>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:16px;">
+      <div>
+        <div style="font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#00A86B;margin-bottom:12px;">Canonical · from the wallet</div>
+        <div style="background:#fff;border:1px solid #E2E8F0;border-radius:16px;padding:20px;display:flex;justify-content:space-between;">
+          <div style="display:flex;flex-direction:column;align-items:center;gap:8px;">
+            <div style="width:52px;height:52px;border-radius:999px;background:#06406b;display:flex;align-items:center;justify-content:center;"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round"><path d="M12 5v14M5 12h14" /></svg></div>
+            <span style="font-size:11px;font-weight:700;">Top up</span>
+          </div>
+          <div style="display:flex;flex-direction:column;align-items:center;gap:8px;">
+            <div style="width:52px;height:52px;border-radius:999px;background:#7c3aed;display:flex;align-items:center;justify-content:center;"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2 11 13M22 2l-7 20-4-9-9-4z" /></svg></div>
+            <span style="font-size:11px;font-weight:700;">Send</span>
+          </div>
+          <div style="display:flex;flex-direction:column;align-items:center;gap:8px;">
+            <div style="width:52px;height:52px;border-radius:999px;background:#e11d48;display:flex;align-items:center;justify-content:center;"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round"><path d="M2 6h20v12H2zM2 10h20" /></svg></div>
+            <span style="font-size:11px;font-weight:700;">Cards</span>
+          </div>
+          <div style="display:flex;flex-direction:column;align-items:center;gap:8px;">
+            <div style="width:52px;height:52px;border-radius:999px;background:#059669;display:flex;align-items:center;justify-content:center;"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round"><path d="M17 7 7 17M17 17H7V7" /></svg></div>
+            <span style="font-size:11px;font-weight:700;">Request</span>
+          </div>
+        </div>
+        <div style="font-size:13px;line-height:20px;color:#475569;margin-top:12px;">52px circle, white glyph at 22px, label 11/700 below, 8px apart. One hue per action, held constant across screens.</div>
+      </div>
+      <div>
+        <div style="font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#EF4444;margin-bottom:12px;">Retired · near-white tile</div>
+        <div style="background:#fff;border:1px solid #f1f5f9;border-radius:32px;padding:20px;display:flex;justify-content:space-between;">
+          <div style="display:flex;flex-direction:column;align-items:center;gap:8px;width:18%;">
+            <div style="width:48px;height:48px;border-radius:16px;background:#f8fafc;display:flex;align-items:center;justify-content:center;"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#ea580c" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8h1a4 4 0 0 1 0 8h-1M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4zM6 1v3M10 1v3M14 1v3" /></svg></div>
+            <span style="font-size:10px;line-height:12px;font-weight:700;text-align:center;">Order<br />Food</span>
+          </div>
+          <div style="display:flex;flex-direction:column;align-items:center;gap:8px;width:18%;">
+            <div style="width:48px;height:48px;border-radius:16px;background:#f8fafc;display:flex;align-items:center;justify-content:center;"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2h12l2 5H4zM4 7v13a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1V7M9 11a3 3 0 0 0 6 0" /></svg></div>
+            <span style="font-size:10px;line-height:12px;font-weight:700;text-align:center;">Shop<br />Products</span>
+          </div>
+          <div style="display:flex;flex-direction:column;align-items:center;gap:8px;width:18%;">
+            <div style="width:48px;height:48px;border-radius:16px;background:#f8fafc;display:flex;align-items:center;justify-content:center;"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 11 19-8-8 19-2.5-8.5z" /></svg></div>
+            <span style="font-size:10px;line-height:12px;font-weight:700;text-align:center;">Book<br />Rider</span>
+          </div>
+          <div style="display:flex;flex-direction:column;align-items:center;gap:8px;width:18%;">
+            <div style="width:48px;height:48px;border-radius:16px;background:#f8fafc;display:flex;align-items:center;justify-content:center;"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#ca8a04" stroke-width="2" stroke-linecap="round"><path d="M2 6h20v12H2zM2 10h20" /></svg></div>
+            <span style="font-size:10px;line-height:12px;font-weight:700;text-align:center;">Wallet</span>
+          </div>
+        </div>
+        <div style="font-size:13px;line-height:20px;color:#475569;margin-top:12px;">A near-white tile on a white card has no edge, the 10px two-line labels are below the minimum, and the 32px-radius container adds 40px of padding for nothing. Tinted tiles are fine — colourless ones are not.</div>
+      </div>
+    </div>
+  </section>
+
+  <section style="margin-bottom:56px;">
+    <div style="display:flex;align-items:baseline;gap:12px;margin-bottom:20px;">
+      <span style="font-family:Raleway;font-size:13px;font-weight:800;color:#06406b;">06</span>
+      <h2 style="margin:0;font-family:Raleway;font-size:24px;font-weight:700;letter-spacing:-.01em;">Header</h2>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:16px;">
+      <div>
+        <div style="font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#EF4444;margin-bottom:12px;">Now</div>
+        <div style="background:#fff;border:1px solid #E2E8F0;border-radius:16px;overflow:hidden;">
+          <div style="padding:16px 20px;border-bottom:1px solid #E2E8F0;">
+            <div style="font-family:Raleway;font-size:20px;font-weight:800;">Tasks</div>
+          </div>
+          <div style="padding:20px;background:#F8FAFC;display:flex;flex-direction:column;gap:8px;">
+            <div style="height:12px;width:70%;background:#E2E8F0;border-radius:3px;"></div>
+            <div style="height:12px;width:50%;background:#E2E8F0;border-radius:3px;"></div>
+          </div>
+        </div>
+        <ul style="margin:12px 0 0;padding-left:20px;font-size:13px;line-height:22px;color:#475569;">
+          <li>20px title, 700 — same weight as the section heads below it</li>
+          <li>No context line, so the screen never says where you are</li>
+          <li>Title size varies 20 / 24 across the three roles</li>
+        </ul>
+      </div>
+      <div>
+        <div style="font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#00A86B;margin-bottom:12px;">Proposed</div>
+        <div style="background:#fff;border:1px solid #E2E8F0;border-radius:16px;overflow:hidden;">
+          <div style="padding:14px 20px 16px;border-bottom:1px solid #E2E8F0;">
+            <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px;">
+              <div>
+                <div style="font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#94A3B8;margin-bottom:3px;">KNUST · Rider</div>
+                <div style="font-family:Raleway;font-size:24px;font-weight:700;letter-spacing:-.01em;">Tasks</div>
+              </div>
+              <div style="width:36px;height:36px;border-radius:999px;background:#F8FAFC;border:1px solid #E2E8F0;display:flex;align-items:center;justify-content:center;">
+                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#475569" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9M13.73 21a2 2 0 0 1-3.46 0" /></svg>
+              </div>
+            </div>
+          </div>
+          <div style="padding:20px;background:#F8FAFC;display:flex;flex-direction:column;gap:8px;">
+            <div style="height:12px;width:70%;background:#E2E8F0;border-radius:3px;"></div>
+            <div style="height:12px;width:50%;background:#E2E8F0;border-radius:3px;"></div>
+          </div>
+        </div>
+        <ul style="margin:12px 0 0;padding-left:20px;font-size:13px;line-height:22px;color:#475569;">
+          <li>24px title on every screen, in every role</li>
+          <li>Eyebrow carries campus, role or count — the anchor</li>
+          <li>Actions are 36px ghost circles, not floating icons</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section style="margin-bottom:56px;">
+    <div style="display:flex;align-items:baseline;gap:12px;margin-bottom:20px;">
+      <span style="font-family:Raleway;font-size:13px;font-weight:800;color:#06406b;">07</span>
+      <h2 style="margin:0;font-family:Raleway;font-size:24px;font-weight:700;letter-spacing:-.01em;">Rules that fix the named problems</h2>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:12px;">
+      <div style="background:#fff;border:1px solid #E2E8F0;border-radius:16px;padding:18px 20px;">
+        <div style="font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#94A3B8;margin-bottom:8px;">Floating bar covers content</div>
+        <div style="font-size:15px;line-height:23px;">The quick-actions dock moves into the scroll flow directly under the search bar. Bottom padding drops from 160px to 96px, so the last row of content is reachable.</div>
+      </div>
+      <div style="background:#fff;border:1px solid #E2E8F0;border-radius:16px;padding:18px 20px;">
+        <div style="font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#94A3B8;margin-bottom:8px;">Sections feel like a random list</div>
+        <div style="font-size:15px;line-height:23px;">Every section is label → content at a 24px gap, and rails alternate with grids rather than stacking four rails in a row. The label is the rhythm.</div>
+      </div>
+      <div style="background:#fff;border:1px solid #E2E8F0;border-radius:16px;padding:18px 20px;">
+        <div style="font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#94A3B8;margin-bottom:8px;">Too many sections on home</div>
+        <div style="font-size:15px;line-height:23px;">Nine blocks become five. Filter pills fold into the nav grid; Top Products, New Items and Most Popular become one rail with segments. No content is dropped.</div>
+      </div>
+      <div style="background:#fff;border:1px solid #E2E8F0;border-radius:16px;padding:18px 20px;">
+        <div style="font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#94A3B8;margin-bottom:8px;">Inconsistent card padding</div>
+        <div style="font-size:15px;line-height:23px;">Two values, chosen by role not by screen: 16 for anything holding data, 20 for the one money hero. <span style="font-family:ui-monospace,monospace;font-size:13px;">Card padding="lg"</span> is retired.</div>
+      </div>
+      <div style="background:#fff;border:1px solid #E2E8F0;border-radius:16px;padding:18px 20px;">
+        <div style="font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#94A3B8;margin-bottom:8px;">No breathing room</div>
+        <div style="font-size:15px;line-height:23px;">Room comes from fewer nested surfaces, not bigger gaps. Order cards lose their inner grey item box; the rider sheet loses its card-in-a-card. Gaps stay tight at 16/24.</div>
+      </div>
+      <div style="background:#fff;border:1px solid #E2E8F0;border-radius:16px;padding:18px 20px;">
+        <div style="font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#94A3B8;margin-bottom:8px;">Depth is reserved, not banned</div>
+        <div style="font-size:15px;line-height:23px;">Shadows now carry meaning: if it lifts off the page it is money or it is chrome. The stray <span style="font-family:ui-monospace,monospace;font-size:13px;">shadow-lg</span> on settings groups, profile cards and order cards still comes off.</div>
+      </div>
+      <div style="background:#fff;border:1px solid #E2E8F0;border-radius:16px;padding:18px 20px;">
+        <div style="font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#94A3B8;margin-bottom:8px;">Off-palette blues</div>
+        <div style="font-size:15px;line-height:23px;"><span style="font-family:ui-monospace,monospace;font-size:13px;">topup.tsx</span> hardcodes <span style="font-family:ui-monospace,monospace;font-size:13px;">#1d4ed8</span> and <span style="font-family:ui-monospace,monospace;font-size:13px;">#3b82f6</span> for the selected payment method. Both become brand-700, so the one selected state matches every other selected state.</div>
+      </div>
+      <div style="background:#fff;border:1px solid #E2E8F0;border-radius:16px;padding:18px 20px;">
+        <div style="font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#94A3B8;margin-bottom:8px;">Weak type hierarchy</div>
+        <div style="font-size:15px;line-height:23px;">18px/700 section headlines become 12px uppercase labels, and the money scale gives balances a 44 / 32 / 20 ladder. The loudest thing on a screen is now always a number.</div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div style="display:flex;align-items:baseline;gap:12px;margin-bottom:20px;">
+      <span style="font-family:Raleway;font-size:13px;font-weight:800;color:#06406b;">08</span>
+      <h2 style="margin:0;font-family:Raleway;font-size:24px;font-weight:700;letter-spacing:-.01em;">Where it lands</h2>
+    </div>
+    <div style="background:#fff;border:1px solid #E2E8F0;border-radius:16px;overflow:hidden;">
+      <div style="display:grid;grid-template-columns:1fr 1.4fr;gap:16px;padding:12px 20px;background:#F8FAFC;border-bottom:1px solid #E2E8F0;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#94A3B8;"><div>Deliverable</div><div>Screens</div></div>
+      <div style="display:grid;grid-template-columns:1fr 1.4fr;gap:16px;padding:16px 20px;border-bottom:1px solid #E2E8F0;align-items:center;">
+        <div><a href="Customer Mobile Layouts.dc.html" style="font-size:15px;font-weight:700;">Customer layouts</a></div>
+        <div style="font-size:13px;line-height:20px;color:#475569;">Home · Shop · Cart · Profile · Order history · Wallet</div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1.4fr;gap:16px;padding:16px 20px;border-bottom:1px solid #E2E8F0;align-items:center;">
+        <div><a href="Vendor Mobile Layouts.dc.html" style="font-size:15px;font-weight:700;">Vendor layouts</a></div>
+        <div style="font-size:13px;line-height:20px;color:#475569;">Dashboard · Listings · Orders · Earnings · Settings</div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1.4fr;gap:16px;padding:16px 20px;align-items:center;">
+        <div><a href="Rider Mobile Layouts.dc.html" style="font-size:15px;font-weight:700;">Rider layouts</a></div>
+        <div style="font-size:13px;line-height:20px;color:#475569;">Map · Tasks · Earnings · Profile</div>
+      </div>
+    </div>
+  </section>
+
+</div>
+</x-dc>
+</body>
+</html>

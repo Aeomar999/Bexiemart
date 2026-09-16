@@ -504,22 +504,24 @@ export default function DispatcherMap() {
       </MapView>
 
       {/* Floating Header */}
-      <View className="absolute w-full px-5 z-10" style={{ top: Math.max(insets.top, 12) + 12 }}>
-        <View className="bg-card rounded-2xl p-4 flex-row items-center justify-between border border-border">
-          <View className="flex-row items-center gap-3">
-            <View
-              className={`w-3 h-3 rounded-full ${isOnline ? "bg-emerald-500" : "bg-slate-400"}`}
-            />
-            <Text className="text-foreground font-bold text-body-lg font-heading">
-              {isOnline ? "You're Online" : "You're Offline"}
-            </Text>
-          </View>
+      <View
+        className="absolute w-full flex-row justify-center z-10 pointer-events-box-none"
+        style={{ top: Math.max(insets.top, 12) + 12 }}
+      >
+        <View className="bg-card rounded-full px-5 py-2 flex-row items-center gap-3 border border-border shadow-elevation-2">
+          <View
+            className={`w-2.5 h-2.5 rounded-full ${isOnline ? "bg-emerald-500" : "bg-slate-400"}`}
+          />
+          <Text className="text-foreground font-bold text-[14px] font-heading mr-2">
+            {isOnline ? "Online" : "Offline"}
+          </Text>
           <Switch
             value={isOnline}
             onValueChange={setIsOnline}
-            trackColor={{ false: "#334155", true: tokens.success }}
+            trackColor={{ false: "#e2e8f0", true: tokens.success }}
             thumbColor={tokens.primaryText}
-            disabled={!!activeRide} // Prevent going offline while on a task
+            disabled={!!activeRide}
+            style={{ transform: [{ scaleX: 0.8 }, { scaleY: 0.8 }] }}
           />
         </View>
       </View>

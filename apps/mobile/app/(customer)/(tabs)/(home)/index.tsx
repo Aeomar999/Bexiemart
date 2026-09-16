@@ -1,4 +1,4 @@
-﻿import { tokens } from "@/theme/tokens";
+import { tokens } from "@/theme/tokens";
 import { View, Text, ScrollView, Pressable, RefreshControl, TextInput } from "react-native";
 import { FlashList } from "@shopify/flash-list";
 import { useState, useCallback, useEffect } from "react";
@@ -15,72 +15,10 @@ import { useRiderStore } from "@/lib/stores/rider-store";
 import { useCountdown } from "@/hooks/useCountdown";
 import { useFlashSalesEnabled } from "@/lib/feature-flags";
 
-const FILTER_PILLS = [
-  { id: "1", label: "Instant Delivery", icon: "clock", iconColor: "#10b981", bgColor: "#f0fdf4" },
-  { id: "2", label: "Featured Meals", icon: "activity", iconColor: "#ef4444", bgColor: "#fef2f2" },
-  { id: "3", label: "New Arrivals", icon: "star", iconColor: "#3b82f6", bgColor: "#eff6ff" },
-];
-
-const FEATURED_HIGHLIGHTS = [
+const EXPLORE_GRID = [
   {
     id: "1",
-    name: "Shopping",
-    icon: "shopping-bag",
-    bgColor: "#fce7f3",
-    iconColor: "#ec4899",
-    route: "/(customer)/(shop)",
-  },
-  {
-    id: "2",
     name: "Food",
-    icon: "coffee",
-    bgColor: "#dcfce7",
-    iconColor: "#22c55e",
-    route: "/(customer)/food",
-  },
-  {
-    id: "3",
-    name: "Delivery",
-    icon: "truck",
-    bgColor: "#ffedd5",
-    iconColor: "#f97316",
-    route: "/(customer)/book-rider",
-  },
-  {
-    id: "4",
-    name: "Finance",
-    icon: "dollar-sign",
-    bgColor: "#dbeafe",
-    iconColor: "#2563eb",
-    route: "/(customer)/wallet",
-  },
-  {
-    id: "5",
-    name: "Reels",
-    icon: "video",
-    bgColor: "#fee2e2",
-    iconColor: "#ef4444",
-    route: "/(customer)/reels",
-  },
-  {
-    id: "6",
-    name: "Services",
-    icon: "briefcase",
-    bgColor: "#f3e8ff",
-    iconColor: "#8b5cf6",
-    route: "/(customer)/services",
-  },
-];
-
-const SHOPS = [
-  { id: "1", name: "Jean Collections", desc: "Bags, Shoes, Dresses", rating: 4.8, image: "" },
-  { id: "2", name: "KFC Ghana", desc: "Burger, Chicken, Fries", rating: 4.8, image: "" },
-];
-
-const QUICK_ACTIONS = [
-  {
-    id: "1",
-    label: "Order\nFood",
     icon: "coffee",
     bgColor: "#f8fafc",
     iconColor: "#ea580c",
@@ -88,7 +26,7 @@ const QUICK_ACTIONS = [
   },
   {
     id: "2",
-    label: "Shop\nProducts",
+    name: "Shop",
     icon: "shopping-bag",
     bgColor: "#f8fafc",
     iconColor: "#3b82f6",
@@ -96,7 +34,7 @@ const QUICK_ACTIONS = [
   },
   {
     id: "3",
-    label: "Book\nRider",
+    name: "Ride",
     icon: "navigation",
     bgColor: "#f8fafc",
     iconColor: "#16a34a",
@@ -104,7 +42,7 @@ const QUICK_ACTIONS = [
   },
   {
     id: "4",
-    label: "Track\nOrder",
+    name: "Track",
     icon: "map-pin",
     bgColor: "#f8fafc",
     iconColor: "#9333ea",
@@ -112,11 +50,35 @@ const QUICK_ACTIONS = [
   },
   {
     id: "5",
-    label: "Wallet",
+    name: "Wallet",
     icon: "credit-card",
     bgColor: "#f8fafc",
     iconColor: "#ca8a04",
     route: "/(customer)/wallet",
+  },
+  {
+    id: "6",
+    name: "Reels",
+    icon: "video",
+    bgColor: "#f8fafc",
+    iconColor: "#ef4444",
+    route: "/(customer)/reels",
+  },
+  {
+    id: "7",
+    name: "Services",
+    icon: "briefcase",
+    bgColor: "#f8fafc",
+    iconColor: "#8b5cf6",
+    route: "/(customer)/services",
+  },
+  {
+    id: "8",
+    name: "Deals",
+    icon: "tag",
+    bgColor: "#f8fafc",
+    iconColor: "#e11d48",
+    route: "/(customer)/flash-sales",
   },
 ];
 
@@ -158,6 +120,7 @@ export default function HomeScreen() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
   const [refreshing, setRefreshing] = useState(false);
+  const [activeTab, setActiveTab] = useState<"top" | "new" | "popular">("top");
 
   const {
     data: productsData,
@@ -224,7 +187,7 @@ export default function HomeScreen() {
             className="w-10 h-10 justify-center active:opacity-70"
             onPress={() => router.push("/(customer)/profile")}
           >
-            <Icon name="menu" size={24} color={tokens.textPrimary} />
+            <Icon name="user" size={24} color={tokens.textPrimary} />
           </Pressable>
 
           <Text className="text-display-sm font-heading font-black text-foreground tracking-tight">
@@ -246,14 +209,14 @@ export default function HomeScreen() {
       </View>
 
       <ScrollView
-        className="flex-1"
-        contentContainerClassName="pb-40"
         showsVerticalScrollIndicator={false}
+        contentContainerStyle={{ paddingBottom: 96 }}
         refreshControl={
           <RefreshControl
             refreshing={refreshing}
             onRefresh={onRefresh}
             tintColor={tokens.primary}
+            colors={[tokens.primary]}
           />
         }
       >
@@ -278,51 +241,25 @@ export default function HomeScreen() {
           />
         )}
 
-        {/* ===== FILTER PILLS ===== */}
-        <FlashList
-          data={FILTER_PILLS}
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          className="mt-6"
-          contentContainerStyle={{ paddingHorizontal: 20, gap: 12 }}
-          keyExtractor={(item) => item.id}
-          renderItem={({ item }) => (
-            <Pressable
-              style={({ pressed }) => ({
-                opacity: pressed ? 0.7 : 1,
-                backgroundColor: item.bgColor,
-              })}
-              onPress={() => router.push("/(customer)/(shop)")}
-              className="flex-row items-center px-4 py-2.5 rounded-xl"
-            >
-              <Icon name={item.icon} size={14} color={item.iconColor} />
-              <Text className="ml-2 font-semibold text-foreground text-sm font-body">
-                {item.label}
-              </Text>
-            </Pressable>
-          )}
-        />
-
-        {/* ===== FEATURED HIGHLIGHTS ===== */}
-        <View className="px-5 mt-8">
-          <Text className="text-heading-md font-heading font-bold text-foreground mb-5">
-            Featured Highlights
-          </Text>
-          <View className="flex-row flex-wrap justify-between gap-y-5">
-            {FEATURED_HIGHLIGHTS.map((item) => (
+        {/* ===== EXPLORE GRID ===== */}
+        <View className="px-5 mt-6">
+          <View className="flex-row flex-wrap justify-between gap-y-3">
+            {EXPLORE_GRID.map((item) => (
               <Pressable
                 key={item.id}
                 style={({ pressed }) => ({ opacity: pressed ? 0.7 : 1 })}
-                className="w-[30%] items-center active:opacity-70"
+                className="w-[23%] items-center active:opacity-70"
                 onPress={() => item.route !== "#" && router.push(item.route as any)}
               >
                 <View
-                  className="w-full rounded-2xl items-center justify-center mb-2"
-                  style={[{ aspectRatio: 1 }, { backgroundColor: item.bgColor }]}
+                  className="w-full rounded-[14px] items-center justify-center mb-1.5 bg-background border border-border"
+                  style={{ aspectRatio: 1 }}
                 >
-                  <Icon name={item.icon} size={32} color={item.iconColor} />
+                  <Icon name={item.icon} size={20} color={item.iconColor} />
                 </View>
-                <Text className="text-sm font-bold text-foreground font-heading">{item.name}</Text>
+                <Text className="text-[11px] font-bold text-foreground font-heading">
+                  {item.name}
+                </Text>
               </Pressable>
             ))}
           </View>
@@ -396,185 +333,50 @@ export default function HomeScreen() {
           </View>
         </View>
 
-        {/* ===== TOP PRODUCTS ===== */}
+        {/* ===== DISCOVER SECTION (MERGED) ===== */}
         <View className="pl-5 mt-10">
           <View className="flex-row justify-between items-center mb-4 pr-5">
-            <Text className="text-heading-md font-heading font-bold text-foreground">
-              Top Products
-            </Text>
-            <Pressable
-              style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
-              onPress={() => router.push("/(customer)/(shop)")}
-            >
-              <Text className="text-body-sm font-bold text-muted-foreground">See All</Text>
-            </Pressable>
-          </View>
-          <FlashList
-            data={topProducts}
-            horizontal
-            showsHorizontalScrollIndicator={false}
-            decelerationRate="fast"
-            snapToInterval={88} // 72px width + 16px gap
-            snapToAlignment="start"
-            contentContainerStyle={{ paddingHorizontal: 20, gap: 16 }}
-            keyExtractor={(item) => item.id}
-            renderItem={({ item }) => (
+            <View className="flex-row items-center bg-[#F1F5F9] rounded-[12px] p-[3px]">
               <Pressable
-                className="items-center active:opacity-70"
-                onPress={() => router.push(`/(customer)/product/${item.id}`)}
+                onPress={() => setActiveTab("top")}
+                className={`h-[34px] px-3 rounded-[9px] items-center justify-center ${activeTab === "top" ? "bg-white shadow-sm" : ""}`}
               >
-                <View className="w-18 h-18 rounded-full bg-muted mb-2 items-center justify-center border-2 border-card overflow-hidden">
-                  {item.image ? (
-                    <Image
-                      source={{ uri: item.image }}
-                      style={{ width: "100%", height: "100%" }}
-                      contentFit="cover"
-                    />
-                  ) : (
-                    <Icon name="image" size={24} color={tokens.textDisabled} />
-                  )}
-                </View>
-                <Text className="text-caption font-bold text-foreground" numberOfLines={1}>
-                  {item.name.substring(0, 10)}
+                <Text
+                  className={`text-[13px] font-bold ${activeTab === "top" ? "text-foreground" : "text-muted-foreground"}`}
+                >
+                  Top
                 </Text>
               </Pressable>
-            )}
-          />
-        </View>
-
-        {/* ===== NEW ITEMS ===== */}
-        {newItems.length > 0 && (
-          <View className="pl-5 mt-10">
-            <View className="flex-row justify-between items-center mb-4 pr-5">
-              <Text className="text-heading-md font-heading font-bold text-foreground">
-                New Items
-              </Text>
               <Pressable
-                style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
-                className="flex-row items-center gap-1 active:opacity-70"
-                onPress={() => router.push("/(customer)/(shop)")}
+                onPress={() => setActiveTab("new")}
+                className={`h-[34px] px-3 rounded-[9px] items-center justify-center ${activeTab === "new" ? "bg-white shadow-sm" : ""}`}
               >
-                <Text className="text-body-sm font-bold text-muted-foreground">See All</Text>
-                <View className="w-5 h-5 rounded-full bg-foreground items-center justify-center">
-                  <Icon name="arrow-right" size={12} color={tokens.primaryText} />
-                </View>
-              </Pressable>
-            </View>
-            <FlashList
-              data={newItems}
-              horizontal
-              showsHorizontalScrollIndicator={false}
-              decelerationRate="fast"
-              snapToInterval={156} // 140px width + 16px gap
-              snapToAlignment="start"
-              contentContainerStyle={{ paddingHorizontal: 20, gap: 16 }}
-              keyExtractor={(item) => item.id}
-              renderItem={({ item }) => (
-                <Pressable
-                  className="w-[140px] active:opacity-70"
-                  onPress={() => router.push(`/(customer)/product/${item.id}`)}
+                <Text
+                  className={`text-[13px] font-bold ${activeTab === "new" ? "text-foreground" : "text-muted-foreground"}`}
                 >
-                  <View
-                    className="w-full rounded-xl bg-muted mb-2 items-center justify-center overflow-hidden"
-                    style={{ aspectRatio: 1 }}
-                  >
-                    {item.image ? (
-                      <Image
-                        source={{ uri: item.image }}
-                        style={{ width: "100%", height: "100%" }}
-                        contentFit="cover"
-                      />
-                    ) : (
-                      <Icon name="image" size={32} color={tokens.textDisabled} />
-                    )}
-                  </View>
-                  <Text className="text-body-md font-bold text-foreground" numberOfLines={1}>
-                    {item.name}
-                  </Text>
-                  <Text
-                    className="text-caption text-muted-foreground font-body mb-1"
-                    numberOfLines={1}
-                  >
-                    {item.subtitle || item.category}
-                  </Text>
-                  <Text className="text-body-md font-bold text-foreground">
-                    GHS {item.price.toFixed(2)}
-                  </Text>
-                </Pressable>
-              )}
-            />
-          </View>
-        )}
-
-        {/* ===== FLASH SALE ===== */}
-        {flashSalesEnabled && flashSale.length > 0 && (
-          <View className="px-5 mt-10">
-            <View className="flex-row justify-between items-center mb-4">
-              <Text className="text-heading-md font-heading font-bold text-foreground">
-                Flash Sale
-              </Text>
+                  New
+                </Text>
+              </Pressable>
               <Pressable
-                style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
-                className="flex-row items-center gap-1.5 active:opacity-70"
-                onPress={() => router.push("/(customer)/flash-sales")}
+                onPress={() => setActiveTab("popular")}
+                className={`h-[34px] px-3 rounded-[9px] items-center justify-center ${activeTab === "popular" ? "bg-white shadow-sm" : ""}`}
               >
-                <Icon name="clock" size={14} color={tokens.textPrimary} />
-                <View className="bg-muted px-1.5 py-0.5 rounded">
-                  <Text className="text-caption font-bold text-error">{hours}</Text>
-                </View>
-                <View className="bg-muted px-1.5 py-0.5 rounded">
-                  <Text className="text-caption font-bold text-error">{minutes}</Text>
-                </View>
-                <View className="bg-muted px-1.5 py-0.5 rounded">
-                  <Text className="text-caption font-bold text-error">{seconds}</Text>
-                </View>
-                <Icon name="chevron-right" size={16} color={tokens.textPrimary} />
+                <Text
+                  className={`text-[13px] font-bold ${activeTab === "popular" ? "text-foreground" : "text-muted-foreground"}`}
+                >
+                  Popular
+                </Text>
               </Pressable>
             </View>
-            <View className="flex-row flex-wrap justify-between gap-y-4">
-              {flashSale.map((item: Product) => {
-                const discount = Math.round((1 - item.price / item.oldPrice) * 100);
-                return (
-                  <Pressable
-                    key={item.id}
-                    className="w-[31%] rounded-lg bg-muted relative items-center justify-center active:opacity-70 overflow-hidden"
-                    style={{ aspectRatio: 1 }}
-                    onPress={() => router.push(`/(customer)/product/${item.id}`)}
-                  >
-                    {item.image ? (
-                      <Image
-                        source={{ uri: item.image }}
-                        style={{ width: "100%", height: "100%", position: "absolute" }}
-                        contentFit="cover"
-                      />
-                    ) : (
-                      <Icon name="image" size={24} color={tokens.textDisabled} />
-                    )}
-                    <View className="absolute top-1 right-1 bg-error px-1.5 py-0.5 rounded-sm">
-                      <Text className="text-caption font-bold text-white">-{discount}%</Text>
-                    </View>
-                  </Pressable>
-                );
-              })}
-            </View>
-          </View>
-        )}
-
-        {/* ===== MOST POPULAR ===== */}
-        <View className="pl-5 mt-10">
-          <View className="flex-row justify-between items-center mb-4 pr-5">
-            <Text className="text-heading-md font-heading font-bold text-foreground">
-              Most Popular
-            </Text>
             <Pressable
               style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
               onPress={() => router.push("/(customer)/(shop)")}
             >
-              <Text className="text-body-sm font-bold text-muted-foreground">See All</Text>
+              <Text className="text-[12px] font-bold text-muted-foreground">See All</Text>
             </Pressable>
           </View>
           <FlashList
-            data={mostPopular}
+            data={activeTab === "top" ? topProducts : activeTab === "new" ? newItems : mostPopular}
             horizontal
             showsHorizontalScrollIndicator={false}
             decelerationRate="fast"
@@ -587,7 +389,7 @@ export default function HomeScreen() {
                 className="w-[110px] active:opacity-70"
                 onPress={() => router.push(`/(customer)/product/${item.id}`)}
               >
-                <View className="w-full h-[150px] rounded-xl bg-muted mb-2 items-center justify-center overflow-hidden">
+                <View className="w-full h-[110px] rounded-[16px] bg-muted mb-2 items-center justify-center overflow-hidden">
                   {item.image ? (
                     <Image
                       source={{ uri: item.image }}
@@ -598,17 +400,36 @@ export default function HomeScreen() {
                     <Icon name="image" size={28} color={tokens.textDisabled} />
                   )}
                 </View>
-                <View className="flex-row justify-between items-center px-1">
-                  <View className="flex-row items-center">
-                    <Text className="text-body-sm font-bold text-foreground">
+                <View className="px-1 gap-[2px]">
+                  <Text
+                    className="text-[14px] font-semibold text-foreground leading-[20px]"
+                    numberOfLines={1}
+                  >
+                    {item.name}
+                  </Text>
+                  <View className="flex-row items-center justify-between">
+                    <Text
+                      className="text-[15px] font-extrabold text-foreground tracking-[-0.02em]"
+                      style={{ fontVariant: ["tabular-nums"] }}
+                    >
                       GHS {item.price.toFixed(0)}
                     </Text>
-                    <Icon name="star" size={10} color={tokens.warning} style={{ marginLeft: 4 }} />
+                    <View className="flex-row items-center">
+                      <Icon
+                        name="star"
+                        size={10}
+                        color={tokens.warning}
+                        style={{ marginRight: 2 }}
+                      />
+                      <Text className="text-caption text-muted-foreground">
+                        {item.rating || "4.5"}
+                      </Text>
+                    </View>
                   </View>
-                  <Text className="text-caption text-muted-foreground">{item.rating}</Text>
                 </View>
               </Pressable>
             )}
+            estimatedItemSize={110}
           />
         </View>
 
@@ -679,58 +500,6 @@ export default function HomeScreen() {
           </View>
         </View>
       </ScrollView>
-
-      {/* ===== QUICK ACTIONS (Floating) ===== */}
-      <View
-        style={{ position: "absolute", bottom: 24, left: 20, right: 20 }}
-        pointerEvents="box-none"
-      >
-        <View
-          style={{
-            backgroundColor: tokens.primaryText,
-            borderRadius: 32,
-            padding: 20,
-            flexDirection: "row",
-            justifyContent: "space-between",
-            alignItems: "flex-start",
-            borderWidth: 1,
-            borderColor: "#f1f5f9",
-          }}
-        >
-          {QUICK_ACTIONS.map((action) => (
-            <Pressable
-              key={action.id}
-              onPress={() => router.push(action.route as any)}
-              style={{ alignItems: "center", width: "18%" }}
-            >
-              <View
-                style={{
-                  width: 48,
-                  height: 48,
-                  borderRadius: 16,
-                  alignItems: "center",
-                  justifyContent: "center",
-                  marginBottom: 8,
-                  backgroundColor: action.bgColor,
-                }}
-              >
-                <Icon name={action.icon} size={22} color={action.iconColor} />
-              </View>
-              <Text
-                style={{
-                  fontSize: 10,
-                  fontWeight: "700",
-                  color: tokens.textPrimary,
-                  textAlign: "center",
-                  lineHeight: 12,
-                }}
-              >
-                {action.label}
-              </Text>
-            </Pressable>
-          ))}
-        </View>
-      </View>
     </View>
   );
 }

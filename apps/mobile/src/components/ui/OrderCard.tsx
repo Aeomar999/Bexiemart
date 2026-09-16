@@ -18,6 +18,7 @@ export interface OrderCardProps {
   onPress?: () => void;
   actionLabel?: string;
   onActionPress?: () => void;
+  variant?: "customer" | "vendor";
 }
 
 const statusConfig: Record<string, { label: string; color: string; bg: string; icon: string }> = {
@@ -37,75 +38,95 @@ export function OrderCard({
   onPress,
   actionLabel,
   onActionPress,
+  variant = "customer",
 }: OrderCardProps) {
   const statusDetails = statusConfig[status];
+  const itemCount = items.reduce((acc, item) => acc + item.qty, 0);
+  const itemsText = items.map((i) => `${i.qty}x ${i.name}`).join(", ");
 
+  if (variant === "vendor") {
+    return (
+      <Pressable
+        style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
+        className="flex-row items-center py-[14px] border-b border-border bg-card"
+        onPress={onPress}
+      >
+        <View className="w-9 h-9 rounded-full bg-muted items-center justify-center mr-3">
+          <Icon name="user" size={16} color={tokens.textMuted} />
+        </View>
+        <View className="flex-1 mr-2">
+          <View className="flex-row items-center mb-0.5">
+            <Text className="text-[15px] font-semibold text-foreground font-body leading-[22px] mr-2">
+              {customerName || "Customer"}
+            </Text>
+            <View
+              className="px-1.5 py-0.5 rounded-full"
+              style={{ backgroundColor: statusDetails.bg }}
+            >
+              <Text className="text-[10px] font-bold" style={{ color: statusDetails.color }}>
+                {statusDetails.label}
+              </Text>
+            </View>
+          </View>
+          <Text className="text-[11px] font-body text-muted-foreground" numberOfLines={1}>
+            #{id} · {date} · {itemCount} {itemCount === 1 ? "item" : "items"}
+          </Text>
+        </View>
+        <Text
+          className="text-[17px] font-extrabold text-foreground tracking-[-0.02em]"
+          style={{ fontVariant: ["tabular-nums"] }}
+        >
+          {total.toFixed(2)}
+        </Text>
+      </Pressable>
+    );
+  }
+
+  // Customer Variant
   return (
     <Pressable
       style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
       className="mb-4"
       onPress={onPress}
-      accessibilityRole="button"
-      accessibilityLabel={`Order #${id}, Status: ${statusDetails.label}, Total: GHS ${total.toFixed(2)}`}
     >
       <Card variant="outlined" padding="md">
-        {/* Order Header */}
-        <View className="flex-row justify-between items-start mb-4">
+        <View className="flex-row justify-between items-start mb-3">
           <View>
-            <Text className="text-body-md font-heading font-bold text-foreground">Order #{id}</Text>
-            <Text className="text-body-sm font-body text-muted-foreground mt-0.5">{date}</Text>
-            {customerName && (
-              <Text className="text-sm font-bold text-muted-foreground mt-1">{customerName}</Text>
-            )}
+            <Text className="text-[15px] font-semibold text-foreground leading-[22px]">
+              Order #{id}
+            </Text>
+            <Text className="text-[12px] font-body text-muted-foreground mt-0.5">{date}</Text>
           </View>
           <View
             className="flex-row items-center px-3 py-1.5 rounded-full"
             style={{ backgroundColor: statusDetails.bg }}
           >
             <Icon name={statusDetails.icon} size={12} color={statusDetails.color} />
-            <Text className="text-body-sm font-bold ml-1.5" style={{ color: statusDetails.color }}>
+            <Text className="text-[12px] font-bold ml-1.5" style={{ color: statusDetails.color }}>
               {statusDetails.label}
             </Text>
           </View>
         </View>
 
-        {/* Items */}
-        <View className="bg-background p-4 rounded-xl mb-4">
-          {items.map((item, idx) => (
-            <View
-              key={idx}
-              className={`flex-row justify-between items-center ${idx !== items.length - 1 ? "mb-2" : ""}`}
-            >
-              <Text
-                className="text-body-md font-body font-medium text-muted-foreground flex-1"
-                numberOfLines={1}
-              >
-                {item.qty}x {item.name}
-              </Text>
-            </View>
-          ))}
-        </View>
+        <Text className="text-[12px] font-body text-muted-foreground mb-4" numberOfLines={1}>
+          {itemsText}
+        </Text>
 
-        {/* Footer */}
-        <View className="flex-row justify-between items-center pt-2">
-          <View>
-            <Text className="text-caption font-body text-muted-foreground mb-0.5">
-              Total Amount
-            </Text>
-            <Text className="text-body-lg font-heading font-black text-primary">
-              GHS {total.toFixed(2)}
-            </Text>
-          </View>
+        <View className="flex-row justify-between items-center">
+          <Text
+            className="text-[18px] font-extrabold text-foreground tracking-[-0.02em]"
+            style={{ fontVariant: ["tabular-nums"] }}
+          >
+            GHS {total.toFixed(2)}
+          </Text>
 
-          {actionLabel && onActionPress && (
+          {status !== "cancelled" && actionLabel && onActionPress && (
             <Pressable
               style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
-              className="bg-primary-subtle px-5 py-2.5 rounded-full"
+              className="bg-primary-subtle px-4 py-2 rounded-full"
               onPress={onActionPress}
-              accessibilityRole="button"
-              accessibilityLabel={actionLabel}
             >
-              <Text className="text-body-md font-bold text-primary">{actionLabel}</Text>
+              <Text className="text-[12px] font-bold text-primary">{actionLabel}</Text>
             </Pressable>
           )}
         </View>

@@ -1,3 +1,4 @@
+import { LinearGradient } from "expo-linear-gradient";
 import { RowsSkeleton } from "@/components/ui/Skeleton";
 import { tokens } from "@/theme/tokens";
 import { View, Text, ScrollView, Pressable, ActivityIndicator, Alert } from "react-native";
@@ -58,66 +59,68 @@ export default function EarningsDashboardScreen() {
         ) : (
           <>
             {/* Balance Card */}
-            <View className="bg-primary rounded-2xl p-6 overflow-hidden relative">
-              <View className="absolute top-0 right-0 w-32 h-32 bg-card/10 rounded-full -mr-10 -mt-10" />
-              <View className="absolute bottom-0 left-0 w-24 h-24 bg-card/10 rounded-full -ml-8 -mb-8" />
+            <View className="rounded-[20px] shadow-elevation-2 overflow-hidden border border-black/5 mb-8">
+              <LinearGradient
+                colors={tokens.moneyGrad1 as [string, string, ...string[]]}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 1, y: 1 }}
+                style={{ position: "absolute", top: 0, left: 0, right: 0, bottom: 0 }}
+              />
 
-              <Text className="text-body-md text-white/80 font-body font-medium mb-1">
-                Available for Withdrawal
-              </Text>
-              <Text className="text-[36px] font-black font-heading text-white leading-tight mb-4">
-                GH₵ {earnings?.availableBalance?.toFixed(2) ?? "0.00"}
-              </Text>
-
-              <View className="flex-row items-center justify-between mt-2">
-                <View>
-                  <Text className="text-body-sm font-body text-white/70">Pending Clearance</Text>
-                  <Text className="text-body-lg font-bold font-heading text-white">
-                    GH₵ {earnings?.pendingClearance?.toFixed(2) ?? "0.00"}
-                  </Text>
-                </View>
-                <Pressable
-                  onPress={() => router.push("/(dispatcher)/(tabs)/(earnings)/withdraw")}
-                  className="bg-card px-5 py-2.5 rounded-full"
+              <View className="p-6">
+                <Text className="text-body-md text-white/80 font-medium mb-1">
+                  Available for Withdrawal
+                </Text>
+                <Text
+                  className="text-[44px] font-black text-white leading-tight mb-4 tracking-tight"
+                  style={{ fontVariant: ["tabular-nums"] }}
                 >
-                  <Text className="text-body-md font-bold font-body text-primary">Withdraw</Text>
+                  GH₵ {earnings?.availableBalance?.toFixed(2) ?? "0.00"}
+                </Text>
+
+                <View className="flex-row items-center justify-between mb-6">
+                  <View>
+                    <Text className="text-[12px] text-white/70 uppercase tracking-wider font-bold mb-1">
+                      Pending Clearance
+                    </Text>
+                    <Text className="text-body-lg font-bold text-white tracking-tight">
+                      GH₵ {earnings?.pendingClearance?.toFixed(2) ?? "0.00"}
+                    </Text>
+                  </View>
+                </View>
+
+                <Pressable
+                  style={({ pressed }) => [{ opacity: pressed ? 0.9 : 1 }]}
+                  onPress={() => router.push("/(dispatcher)/(tabs)/(earnings)/withdraw")}
+                  className="bg-card w-full h-[44px] rounded-full items-center justify-center"
+                >
+                  <Text className="text-body-md font-bold text-primary">Withdraw Funds</Text>
                 </Pressable>
               </View>
-            </View>
 
-            {/* Analytics Overview */}
-            <View>
-              <Text className="text-heading-md font-bold font-heading text-foreground mb-3">
-                Overview
-              </Text>
-              <View className="flex-row gap-3">
+              {/* Hairline Strip */}
+              <View className="flex-row border-t border-white/20 bg-black/10">
                 <Pressable
-                  className="flex-1 bg-card p-4 rounded-xl border border-border"
-                  style={({ pressed }) => [{ opacity: pressed ? 0.8 : 1 }]}
+                  style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
+                  className="flex-1 p-4 border-r border-white/20"
                   onPress={() => router.push("/(dispatcher)/(tabs)/(earnings)/analytics")}
                 >
-                  <View className="w-8 h-8 rounded-full bg-blue-50 items-center justify-center mb-2">
-                    <Icon name="trending-up" size={16} color={tokens.secondary} />
-                  </View>
-                  <Text className="text-body-sm text-muted-foreground font-body mb-1">
-                    Today&apos;s Revenue
+                  <Text className="text-[11px] text-white/70 uppercase tracking-wider font-bold mb-1">
+                    Today
                   </Text>
-                  <Text className="text-body-lg font-bold font-heading text-foreground">
+                  <Text className="text-[16px] font-bold text-white tracking-tight">
                     GH₵ {earnings?.todayRevenue?.toFixed(2) ?? "0.00"}
                   </Text>
                 </Pressable>
                 <Pressable
-                  className="flex-1 bg-card p-4 rounded-xl border border-border"
-                  style={({ pressed }) => [{ opacity: pressed ? 0.8 : 1 }]}
+                  style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
+                  className="flex-1 p-4"
                   onPress={() => router.push("/(dispatcher)/(tabs)/(earnings)/analytics")}
                 >
-                  <View className="w-8 h-8 rounded-full bg-green-50 items-center justify-center mb-2">
-                    <Icon name="calendar" size={16} color={tokens.success} />
-                  </View>
-                  <Text className="text-body-sm text-muted-foreground font-body mb-1">
+                  <Text className="text-[11px] text-white/70 uppercase tracking-wider font-bold mb-1">
                     This Week
                   </Text>
-                  <Text className="text-body-lg font-bold font-heading text-foreground">
+                  <Text className="text-[16px] font-bold text-white tracking-tight">
                     GH₵ {earnings?.thisWeekRevenue?.toFixed(2) ?? "0.00"}
                   </Text>
                 </Pressable>
@@ -127,13 +130,13 @@ export default function EarningsDashboardScreen() {
             {/* Recent Transactions */}
             <View>
               <View className="flex-row items-center justify-between mb-4">
-                <Text className="text-heading-md font-bold font-heading text-foreground">
+                <Text className="text-heading-md font-bold text-foreground">
                   Recent Transactions
                 </Text>
                 <Pressable
                   onPress={() => router.push("/(dispatcher)/(tabs)/(earnings)/transactions")}
                 >
-                  <Text className="text-body-md font-bold font-body text-primary">See All</Text>
+                  <Text className="text-body-md font-bold text-primary">See All</Text>
                 </Pressable>
               </View>
 
@@ -152,7 +155,9 @@ export default function EarningsDashboardScreen() {
                     return (
                       <Pressable
                         key={trx.id}
-                        className={`p-4 flex-row items-center justify-between ${index < arr.length - 1 ? "border-b border-border" : ""}`}
+                        className={`h-[56px] px-4 flex-row items-center justify-between ${
+                          index < arr.length - 1 ? "border-b border-border" : ""
+                        }`}
                         style={({ pressed }) => [
                           { backgroundColor: pressed ? "#f8fafc" : "white" },
                         ]}
@@ -160,34 +165,35 @@ export default function EarningsDashboardScreen() {
                       >
                         <View className="flex-row items-center flex-1">
                           <View
-                            className={`w-10 h-10 rounded-full items-center justify-center mr-3 ${isWithdrawal ? "bg-rose-50" : "bg-green-50"}`}
+                            className={`w-8 h-8 rounded-full items-center justify-center mr-3 ${
+                              isWithdrawal ? "bg-rose-50" : "bg-green-50"
+                            }`}
                           >
                             <Icon
                               name={isWithdrawal ? "arrow-up-right" : "arrow-down-left"}
-                              size={18}
+                              size={16}
                               color={isWithdrawal ? tokens.error : tokens.success}
                             />
                           </View>
-                          <View className="flex-1 pr-4">
+                          <View className="flex-1 pr-2 justify-center">
                             <Text
-                              className="text-body-lg font-bold font-heading text-foreground mb-0.5"
+                              className="text-[14px] font-bold text-foreground mb-0.5"
                               numberOfLines={1}
                             >
                               {trx.title}
                             </Text>
-                            <Text className="text-sm font-body text-muted-foreground">
-                              {trx.date}
-                            </Text>
                           </View>
                         </View>
-                        <View className="items-end">
+                        <View className="items-end justify-center">
                           <Text
-                            className={`text-body-lg font-bold font-heading ${isWithdrawal ? "text-foreground" : "text-green-600"}`}
+                            className={`text-[14px] font-bold ${
+                              isWithdrawal ? "text-foreground" : "text-green-600"
+                            }`}
                           >
                             {isWithdrawal ? "" : "+"}GH₵ {Math.abs(trx.amount).toFixed(2)}
                           </Text>
-                          <Text className="text-body-sm font-body text-muted-foreground capitalize mt-0.5">
-                            {trx.status}
+                          <Text className="text-[10px] text-muted-foreground uppercase font-bold mt-0.5">
+                            {trx.status} • {trx.date}
                           </Text>
                         </View>
                       </Pressable>

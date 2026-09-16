@@ -2,20 +2,19 @@ import { View, type ViewProps } from "react-native";
 
 interface CardProps extends ViewProps {
   variant?: "elevated" | "outlined" | "flat";
-  padding?: "sm" | "md" | "lg" | "none";
+  padding?: "sm" | "md" | "none";
 }
 
 const variantStyles: Record<string, string> = {
-  elevated: "bg-card rounded-2xl border border-border",
-  outlined: "bg-card rounded-2xl border border-border",
-  flat: "bg-background rounded-2xl",
+  elevated: "bg-card rounded-[16px] border border-border shadow-none",
+  outlined: "bg-card rounded-[16px] border border-border",
+  flat: "bg-background rounded-[16px]",
 };
 
 const paddingStyles: Record<string, string> = {
   none: "p-0",
-  sm: "p-4",
-  md: "p-5",
-  lg: "p-6",
+  sm: "p-3",
+  md: "p-4",
 };
 
 export function Card({

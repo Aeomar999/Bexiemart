@@ -87,80 +87,45 @@ export default function DispatcherProfile() {
           </View>
         </View>
 
-        {/* Vehicle Details */}
-        <Text className="text-body-lg font-heading font-bold text-foreground mb-3 px-1">
-          Vehicle Details
-        </Text>
-        <View className="bg-card rounded-2xl border border-border overflow-hidden mb-8">
-          <View className="flex-row items-center p-4 border-b border-border">
-            <View className="w-10 h-10 rounded-full bg-slate-100 items-center justify-center mr-3">
-              <Icon name="truck" size={18} color={tokens.textMuted} />
-            </View>
-            <View className="flex-1">
-              <Text className="text-body-lg font-body font-semibold text-foreground">Type</Text>
-              <Text className="text-body-sm font-body text-muted-foreground">
-                {formattedVehicleType}
-              </Text>
-            </View>
+        <View className="bg-card rounded-[20px] border border-border overflow-hidden mb-8">
+          <View className="flex-row items-center h-[48px] px-4 border-b border-border">
+            <Text className="text-[14px] font-bold text-foreground flex-1">Vehicle Type</Text>
+            <Text className="text-[14px] font-bold text-muted-foreground">
+              {formattedVehicleType}
+            </Text>
           </View>
-          <View className="flex-row items-center p-4 border-b border-border">
-            <View className="w-10 h-10 rounded-full bg-slate-100 items-center justify-center mr-3">
-              <Icon name="credit-card" size={18} color={tokens.textMuted} />
-            </View>
-            <View className="flex-1">
-              <Text className="text-body-lg font-body font-semibold text-foreground">
-                License Plate
-              </Text>
-              <Text className="text-body-sm font-body text-muted-foreground">
-                {profile?.plateNumber || "Not set"}
-              </Text>
-            </View>
+          <View className="flex-row items-center h-[48px] px-4 border-b border-border">
+            <Text className="text-[14px] font-bold text-foreground flex-1">License Plate</Text>
+            <Text className="text-[14px] font-bold text-muted-foreground">
+              {profile?.plateNumber || "Not set"}
+            </Text>
           </View>
-        </View>
-
-        {/* Settings */}
-        <Text className="text-body-lg font-heading font-bold text-foreground mb-3 px-1">
-          Preferences
-        </Text>
-        <View className="bg-card rounded-2xl border border-border overflow-hidden mb-8">
-          <Pressable className="flex-row items-center justify-between p-4 border-b border-border">
-            <View className="flex-row items-center gap-3">
-              <View className="w-10 h-10 rounded-full bg-emerald-50 items-center justify-center">
-                <Icon name="navigation" size={18} color={tokens.success} />
-              </View>
-              <Text className="text-body-lg font-body font-semibold text-foreground">
-                Navigation App
-              </Text>
-            </View>
+          <Pressable className="flex-row items-center justify-between h-[48px] px-4 border-b border-border">
+            <Text className="text-[14px] font-bold text-foreground flex-1">Navigation App</Text>
             <View className="flex-row items-center gap-2">
-              <Text className="text-body-sm font-body text-muted-foreground">Google Maps</Text>
-              <Icon name="chevron-right" size={18} color={tokens.textDisabled} />
+              <Text className="text-[14px] font-bold text-muted-foreground">Google Maps</Text>
+              <Icon name="chevron-right" size={16} color={tokens.textDisabled} />
             </View>
           </Pressable>
           <Pressable
-            className="flex-row items-center justify-between p-4"
+            className="flex-row items-center justify-between h-[48px] px-4"
             onPress={() => router.push("/(dispatcher)/help")}
           >
-            <View className="flex-row items-center gap-3">
-              <View className="w-10 h-10 rounded-full bg-rose-50 items-center justify-center">
-                <Icon name="help-circle" size={18} color={tokens.error} />
-              </View>
-              <Text className="text-body-lg font-body font-semibold text-foreground">
-                Driver Support
-              </Text>
-            </View>
-            <Icon name="chevron-right" size={18} color={tokens.textDisabled} />
+            <Text className="text-[14px] font-bold text-foreground flex-1">Driver Support</Text>
+            <Icon name="chevron-right" size={16} color={tokens.textDisabled} />
           </Pressable>
         </View>
 
         {/* Logout Button */}
         <Pressable
           style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
-          className="flex-row items-center justify-center gap-2 p-4 bg-rose-50 rounded-xl mb-8 border border-rose-100"
+          className="flex-row items-center justify-center gap-2 h-[48px] bg-rose-50 rounded-[14px] mb-8 border border-rose-100"
           onPress={handleLogout}
         >
-          <Icon name="log-out" size={18} color={tokens.error} />
-          <Text className="text-body-lg font-body font-bold text-rose-500">Log Out</Text>
+          <Icon name="log-out" size={16} color={tokens.error} />
+          <Text className="text-[14px] font-bold text-rose-500 uppercase tracking-wider">
+            Log Out
+          </Text>
         </Pressable>
       </ScrollView>
     </View>

@@ -195,7 +195,7 @@ export default function TransferScreen() {
           title={isProcessing ? "Processing..." : `Send ${formatMoney(amount)}`}
           size="lg"
           disabled={!isValidAmount || !recipient || isProcessing}
-          className="w-full rounded-xl"
+          className="w-full rounded-full"
           onPress={handleTransfer}
         />
       </View>
@@ -222,10 +222,11 @@ export default function TransferScreen() {
               ))}
             </View>
 
-            <View className="flex-row flex-wrap justify-center gap-3 mb-6">
+            <View className="flex-row flex-wrap justify-between gap-y-3 mb-6 w-full">
               {[1, 2, 3, 4, 5, 6, 7, 8, 9, "", 0, "del"].map((key, i) => (
                 <Pressable
                   key={i}
+                  style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
                   onPress={() => {
                     if (key === "del") {
                       setPin((p) => p.slice(0, -1));
@@ -235,12 +236,22 @@ export default function TransferScreen() {
                       setPin((p) => (p.length < 4 ? p + key : p));
                     }
                   }}
-                  className={`w-16 h-16 rounded-full items-center justify-center ${typeof key === "number" ? "bg-background" : "bg-transparent"}`}
+                  disabled={key === ""}
+                  className={`w-[30%] h-[56px] rounded-[16px] items-center justify-center active:bg-muted ${
+                    typeof key === "number"
+                      ? "bg-background border border-border/50"
+                      : "bg-transparent"
+                  }`}
                 >
                   {key === "del" ? (
-                    <Icon name="delete" size={24} color={tokens.error} />
+                    <Icon name="delete" size={24} color={tokens.textSecondary} />
                   ) : key === "" ? null : (
-                    <Text className="text-display-md font-bold text-foreground">{key}</Text>
+                    <Text
+                      className="text-[24px] font-black text-foreground font-heading"
+                      style={{ fontVariant: ["tabular-nums"] }}
+                    >
+                      {key}
+                    </Text>
                   )}
                 </Pressable>
               ))}

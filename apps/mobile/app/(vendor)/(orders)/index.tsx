@@ -41,6 +41,9 @@ export default function OrdersManagerScreen() {
     <View className="flex-1 bg-background" style={{ paddingTop: insets.top }}>
       {/* Header */}
       <View className="px-5 py-4 bg-card border-b border-border">
+        <Text className="text-[12px] font-bold uppercase tracking-[0.1em] text-muted-foreground mb-1">
+          Order Management
+        </Text>
         <Text className="text-display-md font-heading font-black text-foreground">Orders</Text>
       </View>
 
@@ -86,8 +89,8 @@ export default function OrdersManagerScreen() {
 
       {/* Orders List */}
       <ScrollView
-        className="flex-1 px-5"
-        contentContainerClassName="pb-24 pt-6 gap-4"
+        className="flex-1"
+        contentContainerClassName="pb-24 pt-2"
         showsVerticalScrollIndicator={false}
         refreshControl={<RefreshControl refreshing={isLoading} onRefresh={refetch} />}
       >
@@ -96,11 +99,13 @@ export default function OrdersManagerScreen() {
             <ListSkeleton />
           </View>
         ) : filteredOrders.length === 0 ? (
-          <EmptyState
-            iconName="package"
-            title={`No ${activeFilter.toLowerCase()} orders`}
-            description="When you get an order, it will appear here."
-          />
+          <View className="px-5 mt-4">
+            <EmptyState
+              iconName="package"
+              title={`No ${activeFilter.toLowerCase()} orders`}
+              description="When you get an order, it will appear here."
+            />
+          </View>
         ) : (
           filteredOrders.map((order: any) => {
             const statusClasses = getStatusColor(order.status).split(" ");
@@ -110,30 +115,30 @@ export default function OrdersManagerScreen() {
             return (
               <Pressable
                 key={order.id}
+                style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
                 onPress={() => router.push(`/(vendor)/(orders)/${order.id}`)}
-                className="bg-card rounded-2xl border border-border overflow-hidden"
+                className="w-full h-[70px] px-5 bg-card border-b border-border flex-row items-center justify-between"
               >
-                <View className="p-5 border-b border-border flex-row justify-between items-start">
-                  <View>
-                    <Text className="text-body-lg font-bold text-foreground mb-1">{order.id}</Text>
-                    <Text className="text-sm text-muted-foreground">{order.time}</Text>
-                  </View>
-                  <View className={`px-2.5 py-1 rounded-full ${bgClass}`}>
-                    <Text className={`text-caption font-bold ${textClass}`}>
-                      {order.status.toUpperCase()}
-                    </Text>
-                  </View>
+                <View className="flex-1 justify-center pr-2">
+                  <Text className="text-[14px] font-bold text-foreground mb-0.5" numberOfLines={1}>
+                    {order.customer}
+                  </Text>
+                  <Text className="text-[11px] text-muted-foreground font-body">
+                    {order.id} • {order.time} • {order.items} {order.items === 1 ? "item" : "items"}
+                  </Text>
                 </View>
-                <View className="px-5 py-4 flex-row justify-between items-center bg-background/50">
-                  <View>
-                    <Text className="text-body-md font-bold text-foreground">{order.customer}</Text>
-                    <Text className="text-sm text-muted-foreground">
-                      {order.items} {order.items === 1 ? "item" : "items"}
-                    </Text>
-                  </View>
-                  <Text className="text-body-lg font-black text-primary">
+                <View className="items-end justify-center">
+                  <Text
+                    className="text-[15px] font-black text-foreground font-heading tracking-tight mb-1"
+                    style={{ fontVariant: ["tabular-nums"] }}
+                  >
                     GHS {order.total.toFixed(2)}
                   </Text>
+                  <View className={`px-2 py-0.5 rounded-full ${bgClass}`}>
+                    <Text className={`text-[10px] font-bold uppercase ${textClass}`}>
+                      {order.status}
+                    </Text>
+                  </View>
                 </View>
               </Pressable>
             );

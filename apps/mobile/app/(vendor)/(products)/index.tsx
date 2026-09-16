@@ -1,4 +1,5 @@
 import { tokens } from "@/theme/tokens";
+import { Image } from "expo-image";
 import { View, Text, FlatList, Pressable, Modal } from "react-native";
 import { useState } from "react";
 import { useRouter } from "expo-router";
@@ -76,9 +77,19 @@ export default function ListingsScreen() {
         className="bg-card px-5 pt-4 pb-2 border-b border-border"
         style={{ paddingTop: (insets.top || 12) + 12 }}
       >
-        <Text className="text-display-md font-heading font-black text-foreground mb-6">
-          My Listings
-        </Text>
+        <View className="flex-row justify-between items-center mb-6">
+          <Text className="text-display-md font-heading font-black text-foreground">
+            My Listings
+          </Text>
+          <Pressable
+            accessibilityRole="button"
+            style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
+            className="w-10 h-10 bg-primary rounded-full items-center justify-center"
+            onPress={() => setAddModalVisible(true)}
+          >
+            <Icon name="plus" size={20} color={tokens.primaryText} />
+          </Pressable>
+        </View>
 
         {/* Segmented Control */}
         <View className="flex-row bg-muted p-1 rounded-xl mb-4">
@@ -114,34 +125,37 @@ export default function ListingsScreen() {
           </Pressable>
         </View>
 
-        <SearchBar placeholder={`Search your ${activeTab}...`} />
-
-        {/* Filters */}
-        <View className="mt-4 pb-2">
-          <FlatList
-            data={activeFilters}
-            horizontal
-            showsHorizontalScrollIndicator={false}
-            contentContainerStyle={{ gap: 8 }}
-            keyExtractor={(item) => item.id}
-            renderItem={({ item }) => (
-              <Pressable
-                style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
-                onPress={() => setFilter(item.id)}
-                className={`px-4 py-2 rounded-full border ${
-                  filter === item.id ? "bg-foreground border-border" : "bg-card border-border"
-                }`}
-              >
-                <Text
-                  className={`text-sm font-bold ${
-                    filter === item.id ? "text-white" : "text-muted-foreground"
+        {/* Search & Filters */}
+        <View className="flex-row items-center gap-3 pb-2 h-12">
+          <View className="flex-1 max-w-[140px]">
+            <SearchBar placeholder="Search..." showCamera={false} />
+          </View>
+          <View className="flex-1 h-full">
+            <FlatList
+              data={activeFilters}
+              horizontal
+              showsHorizontalScrollIndicator={false}
+              contentContainerStyle={{ gap: 8, paddingRight: 20 }}
+              keyExtractor={(item) => item.id}
+              renderItem={({ item }) => (
+                <Pressable
+                  style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
+                  onPress={() => setFilter(item.id)}
+                  className={`px-4 h-full justify-center rounded-full border ${
+                    filter === item.id ? "bg-foreground border-border" : "bg-card border-border"
                   }`}
                 >
-                  {item.label}
-                </Text>
-              </Pressable>
-            )}
-          />
+                  <Text
+                    className={`text-sm font-bold ${
+                      filter === item.id ? "text-white" : "text-muted-foreground"
+                    }`}
+                  >
+                    {item.label}
+                  </Text>
+                </Pressable>
+              )}
+            />
+          </View>
         </View>
       </View>
 
@@ -180,33 +194,60 @@ export default function ListingsScreen() {
                   ? `${item.prepTime} • ${item.category}`
                   : `${item.duration} • ${item.category}`;
 
+            const statusColors: Record<string, { bg: string; text: string }> = {
+              active: { bg: "bg-emerald-100", text: "text-emerald-700" },
+              draft: { bg: "bg-gray-100", text: "text-gray-700" },
+              out_of_stock: { bg: "bg-red-100", text: "text-red-700" },
+              sold_out: { bg: "bg-red-100", text: "text-red-700" },
+              paused: { bg: "bg-amber-100", text: "text-amber-700" },
+            };
+            const style = statusColors[item.status] || statusColors.draft;
+
             return (
-              <ProductCard
-                id={item.id}
-                name={item.name}
-                price={item.price}
-                imageUrl={item.images?.[0]?.url}
-                subtitle={subtitle}
-                variant="horizontal"
+              <Pressable
+                style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
+                className="w-full h-[80px] bg-card border border-border rounded-xl flex-row overflow-hidden mb-3"
                 onPress={() => router.push(`/(vendor)/(products)/${item.id}`)}
-              />
+              >
+                <View className="w-[80px] h-[80px] bg-muted relative">
+                  {item.images?.[0]?.url ? (
+                    <Image
+                      source={{ uri: item.images[0].url }}
+                      style={{ width: "100%", height: "100%" }}
+                      contentFit="cover"
+                    />
+                  ) : (
+                    <View className="w-full h-full items-center justify-center">
+                      <Icon name="image" size={24} color={tokens.textDisabled} />
+                    </View>
+                  )}
+                </View>
+                <View className="flex-1 py-2 px-3 justify-between">
+                  <View className="flex-row justify-between items-start gap-2">
+                    <Text
+                      className="text-[14px] font-bold text-foreground flex-1"
+                      numberOfLines={1}
+                    >
+                      {item.name}
+                    </Text>
+                    <View className={`px-2 py-0.5 rounded-full ${style.bg}`}>
+                      <Text className={`text-[10px] font-bold uppercase ${style.text}`}>
+                        {item.status.replace("_", " ")}
+                      </Text>
+                    </View>
+                  </View>
+                  <Text className="text-[12px] text-muted-foreground font-body" numberOfLines={1}>
+                    {subtitle}
+                  </Text>
+                  <Text className="text-[14px] font-black text-foreground font-heading">
+                    GHS {Number(item.price).toFixed(2)}
+                  </Text>
+                </View>
+              </Pressable>
             );
           }}
         />
       )}
-
-      {/* Flat FAB */}
-      <View className="absolute bottom-6 right-6">
-        <Pressable
-          accessibilityRole="button"
-          accessibilityLabel="Add product"
-          style={({ pressed }) => [{ opacity: pressed ? 0.8 : 1 }]}
-          className="w-14 h-14 bg-primary rounded-full items-center justify-center border-4 border-border"
-          onPress={() => setAddModalVisible(true)}
-        >
-          <Icon name="plus" size={24} color={tokens.primaryText} />
-        </Pressable>
-      </View>
 
       {/* Add Action Sheet Modal */}
       <Modal

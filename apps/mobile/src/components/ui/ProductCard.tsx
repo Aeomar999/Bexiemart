@@ -156,14 +156,14 @@ export function ProductCard({
   return (
     <Pressable
       style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
-      className="w-[140px] active:opacity-70 mb-2"
+      className="flex-1 active:opacity-70 mb-3"
       onPress={onPress}
       accessibilityRole="button"
       accessibilityLabel={label}
     >
-      <Card variant="flat" padding="none">
+      <View className="w-full rounded-[16px] bg-card border border-border overflow-hidden">
         <View
-          className="w-full rounded-xl bg-muted mb-2 items-center justify-center relative overflow-hidden"
+          className="w-full bg-muted items-center justify-center relative overflow-hidden"
           style={{ aspectRatio: 1 }}
         >
           {imageUrl ? (
@@ -174,6 +174,12 @@ export function ProductCard({
             />
           ) : (
             <Icon name="image" size={32} color={tokens.textDisabled} />
+          )}
+          {rating && (
+            <View className="absolute bottom-2 left-2 flex-row items-center bg-card/90 backdrop-blur-md px-1.5 py-0.5 rounded-full">
+              <Icon name="star" size={10} color={tokens.warning} />
+              <Text className="text-[10px] font-bold text-foreground ml-1">{rating}</Text>
+            </View>
           )}
           {onFavoriteToggle && (
             <Pressable
@@ -189,25 +195,36 @@ export function ProductCard({
             </Pressable>
           )}
         </View>
-        <Text className="text-body-md font-bold text-foreground" numberOfLines={1}>
-          {name}
-        </Text>
-        {subtitle && (
-          <Text className="text-caption text-muted-foreground font-body mb-1" numberOfLines={1}>
-            {subtitle}
+        <View className="p-3 gap-[2px]">
+          <Text
+            className="text-[14px] font-semibold text-foreground leading-[20px]"
+            numberOfLines={1}
+          >
+            {name}
           </Text>
-        )}
-        <View className="flex-row items-center gap-1.5">
-          <Text className="text-body-md font-bold text-foreground">
-            GHS {numericPrice.toFixed(2)}
-          </Text>
-          {numericOldPrice && numericOldPrice > numericPrice && (
-            <Text className="text-caption text-muted-foreground line-through">
-              GHS {numericOldPrice.toFixed(2)}
+          {subtitle && (
+            <Text
+              className="text-[11px] text-muted-foreground font-body leading-[14px]"
+              numberOfLines={1}
+            >
+              {subtitle}
             </Text>
           )}
+          <View className="flex-row items-center gap-1.5 mt-1">
+            <Text
+              className="text-[15px] font-extrabold text-foreground tracking-[-0.02em]"
+              style={{ fontVariant: ["tabular-nums"] }}
+            >
+              GHS {numericPrice.toFixed(2)}
+            </Text>
+            {numericOldPrice && numericOldPrice > numericPrice && (
+              <Text className="text-[11px] text-muted-foreground line-through">
+                GHS {numericOldPrice.toFixed(2)}
+              </Text>
+            )}
+          </View>
         </View>
-      </Card>
+      </View>
     </Pressable>
   );
 }

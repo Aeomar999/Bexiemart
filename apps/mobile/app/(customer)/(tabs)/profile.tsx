@@ -206,7 +206,7 @@ export default function ProfileScreen() {
 
           return (
             <View key={idx} className="mb-6">
-              <Text className="text-body-lg font-heading font-bold text-foreground mb-3 px-1">
+              <Text className="text-[12px] font-bold text-foreground uppercase tracking-[0.1em] mb-2 px-1">
                 {section.title}
               </Text>
               <View className="bg-card rounded-2xl border border-border overflow-hidden">

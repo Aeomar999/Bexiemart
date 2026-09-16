@@ -91,7 +91,14 @@ export default function DashboardScreen() {
         style={{ paddingTop: (insets.top || 12) + 12 }}
       >
         <View className="flex-row items-center justify-between">
-          <Text className="text-display-sm font-heading font-black text-foreground">Dashboard</Text>
+          <View>
+            <Text className="text-[12px] font-bold uppercase tracking-[0.1em] text-muted-foreground mb-0.5">
+              {user?.name?.split(" ")[0] || "Store Name"} • Active
+            </Text>
+            <Text className="text-display-sm font-heading font-black text-foreground">
+              Dashboard
+            </Text>
+          </View>
           <View className="flex-row items-center gap-2">
             <Pressable
               accessibilityRole="button"
@@ -121,7 +128,7 @@ export default function DashboardScreen() {
 
       <ScrollView
         className="flex-1"
-        contentContainerClassName="pb-10 pt-4"
+        contentContainerClassName="pb-10 pt-6"
         showsVerticalScrollIndicator={false}
         refreshControl={
           <RefreshControl
@@ -133,83 +140,56 @@ export default function DashboardScreen() {
       >
         {/* ===== HERO / EARNINGS ===== */}
         <View className="px-5 mb-8">
-          <Text className="text-body-md text-muted-foreground font-body mb-1">
-            Good morning, {user?.name?.split(" ")[0] || "Partner"}
-          </Text>
-          <Text className="text-display-md font-heading font-black text-foreground mb-4 tracking-tight">
-            Overview
-          </Text>
-
-          <View className="bg-foreground rounded-2xl p-6 border border-border">
-            <View className="flex-row justify-between items-start mb-6">
-              <View>
-                <Text className="text-muted-foreground font-body text-sm mb-1">
-                  Available Balance
-                </Text>
-                <Text className="text-display-lg font-heading font-black text-white">
-                  GHS {earningsData?.availableBalance?.toFixed(2) ?? "0.00"}
-                </Text>
-              </View>
-            </View>
-
-            <Pressable
-              style={({ pressed }) => [{ opacity: pressed ? 0.8 : 1 }]}
-              className="bg-primary rounded-xl py-3 items-center justify-center flex-row gap-2"
-              onPress={() => router.push("/(vendor)/(earnings)")}
-            >
-              <Text className="text-white font-bold font-body text-body-lg">Withdraw Funds</Text>
-              <Icon name="arrow-right" size={16} color={tokens.primaryText} />
-            </Pressable>
+          <View className="rounded-[20px] p-6 shadow-elevation-2 overflow-hidden border border-black/5">
+            <LinearGradient
+              colors={tokens.moneyGrad1 as [string, string, ...string[]]}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 1 }}
+              style={{ position: "absolute", top: 0, left: 0, right: 0, bottom: 0 }}
+            />
+            <Text className="text-white/80 font-body text-[14px] mb-2 font-medium">
+              Available Balance
+            </Text>
+            <Text className="text-[36px] font-heading font-black text-white tracking-tight">
+              GHS {earningsData?.availableBalance?.toFixed(2) ?? "0.00"}
+            </Text>
           </View>
         </View>
 
         {/* ===== QUICK ACTIONS ===== */}
-        <View className="px-5 mb-8">
-          <View
-            style={{
-              backgroundColor: tokens.primaryText,
-              borderRadius: 32,
-              padding: 20,
-              flexDirection: "row",
-              justifyContent: "space-between",
-              alignItems: "flex-start",
-              borderWidth: 1,
-              borderColor: "#f1f5f9",
-            }}
-          >
-            {QUICK_ACTIONS.map((action) => (
-              <Pressable
-                key={action.id}
-                onPress={() => action.route !== "#" && router.push(action.route as any)}
-                style={{ alignItems: "center", width: "22%" }}
+        <View className="px-5 mb-8 flex-row justify-between">
+          {QUICK_ACTIONS.map((action) => (
+            <Pressable
+              key={action.id}
+              onPress={() => action.route !== "#" && router.push(action.route as any)}
+              style={{ alignItems: "center", width: "22%" }}
+            >
+              <View
+                style={{
+                  width: 52,
+                  height: 52,
+                  borderRadius: 26,
+                  alignItems: "center",
+                  justifyContent: "center",
+                  marginBottom: 8,
+                  backgroundColor: action.bg,
+                }}
               >
-                <View
-                  style={{
-                    width: 48,
-                    height: 48,
-                    borderRadius: 16,
-                    alignItems: "center",
-                    justifyContent: "center",
-                    marginBottom: 8,
-                    backgroundColor: action.bg,
-                  }}
-                >
-                  <Icon name={action.icon} size={22} color={action.color} />
-                </View>
-                <Text
-                  style={{
-                    fontSize: 10,
-                    fontWeight: "700",
-                    color: tokens.textPrimary,
-                    textAlign: "center",
-                    lineHeight: 12,
-                  }}
-                >
-                  {action.label}
-                </Text>
-              </Pressable>
-            ))}
-          </View>
+                <Icon name={action.icon} size={24} color={action.color} />
+              </View>
+              <Text
+                style={{
+                  fontSize: 10,
+                  fontWeight: "700",
+                  color: tokens.textPrimary,
+                  textAlign: "center",
+                  lineHeight: 12,
+                }}
+              >
+                {action.label}
+              </Text>
+            </Pressable>
+          ))}
         </View>
 
         {/* ===== STAT CARDS ===== */}
@@ -243,19 +223,25 @@ export default function DashboardScreen() {
                     style={({ pressed }) => [{ opacity: pressed ? 0.8 : 1 }]}
                     onPress={() => route && router.push(route as any)}
                   >
-                    <Card variant="outlined" padding="md" className="bg-card">
+                    <Card
+                      variant="outlined"
+                      padding="sm"
+                      className="bg-card h-[60px] flex-row items-center justify-start gap-3"
+                    >
                       <View
-                        className="w-10 h-10 rounded-lg items-center justify-center mb-3"
+                        className="w-10 h-10 rounded-full items-center justify-center"
                         style={{ backgroundColor: stat.bg }}
                       >
-                        <Icon name={stat.icon} size={20} color={stat.color} />
+                        <Icon name={stat.icon} size={18} color={stat.color} />
                       </View>
-                      <Text className="text-display-sm font-heading font-black text-foreground mb-0.5">
-                        {stats?.[stat.key] ?? "—"}
-                      </Text>
-                      <Text className="text-body-sm text-muted-foreground font-body">
-                        {stat.label}
-                      </Text>
+                      <View className="flex-1">
+                        <Text className="text-body-md font-heading font-bold text-foreground">
+                          {stats?.[stat.key] ?? "—"}
+                        </Text>
+                        <Text className="text-[12px] text-muted-foreground font-body leading-tight">
+                          {stat.label}
+                        </Text>
+                      </View>
                     </Card>
                   </Pressable>
                 );
