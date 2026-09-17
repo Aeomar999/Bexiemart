@@ -1,14 +1,8 @@
 import { tokens } from "@/theme/tokens";
-import {
-  TouchableOpacity,
-  Text,
-  ActivityIndicator,
-  View,
-  type TouchableOpacityProps,
-} from "react-native";
+import { Pressable, Text, ActivityIndicator, View, type PressableProps } from "react-native";
 import { forwardRef } from "react";
 
-interface ButtonProps extends TouchableOpacityProps {
+interface ButtonProps extends Omit<PressableProps, "style"> {
   title: string;
   variant?: "primary" | "secondary" | "outline" | "ghost" | "danger";
   size?: "sm" | "md" | "lg";
@@ -63,15 +57,14 @@ export const Button = forwardRef<View, ButtonProps>(
     const isDisabled = disabled || loading;
 
     return (
-      <TouchableOpacity
+      <Pressable
         ref={ref}
-        activeOpacity={0.92}
         disabled={isDisabled}
         className={`
           flex-row items-center justify-center gap-2
           ${variantStyles[variant]}
           ${sizeStyles[size]}
-          ${isDisabled ? "opacity-50" : "active:scale-[0.98]"}
+          ${isDisabled ? "opacity-50" : "active:scale-[0.98] active:opacity-90"}
           ${className}
         `}
         accessibilityRole="button"
@@ -100,7 +93,7 @@ export const Button = forwardRef<View, ButtonProps>(
             </Text>
           </>
         )}
-      </TouchableOpacity>
+      </Pressable>
     );
   }
 );
