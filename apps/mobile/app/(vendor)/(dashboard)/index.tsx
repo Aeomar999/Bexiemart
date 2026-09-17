@@ -8,6 +8,7 @@ import { Icon } from "@/components/ui/Icon";
 import { OrderCard, OrderItem } from "@/components/ui/OrderCard";
 import { useAuthStore } from "@/lib/stores/auth-store";
 import { useVendorStats, useVendorOrders, useVendorEarnings } from "@/lib/hooks/use-vendor";
+import { LinearGradient } from "expo-linear-gradient";
 
 const STAT_ITEMS = [
   {

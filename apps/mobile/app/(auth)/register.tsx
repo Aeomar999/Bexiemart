@@ -225,7 +225,7 @@ export default function RegisterScreen() {
                   }
                 >
                   <HugeiconsIcon
-                    icon={AppsIcon}
+                    icon={UserIcon}
                     size={14}
                     color={role === "customer" ? tokens.primary : tokens.textMuted}
                   />
@@ -276,7 +276,7 @@ export default function RegisterScreen() {
               value={name}
               onChangeText={(text) => setName(text.replace(/[^a-zA-Z\s\-']/g, ""))}
               error={errors1.name}
-              leftIcon={<HugeiconsIcon icon={UserIcon} size={16} color={tokens.textMuted} solid />}
+              leftIcon={<HugeiconsIcon icon={UserIcon} size={16} color={tokens.textMuted} />}
             />
           </View>
         )}
@@ -295,9 +295,7 @@ export default function RegisterScreen() {
               }}
               onBlur={handleEmailBlur}
               error={errors2.email || emailCheckError}
-              leftIcon={
-                <HugeiconsIcon icon={Mail01Icon} size={16} color={tokens.textMuted} solid />
-              }
+              leftIcon={<HugeiconsIcon icon={Mail01Icon} size={16} color={tokens.textMuted} />}
             />
 
             <Input
@@ -312,7 +310,7 @@ export default function RegisterScreen() {
               onBlur={handlePhoneBlur}
               error={errors2.phone || phoneCheckError}
               leftIcon={
-                <HugeiconsIcon icon={SmartPhone01Icon} size={16} color={tokens.textMuted} solid />
+                <HugeiconsIcon icon={SmartPhone01Icon} size={16} color={tokens.textMuted} />
               }
             />
           </View>
@@ -327,7 +325,7 @@ export default function RegisterScreen() {
               value={password}
               onChangeText={setPassword}
               error={errors3.password}
-              leftIcon={<HugeiconsIcon icon={LockIcon} size={16} color={tokens.textMuted} solid />}
+              leftIcon={<HugeiconsIcon icon={LockIcon} size={16} color={tokens.textMuted} />}
             />
 
             <Input
@@ -337,7 +335,7 @@ export default function RegisterScreen() {
               value={confirmPassword}
               onChangeText={setConfirmPassword}
               error={errors3.confirmPassword}
-              leftIcon={<HugeiconsIcon icon={LockIcon} size={16} color={tokens.textMuted} solid />}
+              leftIcon={<HugeiconsIcon icon={LockIcon} size={16} color={tokens.textMuted} />}
             />
           </View>
         )}

@@ -6,9 +6,8 @@ import { useState } from "react";
 import { Input } from "../../src/components/ui/Input";
 import { Button } from "../../src/components/ui/Button";
 import { authApi } from "../../src/lib/api/auth";
-// @ts-expect-error
-import { HugeiconsIcon } from "@hugeicons/react-native";
-import { TickCircleIcon, Mail01Icon, Key01Icon } from "@hugeicons/core-free-icons";
+// import { HugeiconsIcon } from "@hugeicons/react-native";
+import { CheckmarkCircle01Icon, Mail01Icon, Key01Icon } from "@hugeicons/core-free-icons";
 
 export default function ForgotPasswordScreen() {
   const [email, setEmail] = useState("");
@@ -37,7 +36,7 @@ export default function ForgotPasswordScreen() {
       {sent ? (
         <View className="flex-1 items-center justify-start">
           <View className="w-24 h-24 rounded-full bg-success-light items-center justify-center mb-6 border border-success/10">
-            <HugeiconsIcon icon={TickCircleIcon} size={40} color={tokens.success} solid />
+            <HugeiconsIcon icon={CheckmarkCircle01Icon} size={40} color={tokens.success} />
           </View>
           <Text className="text-display-sm font-heading font-bold text-foreground text-center mb-3">
             Check your email
@@ -58,7 +57,7 @@ export default function ForgotPasswordScreen() {
       ) : (
         <View>
           <View className="w-16 h-16 rounded-2xl bg-primary-subtle items-center justify-center mb-6">
-            <HugeiconsIcon icon={Key01Icon} size={24} color={tokens.primary} solid />
+            <HugeiconsIcon icon={Key01Icon} size={24} color={tokens.primary} />
           </View>
           <Text className="text-display-md font-heading font-bold text-foreground mb-2">
             Forgot password?
@@ -75,9 +74,7 @@ export default function ForgotPasswordScreen() {
               autoCapitalize="none"
               value={email}
               onChangeText={setEmail}
-              leftIcon={
-                <HugeiconsIcon icon={Mail01Icon} size={16} color={tokens.textMuted} solid />
-              }
+              leftIcon={<HugeiconsIcon icon={Mail01Icon} size={16} color={tokens.textMuted} />}
             />
 
             <View className="w-full mt-2">

@@ -23,7 +23,13 @@ export function ThemeController(): null {
   }, [hydrate]);
 
   useEffect(() => {
-    const apply = () => colorScheme.set(resolveScheme(preference, Appearance.getColorScheme()));
+    const apply = () =>
+      colorScheme.set(
+        resolveScheme(
+          preference,
+          Appearance.getColorScheme() as "light" | "dark" | null | undefined
+        )
+      );
     apply();
 
     // Only react to OS changes when the user is following the system.

@@ -23,7 +23,7 @@ import {
 import { HugeiconsIcon } from "@hugeicons/react-native";
 import {
   HourglassIcon,
-  TickCircleIcon,
+  CheckmarkCircle01Icon,
   AlertCircleIcon,
   MailOpen01Icon,
 } from "@hugeicons/core-free-icons";
@@ -117,7 +117,7 @@ export default function VerifyEmailScreen() {
         {status === "success" && (
           <View className="items-center">
             <View className="w-16 h-16 rounded-2xl bg-green-100 items-center justify-center mb-6">
-              <HugeiconsIcon icon={TickCircleIcon} size={28} color={tokens.success} />
+              <HugeiconsIcon icon={CheckmarkCircle01Icon} size={28} color={tokens.success} />
             </View>
             <Text className="text-display-md font-heading font-bold text-foreground mb-2 text-center">
               Email verified!

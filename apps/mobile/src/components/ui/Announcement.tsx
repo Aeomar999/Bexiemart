@@ -2,7 +2,11 @@ import { tokens } from "@/theme/tokens";
 import React from "react";
 import { View, Text } from "react-native";
 import { HugeiconsIcon } from "@hugeicons/react-native";
-import { AlertCircleIcon, TickCircleIcon, InformationIcon } from "@hugeicons/core-free-icons";
+import {
+  AlertCircleIcon,
+  CheckmarkCircle01Icon,
+  InformationCircleIcon,
+} from "@hugeicons/core-free-icons";
 
 export type AnnouncementType = "error" | "success" | "warning" | "info";
 
@@ -25,7 +29,7 @@ export function Announcement({ message, type = "error" }: AnnouncementProps) {
       bgClass = "bg-success/10";
       borderClass = "border-success/20";
       textClass = "text-success";
-      iconComponent = TickCircleIcon;
+      iconComponent = CheckmarkCircle01Icon;
       iconColor = "#22c55e";
       break;
     case "warning":
@@ -39,7 +43,7 @@ export function Announcement({ message, type = "error" }: AnnouncementProps) {
       bgClass = "bg-primary/10";
       borderClass = "border-primary/20";
       textClass = "text-primary";
-      iconComponent = InformationIcon;
+      iconComponent = InformationCircleIcon;
       iconColor = tokens.primary;
       break;
   }
@@ -47,7 +51,7 @@ export function Announcement({ message, type = "error" }: AnnouncementProps) {
   return (
     <View className={`flex-row items-start p-4 rounded-2xl border ${bgClass} ${borderClass}`}>
       <View className="mr-3 mt-0.5">
-        <HugeiconsIcon icon={iconComponent} size={16} color={iconColor} variant="solid" />
+        <HugeiconsIcon icon={iconComponent} size={16} color={iconColor} />
       </View>
       <View className="flex-1">
         <Text className={`font-body text-body-sm leading-5 ${textClass}`}>{message}</Text>

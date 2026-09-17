@@ -15,6 +15,7 @@ import { useRequireAuth } from "@/lib/hooks/use-require-auth";
 import { useFavoritesStore } from "@/lib/stores/favorites-store";
 import Toast from "@/lib/toast-polyfill";
 import { ProductCardSkeleton } from "@/components/ui/Skeleton";
+import { ProductCard } from "@/components/ui/ProductCard";
 
 type SortOption = "popular" | "newest" | "price-low" | "price-high";
 
@@ -143,7 +144,6 @@ export default function ShopScreen() {
 
   return (
     <View className="flex-1 bg-background">
-      import {ProductCard} from "@/components/ui/ProductCard"; // ... existing code ...
       <View
         className="px-5 pt-4 pb-4 bg-card border-b border-border"
         style={{ paddingTop: insets.top + 12 }}
