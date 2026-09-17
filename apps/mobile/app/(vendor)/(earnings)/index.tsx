@@ -55,7 +55,16 @@ export default function EarningsDashboardScreen() {
         ) : (
           <>
             {/* Balance Card */}
-            <View className="rounded-[20px] shadow-elevation-2 overflow-hidden border border-black/5 mb-8">
+            <View
+              className="rounded-[20px] overflow-hidden border border-black/5 mb-8 bg-black"
+              style={{
+                shadowColor: "#d97706",
+                shadowOffset: { width: 0, height: 12 },
+                shadowOpacity: 0.28,
+                shadowRadius: 26,
+                elevation: 16,
+              }}
+            >
               <LinearGradient
                 colors={tokens.moneyGrad1 as [string, string, ...string[]]}
                 start={{ x: 0, y: 0 }}
@@ -67,12 +76,15 @@ export default function EarningsDashboardScreen() {
                 <Text className="text-body-md text-white/80 font-medium mb-1">
                   Available for Withdrawal
                 </Text>
-                <Text
-                  className="text-[44px] font-black text-white leading-tight mb-4 tracking-tight"
-                  style={{ fontVariant: ["tabular-nums"] }}
-                >
-                  GHS {earnings?.availableBalance?.toFixed(2) ?? "0.00"}
-                </Text>
+                <View className="flex-row items-baseline mb-4 mt-[2px]">
+                  <Text
+                    className="font-heading text-[44px] leading-[48px] font-black tracking-[-1px] text-white"
+                    style={{ fontVariant: ["tabular-nums"] }}
+                  >
+                    {earnings?.availableBalance?.toFixed(2) ?? "0.00"}
+                  </Text>
+                  <Text className="text-[16px] font-bold text-white/80 ml-[8px]">GHS</Text>
+                </View>
 
                 <View className="flex-row items-center justify-between mb-6">
                   <View>
@@ -80,18 +92,21 @@ export default function EarningsDashboardScreen() {
                       Pending Clearance
                     </Text>
                     <Text className="text-body-lg font-bold text-white tracking-tight">
-                      GHS {earnings?.pendingClearance?.toFixed(2) ?? "0.00"}
+                      GH₵ {earnings?.pendingClearance?.toFixed(2) ?? "0.00"}
                     </Text>
                   </View>
-                </View>
 
-                <Pressable
-                  style={({ pressed }) => [{ opacity: pressed ? 0.9 : 1 }]}
-                  onPress={() => router.push("/(vendor)/(earnings)/withdraw")}
-                  className="bg-card w-full h-[44px] rounded-full items-center justify-center"
-                >
-                  <Text className="text-body-md font-bold text-primary">Withdraw Funds</Text>
-                </Pressable>
+                  {/* 52px Saturated Quick-Action Circle */}
+                  <View className="flex-row gap-[7px]">
+                    <Pressable
+                      style={({ pressed }) => [{ opacity: pressed ? 0.9 : 1 }]}
+                      onPress={() => router.push("/(vendor)/(earnings)/withdraw")}
+                      className="w-[52px] h-[52px] rounded-full items-center justify-center bg-blue-600 shadow-elevation-2"
+                    >
+                      <Icon name="arrow-up-right" size={24} color="white" />
+                    </Pressable>
+                  </View>
+                </View>
               </View>
 
               {/* Hairline Strip */}
