@@ -187,7 +187,7 @@ export default function TopUpScreen() {
                     flex: 1,
                     fontSize: 15,
                     fontWeight: "700",
-                    color: isSelected ? "#1d4ed8" : "#475569",
+                    color: isSelected ? tokens.primary : "#475569",
                   }}
                 >
                   {method.label}
@@ -198,8 +198,8 @@ export default function TopUpScreen() {
                     height: 22,
                     borderRadius: 11,
                     borderWidth: 2,
-                    borderColor: isSelected ? "#3b82f6" : tokens.textDisabled,
-                    backgroundColor: isSelected ? "#3b82f6" : "transparent",
+                    borderColor: isSelected ? tokens.primary : tokens.textDisabled,
+                    backgroundColor: isSelected ? tokens.primary : "transparent",
                     alignItems: "center",
                     justifyContent: "center",
                   }}

@@ -90,7 +90,7 @@ export default function WalletScreen() {
           <View
             className="mb-8 mt-2 items-center"
             style={{
-              height: (cards?.length ?? 0) >= 2 ? 260 : (cards?.length ?? 0) === 1 ? 246 : 220,
+              height: (cards?.length ?? 0) >= 2 ? 196 : (cards?.length ?? 0) === 1 ? 186 : 136,
               width: "100%",
               position: "relative",
             }}
@@ -106,13 +106,11 @@ export default function WalletScreen() {
                   top: 0,
                   left: "8%",
                   width: "84%",
-                  height: 40,
-                  borderTopLeftRadius: 20,
-                  borderTopRightRadius: 20,
+                  height: 30,
+                  borderTopLeftRadius: 16,
+                  borderTopRightRadius: 16,
                   borderTopWidth: 1,
                   borderColor: "rgba(255,255,255,0.3)",
-                  borderLeftWidth: 1,
-                  borderRightWidth: 1,
                   opacity: 0.7,
                 }}
               />
@@ -124,10 +122,10 @@ export default function WalletScreen() {
                 onPress={() => router.push("/(customer)/wallet/cards")}
                 className="absolute z-10"
                 style={{
-                  top: (cards?.length ?? 0) >= 2 ? 14 : 0,
+                  top: (cards?.length ?? 0) >= 2 ? 10 : 0,
                   left: "4%",
                   width: "92%",
-                  height: 130,
+                  height: 78,
                   zIndex: 10,
                 }}
               >
@@ -137,14 +135,12 @@ export default function WalletScreen() {
                   end={{ x: 1, y: 1 }}
                   style={{
                     flex: 1,
-                    borderTopLeftRadius: 24,
-                    borderTopRightRadius: 24,
-                    paddingTop: 18,
-                    paddingHorizontal: 22,
+                    borderTopLeftRadius: 18,
+                    borderTopRightRadius: 18,
+                    paddingTop: 12,
+                    paddingHorizontal: 18,
                     borderTopWidth: 1,
                     borderColor: "rgba(255,255,255,0.4)",
-                    borderLeftWidth: 1,
-                    borderRightWidth: 1,
                   }}
                 >
                   <View className="flex-row justify-between items-start">
@@ -155,7 +151,7 @@ export default function WalletScreen() {
                       >
                         {cards[0]?.cardholderName}
                       </Text>
-                      <Text className="text-white/80 text-sm mt-1.5 font-mono tracking-[0.15em]">
+                      <Text className="text-white text-sm mt-1.5 font-mono tracking-[0.15em]">
                         •••• •••• •••• {cards[0]?.last4}
                       </Text>
                     </View>
@@ -184,10 +180,10 @@ export default function WalletScreen() {
               className="z-20"
               style={{
                 position: "absolute",
-                top: (cards?.length ?? 0) >= 2 ? 82 : (cards?.length ?? 0) === 1 ? 68 : 42,
+                top: (cards?.length ?? 0) >= 2 ? 60 : (cards?.length ?? 0) === 1 ? 50 : 0,
                 left: 0,
                 width: "100%",
-                height: 178,
+                height: 136,
                 zIndex: 20,
               }}
             >
@@ -197,27 +193,30 @@ export default function WalletScreen() {
                 end={{ x: 1, y: 1 }}
                 style={{
                   flex: 1,
-                  borderRadius: 28,
-                  paddingTop: 26,
-                  paddingHorizontal: 26,
+                  borderRadius: 24,
+                  paddingTop: 16,
+                  paddingHorizontal: 18,
+                  paddingBottom: 16,
                   overflow: "hidden",
                   borderTopWidth: 1.5,
                   borderColor: "rgba(255,255,255,0.3)",
+                  shadowColor: "#2d1b73",
+                  shadowOffset: { width: 0, height: -6 },
+                  shadowOpacity: 0.55,
+                  shadowRadius: 20,
+                  elevation: 10,
+                  justifyContent: "space-between",
                 }}
               >
                 {/* Abstract Pattern inside the card */}
                 <View className="absolute top-[-50px] right-[-30px] w-[150px] h-[150px] rounded-full bg-white/5" />
-                <View className="absolute bottom-[-80px] left-[-20px] w-[200px] h-[200px] rounded-full bg-white/5" />
 
-                <View className="mb-6">
-                  <Text className="text-white/70 text-body-sm font-bold uppercase tracking-widest mb-1">
-                    Total Balance
+                <View>
+                  <Text className="text-[11px] font-bold tracking-[0.12em] uppercase text-white/70">
+                    Total balance
                   </Text>
-                  <View className="flex-row items-baseline">
-                    <Text
-                      className="text-white text-[44px] font-black tracking-tight"
-                      style={{ letterSpacing: -1 }}
-                    >
+                  <View className="flex-row items-baseline mt-[2px]">
+                    <Text className="font-heading text-[44px] leading-[48px] font-black tracking-[-1px] text-white">
                       {showBalance
                         ? Number(balance).toLocaleString("en-US", {
                             minimumFractionDigits: 2,
@@ -225,39 +224,45 @@ export default function WalletScreen() {
                           })
                         : "••••••"}
                     </Text>
-                    <Text className="text-white/80 text-heading-md font-bold ml-2">{currency}</Text>
+                    <Text className="text-[16px] font-bold text-white/80 ml-[8px]">{currency}</Text>
                   </View>
                 </View>
 
-                <View className="flex-row justify-between items-center absolute bottom-7 left-6 right-6">
+                <View className="flex-row justify-between items-center">
                   <Pressable
                     onPress={() => router.push("/(customer)/wallet/link-account")}
-                    className="bg-white/20 px-6 py-3.5 rounded-full flex-row items-center border border-white/10"
+                    className="flex-row items-center gap-[7px] px-4 py-[9px] rounded-full border"
+                    style={{
+                      backgroundColor: "rgba(255,255,255,0.2)",
+                      borderColor: "rgba(255,255,255,0.12)",
+                    }}
                   >
-                    <Icon name="link" size={18} color={tokens.primaryText} />
-                    <Text className="text-white font-bold ml-2 tracking-wide">Link Account</Text>
+                    <Icon name="link" size={15} color="#fff" />
+                    <Text className="text-[13px] font-bold text-white">Link account</Text>
                   </Pressable>
 
                   <View className="flex-row gap-3">
                     <Pressable
                       accessibilityRole="button"
-                      accessibilityLabel="Refresh balance"
-                      className="bg-white/15 w-12 h-12 rounded-full items-center justify-center border border-white/10"
+                      className="w-10 h-10 rounded-full items-center justify-center border"
+                      style={{
+                        backgroundColor: "rgba(255,255,255,0.15)",
+                        borderColor: "rgba(255,255,255,0.12)",
+                      }}
                       onPress={onRefresh}
                     >
-                      <Icon name="refresh-cw" size={18} color={tokens.primaryText} />
+                      <Icon name="refresh-cw" size={17} color="#fff" />
                     </Pressable>
                     <Pressable
                       accessibilityRole="button"
-                      accessibilityLabel={showBalance ? "Hide balance" : "Show balance"}
-                      className="bg-white/15 w-12 h-12 rounded-full items-center justify-center border border-white/10"
+                      className="w-10 h-10 rounded-full items-center justify-center border"
+                      style={{
+                        backgroundColor: "rgba(255,255,255,0.15)",
+                        borderColor: "rgba(255,255,255,0.12)",
+                      }}
                       onPress={() => setShowBalance(!showBalance)}
                     >
-                      <Icon
-                        name={showBalance ? "eye-off" : "eye"}
-                        size={18}
-                        color={tokens.primaryText}
-                      />
+                      <Icon name={showBalance ? "eye-off" : "eye"} size={17} color="#fff" />
                     </Pressable>
                   </View>
                 </View>
@@ -269,32 +274,29 @@ export default function WalletScreen() {
             style={{
               flexDirection: "row",
               justifyContent: "space-between",
-              marginBottom: 32,
-              paddingHorizontal: 8,
+              marginBottom: 24,
+              paddingHorizontal: 4,
             }}
           >
             {QUICK_ACTIONS.map((action) => (
               <Pressable
                 key={action.id}
                 onPress={() => router.push(action.route as any)}
-                style={{ alignItems: "center" }}
+                style={{ alignItems: "center", gap: 7 }}
               >
                 <View
                   style={{
-                    width: 56,
-                    height: 56,
-                    borderRadius: 28,
+                    width: 52,
+                    height: 52,
+                    borderRadius: 26,
                     alignItems: "center",
                     justifyContent: "center",
-                    marginBottom: 8,
                     backgroundColor: action.color,
                   }}
                 >
-                  <Icon name={action.icon} size={24} color={tokens.primaryText} />
+                  <Icon name={action.icon} size={22} color="#fff" />
                 </View>
-                <Text className="text-body-sm font-bold text-foreground font-body">
-                  {action.label}
-                </Text>
+                <Text className="text-[11px] font-bold text-foreground">{action.label}</Text>
               </Pressable>
             ))}
           </View>
@@ -304,30 +306,43 @@ export default function WalletScreen() {
             onPress={() => router.push("/(customer)/wallet/rewards")}
             className="mb-8"
           >
-            <View className="rounded-2xl overflow-hidden">
+            <View
+              className="rounded-2xl overflow-hidden shadow-lg"
+              style={{
+                shadowColor: "#d97706",
+                shadowOffset: { width: 0, height: 12 },
+                shadowOpacity: 0.28,
+                shadowRadius: 26,
+                elevation: 8,
+              }}
+            >
               <LinearGradient
                 colors={["#f59e0b", "#d97706"]}
                 start={{ x: 0, y: 0 }}
                 end={{ x: 1, y: 0 }}
-                style={{ padding: 20, position: "relative" }}
+                style={{
+                  paddingVertical: 14,
+                  paddingHorizontal: 16,
+                  flexDirection: "row",
+                  alignItems: "center",
+                  gap: 14,
+                  position: "relative",
+                }}
               >
-                <View className="absolute right-[-20px] top-[-20px] opacity-10">
-                  <Icon name="award" size={120} color={tokens.primaryText} />
+                <View className="absolute right-[-16px] top-[-16px] opacity-[0.12]">
+                  <Icon name="award" size={96} color="#fff" />
                 </View>
-                <View className="flex-row justify-between items-center mb-3">
-                  <Text className="text-body-md font-heading font-bold text-white/90 uppercase tracking-wider">
-                    Gold Tier
+                <View style={{ flex: 1, minWidth: 0 }}>
+                  <Text className="text-[11px] font-bold tracking-[0.1em] uppercase text-white/85">
+                    Gold tier · BexieCoins
                   </Text>
-                  <View className="bg-card/20 px-3 py-1 rounded-full">
-                    <Text className="text-body-sm font-bold text-white">How to earn</Text>
-                  </View>
+                  <Text className="font-heading text-[28px] leading-[32px] font-black tracking-[-0.02em] text-white mt-[1px]">
+                    {bexieCoins.toLocaleString()}
+                  </Text>
                 </View>
-                <Text className="text-display-md font-black text-white font-heading mb-1">
-                  {bexieCoins.toLocaleString()}
-                </Text>
-                <Text className="text-body-md text-white/80 font-medium font-body">
-                  BexieCoins Available
-                </Text>
+                <View className="bg-white rounded-full px-4 py-[9px]">
+                  <Text className="text-[13px] font-bold text-[#B45309]">Redeem</Text>
+                </View>
               </LinearGradient>
             </View>
           </Pressable>

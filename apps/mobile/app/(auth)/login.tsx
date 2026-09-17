@@ -9,15 +9,14 @@ import { Input } from "../../src/components/ui/Input";
 import { Button } from "../../src/components/ui/Button";
 import { Announcement } from "../../src/components/ui/Announcement";
 import { useLogin, useResendVerification } from "../../src/lib/hooks/use-auth";
-// @ts-expect-error
 import { HugeiconsIcon } from "@hugeicons/react-native";
 import {
   Store01Icon,
-  TickCircleIcon,
+  CheckmarkCircle01Icon,
   MailOpen01Icon,
   Mail01Icon,
   LockIcon,
-  InformationIcon,
+  InformationCircleIcon,
   Clock01Icon,
 } from "@hugeicons/core-free-icons";
 import { SocialLogins } from "../../src/components/auth/SocialLogins";
@@ -97,7 +96,7 @@ export default function LoginScreen() {
             value={email}
             onChangeText={(text) => setEmail(text.replace(/[^a-zA-Z0-9@._+-]/g, ""))}
             error={errors.email}
-            leftIcon={<HugeiconsIcon icon={Mail01Icon} size={16} color={tokens.textMuted} solid />}
+            leftIcon={<HugeiconsIcon icon={Mail01Icon} size={16} color={tokens.textMuted} />}
           />
 
           <Input
@@ -107,7 +106,7 @@ export default function LoginScreen() {
             value={password}
             onChangeText={setPassword}
             error={errors.password}
-            leftIcon={<HugeiconsIcon icon={LockIcon} size={16} color={tokens.textMuted} solid />}
+            leftIcon={<HugeiconsIcon icon={LockIcon} size={16} color={tokens.textMuted} />}
           />
 
           <View className="self-end -mt-2">
@@ -153,7 +152,7 @@ export default function LoginScreen() {
                   </Text>
                   <View className="mt-2 flex-row items-start gap-2 bg-primary-subtle p-3 rounded-xl border border-border">
                     <HugeiconsIcon
-                      icon={InformationIcon}
+                      icon={InformationCircleIcon}
                       size={14}
                       color={tokens.primary}
                       style={{ marginTop: 2 }}
@@ -173,7 +172,7 @@ export default function LoginScreen() {
                   </Text>
                 ) : resendVerification.isSuccess && countdown > 0 ? (
                   <View className="flex-row items-center justify-center gap-2 mb-4">
-                    <HugeiconsIcon icon={TickCircleIcon} size={14} color={tokens.success} />
+                    <HugeiconsIcon icon={CheckmarkCircle01Icon} size={14} color={tokens.success} />
                     <Text className="text-sm font-bold text-success">
                       Link sent! Check your email.
                     </Text>

@@ -1,4 +1,4 @@
-import { View, Text, TouchableOpacity, ActivityIndicator, Alert } from "react-native";
+import { View, Text, Pressable, ActivityIndicator, Alert } from "react-native";
 // @ts-expect-error FontAwesome5 may not be exported from @expo/vector-icons
 import { HugeiconsIcon } from "@hugeicons/react-native";
 import { GoogleIcon } from "@hugeicons/core-free-icons";
@@ -50,16 +50,13 @@ export function SocialLogins({ roleIntent }: SocialLoginsProps) {
   return (
     <View className="mt-8">
       <View className="flex-row items-center justify-center mb-6">
-        <View className="h-[1px] flex-1 bg-secondary" />
         <Text className="text-body-sm text-muted-foreground font-body px-4">Or continue with</Text>
-        <View className="h-[1px] flex-1 bg-secondary" />
       </View>
 
-      <TouchableOpacity
+      <Pressable
         accessibilityLabel="Continue with Google"
         accessibilityRole="button"
-        className="w-full h-14 rounded-2xl border border-border bg-card flex-row items-center justify-center gap-3 active:bg-background"
-        activeOpacity={0.7}
+        className="w-full h-14 rounded-2xl border border-border bg-card flex-row items-center justify-center gap-3 active:bg-background active:opacity-70"
         disabled={!!loadingProvider}
         onPress={() => handleSocialLogin("google")}
       >
@@ -71,7 +68,7 @@ export function SocialLogins({ roleIntent }: SocialLoginsProps) {
             <Text className="text-body font-semibold text-foreground">Continue with Google</Text>
           </>
         )}
-      </TouchableOpacity>
+      </Pressable>
     </View>
   );
 }

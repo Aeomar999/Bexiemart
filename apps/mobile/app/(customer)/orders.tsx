@@ -99,7 +99,7 @@ export default function OrdersScreen() {
           }
           renderItem={({ item }) => (
             <OrderCard
-              order={item}
+              {...item}
               variant="customer"
               onPress={() => {
                 if (item.status !== "delivered" && item.status !== "cancelled") {

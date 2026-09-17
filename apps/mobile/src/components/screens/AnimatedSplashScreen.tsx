@@ -195,7 +195,7 @@ export function AnimatedSplashScreen({ onAnimationComplete }: AnimatedSplashScre
               justifyContent: "center",
             }}
           >
-            <HugeiconsIcon icon={Store01Icon} size={42} color={tokens.primaryText} solid />
+            <HugeiconsIcon icon={Store01Icon} size={42} color={tokens.primaryText} />
           </View>
         </Animated.View>
 

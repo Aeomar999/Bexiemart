@@ -10,7 +10,7 @@ import { Avatar } from "@/components/ui/Avatar";
 
 const SETTINGS_SECTIONS = [
   {
-    title: "Store Management",
+    title: "Store",
     items: [
       {
         id: "profile",
@@ -23,73 +23,77 @@ const SETTINGS_SECTIONS = [
         id: "hours",
         icon: "clock",
         label: "Operating Hours",
+        value: "08:00 - 21:00",
         route: "/(vendor)/(settings)/hours",
-        color: "#f59e0b",
+        color: tokens.primary,
       },
       {
         id: "staff",
         icon: "users",
         label: "Staff Management",
         route: "/(vendor)/(settings)/staff",
-        color: "#10b981",
+        color: tokens.primary,
       },
     ],
   },
   {
-    title: "Marketing & Feedback",
+    title: "Marketing",
     items: [
       {
         id: "promotions",
         icon: "tag",
-        label: "Promotions & Discounts",
+        label: "Promotions",
+        value: "2 live",
         route: "/(vendor)/(settings)/promotions",
-        color: "#ec4899",
+        color: tokens.primary,
       },
       {
         id: "reviews",
         icon: "star",
-        label: "Customer Reviews",
+        label: "Customer reviews",
+        value: "4.8 • 62",
         route: "/(vendor)/(settings)/reviews",
-        color: "#f59e0b",
+        color: tokens.primary,
       },
     ],
   },
   {
-    title: "Financials",
+    title: "Money",
     items: [
       {
         id: "payment",
         icon: "credit-card",
-        label: "Payment Methods",
+        label: "Payout method",
+        value: "MTN •••• 4821",
         route: "/(vendor)/(settings)/payment",
-        color: "#7c3aed",
+        color: tokens.primary,
       },
       {
         id: "taxes",
         icon: "file-text",
-        label: "Taxes & Documents",
+        label: "Taxes & documents",
         route: "/(vendor)/(settings)/taxes",
-        color: "#ec4899",
+        color: tokens.primary,
       },
     ],
   },
   {
-    title: "Account & Preferences",
+    title: "Account",
     items: [
       {
         id: "notifications",
         icon: "bell",
         label: "Notifications",
         route: "/(vendor)/(settings)/notification-settings",
-        color: "#f59e0b",
+        color: tokens.primary,
       },
-      { id: "dark_mode", icon: "moon", label: "Dark Mode", type: "toggle", color: "#1e293b" },
+      { id: "dark_mode", icon: "moon", label: "Dark Mode", type: "toggle", color: tokens.primary },
       {
         id: "security",
         icon: "shield",
         label: "Security",
         route: "/(vendor)/(settings)/security",
-        color: "#059669",
+        color: tokens.primary,
       },
     ],
   },
@@ -101,14 +105,14 @@ const SETTINGS_SECTIONS = [
         icon: "help-circle",
         label: "Help Center",
         route: "/(vendor)/(settings)/help",
-        color: "#3b82f6",
+        color: tokens.primary,
       },
       {
         id: "contact",
         icon: "message-circle",
         label: "Contact Us",
         route: "/(vendor)/(settings)/contact",
-        color: "#10b981",
+        color: tokens.primary,
       },
     ],
   },
@@ -169,47 +173,57 @@ export default function VendorSettingsScreen() {
         {/* Sections */}
         <View className="gap-6 mb-6">
           {SETTINGS_SECTIONS.map((section, idx) => (
-            <View key={idx} className="bg-card rounded-2xl border border-border overflow-hidden">
-              {section.items.map((item, itemIdx) => {
-                const isLast = itemIdx === section.items.length - 1;
-                return (
-                  <Pressable
-                    style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
-                    key={item.id}
-                    className={`flex-row items-center justify-between h-[48px] px-4 ${!isLast ? "border-b border-border" : ""}`}
-                    disabled={item.type === "toggle"}
-                    onPress={() => {
-                      if (item.route && item.route !== "#") {
-                        router.push(item.route as any);
-                      }
-                    }}
-                  >
-                    <View className="flex-row items-center gap-3">
-                      <View
-                        className="w-8 h-8 rounded-full items-center justify-center"
-                        style={{ backgroundColor: `${item.color}15` }}
-                      >
-                        <Icon name={item.icon} size={16} color={item.color} />
+            <View key={idx}>
+              <Text className="text-[12px] font-bold tracking-[0.1em] uppercase text-muted-foreground mb-2">
+                {section.title}
+              </Text>
+              <View className="bg-card rounded-2xl border border-border overflow-hidden">
+                {section.items.map((item, itemIdx) => {
+                  const isLast = itemIdx === section.items.length - 1;
+                  return (
+                    <Pressable
+                      style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
+                      key={item.id}
+                      className={`flex-row items-center justify-between h-[52px] px-4 ${!isLast ? "border-b border-border" : ""}`}
+                      disabled={(item as any).type === "toggle"}
+                      onPress={() => {
+                        if (item.route && item.route !== "#") {
+                          router.push(item.route as any);
+                        }
+                      }}
+                    >
+                      <View className="flex-row items-center gap-3">
+                        <View
+                          className="w-8 h-8 rounded-xl items-center justify-center"
+                          style={{ backgroundColor: `${item.color}15` }}
+                        >
+                          <Icon name={item.icon} size={16} color={item.color} />
+                        </View>
+                        <Text className="text-[15px] font-bold text-foreground">{item.label}</Text>
                       </View>
-                      <Text className="text-[14px] font-bold text-foreground">{item.label}</Text>
-                    </View>
 
-                    <View className="flex-row items-center gap-2">
-                      {item.type === "toggle" ? (
-                        <Switch
-                          value={isDarkMode}
-                          onValueChange={setIsDarkMode}
-                          trackColor={{ false: "#e2e8f0", true: tokens.primary }}
-                          thumbColor={tokens.primaryText}
-                          style={{ transform: [{ scaleX: 0.8 }, { scaleY: 0.8 }] }}
-                        />
-                      ) : (
-                        <Icon name="chevron-right" size={16} color={tokens.textDisabled} />
-                      )}
-                    </View>
-                  </Pressable>
-                );
-              })}
+                      <View className="flex-row items-center gap-2">
+                        {(item as any).value && (
+                          <Text className="text-[12px] text-muted-foreground mr-1">
+                            {(item as any).value}
+                          </Text>
+                        )}
+                        {(item as any).type === "toggle" ? (
+                          <Switch
+                            value={isDarkMode}
+                            onValueChange={setIsDarkMode}
+                            trackColor={{ false: "#e2e8f0", true: tokens.primary }}
+                            thumbColor={tokens.primaryText}
+                            style={{ transform: [{ scaleX: 0.8 }, { scaleY: 0.8 }] }}
+                          />
+                        ) : (
+                          <Icon name="chevron-right" size={16} color={tokens.textDisabled} />
+                        )}
+                      </View>
+                    </Pressable>
+                  );
+                })}
+              </View>
             </View>
           ))}
         </View>
@@ -217,11 +231,11 @@ export default function VendorSettingsScreen() {
         {/* Logout Button */}
         <Pressable
           style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
-          className="flex-row items-center justify-center gap-2 p-4 bg-rose-50 rounded-xl mt-2 border border-rose-100 active:opacity-70"
+          className="flex-row items-center justify-center gap-2 h-[48px] bg-rose-50 rounded-[14px] mb-8 border border-rose-100"
           onPress={handleLogout}
         >
-          <Icon name="log-out" size={18} color={tokens.error} />
-          <Text className="text-body-lg font-body font-bold text-rose-500">Log Out</Text>
+          <Icon name="log-out" size={17} color={tokens.error} />
+          <Text className="text-[15px] font-bold text-rose-500">Log out</Text>
         </Pressable>
       </ScrollView>
     </View>
