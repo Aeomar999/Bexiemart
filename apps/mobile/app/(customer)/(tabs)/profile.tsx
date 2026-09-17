@@ -126,10 +126,21 @@ export default function ProfileScreen() {
     <View className="flex-1 bg-background">
       {/* Header */}
       <View
-        className="px-5 pb-4 bg-card border-b border-border"
+        className="px-5 pb-4 bg-card border-b border-border flex-row items-end justify-between"
         style={{ paddingTop: (insets.top || 12) + 12 }}
       >
-        <Text className="text-display-sm font-heading font-black text-foreground">Profile</Text>
+        <View>
+          <Text className="text-[11px] font-bold tracking-[0.1em] uppercase text-muted-foreground mb-[2px]">
+            Customer
+          </Text>
+          <Text className="text-display-md font-heading font-black text-foreground">Profile</Text>
+        </View>
+        <Pressable
+          className="w-[36px] h-[36px] rounded-full bg-background border border-border items-center justify-center"
+          style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
+        >
+          <Icon name="settings" size={17} color={tokens.textSecondary} />
+        </Pressable>
       </View>
 
       <ScrollView
@@ -205,8 +216,8 @@ export default function ProfileScreen() {
           }
 
           return (
-            <View key={idx} className="mb-6">
-              <Text className="text-[12px] font-bold text-foreground uppercase tracking-[0.1em] mb-2 px-1">
+            <View key={idx} className="mb-8">
+              <Text className="text-[12px] font-bold text-muted-foreground uppercase tracking-[0.1em] mb-6 px-1">
                 {section.title}
               </Text>
               <View className="bg-card rounded-2xl border border-border overflow-hidden">

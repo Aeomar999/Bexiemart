@@ -130,9 +130,12 @@ export default function CartScreen() {
       <View className="flex-1 bg-background">
         <View
           className="px-5 pt-4 pb-4 bg-card border-b border-border"
-          style={{ paddingTop: insets.top + 12 }}
+          style={{ paddingTop: (insets.top || 12) + 12 }}
         >
-          <Text className="text-display-sm font-heading font-black text-foreground">Cart</Text>
+          <Text className="text-[11px] font-bold tracking-[0.1em] uppercase text-muted-foreground mb-[2px]">
+            Empty
+          </Text>
+          <Text className="text-display-md font-heading font-black text-foreground">Cart</Text>
         </View>
         <EmptyState
           title="Your cart is empty"
@@ -150,12 +153,15 @@ export default function CartScreen() {
   return (
     <View className="flex-1 bg-background">
       <View
-        className="px-5 pt-4 pb-4 bg-card border-b border-border"
-        style={{ paddingTop: insets.top + 12 }}
+        className="px-5 pt-4 pb-4 bg-card border-b border-border flex-row items-end justify-between"
+        style={{ paddingTop: (insets.top || 12) + 12 }}
       >
-        <Text className="text-[24px] leading-[28px] font-heading font-black text-foreground tracking-[-0.01em]">
-          Cart ({itemCount})
-        </Text>
+        <View>
+          <Text className="text-[11px] font-bold tracking-[0.1em] uppercase text-muted-foreground mb-[2px]">
+            {itemCount} {itemCount === 1 ? "item" : "items"}
+          </Text>
+          <Text className="text-display-md font-heading font-black text-foreground">Cart</Text>
+        </View>
       </View>
       <ScrollView contentContainerClassName="px-5 pt-4 pb-40" showsVerticalScrollIndicator={false}>
         {/* Dynamic Vendor Grouping */}

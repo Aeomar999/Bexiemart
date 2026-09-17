@@ -148,13 +148,16 @@ export default function ShopScreen() {
         className="px-5 pt-4 pb-4 bg-card border-b border-border"
         style={{ paddingTop: insets.top + 12 }}
       >
-        <View className="flex-row justify-between items-center mb-3">
-          <Text className="text-[11px] font-bold tracking-[0.1em] uppercase text-muted-foreground">
-            {filteredProducts.length} product{filteredProducts.length !== 1 ? "s" : ""}
-          </Text>
+        <View className="flex-row justify-between items-end mb-5">
+          <View>
+            <Text className="text-[11px] font-bold tracking-[0.1em] uppercase text-muted-foreground mb-[2px]">
+              {filteredProducts.length} product{filteredProducts.length !== 1 ? "s" : ""}
+            </Text>
+            <Text className="text-display-md font-heading font-black text-foreground">Shop</Text>
+          </View>
           <Pressable
             style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
-            className="flex-row items-center gap-1 active:opacity-70"
+            className="flex-row items-center gap-1 active:opacity-70 mb-[6px]"
             onPress={() => setShowSortModal(true)}
           >
             <Text className="text-[12px] font-bold text-muted-foreground">

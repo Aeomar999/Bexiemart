@@ -27,17 +27,22 @@ export default function EarningsDashboardScreen() {
   return (
     <View className="flex-1 bg-background" style={{ paddingTop: insets.top }}>
       {/* Header */}
-      <View className="px-5 py-4 bg-card border-b border-border flex-row items-center justify-between">
-        <Text className="text-display-md font-heading font-black text-foreground">Earnings</Text>
+      <View className="px-5 py-4 bg-card border-b border-border flex-row items-end justify-between">
+        <View>
+          <Text className="text-[11px] font-bold tracking-[0.1em] uppercase text-muted-foreground mb-[2px]">
+            Vendor
+          </Text>
+          <Text className="text-display-md font-heading font-black text-foreground">Earnings</Text>
+        </View>
         <Pressable
           accessibilityRole="button"
           accessibilityLabel="Help"
           hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
-          className="w-10 h-10 rounded-full bg-background items-center justify-center"
+          className="w-[36px] h-[36px] rounded-full bg-background border border-border items-center justify-center"
           style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
           onPress={() => router.push("/(vendor)/(settings)/help")}
         >
-          <Icon name="help-circle" size={20} color={tokens.textMuted} />
+          <Icon name="help-circle" size={17} color={tokens.textSecondary} />
         </Pressable>
       </View>
 

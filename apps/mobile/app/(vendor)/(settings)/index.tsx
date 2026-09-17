@@ -134,10 +134,21 @@ export default function VendorSettingsScreen() {
     <View className="flex-1 bg-background">
       {/* Header */}
       <View
-        className="px-5 pb-4 bg-card border-b border-border"
+        className="px-5 pb-4 bg-card border-b border-border flex-row items-end justify-between"
         style={{ paddingTop: (insets.top || 12) + 12 }}
       >
-        <Text className="text-display-md font-heading font-black text-foreground">Settings</Text>
+        <View>
+          <Text className="text-[11px] font-bold tracking-[0.1em] uppercase text-muted-foreground mb-[2px]">
+            Vendor
+          </Text>
+          <Text className="text-display-md font-heading font-black text-foreground">Settings</Text>
+        </View>
+        <Pressable
+          className="w-[36px] h-[36px] rounded-full bg-background border border-border items-center justify-center"
+          style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
+        >
+          <Icon name="bell" size={17} color={tokens.textSecondary} />
+        </Pressable>
       </View>
 
       <ScrollView
@@ -171,10 +182,10 @@ export default function VendorSettingsScreen() {
         </View>
 
         {/* Sections */}
-        <View className="gap-6 mb-6">
+        <View className="gap-8 mb-6">
           {SETTINGS_SECTIONS.map((section, idx) => (
             <View key={idx}>
-              <Text className="text-[12px] font-bold tracking-[0.1em] uppercase text-muted-foreground mb-2">
+              <Text className="text-[12px] font-bold tracking-[0.1em] uppercase text-muted-foreground mb-6">
                 {section.title}
               </Text>
               <View className="bg-card rounded-2xl border border-border overflow-hidden">

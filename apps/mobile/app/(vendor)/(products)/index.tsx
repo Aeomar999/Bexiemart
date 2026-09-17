@@ -77,10 +77,15 @@ export default function ListingsScreen() {
         className="bg-card px-5 pt-4 pb-2 border-b border-border"
         style={{ paddingTop: (insets.top || 12) + 12 }}
       >
-        <View className="flex-row justify-between items-center mb-6">
-          <Text className="text-display-md font-heading font-black text-foreground">
-            My Listings
-          </Text>
+        <View className="flex-row justify-between items-end mb-5">
+          <View>
+            <Text className="text-[11px] font-bold tracking-[0.1em] uppercase text-muted-foreground mb-[2px]">
+              {filteredItems.length} listing{filteredItems.length !== 1 ? "s" : ""}
+            </Text>
+            <Text className="text-display-md font-heading font-black text-foreground">
+              My Listings
+            </Text>
+          </View>
           <Pressable
             accessibilityRole="button"
             style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
