@@ -6,7 +6,7 @@ import { useState } from "react";
 import { Input } from "../../src/components/ui/Input";
 import { Button } from "../../src/components/ui/Button";
 import { authApi } from "../../src/lib/api/auth";
-// import { HugeiconsIcon } from "@hugeicons/react-native";
+import { HugeiconsIcon } from "@hugeicons/react-native";
 import { CheckmarkCircle01Icon, Mail01Icon, Key01Icon } from "@hugeicons/core-free-icons";
 
 export default function ForgotPasswordScreen() {

@@ -9,7 +9,7 @@ import { Input } from "../../src/components/ui/Input";
 import { Button } from "../../src/components/ui/Button";
 import { Announcement } from "../../src/components/ui/Announcement";
 import { useLogin, useResendVerification } from "../../src/lib/hooks/use-auth";
-// import { HugeiconsIcon } from "@hugeicons/react-native";
+import { HugeiconsIcon } from "@hugeicons/react-native";
 import {
   Store01Icon,
   CheckmarkCircle01Icon,
