@@ -152,7 +152,7 @@ export default function DashboardScreen() {
             }}
           >
             <LinearGradient
-              colors={tokens.moneyGrad1 as [string, string, ...string[]]}
+              colors={[tokens.moneyGrad1, tokens.moneyGrad2]}
               start={{ x: 0, y: 0 }}
               end={{ x: 1, y: 1 }}
               style={{ position: "absolute", top: 0, left: 0, right: 0, bottom: 0 }}

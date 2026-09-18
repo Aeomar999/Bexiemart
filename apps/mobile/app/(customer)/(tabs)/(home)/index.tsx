@@ -1,6 +1,7 @@
 import { tokens } from "@/theme/tokens";
 import { View, Text, ScrollView, Pressable, RefreshControl, TextInput } from "react-native";
-import { FlashList } from "@shopify/flash-list";
+import { FlashList as _FlashList } from "@shopify/flash-list";
+const FlashList = _FlashList as any;
 import { useState, useCallback, useEffect } from "react";
 import { Image } from "expo-image";
 import { useRouter } from "expo-router";
@@ -367,6 +368,7 @@ export default function HomeScreen() {
               <Text className="text-[12px] font-bold text-muted-foreground">See All</Text>
             </Pressable>
           </View>
+          {/* @ts-ignore */}
           <FlashList
             data={activeTab === "top" ? topProducts : activeTab === "new" ? newItems : mostPopular}
             horizontal
@@ -375,8 +377,8 @@ export default function HomeScreen() {
             snapToInterval={122} // 110px width + 12px gap
             snapToAlignment="start"
             contentContainerStyle={{ paddingHorizontal: 20, gap: 12 }}
-            keyExtractor={(item) => item.id}
-            renderItem={({ item }) => (
+            keyExtractor={(item: any) => item.id}
+            renderItem={({ item }: { item: any }) => (
               <Pressable
                 className="w-[110px] active:opacity-70"
                 onPress={() => router.push(`/(customer)/product/${item.id}`)}

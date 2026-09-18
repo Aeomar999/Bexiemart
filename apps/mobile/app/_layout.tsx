@@ -1,4 +1,5 @@
 import "react-native-get-random-values";
+// @ts-ignore
 import "../global.css";
 import "../src/lib/sentry";
 import * as Sentry from "@sentry/react-native";

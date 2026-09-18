@@ -15,7 +15,6 @@ import Animated, {
   useReducedMotion,
 } from "react-native-reanimated";
 import { tokens } from "@/theme/tokens";
-// @ts-expect-error
 import { HugeiconsIcon } from "@hugeicons/react-native";
 import { Store01Icon } from "@hugeicons/core-free-icons";
 

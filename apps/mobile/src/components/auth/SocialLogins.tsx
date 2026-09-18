@@ -1,5 +1,4 @@
 import { View, Text, Pressable, ActivityIndicator, Alert } from "react-native";
-// @ts-expect-error FontAwesome5 may not be exported from @expo/vector-icons
 import { HugeiconsIcon } from "@hugeicons/react-native";
 import { GoogleIcon } from "@hugeicons/core-free-icons";
 import { tokens } from "@/theme/tokens";

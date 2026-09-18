@@ -16,7 +16,6 @@ import { Announcement } from "../../src/components/ui/Announcement";
 import { Input } from "../../src/components/ui/Input";
 import { SegmentedOtpInput } from "../../src/components/ui/SegmentedOtpInput";
 import { authClient } from "../../src/lib/api/better-auth";
-// @ts-expect-error
 import { HugeiconsIcon } from "@hugeicons/react-native";
 import { Tick01Icon } from "@hugeicons/core-free-icons";
 
