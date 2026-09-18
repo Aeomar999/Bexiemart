@@ -1,0 +1,8 @@
+- [x] Mobile App (`apps/mobile`)
+  - [x] Modify `Input.tsx` to use `ViewIcon` and `ViewOffIcon`.
+  - [x] Create `PasswordStrength.tsx` component.
+  - [x] Modify `register.tsx` to include `PasswordStrength`.
+  - [x] Update autofill hints in auth screens.
+- [x] Admin App (`apps/admin`)
+  - [x] Modify `Input.tsx` to support password toggle and Caps Lock warning.
+  - [x] Update `login/page.tsx` for `Input` components.

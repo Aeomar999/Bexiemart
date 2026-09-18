@@ -103,6 +103,8 @@ export default function LoginScreen() {
             label="Password"
             placeholder="Enter your password"
             secureTextEntry
+            textContentType="password"
+            autoComplete="password"
             value={password}
             onChangeText={setPassword}
             error={errors.password}
