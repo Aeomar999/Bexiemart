@@ -23,26 +23,24 @@ async function createTestUser(
 ) {
   let user = await prisma.user.findUnique({ where: { email } });
   if (user) {
-    logger.log(`User ${email} already exists. Updating role...`);
-    user = await prisma.user.update({
-      where: { email },
-      data: { role, emailVerified: true, phoneNumber: phone, phoneNumberVerified: true },
-    });
-  } else {
-    logger.log(`Creating user ${email}...`);
-    const res = await auth.api.signUpEmail({
-      body: { email, password, name, callbackURL: "http://localhost:3000" },
-      asResponse: true,
-    });
-    if (!res.ok) {
-      const errData = await res.json();
-      throw new Error(`Failed to create user: ${errData.message || JSON.stringify(errData)}`);
-    }
-    user = await prisma.user.update({
-      where: { email },
-      data: { role, emailVerified: true, phoneNumber: phone, phoneNumberVerified: true },
-    });
+    logger.log(`User ${email} already exists. Deleting to re-seed...`);
+    await prisma.user.delete({ where: { email } });
   }
+
+  logger.log(`Creating user ${email}...`);
+  const res = await auth.api.signUpEmail({
+    body: { email, password, name, callbackURL: "http://localhost:3000" },
+    asResponse: true,
+  });
+  if (!res.ok) {
+    const errData = await res.json();
+    throw new Error(`Failed to create user: ${errData.message || JSON.stringify(errData)}`);
+  }
+  user = await prisma.user.update({
+    where: { email },
+    data: { role, emailVerified: true, phoneNumber: phone, phoneNumberVerified: true },
+  });
+
   return user;
 }
 
