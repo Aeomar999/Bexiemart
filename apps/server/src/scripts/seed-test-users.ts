@@ -49,7 +49,7 @@ async function main() {
     // 1. Create Vendor
     const vendorUser = await createTestUser(
       "vendorbexiemart@gmail.com",
-      "password123",
+      "Password@123",
       "Test Vendor",
       UserRole.VENDOR,
       "+233541234567"
@@ -77,7 +77,7 @@ async function main() {
     // 2. Create Dispatcher (Delivery)
     const dispatcherUser = await createTestUser(
       "deliverybexiemart@gmail.com",
-      "password123",
+      "Password@123",
       "Test Dispatcher",
       UserRole.DISPATCHER,
       "+233541234568"

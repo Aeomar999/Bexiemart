@@ -3,6 +3,7 @@ import { BackButton } from "../../src/components/ui/BackButton";
 import { View, Text, ScrollView, TouchableOpacity, Dimensions } from "react-native";
 import { router } from "expo-router";
 import { Input } from "../../src/components/ui/Input";
+import { PasswordStrength } from "../../src/components/auth/PasswordStrength";
 import { Button } from "../../src/components/ui/Button";
 import { Announcement } from "../../src/components/ui/Announcement";
 import { useRegister, useCheckAvailability } from "../../src/lib/hooks/use-auth";
@@ -317,20 +318,27 @@ export default function RegisterScreen() {
 
         {step === 3 && (
           <View className="gap-5">
-            <Input
-              label="Password"
-              placeholder="Min 8 characters"
-              secureTextEntry
-              value={password}
-              onChangeText={setPassword}
-              error={errors3.password}
-              leftIcon={<HugeiconsIcon icon={LockIcon} size={16} color={tokens.textMuted} />}
-            />
+            <View>
+              <Input
+                label="Password"
+                placeholder="Min 8 characters"
+                secureTextEntry
+                textContentType="newPassword"
+                autoComplete="password-new"
+                value={password}
+                onChangeText={setPassword}
+                error={errors3.password}
+                leftIcon={<HugeiconsIcon icon={LockIcon} size={16} color={tokens.textMuted} />}
+              />
+              <PasswordStrength password={password} />
+            </View>
 
             <Input
               label="Confirm password"
               placeholder="Re-enter your password"
               secureTextEntry
+              textContentType="newPassword"
+              autoComplete="password-new"
               value={confirmPassword}
               onChangeText={setConfirmPassword}
               error={errors3.confirmPassword}

@@ -1,6 +1,8 @@
 import { View, Text, TextInput, type TextInputProps, TouchableOpacity } from "react-native";
 import { useState, forwardRef } from "react";
 import { tokens } from "@/theme/tokens";
+import { HugeiconsIcon } from "@hugeicons/react-native";
+import { ViewIcon, ViewOffIcon } from "@hugeicons/core-free-icons";
 
 interface InputProps extends TextInputProps {
   label?: string;
@@ -60,9 +62,11 @@ export const Input = forwardRef<TextInput, InputProps>(
               accessibilityRole="button"
               accessibilityLabel={isSecureVisible ? "Hide password" : "Show password"}
             >
-              <Text className="text-body-sm text-muted-foreground font-body">
-                {isSecureVisible ? "Hide" : "Show"}
-              </Text>
+              <HugeiconsIcon
+                icon={isSecureVisible ? ViewOffIcon : ViewIcon}
+                size={20}
+                color={tokens.textMuted}
+              />
             </TouchableOpacity>
           )}
           {rightIcon}
