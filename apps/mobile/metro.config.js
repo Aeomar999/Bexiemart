@@ -14,4 +14,6 @@ config.watchFolders = [__dirname];
 // Limit Metro workers to prevent EMFILE when reading cache on Windows
 config.maxWorkers = 2;
 
+config.cacheStores = [];
+
 module.exports = withNativeWind(config, { input: "./global.css" });
