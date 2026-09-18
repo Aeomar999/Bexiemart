@@ -319,7 +319,23 @@ const ROUTES: MockRouteHandler[] = [
   { matcher: /\/auth\/send-verification/, handler: () => ({}) },
   { matcher: /\/auth\/forgot-password/, handler: () => ({}) },
   { matcher: /\/auth\/reset-password/, handler: () => ({}) },
-  { matcher: /\/auth\/check-availability/, handler: () => ({ available: true }) },
+  {
+    matcher: /\/auth\/check-availability/,
+    handler: (config) => {
+      let data = {};
+      try {
+        data = JSON.parse(config.data || "{}");
+      } catch (e) {}
+      const errors: any = {};
+      if (data.email === "test@bexiemart.com") {
+        errors.email = "This email is already registered.";
+      }
+      if (data.phone === "+233241234567") {
+        errors.phone = "This phone number is already registered.";
+      }
+      return { isAvailable: Object.keys(errors).length === 0, errors };
+    },
+  },
 
   // Products
   { matcher: /\/products\/categories/, handler: () => MOCK_CATEGORIES },
