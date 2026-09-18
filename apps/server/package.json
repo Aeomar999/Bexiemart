@@ -18,7 +18,8 @@
     "prisma:push": "prisma db push",
     "prisma:studio": "prisma studio",
     "seed:system": "ts-node src/scripts/seed-system-user.ts",
-    "seed:banners": "ts-node src/scripts/seed-banners.ts"
+    "seed:banners": "ts-node src/scripts/seed-banners.ts",
+    "seed:test-users": "ts-node src/scripts/seed-test-users.ts"
   },
   "dependencies": {
     "@better-auth/infra": "^0.2.11",
