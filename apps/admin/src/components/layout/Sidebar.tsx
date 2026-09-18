@@ -181,7 +181,7 @@ export function Sidebar() {
                         className={cn(
                           "group relative flex items-center justify-between rounded-md px-3 py-2 text-sm font-medium transition-all duration-200",
                           isActive
-                            ? "bg-[var(--color-primary)]/10 text-[var(--color-primary)] shadow-sm"
+                            ? "bg-[var(--color-primary)]/10 text-[var(--color-primary)] "
                             : "text-[var(--color-text-secondary)] hover:bg-[var(--color-surface-100)] hover:text-[var(--color-text)]",
                           !isSidebarOpen && "justify-center px-0"
                         )}

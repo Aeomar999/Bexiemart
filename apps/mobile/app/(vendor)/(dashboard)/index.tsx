@@ -143,13 +143,7 @@ export default function DashboardScreen() {
         <View className="px-5 mb-8">
           <View
             className="rounded-[20px] p-6 overflow-hidden border border-black/5 bg-black"
-            style={{
-              shadowColor: "#d97706",
-              shadowOffset: { width: 0, height: 12 },
-              shadowOpacity: 0.28,
-              shadowRadius: 26,
-              elevation: 16,
-            }}
+            style={{}}
           >
             <LinearGradient
               colors={[tokens.moneyGrad1, tokens.moneyGrad2]}

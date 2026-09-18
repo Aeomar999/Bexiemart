@@ -30,7 +30,7 @@ export function ConfirmModal({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
-      <div className="w-full max-w-md animate-in fade-in zoom-in-95 rounded-xl bg-[var(--color-bg)] p-6 shadow-xl border border-[var(--color-border)]">
+      <div className="w-full max-w-md animate-in fade-in zoom-in-95 rounded-xl bg-[var(--color-bg)] p-6  border border-[var(--color-border)]">
         <div className="flex items-start justify-between">
           <div className="flex items-center space-x-3">
             <div className={cn(

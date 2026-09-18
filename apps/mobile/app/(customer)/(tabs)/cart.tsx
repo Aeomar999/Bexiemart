@@ -343,16 +343,7 @@ export default function CartScreen() {
 
       {/* Bottom Checkout Bar */}
       <View className="absolute bottom-0 left-0 right-0 p-5 pb-8">
-        <View
-          className="rounded-[20px] overflow-hidden border border-black/5 bg-black"
-          style={{
-            shadowColor: "#d97706",
-            shadowOffset: { width: 0, height: 12 },
-            shadowOpacity: 0.28,
-            shadowRadius: 26,
-            elevation: 16,
-          }}
-        >
+        <View className="rounded-[20px] overflow-hidden border border-black/5 bg-black" style={{}}>
           <LinearGradient
             colors={[tokens.moneyGrad1, tokens.moneyGrad2]}
             start={{ x: 0, y: 0 }}

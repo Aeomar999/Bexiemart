@@ -332,7 +332,7 @@ export default function HomeScreen() {
             <View className="flex-row items-center bg-[#F1F5F9] rounded-[12px] p-[3px]">
               <Pressable
                 onPress={() => setActiveTab("top")}
-                className={`h-[34px] px-3 rounded-[9px] items-center justify-center ${activeTab === "top" ? "bg-white shadow-sm" : ""}`}
+                className={`h-[34px] px-3 rounded-[9px] items-center justify-center ${activeTab === "top" ? "bg-white " : ""}`}
               >
                 <Text
                   className={`text-[13px] font-bold ${activeTab === "top" ? "text-foreground" : "text-muted-foreground"}`}
@@ -342,7 +342,7 @@ export default function HomeScreen() {
               </Pressable>
               <Pressable
                 onPress={() => setActiveTab("new")}
-                className={`h-[34px] px-3 rounded-[9px] items-center justify-center ${activeTab === "new" ? "bg-white shadow-sm" : ""}`}
+                className={`h-[34px] px-3 rounded-[9px] items-center justify-center ${activeTab === "new" ? "bg-white " : ""}`}
               >
                 <Text
                   className={`text-[13px] font-bold ${activeTab === "new" ? "text-foreground" : "text-muted-foreground"}`}
@@ -352,7 +352,7 @@ export default function HomeScreen() {
               </Pressable>
               <Pressable
                 onPress={() => setActiveTab("popular")}
-                className={`h-[34px] px-3 rounded-[9px] items-center justify-center ${activeTab === "popular" ? "bg-white shadow-sm" : ""}`}
+                className={`h-[34px] px-3 rounded-[9px] items-center justify-center ${activeTab === "popular" ? "bg-white " : ""}`}
               >
                 <Text
                   className={`text-[13px] font-bold ${activeTab === "popular" ? "text-foreground" : "text-muted-foreground"}`}

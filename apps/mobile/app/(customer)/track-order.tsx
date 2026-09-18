@@ -244,13 +244,7 @@ export default function TrackOrderScreen() {
           {/* Order Tracking Hero */}
           <View
             className="rounded-t-[24px] overflow-hidden border-b border-black/5 bg-black p-6"
-            style={{
-              shadowColor: "#d97706",
-              shadowOffset: { width: 0, height: 12 },
-              shadowOpacity: 0.28,
-              shadowRadius: 26,
-              elevation: 16,
-            }}
+            style={{}}
           >
             <LinearGradient
               colors={[tokens.moneyGrad1, tokens.moneyGrad2]}

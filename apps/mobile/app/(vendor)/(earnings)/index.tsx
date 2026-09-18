@@ -62,13 +62,7 @@ export default function EarningsDashboardScreen() {
             {/* Balance Card */}
             <View
               className="rounded-[20px] overflow-hidden border border-black/5 mb-8 bg-black"
-              style={{
-                shadowColor: "#d97706",
-                shadowOffset: { width: 0, height: 12 },
-                shadowOpacity: 0.28,
-                shadowRadius: 26,
-                elevation: 16,
-              }}
+              style={{}}
             >
               <LinearGradient
                 colors={[tokens.moneyGrad1, tokens.moneyGrad2]}
@@ -106,7 +100,7 @@ export default function EarningsDashboardScreen() {
                     <Pressable
                       style={({ pressed }) => [{ opacity: pressed ? 0.9 : 1 }]}
                       onPress={() => router.push("/(vendor)/(earnings)/withdraw")}
-                      className="w-[52px] h-[52px] rounded-full items-center justify-center bg-blue-600 shadow-elevation-2"
+                      className="w-[52px] h-[52px] rounded-full items-center justify-center bg-blue-600 "
                     >
                       <Icon name="arrow-up-right" size={24} color="white" />
                     </Pressable>

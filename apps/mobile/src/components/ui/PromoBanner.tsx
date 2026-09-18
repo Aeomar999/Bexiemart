@@ -93,16 +93,7 @@ function BannerCard({ banner, onPress }: { banner: Banner; onPress?: () => void 
 
   return (
     <View style={{ width: SCREEN_WIDTH, paddingHorizontal: 20, paddingBottom: 16 }}>
-      <View
-        className="rounded-[16px] border border-black/5 bg-black"
-        style={{
-          shadowColor: "#d97706",
-          shadowOffset: { width: 0, height: 12 },
-          shadowOpacity: 0.28,
-          shadowRadius: 26,
-          elevation: 16,
-        }}
-      >
+      <View className="rounded-[16px] border border-black/5 bg-black" style={{}}>
         <Pressable
           className={cardClass}
           onPress={onPress}

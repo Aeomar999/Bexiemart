@@ -15,12 +15,12 @@ interface StatProps {
 
 export function Stat({ title, value, icon, trend, className }: StatProps) {
   return (
-    <Card className={cn("overflow-hidden transition-all hover:shadow-md", className)}>
+    <Card className={cn("overflow-hidden transition-all ", className)}>
       <CardContent className="p-6">
         <div className="flex items-center justify-between mb-4">
           <span className="text-sm font-medium text-(--color-text-muted)">{title}</span>
           {icon && (
-            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-(--color-primary-subtle) text-(--color-primary) shadow-sm">
+            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-(--color-primary-subtle) text-(--color-primary) ">
               {React.isValidElement(icon) 
                 ? React.cloneElement(icon as React.ReactElement<{ className?: string }>, { className: "h-5 w-5" }) 
                 : icon}

@@ -11,7 +11,7 @@ export function Header() {
   const displayName = user?.name || "Admin";
 
   return (
-    <header className="sticky top-0 z-10 flex h-16 shrink-0 items-center gap-x-4 border-b border-[var(--color-border)] bg-[var(--color-card)]/80 backdrop-blur-md px-4 shadow-sm transition-all sm:gap-x-6 sm:px-6 lg:px-8">
+    <header className="sticky top-0 z-10 flex h-16 shrink-0 items-center gap-x-4 border-b border-[var(--color-border)] bg-[var(--color-card)]/80 backdrop-blur-md px-4  transition-all sm:gap-x-6 sm:px-6 lg:px-8">
       <button
         type="button"
         className="-m-2.5 p-2.5 text-[var(--color-text-secondary)] hover:text-[var(--color-text)]"
