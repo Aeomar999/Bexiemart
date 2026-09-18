@@ -22,7 +22,6 @@ jobs:
             server:
               - 'apps/server/**'
               - 'packages/shared/**'
-              - 'railway.json'
             docker:
               - 'apps/server/Dockerfile'
               - 'apps/admin/**'
@@ -108,11 +107,11 @@ jobs:
       - name: Build Admin Web App
         run: npm run build
         env:
-          NEXT_PUBLIC_API_URL: https://bexiemart-production.up.railway.app/api/v1
+          NEXT_PUBLIC_API_URL: https://bexiemart-api.onrender.com/api/v1
 
   docker-admin:
     # The admin image once shipped permanently broken (context/COPY drift) and
-    # nothing ever caught it — building it here fails on the PR instead.
+    # nothing ever caught it - building it here fails on the PR instead.
     needs: changes
     if: needs.changes.outputs.docker == 'true'
     runs-on: ubuntu-latest
@@ -123,7 +122,7 @@ jobs:
         run: docker build -t bexiemart-admin:ci apps/admin
 
   docker-server:
-    # Same rationale for the API image Railway will build at deploy time.
+    # Same rationale for the API image Render will build at deploy time.
     needs: changes
     if: needs.changes.outputs.docker == 'true' || needs.changes.outputs.server == 'true'
     runs-on: ubuntu-latest
@@ -132,33 +131,4 @@ jobs:
       - uses: actions/checkout@v4
       - name: Build server image (root build context)
         run: docker build -f apps/server/Dockerfile -t bexiemart-server:ci .
-
-  deploy-server:
-    needs: [changes, shared, server, docker-server]
-    if: >-
-      always() &&
-      github.event_name == 'push' &&
-      github.ref == 'refs/heads/main' &&
-      needs.changes.outputs.server == 'true' &&
-      needs.shared.result == 'success' &&
-      needs.server.result == 'success' &&
-      (needs.docker-server.result == 'success' || needs.docker-server.result == 'skipped')
-    runs-on: ubuntu-latest
-    timeout-minutes: 20
-    concurrency:
-      group: deploy-server
-      cancel-in-progress: false
-    environment: production
-    steps:
-      - uses: actions/checkout@v4
-      - name: Install Railway CLI
-        run: curl -fsSL https://railway.app/install.sh | sh
-      - name: Deploy to Railway
-        env:
-          RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
-          RAILWAY_SERVICE: bexiemart-api
-          RAILWAY_ENVIRONMENT: production
-        run: railway up --ci --service "$RAILWAY_SERVICE" --environment "$RAILWAY_ENVIRONMENT"
-      - name: Verify health endpoint
-        run: curl -fsS --retry 6 --retry-delay 15 --retry-all-errors https://bexiemart-production.up.railway.app/api/v1/health
 
