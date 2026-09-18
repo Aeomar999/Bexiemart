@@ -1,3 +1,4 @@
+import { LinearGradient } from "expo-linear-gradient";
 import { LoadingState } from "@/components/ui/LoadingState";
 import { tokens } from "@/theme/tokens";
 import Toast from "@/lib/toast-polyfill";
@@ -237,96 +238,126 @@ export default function TrackOrderScreen() {
       {/* Bottom Sheet */}
       <View className="absolute bottom-0 left-0 right-0">
         <View
-          className="bg-card rounded-t-3xl p-6 border-t border-border"
+          className="bg-card rounded-t-3xl border-t border-border"
           style={{ paddingBottom: Math.max(insets.bottom, 24) }}
         >
-          <View className="w-12 h-1.5 bg-secondary rounded-full mx-auto mb-6" />
+          {/* Order Tracking Hero */}
+          <View
+            className="rounded-t-[24px] overflow-hidden border-b border-black/5 bg-black p-6"
+            style={{
+              shadowColor: "#d97706",
+              shadowOffset: { width: 0, height: 12 },
+              shadowOpacity: 0.28,
+              shadowRadius: 26,
+              elevation: 16,
+            }}
+          >
+            <LinearGradient
+              colors={[tokens.moneyGrad1, tokens.moneyGrad2]}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 1 }}
+              style={{ position: "absolute", top: 0, left: 0, right: 0, bottom: 0 }}
+            />
+            <View className="w-12 h-1.5 bg-white/20 rounded-full mx-auto mb-6" />
 
-          <View className="flex-row justify-between items-end mb-6">
-            <View>
-              <Text className="text-display-md font-heading font-black text-foreground">
-                {STATUS_LABEL[status] ?? status}
-              </Text>
-              <Text className="text-body-lg font-body text-muted-foreground mt-1">
-                {status === "PENDING"
-                  ? "Finding the nearest rider"
-                  : delivered
-                    ? "Confirm to release payment"
-                    : `${job.vehicleType} • GHS ${Number(job.customerFee).toFixed(2)}`}
-              </Text>
-            </View>
-            <View className="px-3 py-1.5 rounded-md flex-row items-center gap-1.5 bg-primary-subtle border border-border">
-              <View
-                className={`w-2 h-2 rounded-full ${isActive(status) ? "bg-emerald-500" : "bg-slate-400"}`}
-              />
-              <Text className="text-body-sm font-bold uppercase tracking-wider text-primary">
-                {job.jobNumber}
-              </Text>
+            <View className="flex-row justify-between items-end mb-2">
+              <View>
+                <Text className="text-[12px] font-bold text-white/80 uppercase tracking-wider mb-2">
+                  {STATUS_LABEL[status] ?? status}
+                </Text>
+
+                {status === "PENDING" || delivered ? (
+                  <Text className="text-white text-[24px] font-heading font-black">
+                    {status === "PENDING" ? "Finding rider..." : "Confirm payment"}
+                  </Text>
+                ) : (
+                  <View className="flex-row items-baseline mt-[2px]">
+                    <Text
+                      className="font-heading text-[44px] leading-[48px] font-black tracking-[-1px] text-white"
+                      style={{ fontVariant: ["tabular-nums"] }}
+                    >
+                      {Number(job.customerFee).toFixed(2)}
+                    </Text>
+                    <Text className="text-[16px] font-bold text-white/80 ml-[8px]">GH₵</Text>
+                  </View>
+                )}
+              </View>
+              <View className="px-3 py-1.5 rounded-md flex-row items-center gap-1.5 bg-black/20 border border-white/10">
+                <View
+                  className={`w-2 h-2 rounded-full ${isActive(status) ? "bg-emerald-400" : "bg-white/40"}`}
+                />
+                <Text className="text-body-sm font-bold uppercase tracking-wider text-white">
+                  {job.jobNumber}
+                </Text>
+              </View>
             </View>
           </View>
 
-          {/* Rider Info */}
-          {job.dispatcher ? (
-            <View className="flex-row items-center justify-between bg-background p-4 rounded-2xl border border-border mb-6">
-              <View className="flex-row items-center gap-4">
-                <View className="w-12 h-12 rounded-full bg-secondary items-center justify-center border border-border">
-                  <Icon name="user" size={24} color={tokens.textMuted} />
+          <View className="p-6">
+            {/* Rider Info */}
+            {job.dispatcher ? (
+              <View className="flex-row items-center justify-between bg-background p-4 rounded-2xl border border-border mb-6">
+                <View className="flex-row items-center gap-4">
+                  <View className="w-12 h-12 rounded-full bg-secondary items-center justify-center border border-border">
+                    <Icon name="user" size={24} color={tokens.textMuted} />
+                  </View>
+                  <View>
+                    <Text className="text-body-lg font-bold text-foreground font-heading">
+                      {job.dispatcher.user.name}
+                    </Text>
+                    <Text className="text-sm text-muted-foreground font-body">
+                      {job.dispatcher.vehicleType} • {job.dispatcher.plateNumber}
+                    </Text>
+                  </View>
                 </View>
-                <View>
-                  <Text className="text-body-lg font-bold text-foreground font-heading">
-                    {job.dispatcher.user.name}
-                  </Text>
-                  <Text className="text-sm text-muted-foreground font-body">
-                    {job.dispatcher.vehicleType} • {job.dispatcher.plateNumber}
-                  </Text>
-                </View>
-              </View>
-              <Pressable
-                accessibilityRole="button"
-                accessibilityLabel="Call rider"
-                hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
-                className={`w-10 h-10 rounded-full items-center justify-center border ${job.dispatcher.user?.phoneNumber ? "bg-emerald-50 border-emerald-100" : "bg-muted border-border opacity-50"}`}
-                disabled={!job.dispatcher.user?.phoneNumber}
-                onPress={() => {
-                  const phone = job.dispatcher?.user?.phoneNumber;
-                  if (phone) {
-                    Linking.openURL(`tel:${phone}`).catch(() => {
-                      Toast.show({
-                        type: "error",
-                        text1: "We couldn't open your phone's dialer. Please try calling manually.",
+                <Pressable
+                  accessibilityRole="button"
+                  accessibilityLabel="Call rider"
+                  hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+                  className={`w-10 h-10 rounded-full items-center justify-center border ${job.dispatcher.user?.phoneNumber ? "bg-emerald-50 border-emerald-100" : "bg-muted border-border opacity-50"}`}
+                  disabled={!job.dispatcher.user?.phoneNumber}
+                  onPress={() => {
+                    const phone = job.dispatcher?.user?.phoneNumber;
+                    if (phone) {
+                      Linking.openURL(`tel:${phone}`).catch(() => {
+                        Toast.show({
+                          type: "error",
+                          text1:
+                            "We couldn't open your phone's dialer. Please try calling manually.",
+                        });
                       });
-                    });
-                  }
-                }}
-              >
-                <Icon
-                  name="phone"
-                  size={18}
-                  color={job.dispatcher.user?.phoneNumber ? tokens.success : tokens.textMuted}
-                />
-              </Pressable>
-            </View>
-          ) : (
-            <View className="flex-row items-center justify-center bg-background p-6 rounded-2xl border border-border mb-6 border-dashed">
-              <Text className="text-body-md text-muted-foreground font-body">
-                Matching you with a rider nearby...
-              </Text>
-            </View>
-          )}
+                    }
+                  }}
+                >
+                  <Icon
+                    name="phone"
+                    size={18}
+                    color={job.dispatcher.user?.phoneNumber ? tokens.success : tokens.textMuted}
+                  />
+                </Pressable>
+              </View>
+            ) : (
+              <View className="flex-row items-center justify-center bg-background p-6 rounded-2xl border border-border mb-6 border-dashed">
+                <Text className="text-body-md text-muted-foreground font-body">
+                  Matching you with a rider nearby...
+                </Text>
+              </View>
+            )}
 
-          {delivered && (
-            <Pressable
-              className="bg-primary w-full h-14 rounded-full items-center justify-center"
-              onPress={handleConfirm}
-              disabled={actioning}
-            >
-              {actioning ? (
-                <ActivityIndicator color={tokens.primaryText} />
-              ) : (
-                <Text className="text-white font-bold text-body-lg">Confirm Delivery</Text>
-              )}
-            </Pressable>
-          )}
+            {delivered && (
+              <Pressable
+                className="bg-primary w-full h-14 rounded-full items-center justify-center"
+                onPress={handleConfirm}
+                disabled={actioning}
+              >
+                {actioning ? (
+                  <ActivityIndicator color={tokens.primaryText} />
+                ) : (
+                  <Text className="text-white font-bold text-body-lg">Confirm Delivery</Text>
+                )}
+              </Pressable>
+            )}
+          </View>
         </View>
       </View>
     </View>

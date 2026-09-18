@@ -11,4 +11,7 @@ config.resolver.blockList = [/.*\.test\.[tj]sx?$/, /.*\.spec\.[tj]sx?$/, /.*\/__
 // Prevent Metro from watching the entire monorepo, which causes EMFILE errors on Windows
 config.watchFolders = [__dirname];
 
+// Limit Metro workers to prevent EMFILE when reading cache on Windows
+config.maxWorkers = 2;
+
 module.exports = withNativeWind(config, { input: "./global.css" });

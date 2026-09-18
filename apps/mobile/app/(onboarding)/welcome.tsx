@@ -5,7 +5,6 @@ import { tokens } from "@/theme/tokens";
 import { useAuthStore } from "../../src/lib/stores/auth-store";
 import { useAuthEnabled } from "../../src/lib/feature-flags";
 import { Button } from "../../src/components/ui/Button";
-// @ts-expect-error
 import { HugeiconsIcon } from "@hugeicons/react-native";
 import { Store01Icon } from "@hugeicons/core-free-icons";
 

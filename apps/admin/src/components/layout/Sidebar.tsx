@@ -4,7 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { HugeiconsIcon } from "@hugeicons/react";
-import { LayoutDashboardIcon, UsersIcon, StoreIcon, ShoppingBagIcon, AlertTriangle, FileTextIcon, SettingsIcon, LogOutIcon, BikeIcon, TruckIcon, PizzaIcon, WrenchIcon, MegaphoneIcon, ShieldAlertIcon, ShieldCheckIcon, TicketIcon, ChevronDownIcon, ChevronRightIcon } from "@hugeicons/core-free-icons";
+import { LayoutDashboardIcon, UsersIcon, StoreIcon, ShoppingBagIcon, Alert01Icon, FileTextIcon, SettingsIcon, LogOutIcon, BikeIcon, TruckIcon, PizzaIcon, WrenchIcon, MegaphoneIcon, ShieldAlertIcon, ShieldCheckIcon, TicketIcon, ChevronDownIcon, ChevronRightIcon } from "@hugeicons/core-free-icons";
 import { cn } from "../../lib/utils";
 import { useUiStore } from "../../lib/stores/ui-store";
 import { useAuthStore } from "../../lib/stores/auth-store";
@@ -28,17 +28,17 @@ const navigationConfig: NavGroup[] = [
   {
     group: "Overview",
     items: [
-      { name: "Dashboard", href: "/", icon: LayoutDashboard },
-      { name: "Reports", href: "/reports", icon: FileText },
+      { name: "Dashboard", href: "/", icon: LayoutDashboardIcon },
+      { name: "Reports", href: "/reports", icon: FileTextIcon },
     ]
   },
   {
     group: "Commerce",
     items: [
-      { name: "Users", href: "/users", icon: Users },
+      { name: "Users", href: "/users", icon: UsersIcon },
       { 
         name: "Vendors & Stores", 
-        icon: Store,
+        icon: StoreIcon,
         subItems: [
           { name: "Retail Vendors", href: "/vendors" },
           { name: "Restaurants", href: "/food-vendors" },
@@ -47,7 +47,7 @@ const navigationConfig: NavGroup[] = [
       },
       { 
         name: "Orders & Bookings", 
-        icon: ShoppingBag,
+        icon: ShoppingBagIcon,
         subItems: [
           { name: "Retail Orders", href: "/orders" },
           { name: "Food Orders", href: "/food-orders" },
@@ -59,8 +59,8 @@ const navigationConfig: NavGroup[] = [
   {
     group: "Logistics",
     items: [
-      { name: "Dispatchers", href: "/dispatchers", icon: Bike },
-      { name: "Deliveries", href: "/deliveries", icon: Truck },
+      { name: "Dispatchers", href: "/dispatchers", icon: BikeIcon },
+      { name: "Deliveries", href: "/deliveries", icon: TruckIcon },
     ]
   },
   {
@@ -68,14 +68,14 @@ const navigationConfig: NavGroup[] = [
     items: [
       { 
         name: "Marketing", 
-        icon: Megaphone,
+        icon: MegaphoneIcon,
         subItems: [
           { name: "Banners", href: "/marketing/banners" },
           { name: "Flash Sales", href: "/marketing/flash-sales" },
           { name: "Coupons", href: "/marketing/coupons" },
         ]
       },
-      { name: "Referrals", href: "/referrals", icon: Ticket },
+      { name: "Referrals", href: "/referrals", icon: TicketIcon },
     ]
   },
   {
@@ -83,20 +83,20 @@ const navigationConfig: NavGroup[] = [
     items: [
       { 
         name: "Content", 
-        icon: ShieldAlert,
+        icon: ShieldAlertIcon,
         subItems: [
           { name: "Reels", href: "/moderation/reels" },
           { name: "Reviews", href: "/moderation/reviews" },
         ]
       },
-      { name: "Disputes", href: "/disputes", icon: AlertTriangle, badge: 3 },
+      { name: "Disputes", href: "/disputes", icon: Alert01Icon, badge: 3 },
     ]
   },
   {
     group: "System",
     items: [
-      { name: "Admins", href: "/admins", icon: ShieldCheck, superAdminOnly: true },
-      { name: "Settings", href: "/settings", icon: Settings },
+      { name: "Admins", href: "/admins", icon: ShieldCheckIcon, superAdminOnly: true },
+      { name: "Settings", href: "/settings", icon: SettingsIcon },
     ]
   }
 ];

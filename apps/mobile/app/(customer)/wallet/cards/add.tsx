@@ -157,7 +157,7 @@ export default function AddCardScreen() {
               </View>
 
               <View>
-                <Text className="text-white/80 text-display-sm font-mono tracking-[0.15em] mb-4">
+                <Text className="text-white text-display-sm font-mono tracking-[0.15em] mb-4">
                   {number || "•••• •••• •••• ••••"}
                 </Text>
 

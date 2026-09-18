@@ -307,7 +307,7 @@ const MOCK_SERVICES = [
 
 interface MockRouteHandler {
   matcher: RegExp;
-  handler: (match: RegExpMatchArray) => any;
+  handler: (match: RegExpMatchArray, config?: AxiosRequestConfig) => any;
 }
 
 const ROUTES: MockRouteHandler[] = [
@@ -319,7 +319,23 @@ const ROUTES: MockRouteHandler[] = [
   { matcher: /\/auth\/send-verification/, handler: () => ({}) },
   { matcher: /\/auth\/forgot-password/, handler: () => ({}) },
   { matcher: /\/auth\/reset-password/, handler: () => ({}) },
-  { matcher: /\/auth\/check-availability/, handler: () => ({ available: true }) },
+  {
+    matcher: /\/auth\/check-availability/,
+    handler: (_, config) => {
+      let data: any = {};
+      try {
+        data = JSON.parse(config?.data || "{}");
+      } catch (e) {}
+      const errors: any = {};
+      if (data.email === "test@bexiemart.com") {
+        errors.email = "This email is already registered.";
+      }
+      if (data.phone === "+233241234567") {
+        errors.phone = "This phone number is already registered.";
+      }
+      return { isAvailable: Object.keys(errors).length === 0, errors };
+    },
+  },
 
   // Products
   { matcher: /\/products\/categories/, handler: () => MOCK_CATEGORIES },
@@ -436,22 +452,23 @@ const ROUTES: MockRouteHandler[] = [
   { matcher: /\/health/, handler: () => ({ status: "ok" }) },
 ];
 
-function resolveMockData(url: string): any {
-  for (const route of ROUTES) {
-    const match = url.match(route.matcher);
-    if (match) return route.handler(match);
-  }
-  // Default: return empty paginated response
-  return { data: [], meta: { total: 0, page: 1, totalPages: 0 } };
-}
-
 export const mockAdapter: AxiosAdapter = (config: AxiosRequestConfig) => {
   return new Promise((resolve) => {
     setTimeout(
       () => {
         const url = config.url || "";
         const method = (config.method || "get").toLowerCase();
-        const data = resolveMockData(url);
+        let data: any;
+        for (const route of ROUTES) {
+          const match = url.match(route.matcher);
+          if (match) {
+            data = route.handler(match, config);
+            break;
+          }
+        }
+        if (data === undefined) {
+          data = { data: [], meta: { total: 0, page: 1, totalPages: 0 } };
+        }
 
         const response: AxiosResponse = {
           data,

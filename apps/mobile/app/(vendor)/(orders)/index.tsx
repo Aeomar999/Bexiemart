@@ -41,7 +41,7 @@ export default function OrdersManagerScreen() {
     <View className="flex-1 bg-background" style={{ paddingTop: insets.top }}>
       {/* Header */}
       <View className="px-5 py-4 bg-card border-b border-border">
-        <Text className="text-[12px] font-bold uppercase tracking-[0.1em] text-muted-foreground mb-1">
+        <Text className="text-[11px] font-bold uppercase tracking-[0.1em] text-muted-foreground mb-[2px]">
           Order Management
         </Text>
         <Text className="text-display-md font-heading font-black text-foreground">Orders</Text>

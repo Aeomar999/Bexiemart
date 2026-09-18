@@ -2,7 +2,8 @@ import { tokens } from "@/theme/tokens";
 import { BackButton } from "@/components/ui/BackButton";
 import { View, Text, TextInput, ScrollView, Pressable, ActivityIndicator } from "react-native";
 import { Image } from "expo-image";
-import { FlashList } from "@shopify/flash-list";
+import { FlashList as _FlashList } from "@shopify/flash-list";
+const FlashList = _FlashList as any;
 import { useState, useMemo } from "react";
 import { useRouter } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -220,7 +221,7 @@ export default function SearchScreen() {
                   ) : null
                 }
                 ItemSeparatorComponent={() => <View className="h-4" />}
-                renderItem={({ item }) => (
+                renderItem={({ item }: { item: any }) => (
                   <Pressable
                     style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
                     className="flex-row items-center bg-card rounded-2xl p-4 border border-border"

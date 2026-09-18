@@ -90,7 +90,7 @@ export default function WalletScreen() {
           <View
             className="mb-8 mt-2 items-center"
             style={{
-              height: (cards?.length ?? 0) >= 2 ? 196 : (cards?.length ?? 0) === 1 ? 186 : 136,
+              height: 196,
               width: "100%",
               position: "relative",
             }}
@@ -117,12 +117,12 @@ export default function WalletScreen() {
             )}
 
             {/* Layer 2: Middle Card — only show when 1+ cards */}
-            {(cards?.length ?? 0) >= 1 ? (
+            {(cards?.length ?? 0) >= 1 && (
               <Pressable
                 onPress={() => router.push("/(customer)/wallet/cards")}
                 className="absolute z-10"
                 style={{
-                  top: (cards?.length ?? 0) >= 2 ? 10 : 0,
+                  top: 10,
                   left: "4%",
                   width: "92%",
                   height: 78,
@@ -166,21 +166,18 @@ export default function WalletScreen() {
                           {cards[0]?.type?.toUpperCase() || "CARD"}
                         </Text>
                       </View>
-                      <Text className="text-white/60 text-caption mt-0.5 font-bold uppercase tracking-widest">
-                        Valid {cards[0]?.expiryMonth}/{cards[0]?.expiryYear?.slice(-2)}
-                      </Text>
                     </View>
                   </View>
                 </LinearGradient>
               </Pressable>
-            ) : null}
+            )}
 
             {/* Layer 3: Front Pocket (Balance) */}
             <View
               className="z-20"
               style={{
                 position: "absolute",
-                top: (cards?.length ?? 0) >= 2 ? 60 : (cards?.length ?? 0) === 1 ? 50 : 0,
+                top: 60,
                 left: 0,
                 width: "100%",
                 height: 136,

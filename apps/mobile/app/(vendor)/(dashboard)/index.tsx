@@ -93,10 +93,10 @@ export default function DashboardScreen() {
       >
         <View className="flex-row items-center justify-between">
           <View>
-            <Text className="text-[12px] font-bold uppercase tracking-[0.1em] text-muted-foreground mb-0.5">
+            <Text className="text-[11px] font-bold uppercase tracking-[0.1em] text-muted-foreground mb-[2px]">
               {user?.name?.split(" ")[0] || "Store Name"} • Active
             </Text>
-            <Text className="text-display-sm font-heading font-black text-foreground">
+            <Text className="text-display-md font-heading font-black text-foreground">
               Dashboard
             </Text>
           </View>
@@ -106,22 +106,22 @@ export default function DashboardScreen() {
               accessibilityLabel="Messages"
               hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
               style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
-              className="w-10 h-10 rounded-full bg-background border border-border items-center justify-center relative"
+              className="w-[36px] h-[36px] rounded-full bg-background border border-border items-center justify-center relative"
               onPress={() => router.push("/(vendor)/inbox")}
             >
-              <Icon name="message-square" size={20} color={tokens.textMuted} />
-              <View className="absolute top-2 right-2 w-2 h-2 bg-error rounded-full border border-card" />
+              <Icon name="message-square" size={17} color={tokens.textMuted} />
+              <View className="absolute top-1 right-1 w-2 h-2 bg-error rounded-full border border-card" />
             </Pressable>
             <Pressable
               accessibilityRole="button"
               accessibilityLabel="Notifications"
               hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
               style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
-              className="w-10 h-10 rounded-full bg-background border border-border items-center justify-center relative"
+              className="w-[36px] h-[36px] rounded-full bg-background border border-border items-center justify-center relative"
               onPress={() => router.push("/(vendor)/notifications")}
             >
-              <Icon name="bell" size={20} color={tokens.textMuted} />
-              <View className="absolute top-2 right-2 w-2 h-2 bg-primary rounded-full border border-card" />
+              <Icon name="bell" size={17} color={tokens.textMuted} />
+              <View className="absolute top-1 right-1 w-2 h-2 bg-primary rounded-full border border-card" />
             </Pressable>
           </View>
         </View>
@@ -141,19 +141,34 @@ export default function DashboardScreen() {
       >
         {/* ===== HERO / EARNINGS ===== */}
         <View className="px-5 mb-8">
-          <View className="rounded-[20px] p-6 shadow-elevation-2 overflow-hidden border border-black/5">
+          <View
+            className="rounded-[20px] p-6 overflow-hidden border border-black/5 bg-black"
+            style={{
+              shadowColor: "#d97706",
+              shadowOffset: { width: 0, height: 12 },
+              shadowOpacity: 0.28,
+              shadowRadius: 26,
+              elevation: 16,
+            }}
+          >
             <LinearGradient
-              colors={tokens.moneyGrad1 as [string, string, ...string[]]}
+              colors={[tokens.moneyGrad1, tokens.moneyGrad2]}
               start={{ x: 0, y: 0 }}
               end={{ x: 1, y: 1 }}
               style={{ position: "absolute", top: 0, left: 0, right: 0, bottom: 0 }}
             />
-            <Text className="text-white/80 font-body text-[14px] mb-2 font-medium">
+            <Text className="text-white text-[11px] font-bold tracking-[0.1em] uppercase mb-[2px]">
               Available Balance
             </Text>
-            <Text className="text-[36px] font-heading font-black text-white tracking-tight">
-              GHS {earningsData?.availableBalance?.toFixed(2) ?? "0.00"}
-            </Text>
+            <View className="flex-row items-baseline mt-[2px]">
+              <Text
+                className="font-heading text-[44px] leading-[48px] font-black tracking-[-1px] text-white"
+                style={{ fontVariant: ["tabular-nums"] }}
+              >
+                {earningsData?.availableBalance?.toFixed(2) ?? "0.00"}
+              </Text>
+              <Text className="text-[16px] font-bold text-white/80 ml-[8px]">GH₵</Text>
+            </View>
           </View>
         </View>
 

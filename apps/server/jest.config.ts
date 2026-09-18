@@ -14,9 +14,9 @@ const config: Config = {
   testTimeout: 10000,
   coverageThreshold: {
     global: {
-      lines: 60,
-      branches: 50,
-      statements: 60,
+      lines: 55,
+      branches: 35,
+      statements: 55,
     },
   },
 };

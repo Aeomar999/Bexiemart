@@ -1,6 +1,5 @@
 import { TouchableOpacity, TouchableOpacityProps } from "react-native";
 import { router } from "expo-router";
-// @ts-expect-error
 import { HugeiconsIcon } from "@hugeicons/react-native";
 import { ArrowLeft01Icon } from "@hugeicons/core-free-icons";
 

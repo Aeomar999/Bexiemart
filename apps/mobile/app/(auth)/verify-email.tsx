@@ -19,7 +19,6 @@ import {
   useResendVerification,
   useVerifyEmailOtp,
 } from "../../src/lib/hooks/use-auth";
-// @ts-expect-error
 import { HugeiconsIcon } from "@hugeicons/react-native";
 import {
   HourglassIcon,

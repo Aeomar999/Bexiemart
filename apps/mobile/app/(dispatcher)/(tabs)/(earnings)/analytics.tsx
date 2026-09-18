@@ -20,7 +20,7 @@ export default function AnalyticsScreen() {
       <View className="px-5 py-4 bg-card border-b border-border flex-row items-center justify-between">
         <View className="flex-row items-center">
           <BackButton className="-ml-2 active:bg-slate-100" />
-          <Text className="text-display-sm font-heading font-bold text-foreground ml-2">
+          <Text className="text-display-md font-heading font-bold text-foreground ml-2">
             Analytics
           </Text>
         </View>
@@ -31,11 +31,28 @@ export default function AnalyticsScreen() {
           <RowsSkeleton />
         ) : (
           <>
-            <View className="bg-primary rounded-2xl p-6 mb-2">
-              <Text className="text-white/80 font-body text-body-md mb-1">30-Day Revenue</Text>
-              <Text className="text-white font-heading font-black text-[36px] mb-4">
-                GH₵ {analytics?.revenue30Days?.toFixed(2) ?? "0.00"}
+            <View
+              className="bg-primary rounded-[20px] p-6 mb-2 border border-black/5"
+              style={{
+                shadowColor: "#2563eb",
+                shadowOffset: { width: 0, height: 12 },
+                shadowOpacity: 0.28,
+                shadowRadius: 26,
+                elevation: 16,
+              }}
+            >
+              <Text className="text-white text-[11px] font-bold tracking-[0.1em] uppercase mb-[2px]">
+                30-Day Revenue
               </Text>
+              <View className="flex-row items-baseline mt-[2px] mb-4">
+                <Text
+                  className="font-heading text-[44px] leading-[48px] font-black tracking-[-1px] text-white"
+                  style={{ fontVariant: ["tabular-nums"] }}
+                >
+                  {analytics?.revenue30Days?.toFixed(2) ?? "0.00"}
+                </Text>
+                <Text className="text-[16px] font-bold text-white/80 ml-[8px]">GH₵</Text>
+              </View>
 
               <View className="flex-row items-center justify-between border-t border-white/20 pt-4">
                 <View>

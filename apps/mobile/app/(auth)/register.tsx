@@ -8,7 +8,6 @@ import { Announcement } from "../../src/components/ui/Announcement";
 import { useRegister, useCheckAvailability } from "../../src/lib/hooks/use-auth";
 import { useState } from "react";
 import { useAuthStore } from "../../src/lib/stores/auth-store";
-// @ts-expect-error
 import { HugeiconsIcon } from "@hugeicons/react-native";
 import {
   Store01Icon,

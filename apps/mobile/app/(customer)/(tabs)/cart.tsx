@@ -130,9 +130,12 @@ export default function CartScreen() {
       <View className="flex-1 bg-background">
         <View
           className="px-5 pt-4 pb-4 bg-card border-b border-border"
-          style={{ paddingTop: insets.top + 12 }}
+          style={{ paddingTop: (insets.top || 12) + 12 }}
         >
-          <Text className="text-display-sm font-heading font-black text-foreground">Cart</Text>
+          <Text className="text-[11px] font-bold tracking-[0.1em] uppercase text-muted-foreground mb-[2px]">
+            Empty
+          </Text>
+          <Text className="text-display-md font-heading font-black text-foreground">Cart</Text>
         </View>
         <EmptyState
           title="Your cart is empty"
@@ -150,12 +153,15 @@ export default function CartScreen() {
   return (
     <View className="flex-1 bg-background">
       <View
-        className="px-5 pt-4 pb-4 bg-card border-b border-border"
-        style={{ paddingTop: insets.top + 12 }}
+        className="px-5 pt-4 pb-4 bg-card border-b border-border flex-row items-end justify-between"
+        style={{ paddingTop: (insets.top || 12) + 12 }}
       >
-        <Text className="text-[24px] leading-[28px] font-heading font-black text-foreground tracking-[-0.01em]">
-          Cart ({itemCount})
-        </Text>
+        <View>
+          <Text className="text-[11px] font-bold tracking-[0.1em] uppercase text-muted-foreground mb-[2px]">
+            {itemCount} {itemCount === 1 ? "item" : "items"}
+          </Text>
+          <Text className="text-display-md font-heading font-black text-foreground">Cart</Text>
+        </View>
       </View>
       <ScrollView contentContainerClassName="px-5 pt-4 pb-40" showsVerticalScrollIndicator={false}>
         {/* Dynamic Vendor Grouping */}
@@ -335,40 +341,48 @@ export default function CartScreen() {
         </View>
       </ScrollView>
 
-      {/* Shrink Bottom Checkout Bar */}
-      <View className="absolute bottom-0 left-0 right-0">
-        <BlurView
-          intensity={90}
-          tint="light"
-          className="px-5 py-4 rounded-t-[20px] border-t border-border/50 bg-white/80"
+      {/* Bottom Checkout Bar */}
+      <View className="absolute bottom-0 left-0 right-0 p-5 pb-8">
+        <View
+          className="rounded-[20px] overflow-hidden border border-black/5 bg-black"
+          style={{
+            shadowColor: "#d97706",
+            shadowOffset: { width: 0, height: 12 },
+            shadowOpacity: 0.28,
+            shadowRadius: 26,
+            elevation: 16,
+          }}
         >
-          <View className="flex-row items-center justify-between mb-3">
-            <View className="flex-row items-center gap-1">
-              <Text className="text-[14px] font-bold text-foreground">Total</Text>
-              <Icon name="chevron-up" size={16} color={tokens.textMuted} />
-            </View>
-            <Text
-              className="text-[18px] font-extrabold text-foreground tracking-[-0.02em]"
-              style={{ fontVariant: ["tabular-nums"] }}
-            >
-              GHS {total.toFixed(2)}
+          <LinearGradient
+            colors={[tokens.moneyGrad1, tokens.moneyGrad2]}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 1, y: 1 }}
+            style={{ position: "absolute", top: 0, left: 0, right: 0, bottom: 0 }}
+          />
+          <View className="p-6">
+            <Text className="text-[12px] font-bold text-white/80 uppercase tracking-wider mb-2">
+              Cart Total
             </Text>
-          </View>
+            <View className="flex-row items-baseline mb-4 mt-[2px]">
+              <Text
+                className="font-heading text-[44px] leading-[48px] font-black tracking-[-1px] text-white"
+                style={{ fontVariant: ["tabular-nums"] }}
+              >
+                {total.toFixed(2)}
+              </Text>
+              <Text className="text-[16px] font-bold text-white/80 ml-[8px]">GH₵</Text>
+            </View>
 
-          <Pressable
-            style={({ pressed }) => [{ opacity: pressed ? 0.8 : 1 }]}
-            onPress={handleCheckout}
-            className="w-full h-[52px] rounded-full overflow-hidden active:scale-[0.98] relative items-center justify-center"
-          >
-            <LinearGradient
-              colors={[tokens.moneyGrad1, tokens.moneyGrad2]}
-              start={{ x: 0, y: 0 }}
-              end={{ x: 1, y: 0 }}
-              className="absolute inset-0 opacity-90"
-            />
-            <Text className="text-[16px] font-bold text-white font-heading relative">Checkout</Text>
-          </Pressable>
-        </BlurView>
+            <Pressable
+              style={({ pressed }) => [{ opacity: pressed ? 0.9 : 1 }]}
+              onPress={handleCheckout}
+              className="bg-card w-full h-[52px] rounded-full items-center justify-center flex-row gap-2"
+            >
+              <Text className="text-[15px] font-bold text-primary">Checkout</Text>
+              <Icon name="arrow-right" size={16} color={tokens.primary} />
+            </Pressable>
+          </View>
+        </View>
       </View>
     </View>
   );

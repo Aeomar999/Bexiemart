@@ -1,6 +1,7 @@
 import { tokens } from "@/theme/tokens";
 import { View, Text, ScrollView, Pressable, RefreshControl, TextInput } from "react-native";
-import { FlashList } from "@shopify/flash-list";
+import { FlashList as _FlashList } from "@shopify/flash-list";
+const FlashList = _FlashList as any;
 import { useState, useCallback, useEffect } from "react";
 import { Image } from "expo-image";
 import { useRouter } from "expo-router";
@@ -176,32 +177,24 @@ export default function HomeScreen() {
     <View className="flex-1 bg-card">
       {/* ===== HEADER ===== */}
       <View className="px-5 bg-card pb-3" style={{ paddingTop: (insets.top || 12) + 12 }}>
-        <View className="flex-row justify-between items-center mb-5">
-          {/* NOTE: renders a hamburger but navigates to the profile tab â€” icon
-              and destination should be reconciled (product call). Label reflects
-              what actually happens so screen readers aren't misled. */}
-          <Pressable
-            accessibilityRole="button"
-            accessibilityLabel="Open profile"
-            hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
-            className="w-10 h-10 justify-center active:opacity-70"
-            onPress={() => router.push("/(customer)/profile")}
-          >
-            <Icon name="user" size={24} color={tokens.textPrimary} />
-          </Pressable>
-
-          <Text className="text-display-sm font-heading font-black text-foreground tracking-tight">
-            Bexiemart
-          </Text>
+        <View className="flex-row justify-between items-end mb-5">
+          <View>
+            <Text className="text-[11px] font-bold tracking-[0.1em] uppercase text-muted-foreground mb-[2px]">
+              KNUST Campus
+            </Text>
+            <Text className="text-display-md font-heading font-black text-foreground">
+              Bexiemart
+            </Text>
+          </View>
 
           <Pressable
             accessibilityRole="button"
             accessibilityLabel="Notifications"
-            hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
-            className="w-10 h-10 items-end justify-center active:opacity-70"
+            className="w-[36px] h-[36px] rounded-full bg-background border border-border items-center justify-center"
+            style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
             onPress={() => router.push("/(customer)/notifications")}
           >
-            <Icon name="bell" size={22} color={tokens.textPrimary} />
+            <Icon name="bell" size={17} color={tokens.textSecondary} />
           </Pressable>
         </View>
 
@@ -220,29 +213,8 @@ export default function HomeScreen() {
           />
         }
       >
-        {/* ===== HERO BANNER ===== */}
-        <PromoBanner placement="HOME" containerClassName="mt-4" />
-
-        {/* ===== ACTIVE RIDE BANNER ===== */}
-        {activeRide && (
-          <StatusBanner
-            className="px-5 mt-6"
-            icon="map"
-            title="Delivery in progress"
-            subtitle={
-              activeRide.status === "searching"
-                ? "Locating your rider..."
-                : activeRide.status === "on_the_way"
-                  ? "Your rider is arriving"
-                  : "Rider is outside"
-            }
-            actionLabel="Track"
-            onPress={() => router.push("/(customer)/track-order")}
-          />
-        )}
-
-        {/* ===== EXPLORE GRID ===== */}
-        <View className="px-5 mt-6">
+        {/* ===== EXPLORE GRID (Quick Actions) ===== */}
+        <View className="px-5 mt-6 mb-2">
           <View className="flex-row flex-wrap justify-between gap-y-3">
             {EXPLORE_GRID.map((item) => (
               <Pressable
@@ -265,10 +237,31 @@ export default function HomeScreen() {
           </View>
         </View>
 
+        {/* ===== HERO BANNER ===== */}
+        <PromoBanner placement="HOME" containerClassName="mt-4" />
+
+        {/* ===== ACTIVE RIDE BANNER ===== */}
+        {activeRide && (
+          <StatusBanner
+            className="px-5 mt-6"
+            icon="map"
+            title="Delivery in progress"
+            subtitle={
+              activeRide.status === "searching"
+                ? "Locating your rider..."
+                : activeRide.status === "on_the_way"
+                  ? "Your rider is arriving"
+                  : "Rider is outside"
+            }
+            actionLabel="Track"
+            onPress={() => router.push("/(customer)/track-order")}
+          />
+        )}
+
         {/* ===== CATEGORIES ===== */}
         <View className="px-5 mt-10">
-          <View className="flex-row justify-between items-center mb-4">
-            <Text className="text-heading-md font-heading font-bold text-foreground">
+          <View className="flex-row justify-between items-center mb-6">
+            <Text className="text-[12px] font-bold tracking-[0.1em] uppercase text-muted-foreground">
               Categories
             </Text>
             <Pressable
@@ -335,7 +328,7 @@ export default function HomeScreen() {
 
         {/* ===== DISCOVER SECTION (MERGED) ===== */}
         <View className="pl-5 mt-10">
-          <View className="flex-row justify-between items-center mb-4 pr-5">
+          <View className="flex-row justify-between items-center mb-6 pr-5">
             <View className="flex-row items-center bg-[#F1F5F9] rounded-[12px] p-[3px]">
               <Pressable
                 onPress={() => setActiveTab("top")}
@@ -375,6 +368,7 @@ export default function HomeScreen() {
               <Text className="text-[12px] font-bold text-muted-foreground">See All</Text>
             </Pressable>
           </View>
+          {/* @ts-ignore */}
           <FlashList
             data={activeTab === "top" ? topProducts : activeTab === "new" ? newItems : mostPopular}
             horizontal
@@ -383,8 +377,8 @@ export default function HomeScreen() {
             snapToInterval={122} // 110px width + 12px gap
             snapToAlignment="start"
             contentContainerStyle={{ paddingHorizontal: 20, gap: 12 }}
-            keyExtractor={(item) => item.id}
-            renderItem={({ item }) => (
+            keyExtractor={(item: any) => item.id}
+            renderItem={({ item }: { item: any }) => (
               <Pressable
                 className="w-[110px] active:opacity-70"
                 onPress={() => router.push(`/(customer)/product/${item.id}`)}
@@ -435,8 +429,8 @@ export default function HomeScreen() {
 
         {/* ===== JUST FOR YOU ===== */}
         <View className="px-5 mt-10">
-          <View className="flex-row items-center mb-4 gap-2">
-            <Text className="text-heading-md font-heading font-bold text-foreground">
+          <View className="flex-row items-center mb-6 gap-2">
+            <Text className="text-[12px] font-bold tracking-[0.1em] uppercase text-muted-foreground">
               Just For You
             </Text>
             <View className="bg-primary-subtle px-2 py-0.5 rounded-md border border-border flex-row items-center gap-1">
