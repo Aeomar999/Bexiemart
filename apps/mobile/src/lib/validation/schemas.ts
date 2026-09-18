@@ -6,19 +6,20 @@ export const loginSchema = z.object({
     .min(1, "Email is required")
     .email("Valid email required")
     .regex(/^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/, "Invalid email format"),
-  password: z
-    .string()
-    .min(8, "Min 8 characters")
-    .regex(/[A-Z]/, "Must contain uppercase letter")
-    .regex(/[a-z]/, "Must contain lowercase letter")
-    .regex(/[0-9]/, "Must contain number")
-    .regex(/[^A-Za-z0-9]/, "Must contain special character"),
+  password: z.string().min(1, "Password is required"),
 });
 
 export const registerSchema = loginSchema
   .extend({
     name: z.string().min(1, "Name is required"),
     phone: z.string().optional(),
+    password: z
+      .string()
+      .min(8, "Min 8 characters")
+      .regex(/[A-Z]/, "Must contain uppercase letter")
+      .regex(/[a-z]/, "Must contain lowercase letter")
+      .regex(/[0-9]/, "Must contain number")
+      .regex(/[^A-Za-z0-9]/, "Must contain special character"),
     confirmPassword: z.string().min(8, "Min 8 characters"),
   })
   .refine((data) => data.password === data.confirmPassword, {
