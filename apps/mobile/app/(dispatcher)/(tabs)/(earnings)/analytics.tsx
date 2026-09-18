@@ -31,16 +31,7 @@ export default function AnalyticsScreen() {
           <RowsSkeleton />
         ) : (
           <>
-            <View
-              className="bg-primary rounded-[20px] p-6 mb-2 border border-black/5"
-              style={{
-                shadowColor: "#2563eb",
-                shadowOffset: { width: 0, height: 12 },
-                shadowOpacity: 0.28,
-                shadowRadius: 26,
-                elevation: 16,
-              }}
-            >
+            <View className="bg-primary rounded-[20px] p-6 mb-2 border border-black/5" style={{}}>
               <Text className="text-white text-[11px] font-bold tracking-[0.1em] uppercase mb-[2px]">
                 30-Day Revenue
               </Text>

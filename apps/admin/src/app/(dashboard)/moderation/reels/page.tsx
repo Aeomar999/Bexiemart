@@ -57,7 +57,7 @@ export default function ReelsModerationPage() {
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                 {reels.map((reel: any) => (
-                  <div key={reel.id} className="group relative overflow-hidden rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] transition-all hover:shadow-md">
+                  <div key={reel.id} className="group relative overflow-hidden rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] transition-all ">
                     {/* Video Thumbnail Placeholder */}
                     <div className="aspect-[9/16] bg-gray-900 relative flex items-center justify-center">
                       <HugeiconsIcon icon={PlayCircleIcon} className="h-12 w-12 text-white/50" />

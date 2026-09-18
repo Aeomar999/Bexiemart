@@ -508,7 +508,7 @@ export default function DispatcherMap() {
         className="absolute w-full flex-row justify-center z-10 pointer-events-box-none"
         style={{ top: Math.max(insets.top, 12) + 12 }}
       >
-        <View className="bg-card rounded-full px-5 py-2 flex-row items-center gap-3 border border-border shadow-elevation-2">
+        <View className="bg-card rounded-full px-5 py-2 flex-row items-center gap-3 border border-border ">
           <View
             className={`w-2.5 h-2.5 rounded-full ${isOnline ? "bg-emerald-500" : "bg-slate-400"}`}
           />

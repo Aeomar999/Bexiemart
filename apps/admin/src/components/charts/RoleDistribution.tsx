@@ -96,7 +96,7 @@ export function RoleDistribution() {
         {chartData.map((entry: any, index: number) => (
           <div key={`legend-${index}`} className="flex items-center space-x-3">
             <div 
-              className="h-3.5 w-3.5 rounded-full shrink-0 shadow-sm" 
+              className="h-3.5 w-3.5 rounded-full shrink-0 " 
               style={{ backgroundColor: ROLE_COLORS[entry.originalRole] || ROLE_COLORS.DEFAULT }}
             />
             <div className="flex flex-col">
@@ -117,7 +117,7 @@ const CustomTooltip = ({ active, payload }: any) => {
   if (active && payload && payload.length) {
     const data = payload[0].payload;
     return (
-      <div className="rounded-xl border border-(--color-border) bg-(--color-card) p-3 shadow-xl flex items-center space-x-3 min-w-[140px]">
+      <div className="rounded-xl border border-(--color-border) bg-(--color-card) p-3  flex items-center space-x-3 min-w-[140px]">
         <div 
           className="h-3 w-3 rounded-full shrink-0" 
           style={{ backgroundColor: ROLE_COLORS[data.originalRole] || ROLE_COLORS.DEFAULT }}

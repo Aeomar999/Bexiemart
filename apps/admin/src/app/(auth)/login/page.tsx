@@ -68,7 +68,7 @@ export default function LoginPage() {
   if (requiresTwoFactor) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-[var(--color-bg)] py-12 px-4 sm:px-6 lg:px-8">
-        <div className="w-full max-w-md space-y-8 rounded-xl bg-[var(--color-card)] p-8 shadow-md border border-[var(--color-border)]">
+        <div className="w-full max-w-md space-y-8 rounded-xl bg-[var(--color-card)] p-8  border border-[var(--color-border)]">
           <div>
             <h2 className="mt-6 text-center text-3xl font-bold tracking-tight text-[var(--color-text)]">
               Two-Factor Authentication
@@ -114,7 +114,7 @@ export default function LoginPage() {
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-[var(--color-bg)] py-12 px-4 sm:px-6 lg:px-8">
-      <div className="w-full max-w-md space-y-8 rounded-xl bg-[var(--color-card)] p-8 shadow-md border border-[var(--color-border)]">
+      <div className="w-full max-w-md space-y-8 rounded-xl bg-[var(--color-card)] p-8  border border-[var(--color-border)]">
         <div>
           <h2 className="mt-6 text-center text-3xl font-bold tracking-tight text-[var(--color-text)]">
             BexieMart Admin
@@ -124,7 +124,7 @@ export default function LoginPage() {
           </p>
         </div>
         <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
-          <div className="space-y-4 rounded-md shadow-sm">
+          <div className="space-y-4 rounded-md ">
             <div>
               <label htmlFor="email-address" className="sr-only">
                 Email address

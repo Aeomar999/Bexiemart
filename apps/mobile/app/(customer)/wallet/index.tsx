@@ -197,11 +197,6 @@ export default function WalletScreen() {
                   overflow: "hidden",
                   borderTopWidth: 1.5,
                   borderColor: "rgba(255,255,255,0.3)",
-                  shadowColor: "#2d1b73",
-                  shadowOffset: { width: 0, height: -6 },
-                  shadowOpacity: 0.55,
-                  shadowRadius: 20,
-                  elevation: 10,
                   justifyContent: "space-between",
                 }}
               >
@@ -303,16 +298,7 @@ export default function WalletScreen() {
             onPress={() => router.push("/(customer)/wallet/rewards")}
             className="mb-8"
           >
-            <View
-              className="rounded-2xl overflow-hidden shadow-lg"
-              style={{
-                shadowColor: "#d97706",
-                shadowOffset: { width: 0, height: 12 },
-                shadowOpacity: 0.28,
-                shadowRadius: 26,
-                elevation: 8,
-              }}
-            >
+            <View className="rounded-2xl overflow-hidden " style={{}}>
               <LinearGradient
                 colors={["#f59e0b", "#d97706"]}
                 start={{ x: 0, y: 0 }}

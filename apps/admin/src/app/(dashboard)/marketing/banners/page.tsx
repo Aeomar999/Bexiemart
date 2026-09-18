@@ -253,7 +253,7 @@ export default function BannersPage() {
 
       {isModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-          <div className="max-h-[90vh] w-full max-w-lg overflow-y-auto rounded-lg border border-[var(--color-border)] bg-[var(--color-card)] p-6 text-[var(--color-text)] shadow-xl">
+          <div className="max-h-[90vh] w-full max-w-lg overflow-y-auto rounded-lg border border-[var(--color-border)] bg-[var(--color-card)] p-6 text-[var(--color-text)] ">
             <h2 className="mb-4 text-xl font-bold">{editingId ? "Edit Banner" : "Create Banner"}</h2>
             <form onSubmit={handleSubmit} className="space-y-4">
               {/* Image upload + preview */}
