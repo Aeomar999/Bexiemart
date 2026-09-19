@@ -74,25 +74,57 @@ export default function DispatcherTasks() {
     return (
       <View className="pb-20">
         {rides.map((ride: any) => (
-          <View
-            key={ride.id}
-            className="w-full h-[70px] px-5 bg-card border-b border-border flex-row items-center justify-between"
-          >
-            <View className="flex-1 justify-center pr-2">
-              <Text className="text-[14px] font-bold text-foreground mb-0.5" numberOfLines={1}>
-                {ride.customer?.name || "Ride Request"}
-              </Text>
-              <Text className="text-[11px] text-muted-foreground font-body" numberOfLines={1}>
-                {ride.pickupAddress || "Pickup"} • {ride.dropoffAddress || "Dropoff"}
-              </Text>
-            </View>
-            <View className="items-end justify-center">
-              <Text
-                className="text-[15px] font-black text-primary font-heading tracking-tight mb-1"
-                style={{ fontVariant: ["tabular-nums"] }}
-              >
+          <View key={ride.id} className="mx-5 mb-4 p-4 rounded-2xl bg-card border border-border">
+            {/* Top Row: Type and Price */}
+            <View className="flex-row items-start justify-between mb-4">
+              <View>
+                <Text className="text-muted-foreground text-[11px] font-bold uppercase tracking-[0.1em] mb-[2px]">
+                  {ride.type === "FOOD"
+                    ? "Food delivery"
+                    : ride.type === "ORDER"
+                      ? "Order delivery"
+                      : "Ride request"}
+                </Text>
+                <Text className="text-muted-foreground text-[12px] font-body font-bold mt-1">
+                  2.4 km · 12 min
+                </Text>
+              </View>
+              <Text className="font-black text-foreground text-[20px] font-heading">
                 GH₵ {Number(ride.driverPayout).toFixed(2)}
               </Text>
+            </View>
+
+            {/* Middle: Addresses */}
+            <View className="gap-3 mb-4">
+              <View className="flex-row items-center gap-3">
+                <View className="w-2 h-2 rounded-full bg-error" />
+                <Text
+                  className="text-foreground text-[14px] font-semibold font-body flex-1"
+                  numberOfLines={1}
+                >
+                  {ride.pickupAddress}
+                </Text>
+              </View>
+              <View className="flex-row items-center gap-3">
+                <View className="w-2 h-2 rounded-full bg-emerald-500" />
+                <Text
+                  className="text-foreground text-[14px] font-semibold font-body flex-1"
+                  numberOfLines={1}
+                >
+                  {ride.dropoffAddress}
+                </Text>
+              </View>
+            </View>
+
+            {/* Bottom Row: Customer Meta and Accept */}
+            <View className="flex-row items-center justify-between pt-3 border-t border-border">
+              <View className="flex-row items-center gap-1">
+                <Text className="text-foreground font-semibold text-[13px] font-body">
+                  {ride.customer?.name || "Customer"}
+                </Text>
+                <Text className="text-muted-foreground text-[13px] font-body"> · 4.9 </Text>
+                <Icon name="star" size={10} color={tokens.warning} />
+              </View>
               <Pressable
                 disabled={acceptTask.isPending}
                 onPress={() => {
@@ -117,9 +149,11 @@ export default function DispatcherTasks() {
                     }
                   );
                 }}
-                className="px-3 py-1 bg-primary rounded-full"
+                className="px-4 py-2 bg-primary rounded-full"
               >
-                <Text className="text-[10px] font-bold text-white uppercase">Accept</Text>
+                <Text className="text-[11px] font-bold text-white uppercase tracking-wider">
+                  Accept
+                </Text>
               </Pressable>
             </View>
           </View>
@@ -156,28 +190,66 @@ export default function DispatcherTasks() {
         {rides.map((ride: any) => (
           <View
             key={ride.id}
-            className="w-full h-[70px] px-5 bg-card border-b border-border flex-row items-center justify-between border-l-4 border-l-primary"
+            className="mx-5 mb-4 p-4 rounded-2xl bg-card border border-border border-l-4 border-l-primary"
           >
-            <View className="flex-1 justify-center pr-2">
-              <Text className="text-[14px] font-bold text-foreground mb-0.5" numberOfLines={1}>
-                Active Ride
-              </Text>
-              <Text className="text-[11px] text-muted-foreground font-body" numberOfLines={1}>
-                {ride.pickupAddress || "Pickup"} • {ride.dropoffAddress || "Dropoff"}
-              </Text>
-            </View>
-            <View className="items-end justify-center">
-              <Text
-                className="text-[15px] font-black text-foreground font-heading tracking-tight mb-1"
-                style={{ fontVariant: ["tabular-nums"] }}
-              >
+            {/* Top Row: Type and Price */}
+            <View className="flex-row items-start justify-between mb-4">
+              <View>
+                <Text className="text-primary text-[11px] font-bold uppercase tracking-[0.1em] mb-[2px]">
+                  {ride.type === "FOOD"
+                    ? "Active food delivery"
+                    : ride.type === "ORDER"
+                      ? "Active order delivery"
+                      : "Active ride request"}
+                </Text>
+                <Text className="text-muted-foreground text-[12px] font-body font-bold mt-1">
+                  2.4 km · 12 min
+                </Text>
+              </View>
+              <Text className="font-black text-foreground text-[20px] font-heading">
                 GH₵ {Number(ride.driverPayout).toFixed(2)}
               </Text>
+            </View>
+
+            {/* Middle: Addresses */}
+            <View className="gap-3 mb-4">
+              <View className="flex-row items-center gap-3">
+                <View className="w-2 h-2 rounded-full bg-error" />
+                <Text
+                  className="text-foreground text-[14px] font-semibold font-body flex-1"
+                  numberOfLines={1}
+                >
+                  {ride.pickupAddress}
+                </Text>
+              </View>
+              <View className="flex-row items-center gap-3">
+                <View className="w-2 h-2 rounded-full bg-emerald-500" />
+                <Text
+                  className="text-foreground text-[14px] font-semibold font-body flex-1"
+                  numberOfLines={1}
+                >
+                  {ride.dropoffAddress}
+                </Text>
+              </View>
+            </View>
+
+            {/* Bottom Row: Customer Meta and Map */}
+            <View className="flex-row items-center justify-between pt-3 border-t border-border">
+              <View className="flex-row items-center gap-1">
+                <Text className="text-foreground font-semibold text-[13px] font-body">
+                  {ride.customer?.name || "Customer"}
+                </Text>
+                <Text className="text-muted-foreground text-[13px] font-body"> · 4.9 </Text>
+                <Icon name="star" size={10} color={tokens.warning} />
+              </View>
               <Pressable
-                className="px-3 py-1 bg-slate-100 rounded-full"
                 onPress={() => router.replace("/(dispatcher)/(tabs)/(home)")}
+                className="px-4 py-2 bg-slate-100 rounded-full flex-row items-center gap-1"
               >
-                <Text className="text-[10px] font-bold text-foreground uppercase">Map</Text>
+                <Icon name="map" size={12} color={tokens.foreground} />
+                <Text className="text-[11px] font-bold text-foreground uppercase tracking-wider">
+                  Map
+                </Text>
               </Pressable>
             </View>
           </View>
@@ -281,6 +353,14 @@ export default function DispatcherTasks() {
         <View className="flex-row bg-slate-100 p-1 rounded-xl">
           {tabs.map((tab) => {
             const isActive = activeTab === tab.id;
+            let displayLabel = tab.label;
+            if (tab.id === "available" && availableData?.jobs?.length) {
+              displayLabel = `Available · ${availableData.jobs.length}`;
+            } else if (tab.id === "active" && activeData?.jobs?.length) {
+              displayLabel = `Active · ${activeData.jobs.length}`;
+            } else if (tab.id === "completed") {
+              displayLabel = "Done";
+            }
             return (
               <Pressable
                 key={tab.id}
