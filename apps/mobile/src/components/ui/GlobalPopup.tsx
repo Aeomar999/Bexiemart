@@ -148,8 +148,6 @@ export function GlobalPopup() {
           alignItems: "center",
           opacity: opacity,
           transform: [{ translateY }],
-          borderLeftWidth: 4,
-          borderLeftColor: styleProps.color,
           borderWidth: 1,
           borderColor: "#E2E8F0",
         }}

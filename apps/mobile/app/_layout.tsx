@@ -38,7 +38,6 @@ SplashScreen.preventAutoHideAsync();
 import { PaystackProvider } from "react-native-paystack-webview";
 import { OfflineBanner } from "../src/components/ui/OfflineBanner";
 import { useOTAUpdate } from "../src/hooks/useOTAUpdate";
-import { PaymentTestModeBanner } from "../src/components/ui/PaymentTestModeBanner";
 import {
   Raleway_400Regular,
   Raleway_600SemiBold,
@@ -196,7 +195,6 @@ function RootLayout() {
       <PostHogProvider client={posthog ?? undefined} autocapture>
         <ThemeController />
         <OfflineBanner />
-        <PaymentTestModeBanner />
         <QueryClientProvider client={queryClient}>
           {PAYSTACK_PUBLIC_KEY ? (
             <PaystackProvider publicKey={PAYSTACK_PUBLIC_KEY}>
