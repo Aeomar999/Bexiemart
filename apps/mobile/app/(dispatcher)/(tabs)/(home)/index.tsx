@@ -260,74 +260,72 @@ export default function DispatcherMap() {
         >
           <View className="w-12 h-1.5 bg-slate-200 rounded-full self-center my-3" />
           <View className="px-5 pb-5 pt-2">
-            <Text className="text-foreground font-bold text-heading-md mb-4 font-heading">
-              New Task Available
-            </Text>
-
-            <View className="bg-background rounded-2xl p-4 border border-border">
-              <View className="flex-row items-center justify-between mb-3">
-                <View className="flex-row items-center gap-2">
-                  <View className="bg-primary-subtle p-2 rounded-full">
-                    <Icon name="package" size={16} color={tokens.primary} />
-                  </View>
-                  <Text className="font-bold text-foreground font-body">
+            <View className="mb-4">
+              <View className="flex-row items-end justify-between mb-1">
+                <View>
+                  <Text className="text-muted-foreground text-[11px] font-bold uppercase tracking-[0.1em] mb-[2px]">
                     {displayRide.type === "FOOD"
-                      ? "Food Delivery"
+                      ? "New food delivery"
                       : displayRide.type === "ORDER"
-                        ? "Order Delivery"
-                        : "Ride Request"}
+                        ? "New order delivery"
+                        : "New ride request"}
+                  </Text>
+                  <Text className="font-black text-foreground text-[28px] font-heading">
+                    GH₵ {Number(displayRide.driverPayout).toFixed(2)}
                   </Text>
                 </View>
-                <Text className="font-black text-primary text-heading-md font-heading">
-                  GH₵ {Number(displayRide.driverPayout).toFixed(2)}
+                <View className="items-end pb-1.5">
+                  <Text className="text-muted-foreground text-[14px] font-body font-bold">
+                    2.4 km · 12 min
+                  </Text>
+                </View>
+              </View>
+            </View>
+
+            <View className="gap-4 mb-6 mt-2">
+              <View>
+                <Text className="text-muted-foreground text-body-sm mb-1">Pick up</Text>
+                <Text
+                  className="text-foreground text-[15px] font-semibold font-body"
+                  numberOfLines={1}
+                >
+                  {displayRide.pickupAddress}
                 </Text>
               </View>
-
-              <View className="gap-2 mb-6">
-                <View className="flex-row items-center gap-3">
-                  <View className="w-2 h-2 rounded-full bg-error" />
-                  <Text
-                    className="text-muted-foreground text-body-md font-body flex-1"
-                    numberOfLines={1}
-                  >
-                    {displayRide.pickupAddress}
-                  </Text>
-                </View>
-                <View className="flex-row items-center gap-3">
-                  <View className="w-2 h-2 rounded-full bg-emerald-500" />
-                  <Text
-                    className="text-muted-foreground text-body-md font-body flex-1"
-                    numberOfLines={1}
-                  >
-                    {displayRide.dropoffAddress}
-                  </Text>
-                </View>
+              <View>
+                <Text className="text-muted-foreground text-body-sm mb-1">Drop off</Text>
+                <Text
+                  className="text-foreground text-[15px] font-semibold font-body"
+                  numberOfLines={1}
+                >
+                  {displayRide.dropoffAddress}
+                </Text>
               </View>
-
-              <SwipeButton
-                text={acceptTask.isPending ? "Accepting..." : "Slide to Accept"}
-                buttonColor={tokens.primary}
-                onComplete={() => {
-                  acceptTask.mutate(
-                    { taskId: displayRide.id },
-                    {
-                      onSuccess: () =>
-                        Toast.show({
-                          type: "success",
-                          text1: "Task Accepted",
-                          text2: "Navigate to the pickup location.",
-                        }),
-                      onError: () =>
-                        Toast.show({
-                          type: "error",
-                          text1: "Failed",
-                          text2: "Someone else might have taken this task.",
-                        }),
-                    }
-                  );
-                }}
-              />
             </View>
+
+            <SwipeButton
+              text={acceptTask.isPending ? "Accepting..." : "Slide to accept"}
+              buttonColor={tokens.primary}
+              onComplete={() => {
+                acceptTask.mutate(
+                  { taskId: displayRide.id },
+                  {
+                    onSuccess: () =>
+                      Toast.show({
+                        type: "success",
+                        text1: "Task Accepted",
+                        text2: "Navigate to the pickup location.",
+                      }),
+                    onError: () =>
+                      Toast.show({
+                        type: "error",
+                        text1: "Failed",
+                        text2: "Someone else might have taken this task.",
+                      }),
+                  }
+                );
+              }}
+            />
           </View>
         </View>
       );
@@ -394,34 +392,26 @@ export default function DispatcherMap() {
             </View>
 
             {/* Location Info */}
-            <View className="bg-background rounded-2xl p-4 border border-border mb-6">
+            <View className="gap-4 mb-6 mt-2">
               {taskStatus === "accepted" ? (
-                <View className="flex-row items-center gap-3">
-                  <View className="bg-rose-100 p-2 rounded-full">
-                    <Icon name="map-pin" size={16} color={tokens.error} />
-                  </View>
-                  <View>
-                    <Text className="text-muted-foreground text-body-sm font-body">
-                      Pick up from
-                    </Text>
-                    <Text className="font-bold text-foreground font-body">
-                      {displayRide.pickupAddress}
-                    </Text>
-                  </View>
+                <View>
+                  <Text className="text-muted-foreground text-body-sm mb-1">Pick up from</Text>
+                  <Text
+                    className="text-foreground text-[15px] font-semibold font-body"
+                    numberOfLines={1}
+                  >
+                    {displayRide.pickupAddress}
+                  </Text>
                 </View>
               ) : (
-                <View className="flex-row items-center gap-3">
-                  <View className="bg-emerald-100 p-2 rounded-full">
-                    <Icon name="navigation" size={16} color={tokens.success} />
-                  </View>
-                  <View>
-                    <Text className="text-muted-foreground text-body-sm font-body">
-                      Drop off at
-                    </Text>
-                    <Text className="font-bold text-foreground font-body">
-                      {displayRide.dropoffAddress}
-                    </Text>
-                  </View>
+                <View>
+                  <Text className="text-muted-foreground text-body-sm mb-1">Drop off at</Text>
+                  <Text
+                    className="text-foreground text-[15px] font-semibold font-body"
+                    numberOfLines={1}
+                  >
+                    {displayRide.dropoffAddress}
+                  </Text>
                 </View>
               )}
             </View>
@@ -429,7 +419,7 @@ export default function DispatcherMap() {
             {/* Action Buttons */}
             {taskStatus === "accepted" && (
               <SwipeButton
-                text={updateStatus.isPending ? "Updating..." : "Slide to Arrive"}
+                text={updateStatus.isPending ? "Updating..." : "Slide to arrive"}
                 buttonColor={tokens.warning}
                 iconName="map-pin"
                 onComplete={() => {
@@ -440,7 +430,7 @@ export default function DispatcherMap() {
 
             {taskStatus === "arrived" && (
               <SwipeButton
-                text={updateStatus.isPending ? "Updating..." : "Confirm Pickup"}
+                text={updateStatus.isPending ? "Updating..." : "Confirm pickup"}
                 buttonColor={tokens.success}
                 iconName="package"
                 onComplete={() => {
@@ -454,7 +444,7 @@ export default function DispatcherMap() {
 
             {taskStatus === "delivering" && (
               <SwipeButton
-                text={updateStatus.isPending ? "Updating..." : "Slide to Deliver"}
+                text={updateStatus.isPending ? "Updating..." : "Slide to deliver"}
                 buttonColor={tokens.primary}
                 iconName="check-circle"
                 onComplete={() => {
@@ -505,16 +495,25 @@ export default function DispatcherMap() {
 
       {/* Floating Header */}
       <View
-        className="absolute w-full flex-row justify-center z-10 pointer-events-box-none"
+        className="absolute w-full flex-row justify-center z-10 pointer-events-box-none px-5"
         style={{ top: Math.max(insets.top, 12) + 12 }}
       >
-        <View className="bg-card rounded-full px-5 py-2 flex-row items-center gap-3 border border-border ">
-          <View
-            className={`w-2.5 h-2.5 rounded-full ${isOnline ? "bg-emerald-500" : "bg-slate-400"}`}
-          />
-          <Text className="text-foreground font-bold text-[14px] font-heading mr-2">
-            {isOnline ? "Online" : "Offline"}
-          </Text>
+        <View className="bg-card rounded-2xl px-4 h-[52px] w-full flex-row items-center justify-between border border-border shadow-sm pointer-events-auto">
+          <View className="justify-center">
+            <View className="flex-row items-center gap-2">
+              <View
+                className={`w-2 h-2 rounded-full ${isOnline ? "bg-emerald-500" : "bg-slate-400"}`}
+              />
+              <Text className="text-foreground font-bold text-[14px] font-heading">
+                {isOnline ? "Online" : "Offline"}
+              </Text>
+            </View>
+            {isOnline && (
+              <Text className="text-muted-foreground text-[11px] font-bold mt-0.5 ml-4">
+                GH₵ 84.00 today · 6 trips
+              </Text>
+            )}
+          </View>
           <Switch
             value={isOnline}
             onValueChange={setIsOnline}
@@ -543,8 +542,8 @@ export default function DispatcherMap() {
             );
           }
         }}
-        className="absolute right-5 bg-card p-3 rounded-full border border-border"
-        style={{ top: Math.max(insets.top, 12) + 90 }}
+        className="absolute right-5 bg-card p-3 rounded-full border border-border shadow-sm"
+        style={{ bottom: Math.max(insets.bottom, 20) + 300 }}
       >
         <Icon name="navigation" size={20} color={tokens.primary} />
       </Pressable>

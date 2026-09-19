@@ -49,7 +49,11 @@ export default function DispatcherProfile() {
         </Pressable>
       </View>
 
-      <ScrollView className="flex-1 px-5 pt-6 pb-10" showsVerticalScrollIndicator={false}>
+      <ScrollView
+        className="flex-1 px-5"
+        contentContainerClassName="pt-6 pb-32"
+        showsVerticalScrollIndicator={false}
+      >
         {/* User Identity & Metrics Card */}
         <View className="bg-card rounded-[20px] border border-border mb-8 overflow-hidden">
           <View className="p-5 flex-row items-center">

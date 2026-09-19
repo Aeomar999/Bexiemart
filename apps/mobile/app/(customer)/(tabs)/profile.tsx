@@ -167,21 +167,26 @@ export default function ProfileScreen() {
               iconName="user"
             />
           </View>
-          <View className="flex-1">
-            <Text
-              className="text-display-sm font-heading font-bold text-foreground"
-              numberOfLines={1}
-            >
+          <View className="flex-1 pr-2">
+            <Text className="text-[20px] font-heading font-bold text-foreground" numberOfLines={1}>
               {isAuthenticated ? user?.name || "Bexiemart" : "Sign in or sign up"}
             </Text>
-            <Text className="text-body-sm font-body text-muted-foreground" numberOfLines={1}>
+            <Text className="text-[13px] font-body text-muted-foreground mt-0.5" numberOfLines={1}>
               {isAuthenticated
                 ? user?.email || "Tap to edit your profile"
                 : "Access your orders, wallet & rewards"}
             </Text>
+            {isAuthenticated && user?.phoneNumber && (
+              <Text
+                className="text-[13px] font-body text-muted-foreground mt-0.5"
+                numberOfLines={1}
+              >
+                {user.phoneNumber} {user.phoneNumberVerified ? "✓" : "(Unverified)"}
+              </Text>
+            )}
           </View>
           {isAuthenticated ? (
-            <View className="w-10 h-10 rounded-full bg-background items-center justify-center">
+            <View className="w-10 h-10 rounded-full bg-background items-center justify-center border border-border">
               <Icon name="edit-2" size={16} color={tokens.textSecondary} />
             </View>
           ) : (
@@ -191,29 +196,37 @@ export default function ProfileScreen() {
           )}
         </Pressable>
 
+        {/* Stat Cards (Wallet & Referrals) */}
+        {isAuthenticated && (
+          <View className="flex-row justify-between mb-8">
+            <Pressable
+              style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
+              className="w-[48%] h-[60px] bg-card rounded-xl border border-border flex-row items-center px-4 gap-3"
+              onPress={() => router.push("/(customer)/wallet")}
+            >
+              <View className="w-8 h-8 rounded-full bg-green-50 items-center justify-center">
+                <Icon name="banknote" size={16} color={tokens.success} />
+              </View>
+              <Text className="text-[14px] font-bold text-foreground font-heading">My Wallet</Text>
+            </Pressable>
+            <Pressable
+              style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
+              className="w-[48%] h-[60px] bg-card rounded-xl border border-border flex-row items-center px-4 gap-3"
+              onPress={() => router.push("/(customer)/referrals")}
+            >
+              <View className="w-8 h-8 rounded-full bg-blue-50 items-center justify-center">
+                <Icon name="gift" size={16} color={tokens.primary} />
+              </View>
+              <Text className="text-[14px] font-bold text-foreground font-heading">
+                Refer & Earn
+              </Text>
+            </Pressable>
+          </View>
+        )}
+
         {/* Sections */}
         {PROFILE_SECTIONS.map((section, idx) => {
           let items = section.items;
-          // Inject phone number into the Account section dynamically
-          if (section.title === "Account") {
-            items = [
-              {
-                id: "phone",
-                icon: "smartphone",
-                label: "Phone Number",
-                value: isAuthenticated
-                  ? user?.phoneNumber
-                    ? user.phoneNumberVerified
-                      ? `${user.phoneNumber} ✓`
-                      : `${user.phoneNumber} (Unverified)`
-                    : "Not set"
-                  : undefined,
-                route: "/(customer)/edit-phone",
-                requiresAuth: true,
-              },
-              ...section.items,
-            ];
-          }
 
           return (
             <View key={idx} className="mb-8">
@@ -249,7 +262,7 @@ export default function ProfileScreen() {
                             : undefined
                       }
                       style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
-                      className={`flex-row items-center justify-between p-4 ${!isLast ? "border-b border-border" : ""}`}
+                      className={`flex-row items-center justify-between h-[52px] px-4 ${!isLast ? "border-b border-border" : ""}`}
                       onPress={() => {
                         if (item.comingSoon) {
                           Toast.show({
@@ -270,26 +283,24 @@ export default function ProfileScreen() {
                     >
                       <View className="flex-row items-center gap-3">
                         <View
-                          className="w-10 h-10 rounded-full items-center justify-center"
+                          className="w-8 h-8 rounded-xl items-center justify-center"
                           style={{ backgroundColor: `${tokens.primary}15` }}
                         >
-                          <Icon name={item.icon} size={18} color={tokens.primary} />
+                          <Icon name={item.icon} size={16} color={tokens.primary} />
                         </View>
-                        <Text className="text-body-lg font-body font-semibold text-foreground">
-                          {item.label}
-                        </Text>
+                        <Text className="text-[15px] font-bold text-foreground">{item.label}</Text>
                       </View>
 
                       <View className="flex-row items-center gap-2">
                         {item.value && (
-                          <Text className="text-body-sm font-body text-muted-foreground">
+                          <Text className="text-[12px] text-muted-foreground mr-1">
                             {item.value}
                           </Text>
                         )}
                         {guestLocked ? (
                           <Icon name="lock" size={16} color={tokens.textMuted} />
                         ) : (
-                          <Icon name="chevron-right" size={18} color={tokens.textMuted} />
+                          <Icon name="chevron-right" size={16} color={tokens.textDisabled} />
                         )}
                       </View>
                     </Pressable>

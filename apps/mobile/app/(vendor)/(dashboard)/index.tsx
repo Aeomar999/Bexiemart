@@ -154,7 +154,7 @@ export default function DashboardScreen() {
             <Text className="text-white text-[11px] font-bold tracking-[0.1em] uppercase mb-[2px]">
               Available Balance
             </Text>
-            <View className="flex-row items-baseline mt-[2px]">
+            <View className="flex-row items-baseline mb-4 mt-[2px]">
               <Text
                 className="font-heading text-[44px] leading-[48px] font-black tracking-[-1px] text-white"
                 style={{ fontVariant: ["tabular-nums"] }}
@@ -162,6 +162,24 @@ export default function DashboardScreen() {
                 {earningsData?.availableBalance?.toFixed(2) ?? "0.00"}
               </Text>
               <Text className="text-[16px] font-bold text-white/80 ml-[8px]">GH₵</Text>
+            </View>
+
+            <View className="flex-row items-center justify-between border-t border-white/10 pt-4">
+              <View>
+                <Text className="text-[11px] text-white/70 uppercase tracking-[0.08em] font-bold mb-[2px]">
+                  Pending Clearance
+                </Text>
+                <Text className="text-[18px] font-heading font-bold text-white tracking-tight">
+                  GH₵ {earningsData?.pendingClearance?.toFixed(2) ?? "0.00"}
+                </Text>
+              </View>
+              <Pressable
+                style={({ pressed }) => [{ opacity: pressed ? 0.9 : 1 }]}
+                onPress={() => router.push("/(vendor)/(earnings)")}
+                className="w-10 h-10 rounded-full items-center justify-center bg-white/10"
+              >
+                <Icon name="arrow-up-right" size={18} color="white" />
+              </Pressable>
             </View>
           </View>
         </View>
@@ -189,7 +207,7 @@ export default function DashboardScreen() {
               </View>
               <Text
                 style={{
-                  fontSize: 10,
+                  fontSize: 11,
                   fontWeight: "700",
                   color: tokens.textPrimary,
                   textAlign: "center",

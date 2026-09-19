@@ -1,0 +1,381 @@
+Customer role · 5 screens
+Before / after
+Left frame is the screen as it renders today, rebuilt from the source files. Right frame applies the
+layout system
+. Both frames are 390 × 844 with the real 114px tab bar, so what clips at the fold is what clips on device.
+Home
+app/(customer)/(tabs)/(home)/index.tsx
+Now
+9:41
+▪▪▪ ⌁
+Bexiemart
+Search products, stores...
+Free delivery
+Campus deals every Friday
+On orders over GHS 50
+Shop now
+Instant Delivery
+Featured Meals
+Featured Highlights
+Shopping
+Food
+Delivery
+Finance
+Reels
+Services
+Categories
+See All
+Order
+Food
+Shop
+Products
+Book
+Rider
+Track
+Order
+Wallet
+Home
+Proposed
+9:41
+▪▪▪ ⌁
+KNUST campus
+Bexiemart
+Search products, stores
+Explore
+Shop
+Food
+Rider
+Wallet
+Reels
+Services
+Track
+Deals
+Free delivery
+On orders over GHS 50
+Campus deals every Friday
+Shop now
+Trending
+Top
+New
+Popular
+Ankara tote
+Jean Collections
+GHS 85
+Jollof combo
+KFC Ghana
+GHS 42
+Desk lamp
+Shop by category
+Home
+The dock covers the tab bar
+At
+bottom: 24
+the 120px dock sits on top of the 114px tab bar, and the scroll view pads 160px to compensate. Its five actions duplicate four of the six Featured Highlights.
+One nav grid, in flow
+Dock + highlights + filter pills merge into eight 74px tiles. Nothing floats, nothing is duplicated, and the whole nav set is 176px instead of 335px.
+Nine sections become five
+Top Products, New Items and Most Popular were three rails in a row; they become one rail with segments. Flash Sale folds into the Deals tile.
+Section heads step back
+18px/700 headlines become 12px uppercase labels. Four sections now fit above the fold where three did, and product names are the loudest text in the body.
+Explore keeps the boxed tinted tiles — they are navigation, not quick actions. The promo banner takes the money gradient over the image and level-2 depth. Gaps: header→nav 20, everything else 24. Bottom padding 160→96.
+Shop & search
+app/(customer)/(tabs)/(shop)/index.tsx
+Now
+9:41
+▪▪▪ ⌁
+Search products...
+All
+Fashion
+Electronics
+Food
+148 products
+Most Popular
+-25%
+Jean Collections
+Ankara print tote bag with leather straps
+GHS 85.00
+GHS 112.00
+4.8
+Tech Hub KNUST
+Wireless earbuds, 30h battery
+GHS 240.00
+4.6
+Shop
+Proposed
+9:41
+▪▪▪ ⌁
+148 products
+Shop
+Search products
+All
+Fashion
+Electronics
+Food
+Results
+Most popular
+-25%
+4.8
+Ankara print tote bag
+Jean Collections
+GHS 85
+112
+4.6
+Wireless earbuds
+Tech Hub KNUST
+GHS 240
+4.9
+Study desk lamp
+Campus Living
+GHS 60
+Jollof combo
+Shop
+One row per screen
+The 0.8 aspect image plus five stacked text rows makes a 316px card, so barely one row clears the fold. Product name is 12px — smaller than the vendor label above it.
+Two rows, bigger names
+Square image, name up to 14/600, vendor demoted to 11px meta, rating moves onto the image as a pill. Card drops to 244px; two full rows are visible.
+Count moves to the header
+"148 products" becomes the header eyebrow, so the strip between filters and grid carries only the sort control — and sort is now legible at 12/700 instead of 11/400 muted.
+Card radius 24→16, grid gap 14→12, filter pills 44→36 tall with filled inactive state instead of outline.
+Cart & checkout
+app/(customer)/(tabs)/cart.tsx
+Now
+9:41
+▪▪▪ ⌁
+Cart (3)
+Jean Collections
+Visit Store
+Ankara print tote bag
+GHS 85.00
+1
+Beaded hoop earrings
+GHS 32.00
+Only 3 left
+2
+Enter coupon code
+Apply
+Subtotal (3 items)
+GHS 149.00
+Delivery fee
+Calculated at checkout
+Total
+GHS 149.00
+Proceed to Checkout
+GHS 149.00
+Cart
+Proposed
+9:41
+▪▪▪ ⌁
+3 items · 2 stores
+Cart
+Select all
+Jean Collections
+Visit store
+Ankara print tote bag
+GHS 85.00
+1
+Beaded hoop earrings
+3 left
+GHS 64.00
+2
+KFC Ghana
+Visit store
+Jollof combo meal
+GHS 42.00
+1
+Add a coupon code
+Total · 3 items
+191.00
+GHS
+Proceed to checkout
+Cart
+The bar takes 45% of the list
+Coupon field, three-line breakdown and a 56px button stack to 310px, and the scroll view pads 288px for it. Two cart items fit above it.
+130px bar, expandable
+Total on one line with a chevron that expands the breakdown on demand; coupon moves to the end of the list where it belongs in the flow. Four items now fit.
+Item rows lose 30px each
+Image 84→64, padding 16→12, radius 24→16, checkbox 22→18. "Only 3 left" becomes an inline tag beside the name instead of a third line under the price.
+Vendor headers become labels
+16px Raleway store names competed with item names. As 12px uppercase labels they group the list without joining the reading order.
+Per-item delete moves to swipe, which is why the 32px rose button is gone. Needs a confirm-on-swipe check before build.
+Profile
+app/(customer)/(tabs)/profile.tsx
+Now
+9:41
+▪▪▪ ⌁
+Profile
+A
+Ama Boateng
+ama.b@knust.edu.gh
+Rewards & Wallet
+My Wallet
+Refer & Earn
+Account
+Phone Number
++233 24 ··· ✓
+Order History
+My Collections
+Profile
+Proposed
+9:41
+▪▪▪ ⌁
+Signed in
+Profile
+A
+Ama Boateng
+ama.b@knust.edu.gh · +233 24 ··· ✓
+Wallet
+GHS 84.20
+BexieCoins
+1,240
+Account
+Order history
+12
+My collections
+Delivery addresses
+2
+Payment methods
+Drive for Bexiemart
+Settings
+Notifications
+Dark mode
+Coming soon
+Profile
+72px per row, 13 rows
+16px padding around a 40px circle makes every row 72px tall. The four groups total 1,160px of scroll for what is a list of labels.
+52px rows, same 13
+28px rounded-square icons at 12px padding. Saves 260px, and two groups clear the fold where one did.
+Wallet gets a number
+"My Wallet" and "Refer & Earn" were two chevron rows with no information. As two stat cards they show balance and coins — the reason you open the screen.
+Phone folds into identity
+The injected Phone Number row becomes part of the identity card's meta line, so Account starts with an action rather than a field.
+Avatar loses its 4px white ring (it read as a gap), group radius 24→16, row dividers move to #F1F5F9 so the group edge stays the strongest line.
+Order history & tracking
+app/(customer)/orders.tsx
+Now
+9:41
+▪▪▪ ⌁
+Order History
+All Orders
+Active Orders
+Past
+Order #BX-4471
+12 Sep 2026
+Shipped
+2x Jollof combo meal
+1x Bottled water
+Total Amount
+GHS 96.00
+Track
+Order #BX-4468
+9 Sep 2026
+Delivered
+1x Ankara print tote bag
+Total Amount
+GHS 85.00
+Reorder
+Proposed
+9:41
+▪▪▪ ⌁
+12 orders
+Orders
+All
+Active · 2
+Past
+Arriving in 12 min
+#BX-4471 · Kofi is 400m away
+Track
+September
+#BX-4471
+Shipped
+12 Sep · 2× Jollof combo, 1× Bottled water
+GHS 96.00
+Track
+#BX-4468
+Delivered
+9 Sep · 1× Ankara print tote bag
+GHS 85.00
+Reorder
+#BX-4452
+Delivered
+4 Sep · 1× Wireless earbuds
+GHS 240.00
+Reorder
+#BX-4430
+Cancelled
+1 Sep · 1× Study desk lamp
+Three surfaces per card
+White card, grey item box, pill button — nested at 20/16/10px padding. The 232px card shows two orders per screen, and "Total Amount" is labelled twice as loudly as the order number.
+One surface, 131px
+The grey item box becomes a single 12px meta line; the label "Total Amount" goes away because a large currency figure needs no caption. Four orders per screen.
+Active order gets the hero
+Tracking is the reason this screen gets opened, so the in-flight order is pulled out as the one hero card. Cancelled orders drop their action row entirely.
+Month labels replace "All / Active / Past Orders" repetition in the chips; counts move into the chips.
+shadow-lg
+removed per the flat rule.
+Wallet
+app/(customer)/wallet/index.tsx
+Sets the direction
+Now
+9:41
+▪▪▪ ⌁
+Wallet
+AMA BOATENG
+•••• •••• •••• 4821
+VISA
+Valid 08/28
+Total Balance
+84.20
+GHS
+Link Account
+Top Up
+Send
+Cards
+Request
+Gold Tier
+How to earn
+1,240
+BexieCoins Available
+Proposed
+9:41
+▪▪▪ ⌁
+MTN ···4821 linked
+Wallet
+AMA BOATENG
+•••• 4821
+VISA
+Total balance
+84.20
+GHS
+Link account
+Top up
+Send
+Cards
+Request
+Gold tier · BexieCoins
+1,240
+Redeem
+Recent activity
+View all
+MoMo top-up
+12 Sep 2026
++100.00
+Order #BX-4471
+12 Sep 2026
+−96.00
+From Kwesi M.
+10 Sep 2026
++40.00
+What the rest of the app copies
+The 44px balance with the currency on the baseline, the gradient plus hue-matched shadow, and the 52px saturated quick-action circles. All three now appear on the vendor and rider balances, the cart total bar, the order-tracking hero and the home promo banner.
+Recent activity never clears the fold
+Stack 260 + actions 80 + rewards 130 with 32px gaps between fills the whole 686px content area. The transaction list — the only part of the screen that changes day to day — starts 1px below it.
+Stack 260 → 196, balance unchanged
+Layer offsets tighten to 0 / 10 / 60 and the peeking card shows name, last four and brand only. The 44px figure keeps its size — it is the one number in the app that has earned it.
+Rewards becomes a row
+Tier, coins and the action stack to 130px. Side by side they fit in 76px and gain a real "Redeem" button instead of a "How to earn" pill that looks like a badge.
+Two things to check in build
+The masked number at
+white/80
+drops under 4.5:1 on the lighter hashed gradients — amber gold and slate especially; it goes to full white. And the layer
+top
+values currently branch on card count (0/14/82, 0/68, 42) — one offset scale should cover 0, 1 and 2+ by collapsing layers.

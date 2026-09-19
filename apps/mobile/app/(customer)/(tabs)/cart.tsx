@@ -342,38 +342,23 @@ export default function CartScreen() {
       </ScrollView>
 
       {/* Bottom Checkout Bar */}
-      <View className="absolute bottom-0 left-0 right-0 p-5 pb-8">
-        <View className="rounded-[20px] overflow-hidden border border-black/5 bg-black" style={{}}>
-          <LinearGradient
-            colors={[tokens.moneyGrad1, tokens.moneyGrad2]}
-            start={{ x: 0, y: 0 }}
-            end={{ x: 1, y: 1 }}
-            style={{ position: "absolute", top: 0, left: 0, right: 0, bottom: 0 }}
-          />
-          <View className="p-6">
-            <Text className="text-[12px] font-bold text-white/80 uppercase tracking-wider mb-2">
-              Cart Total
-            </Text>
-            <View className="flex-row items-baseline mb-4 mt-[2px]">
-              <Text
-                className="font-heading text-[44px] leading-[48px] font-black tracking-[-1px] text-white"
-                style={{ fontVariant: ["tabular-nums"] }}
-              >
-                {total.toFixed(2)}
-              </Text>
-              <Text className="text-[16px] font-bold text-white/80 ml-[8px]">GH₵</Text>
-            </View>
-
-            <Pressable
-              style={({ pressed }) => [{ opacity: pressed ? 0.9 : 1 }]}
-              onPress={handleCheckout}
-              className="bg-card w-full h-[52px] rounded-full items-center justify-center flex-row gap-2"
-            >
-              <Text className="text-[15px] font-bold text-primary">Checkout</Text>
-              <Icon name="arrow-right" size={16} color={tokens.primary} />
-            </Pressable>
+      <View className="absolute bottom-0 left-0 right-0 px-5 pt-4 pb-8 bg-card border-t border-border">
+        <View className="flex-row items-center justify-between mb-4">
+          <View className="flex-row items-center">
+            <Text className="text-[15px] font-bold text-foreground">Total</Text>
+            <Icon name="chevron-up" size={16} color={tokens.textMuted} style={{ marginLeft: 4 }} />
           </View>
+          <Text className="text-[20px] font-heading font-black text-foreground">
+            GH₵ {total.toFixed(2)}
+          </Text>
         </View>
+        <Pressable
+          style={({ pressed }) => [{ opacity: pressed ? 0.9 : 1 }]}
+          onPress={handleCheckout}
+          className="bg-primary w-full h-[52px] rounded-full items-center justify-center"
+        >
+          <Text className="text-[15px] font-bold text-white">Checkout</Text>
+        </Pressable>
       </View>
     </View>
   );

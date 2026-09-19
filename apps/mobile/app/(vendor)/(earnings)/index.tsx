@@ -25,9 +25,12 @@ export default function EarningsDashboardScreen() {
   };
 
   return (
-    <View className="flex-1 bg-background" style={{ paddingTop: insets.top }}>
+    <View className="flex-1 bg-background">
       {/* Header */}
-      <View className="px-5 py-4 bg-card border-b border-border flex-row items-end justify-between">
+      <View
+        className="px-5 pb-4 bg-card border-b border-border flex-row items-end justify-between"
+        style={{ paddingTop: Math.max(insets.top, 12) + 12 }}
+      >
         <View>
           <Text className="text-[11px] font-bold tracking-[0.1em] uppercase text-muted-foreground mb-[2px]">
             Vendor
@@ -60,10 +63,7 @@ export default function EarningsDashboardScreen() {
         ) : (
           <>
             {/* Balance Card */}
-            <View
-              className="rounded-[20px] overflow-hidden border border-black/5 mb-8 bg-black"
-              style={{}}
-            >
+            <View className="rounded-[20px] overflow-hidden border mb-8 bg-black" style={{}}>
               <LinearGradient
                 colors={[tokens.moneyGrad1, tokens.moneyGrad2]}
                 start={{ x: 0, y: 0 }}
@@ -85,34 +85,30 @@ export default function EarningsDashboardScreen() {
                   <Text className="text-[16px] font-bold text-white/80 ml-[8px]">GHS</Text>
                 </View>
 
-                <View className="flex-row items-center justify-between mb-6">
-                  <View>
-                    <Text className="text-[12px] text-white/70 uppercase tracking-wider font-bold mb-1">
-                      Pending Clearance
-                    </Text>
-                    <Text className="text-body-lg font-bold text-white tracking-tight">
-                      GH₵ {earnings?.pendingClearance?.toFixed(2) ?? "0.00"}
-                    </Text>
-                  </View>
+                <View className="mb-6 border-t border-white/10 pt-4">
+                  <Text className="text-[11px] text-white/70 uppercase tracking-[0.08em] font-bold mb-1">
+                    Pending Clearance
+                  </Text>
+                  <Text className="text-[18px] font-heading font-bold text-white tracking-tight mb-4">
+                    GH₵ {earnings?.pendingClearance?.toFixed(2) ?? "0.00"}
+                  </Text>
 
-                  {/* 52px Saturated Quick-Action Circle */}
-                  <View className="flex-row gap-[7px]">
-                    <Pressable
-                      style={({ pressed }) => [{ opacity: pressed ? 0.9 : 1 }]}
-                      onPress={() => router.push("/(vendor)/(earnings)/withdraw")}
-                      className="w-[52px] h-[52px] rounded-full items-center justify-center bg-blue-600 "
-                    >
-                      <Icon name="arrow-up-right" size={24} color="white" />
-                    </Pressable>
-                  </View>
+                  <Pressable
+                    style={({ pressed }) => [{ opacity: pressed ? 0.9 : 1 }]}
+                    onPress={() => router.push("/(vendor)/(earnings)/withdraw")}
+                    className="w-full h-[52px] rounded-xl items-center justify-center bg-blue-600 flex-row gap-2"
+                  >
+                    <Icon name="arrow-up-right" size={20} color="white" />
+                    <Text className="text-white font-bold text-[15px]">Withdraw Funds</Text>
+                  </Pressable>
                 </View>
               </View>
 
               {/* Hairline Strip */}
-              <View className="flex-row border-t border-white/20 bg-black/10">
+              <View className="flex-row bg-black/10">
                 <Pressable
                   style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
-                  className="flex-1 p-4 border-r border-white/20"
+                  className="flex-1 p-4 border-r"
                   onPress={() => router.push("/(vendor)/(earnings)/analytics")}
                 >
                   <Text className="text-[11px] text-white/70 uppercase tracking-wider font-bold mb-1">
