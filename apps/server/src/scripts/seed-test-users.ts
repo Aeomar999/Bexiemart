@@ -96,8 +96,17 @@ async function main() {
       });
       logger.log("Created DispatcherProfile");
     }
+    // 3. Create Customer
+    const customerUser = await createTestUser(
+      "customerbexiemart@gmail.com",
+      "Password@123",
+      "Test Customer",
+      UserRole.CUSTOMER,
+      "+233541234569"
+    );
+    logger.log("Created Customer User");
 
-    logger.log("Successfully seeded test vendor and delivery users.");
+    logger.log("Successfully seeded test vendor, delivery, and customer users.");
   } catch (error) {
     logger.error("Seeding failed:", error);
     process.exit(1);

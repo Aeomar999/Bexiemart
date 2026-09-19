@@ -246,7 +246,7 @@ export default function DispatcherTasks() {
                 onPress={() => router.replace("/(dispatcher)/(tabs)/(home)")}
                 className="px-4 py-2 bg-slate-100 rounded-full flex-row items-center gap-1"
               >
-                <Icon name="map" size={12} color={tokens.foreground} />
+                <Icon name="map" size={12} color={tokens.textPrimary} />
                 <Text className="text-[11px] font-bold text-foreground uppercase tracking-wider">
                   Map
                 </Text>

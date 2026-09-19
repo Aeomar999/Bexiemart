@@ -238,7 +238,7 @@ export default function ShopScreen() {
               onPress={() => setShowSortModal(true)}
             >
               <Text className="text-[12px] font-bold text-foreground">{sortLabels[sortBy]}</Text>
-              <Icon name="chevron-down" size={12} color={tokens.foreground} />
+              <Icon name="chevron-down" size={12} color={tokens.textPrimary} />
             </Pressable>
           </View>
         }

@@ -20,7 +20,7 @@ export function PasswordStrength({ password = "" }: PasswordStrengthProps) {
   const metCount = requirements.filter((r) => r.isMet).length;
 
   let strengthLabel = "Weak";
-  let barColor = tokens.error;
+  let barColor: string = tokens.error;
   if (metCount === requirements.length) {
     strengthLabel = "Strong";
     barColor = tokens.success;
