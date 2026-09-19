@@ -210,7 +210,7 @@ export default function WalletScreen() {
                           })
                         : "••••••"}
                     </Text>
-                    <Text className="text-[16px] font-bold text-white/80 ml-[8px]">{currency}</Text>
+                    <Text className="text-[16px] font-bold text-white ml-[8px]">{currency}</Text>
                   </View>
                 </View>
 

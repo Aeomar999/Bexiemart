@@ -84,7 +84,7 @@ export default function TopUpScreen() {
         <Text className="text-display-lg font-black text-white font-heading text-center mb-2">
           Top-Up Initiated!
         </Text>
-        <Text className="text-body-lg text-white/80 font-body text-center mb-10 px-4">
+        <Text className="text-body-lg text-white font-body text-center mb-10 px-4">
           {formatMoney(amount)} - Complete payment to add funds.
         </Text>
         {payUrl ? (
