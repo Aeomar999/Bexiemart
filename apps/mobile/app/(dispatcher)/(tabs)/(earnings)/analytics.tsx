@@ -31,7 +31,7 @@ export default function AnalyticsScreen() {
           <RowsSkeleton />
         ) : (
           <>
-            <View className="bg-primary rounded-[20px] p-6 mb-2 border border-black/5" style={{}}>
+            <View className="bg-primary rounded-[20px] p-6 mb-2 border" style={{}}>
               <Text className="text-white text-[11px] font-bold tracking-[0.1em] uppercase mb-[2px]">
                 30-Day Revenue
               </Text>
@@ -45,7 +45,7 @@ export default function AnalyticsScreen() {
                 <Text className="text-[16px] font-bold text-white/80 ml-[8px]">GH₵</Text>
               </View>
 
-              <View className="flex-row items-center justify-between border-t border-white/20 pt-4">
+              <View className="flex-row items-center justify-between pt-4">
                 <View>
                   <Text className="text-white/70 font-body text-body-sm mb-1">
                     Total Trips (30 Days)

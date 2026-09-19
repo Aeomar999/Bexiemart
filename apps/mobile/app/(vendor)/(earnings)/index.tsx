@@ -60,10 +60,7 @@ export default function EarningsDashboardScreen() {
         ) : (
           <>
             {/* Balance Card */}
-            <View
-              className="rounded-[20px] overflow-hidden border border-black/5 mb-8 bg-black"
-              style={{}}
-            >
+            <View className="rounded-[20px] overflow-hidden border mb-8 bg-black" style={{}}>
               <LinearGradient
                 colors={[tokens.moneyGrad1, tokens.moneyGrad2]}
                 start={{ x: 0, y: 0 }}
@@ -109,10 +106,10 @@ export default function EarningsDashboardScreen() {
               </View>
 
               {/* Hairline Strip */}
-              <View className="flex-row border-t border-white/20 bg-black/10">
+              <View className="flex-row bg-black/10">
                 <Pressable
                   style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
-                  className="flex-1 p-4 border-r border-white/20"
+                  className="flex-1 p-4 border-r"
                   onPress={() => router.push("/(vendor)/(earnings)/analytics")}
                 >
                   <Text className="text-[11px] text-white/70 uppercase tracking-wider font-bold mb-1">

@@ -109,8 +109,6 @@ export default function WalletScreen() {
                   height: 30,
                   borderTopLeftRadius: 16,
                   borderTopRightRadius: 16,
-                  borderTopWidth: 1,
-                  borderColor: "rgba(255,255,255,0.3)",
                   opacity: 0.7,
                 }}
               />
@@ -139,8 +137,6 @@ export default function WalletScreen() {
                     borderTopRightRadius: 18,
                     paddingTop: 12,
                     paddingHorizontal: 18,
-                    borderTopWidth: 1,
-                    borderColor: "rgba(255,255,255,0.4)",
                   }}
                 >
                   <View className="flex-row justify-between items-start">
@@ -195,8 +191,6 @@ export default function WalletScreen() {
                   paddingHorizontal: 18,
                   paddingBottom: 16,
                   overflow: "hidden",
-                  borderTopWidth: 1.5,
-                  borderColor: "rgba(255,255,255,0.3)",
                   justifyContent: "space-between",
                 }}
               >
@@ -223,10 +217,9 @@ export default function WalletScreen() {
                 <View className="flex-row justify-between items-center">
                   <Pressable
                     onPress={() => router.push("/(customer)/wallet/link-account")}
-                    className="flex-row items-center gap-[7px] px-4 py-[9px] rounded-full border"
+                    className="flex-row items-center gap-[7px] px-4 py-[9px] rounded-full"
                     style={{
                       backgroundColor: "rgba(255,255,255,0.2)",
-                      borderColor: "rgba(255,255,255,0.12)",
                     }}
                   >
                     <Icon name="link" size={15} color="#fff" />
@@ -236,10 +229,9 @@ export default function WalletScreen() {
                   <View className="flex-row gap-3">
                     <Pressable
                       accessibilityRole="button"
-                      className="w-10 h-10 rounded-full items-center justify-center border"
+                      className="w-10 h-10 rounded-full items-center justify-center"
                       style={{
                         backgroundColor: "rgba(255,255,255,0.15)",
-                        borderColor: "rgba(255,255,255,0.12)",
                       }}
                       onPress={onRefresh}
                     >
@@ -247,10 +239,9 @@ export default function WalletScreen() {
                     </Pressable>
                     <Pressable
                       accessibilityRole="button"
-                      className="w-10 h-10 rounded-full items-center justify-center border"
+                      className="w-10 h-10 rounded-full items-center justify-center"
                       style={{
                         backgroundColor: "rgba(255,255,255,0.15)",
-                        borderColor: "rgba(255,255,255,0.12)",
                       }}
                       onPress={() => setShowBalance(!showBalance)}
                     >
