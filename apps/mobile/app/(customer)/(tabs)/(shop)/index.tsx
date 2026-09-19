@@ -108,19 +108,19 @@ export default function ShopScreen() {
     return (
       <View className="flex-1 bg-background">
         <View
-          className="px-5 pt-4 pb-4 bg-card border-b border-border"
+          className="pt-4 pb-4 bg-card border-b border-border"
           style={{ paddingTop: insets.top + 12 }}
         >
-          <View className="flex-row justify-between items-end mb-6">
+          <View className="px-5 flex-row justify-between items-end mb-6">
             <View>
               <View className="w-16 h-3 bg-muted rounded-full mb-[6px]" />
               <View className="w-24 h-8 bg-muted rounded-full" />
             </View>
           </View>
-          <View className="flex-row items-center gap-3">
-            <View className="flex-1 h-11 bg-muted rounded-full" />
+          <View className="px-5 flex-row items-center gap-3">
+            <View className="flex-1 h-11 bg-muted rounded-2xl" />
           </View>
-          <View className="flex-row gap-2 mt-5">
+          <View className="px-5 flex-row gap-3 mt-5">
             <View className="w-20 h-[36px] rounded-full bg-muted" />
             <View className="w-24 h-[36px] rounded-full bg-muted" />
             <View className="w-16 h-[36px] rounded-full bg-muted" />
@@ -150,10 +150,10 @@ export default function ShopScreen() {
   return (
     <View className="flex-1 bg-background">
       <View
-        className="px-5 pt-4 pb-4 bg-card border-b border-border"
+        className="pt-4 pb-4 bg-card border-b border-border"
         style={{ paddingTop: insets.top + 12 }}
       >
-        <View className="flex-row justify-between items-end mb-6">
+        <View className="px-5 flex-row justify-between items-end mb-6">
           <View>
             <Text className="text-[11px] font-bold tracking-[0.1em] uppercase text-muted-foreground mb-[2px]">
               {filteredProducts.length} product{filteredProducts.length !== 1 ? "s" : ""}
@@ -161,8 +161,8 @@ export default function ShopScreen() {
             <Text className="text-display-md font-heading font-black text-foreground">Shop</Text>
           </View>
         </View>
-        <View className="flex-row items-center gap-3">
-          <View className="flex-1 flex-row items-center gap-2 bg-muted rounded-full px-4 h-11">
+        <View className="px-5 flex-row items-center gap-3">
+          <View className="flex-1 flex-row items-center gap-2 bg-muted rounded-2xl px-4 h-11">
             <Icon name="search" size={16} color={tokens.textMuted} />
             <TextInput
               className="flex-1 font-body text-body-sm text-foreground"
@@ -191,7 +191,7 @@ export default function ShopScreen() {
           decelerationRate="fast"
           keyExtractor={(item) => item.id}
           className="mt-5"
-          contentContainerStyle={{ gap: 10, paddingRight: 20 }}
+          contentContainerStyle={{ paddingHorizontal: 20, gap: 12 }}
           renderItem={({ item }) => (
             <Pressable
               style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
