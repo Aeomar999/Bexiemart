@@ -38,9 +38,12 @@ export default function OrdersManagerScreen() {
   };
 
   return (
-    <View className="flex-1 bg-background" style={{ paddingTop: insets.top }}>
+    <View className="flex-1 bg-background">
       {/* Header */}
-      <View className="px-5 py-4 bg-card border-b border-border">
+      <View
+        className="px-5 pb-4 bg-card border-b border-border"
+        style={{ paddingTop: Math.max(insets.top, 12) + 12 }}
+      >
         <Text className="text-[11px] font-bold uppercase tracking-[0.1em] text-muted-foreground mb-[2px]">
           Order Management
         </Text>

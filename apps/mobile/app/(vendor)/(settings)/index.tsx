@@ -204,10 +204,7 @@ export default function VendorSettingsScreen() {
                       }}
                     >
                       <View className="flex-row items-center gap-3">
-                        <View
-                          className="w-8 h-8 rounded-xl items-center justify-center"
-                          style={{ backgroundColor: `${item.color}15` }}
-                        >
+                        <View className="w-8 h-8 rounded-xl items-center justify-center bg-[#f0f7fb]">
                           <Icon name={item.icon} size={16} color={item.color} />
                         </View>
                         <Text className="text-[15px] font-bold text-foreground">{item.label}</Text>
