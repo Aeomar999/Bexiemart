@@ -162,10 +162,10 @@ export default function ShopScreen() {
           </View>
         </View>
         <View className="px-5 flex-row items-center gap-3">
-          <View className="flex-1 flex-row items-center gap-2 bg-muted rounded-2xl px-4 h-11">
-            <Icon name="search" size={16} color={tokens.textMuted} />
+          <View className="flex-1 flex-row items-center gap-2 bg-background rounded-xl px-4 h-12 border border-border">
+            <Icon name="search" size={18} color={tokens.textMuted} />
             <TextInput
-              className="flex-1 font-body text-body-sm text-foreground"
+              className="flex-1 font-body text-body-lg text-foreground"
               placeholder="Search products"
               placeholderTextColor={tokens.textMuted}
               value={searchQuery}
@@ -191,12 +191,15 @@ export default function ShopScreen() {
           decelerationRate="fast"
           keyExtractor={(item) => item.id}
           className="mt-5"
-          contentContainerStyle={{ paddingHorizontal: 20, gap: 12 }}
+          contentContainerStyle={{ paddingHorizontal: 20 }}
+          ItemSeparatorComponent={() => <View style={{ width: 12 }} />}
           renderItem={({ item }) => (
             <Pressable
               style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
-              className={`px-4 h-[36px] justify-center items-center rounded-full ${
-                activeCategoryFilter === item.name ? "bg-primary" : "bg-muted"
+              className={`px-4 py-2 justify-center items-center rounded-full border ${
+                activeCategoryFilter === item.name
+                  ? "bg-foreground border-border"
+                  : "bg-card border-border"
               }`}
               onPress={() => setActiveCategoryFilter(item.name)}
             >
