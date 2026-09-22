@@ -12,7 +12,11 @@
       "env": {
         "EXPO_PUBLIC_API_URL": "http://localhost:3000/api/v1",
         "EXPO_PUBLIC_SOCKET_URL": "ws://localhost:3000",
-        "EXPO_PUBLIC_PAYSTACK_PUBLIC_KEY": "pk_test_8cd3b286f7b46cf8700f982bb1c8bb0f41afca0c"
+        "EXPO_PUBLIC_PAYSTACK_PUBLIC_KEY": "pk_test_8cd3b286f7b46cf8700f982bb1c8bb0f41afca0c",
+        "EXPO_PUBLIC_POSTHOG_API_KEY": "phc_nQvLXaLZDchbn2RLbeBkZhtpFbDyPfU7jcSMYYnh8Dkx",
+        "EXPO_PUBLIC_POSTHOG_HOST": "https://us.i.posthog.com",
+        "EXPO_PUBLIC_CLOUDINARY_CLOUD_NAME": "duirkgqop",
+        "EXPO_PUBLIC_BETTER_AUTH_KV_URL": "https://kv.better-auth.com"
       }
     },
     "preview": {
@@ -23,9 +27,12 @@
       },
       "env": {
         "EXPO_PUBLIC_API_URL": "https://bexiemart-api.onrender.com/api/v1",
+        "EXPO_PUBLIC_SOCKET_URL": "wss://bexiemart-api.onrender.com",
+        "EXPO_PUBLIC_PAYSTACK_PUBLIC_KEY": "pk_test_8cd3b286f7b46cf8700f982bb1c8bb0f41afca0c",
         "EXPO_PUBLIC_POSTHOG_API_KEY": "phc_nQvLXaLZDchbn2RLbeBkZhtpFbDyPfU7jcSMYYnh8Dkx",
         "EXPO_PUBLIC_POSTHOG_HOST": "https://us.i.posthog.com",
-        "EXPO_PUBLIC_CLOUDINARY_CLOUD_NAME": "duirkgqop"
+        "EXPO_PUBLIC_CLOUDINARY_CLOUD_NAME": "duirkgqop",
+        "EXPO_PUBLIC_BETTER_AUTH_KV_URL": "https://kv.better-auth.com"
       }
     },
     "device": {
@@ -36,9 +43,12 @@
       },
       "env": {
         "EXPO_PUBLIC_API_URL": "https://bexiemart-api.onrender.com/api/v1",
+        "EXPO_PUBLIC_SOCKET_URL": "wss://bexiemart-api.onrender.com",
+        "EXPO_PUBLIC_PAYSTACK_PUBLIC_KEY": "pk_test_8cd3b286f7b46cf8700f982bb1c8bb0f41afca0c",
         "EXPO_PUBLIC_POSTHOG_API_KEY": "phc_nQvLXaLZDchbn2RLbeBkZhtpFbDyPfU7jcSMYYnh8Dkx",
         "EXPO_PUBLIC_POSTHOG_HOST": "https://us.i.posthog.com",
-        "EXPO_PUBLIC_CLOUDINARY_CLOUD_NAME": "duirkgqop"
+        "EXPO_PUBLIC_CLOUDINARY_CLOUD_NAME": "duirkgqop",
+        "EXPO_PUBLIC_BETTER_AUTH_KV_URL": "https://kv.better-auth.com"
       }
     },
     "mock": {
@@ -49,7 +59,13 @@
       },
       "env": {
         "EXPO_PUBLIC_MOCK_API": "true",
-        "EXPO_PUBLIC_API_URL": "http://localhost:0/api/v1"
+        "EXPO_PUBLIC_API_URL": "http://localhost:0/api/v1",
+        "EXPO_PUBLIC_SOCKET_URL": "ws://localhost:3000",
+        "EXPO_PUBLIC_PAYSTACK_PUBLIC_KEY": "pk_test_8cd3b286f7b46cf8700f982bb1c8bb0f41afca0c",
+        "EXPO_PUBLIC_POSTHOG_API_KEY": "phc_nQvLXaLZDchbn2RLbeBkZhtpFbDyPfU7jcSMYYnh8Dkx",
+        "EXPO_PUBLIC_POSTHOG_HOST": "https://us.i.posthog.com",
+        "EXPO_PUBLIC_CLOUDINARY_CLOUD_NAME": "duirkgqop",
+        "EXPO_PUBLIC_BETTER_AUTH_KV_URL": "https://kv.better-auth.com"
       }
     },
     "production": {
@@ -61,10 +77,12 @@
       "env": {
         "EXPO_PUBLIC_API_URL": "https://bexiemart-api.onrender.com/api/v1",
         "EXPO_PUBLIC_SOCKET_URL": "wss://bexiemart-api.onrender.com",
-        "EXPO_PUBLIC_SENTRY_DSN": "https://0c4866316a83164b10cafea12af5a195@o4511490466119680.ingest.de.sentry.io/4511490530148432",
+        "EXPO_PUBLIC_PAYSTACK_PUBLIC_KEY": "pk_test_8cd3b286f7b46cf8700f982bb1c8bb0f41afca0c",
+        "EXPO_PUBLIC_SENTRY_DSN": "https://498e60231f0a8e51fa7d0b68aa428cb5@o4510760504655872.ingest.us.sentry.io/4512129966997504",
         "EXPO_PUBLIC_POSTHOG_API_KEY": "phc_nQvLXaLZDchbn2RLbeBkZhtpFbDyPfU7jcSMYYnh8Dkx",
         "EXPO_PUBLIC_POSTHOG_HOST": "https://us.i.posthog.com",
-        "EXPO_PUBLIC_CLOUDINARY_CLOUD_NAME": "duirkgqop"
+        "EXPO_PUBLIC_CLOUDINARY_CLOUD_NAME": "duirkgqop",
+        "EXPO_PUBLIC_BETTER_AUTH_KV_URL": "https://kv.better-auth.com"
       }
     }
   },
