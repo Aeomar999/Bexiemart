@@ -496,19 +496,21 @@ export default function CheckoutScreen() {
 
       {/* Place Order Button — outside ScrollView */}
       <View
-        className="px-5 py-4 bg-card border-t border-border"
+        className="bg-card border-t border-border"
         style={{ paddingBottom: Math.max(insets.bottom, 16) }}
       >
-        <Button
-          title={createOrder.isPending ? "Processing..." : `Pay GHS ${total.toFixed(2)}`}
-          size="lg"
-          onPress={handlePlaceOrder}
-          disabled={createOrder.isPending}
-          className="w-full rounded-full"
-        />
-        <Text className="text-caption text-muted-foreground font-body text-center mt-3">
-          By placing this order, you agree to our Terms of Service
-        </Text>
+        <View className="px-5 pt-4 w-full max-w-2xl mx-auto">
+          <Button
+            title={createOrder.isPending ? "Processing..." : `Pay GHS ${total.toFixed(2)}`}
+            size="lg"
+            onPress={handlePlaceOrder}
+            disabled={createOrder.isPending}
+            className="w-full rounded-full"
+          />
+          <Text className="text-caption text-muted-foreground font-body text-center mt-3">
+            By placing this order, you agree to our Terms of Service
+          </Text>
+        </View>
       </View>
     </View>
   );

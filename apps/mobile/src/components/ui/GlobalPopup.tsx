@@ -135,6 +135,8 @@ export function GlobalPopup() {
         zIndex: 9999,
         elevation: 9999,
         alignItems: "center",
+        maxWidth: 400,
+        alignSelf: "center",
       }}
       pointerEvents="box-none"
     >

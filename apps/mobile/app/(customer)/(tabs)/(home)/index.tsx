@@ -220,7 +220,7 @@ export default function HomeScreen() {
               <Pressable
                 key={item.id}
                 style={({ pressed }) => ({ opacity: pressed ? 0.7 : 1 })}
-                className="w-[23%] items-center active:opacity-70"
+                className="w-[23%] md:w-[11%] lg:w-[11%] items-center active:opacity-70"
                 onPress={() => item.route !== "#" && router.push(item.route as any)}
               >
                 <View
@@ -278,7 +278,7 @@ export default function HomeScreen() {
               return (
                 <Pressable
                   key={cat.id}
-                  className="w-[48%] active:opacity-90"
+                  className="w-[48%] md:w-[31%] lg:w-[23%] active:opacity-90"
                   onPress={() => goToShopWithCategory(cat.name)}
                   accessibilityRole="button"
                   accessibilityLabel={`${cat.name}, ${cat.count} ${cat.count === 1 ? "item" : "items"}`}
@@ -444,7 +444,7 @@ export default function HomeScreen() {
             {justForYou.map((item: Product) => (
               <Pressable
                 key={item.id}
-                className="w-[48%] active:opacity-70"
+                className="w-[48%] md:w-[31%] lg:w-[23%] active:opacity-70"
                 onPress={() => router.push(`/(customer)/product/${item.id}`)}
               >
                 <View

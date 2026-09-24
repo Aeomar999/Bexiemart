@@ -105,7 +105,7 @@ export default function AddServiceScreen() {
         </Pressable>
 
         <View className="gap-5">
-          <View>
+          <View className="bg-card p-5 rounded-2xl border border-border">
             <Text className="text-body-lg font-bold text-foreground mb-4">Basic Details</Text>
             <View className="gap-4">
               <Input
@@ -131,9 +131,7 @@ export default function AddServiceScreen() {
             </View>
           </View>
 
-          <View className="h-px bg-secondary my-2" />
-
-          <View>
+          <View className="bg-card p-5 rounded-2xl border border-border">
             <Text className="text-body-lg font-bold text-foreground mb-4">Pricing Model</Text>
             <View className="flex-row bg-muted p-1 rounded-xl mb-4">
               <Pressable
@@ -179,9 +177,7 @@ export default function AddServiceScreen() {
             </View>
           </View>
 
-          <View className="h-px bg-secondary my-2" />
-
-          <View>
+          <View className="bg-card p-5 rounded-2xl border border-border">
             <Text className="text-body-lg font-bold text-foreground mb-4">Location</Text>
             <View className="flex-row bg-muted p-1 rounded-xl">
               <Pressable

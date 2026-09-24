@@ -176,206 +176,208 @@ export default function RegisterScreen() {
       contentContainerClassName="pb-12 pt-6 px-6"
       keyboardShouldPersistTaps="handled"
     >
-      <View className="mb-8 mt-4">
-        <BackButton onPress={handleBack} className="mb-6 border-border" color={tokens.primary} />
+      <View className="w-full max-w-md mx-auto">
+        <View className="mb-8 mt-4">
+          <BackButton onPress={handleBack} className="mb-6 border-border" color={tokens.primary} />
 
-        {/* Progress Bar */}
-        <View className="w-full h-2 bg-primary-subtle rounded-full mb-6 overflow-hidden border border-border">
-          <View
-            className="h-full bg-primary rounded-full"
-            style={{ width: `${progressPercentage}%` }}
-          />
+          {/* Progress Bar */}
+          <View className="w-full h-2 bg-primary-subtle rounded-full mb-6 overflow-hidden border border-border">
+            <View
+              className="h-full bg-primary rounded-full"
+              style={{ width: `${progressPercentage}%` }}
+            />
+          </View>
+
+          <Text className="text-display-md font-heading font-bold text-foreground mb-1">
+            {step === 1 ? "Account setup" : step === 2 ? "Contact details" : "Secure account"}
+          </Text>
+          <Text className="text-body-lg text-muted-foreground font-body">
+            {step === 1
+              ? "Choose your role and name"
+              : step === 2
+                ? "How can we reach you?"
+                : "Set a strong password"}
+          </Text>
         </View>
 
-        <Text className="text-display-md font-heading font-bold text-foreground mb-1">
-          {step === 1 ? "Account setup" : step === 2 ? "Contact details" : "Secure account"}
-        </Text>
-        <Text className="text-body-lg text-muted-foreground font-body">
-          {step === 1
-            ? "Choose your role and name"
-            : step === 2
-              ? "How can we reach you?"
-              : "Set a strong password"}
-        </Text>
-      </View>
-
-      <View className="bg-card p-6 rounded-3xl border border-border gap-5">
-        {step === 1 && (
-          <View className="gap-5">
-            <View>
-              <Text className="text-body-sm font-medium text-muted-foreground font-body mb-3">
-                I want to
-              </Text>
-              <View className="flex-row gap-3 bg-background p-1 rounded-2xl border border-border">
-                <TouchableOpacity
-                  onPress={() => setRole("customer")}
-                  className="flex-1 h-12 rounded-xl items-center justify-center flex-row gap-2"
-                  style={
-                    role === "customer"
-                      ? {
-                          backgroundColor: tokens.primaryText,
-                          borderWidth: 1,
-                          borderColor: tokens.border,
-                        }
-                      : {
-                          backgroundColor: "transparent",
-                          borderWidth: 1,
-                          borderColor: "transparent",
-                        }
-                  }
-                >
-                  <HugeiconsIcon
-                    icon={UserIcon}
-                    size={14}
-                    color={role === "customer" ? tokens.primary : tokens.textMuted}
-                  />
-                  <Text
-                    className="font-heading font-semibold"
-                    style={{ color: role === "customer" ? tokens.primary : tokens.textMuted }}
+        <View className="bg-card p-6 rounded-3xl border border-border gap-5">
+          {step === 1 && (
+            <View className="gap-5">
+              <View>
+                <Text className="text-body-sm font-medium text-muted-foreground font-body mb-3">
+                  I want to
+                </Text>
+                <View className="flex-row gap-3 bg-background p-1 rounded-2xl border border-border">
+                  <TouchableOpacity
+                    onPress={() => setRole("customer")}
+                    className="flex-1 h-12 rounded-xl items-center justify-center flex-row gap-2"
+                    style={
+                      role === "customer"
+                        ? {
+                            backgroundColor: tokens.primaryText,
+                            borderWidth: 1,
+                            borderColor: tokens.border,
+                          }
+                        : {
+                            backgroundColor: "transparent",
+                            borderWidth: 1,
+                            borderColor: "transparent",
+                          }
+                    }
                   >
-                    Shop
-                  </Text>
-                </TouchableOpacity>
+                    <HugeiconsIcon
+                      icon={UserIcon}
+                      size={14}
+                      color={role === "customer" ? tokens.primary : tokens.textMuted}
+                    />
+                    <Text
+                      className="font-heading font-semibold"
+                      style={{ color: role === "customer" ? tokens.primary : tokens.textMuted }}
+                    >
+                      Shop
+                    </Text>
+                  </TouchableOpacity>
 
-                <TouchableOpacity
-                  onPress={() => setRole("vendor")}
-                  className="flex-1 h-12 rounded-xl items-center justify-center flex-row gap-2"
-                  style={
-                    role === "vendor"
-                      ? {
-                          backgroundColor: tokens.primaryText,
-                          borderWidth: 1,
-                          borderColor: tokens.border,
-                        }
-                      : {
-                          backgroundColor: "transparent",
-                          borderWidth: 1,
-                          borderColor: "transparent",
-                        }
-                  }
-                >
-                  <HugeiconsIcon
-                    icon={Store01Icon}
-                    size={14}
-                    color={role === "vendor" ? tokens.primary : tokens.textMuted}
-                  />
-                  <Text
-                    className="font-heading font-semibold"
-                    style={{ color: role === "vendor" ? tokens.primary : tokens.textMuted }}
+                  <TouchableOpacity
+                    onPress={() => setRole("vendor")}
+                    className="flex-1 h-12 rounded-xl items-center justify-center flex-row gap-2"
+                    style={
+                      role === "vendor"
+                        ? {
+                            backgroundColor: tokens.primaryText,
+                            borderWidth: 1,
+                            borderColor: tokens.border,
+                          }
+                        : {
+                            backgroundColor: "transparent",
+                            borderWidth: 1,
+                            borderColor: "transparent",
+                          }
+                    }
                   >
-                    Sell
-                  </Text>
-                </TouchableOpacity>
+                    <HugeiconsIcon
+                      icon={Store01Icon}
+                      size={14}
+                      color={role === "vendor" ? tokens.primary : tokens.textMuted}
+                    />
+                    <Text
+                      className="font-heading font-semibold"
+                      style={{ color: role === "vendor" ? tokens.primary : tokens.textMuted }}
+                    >
+                      Sell
+                    </Text>
+                  </TouchableOpacity>
+                </View>
               </View>
-            </View>
 
-            <Input
-              label="Full name"
-              placeholder="Kofi Mensah"
-              autoCapitalize="words"
-              value={name}
-              onChangeText={(text) => setName(text.replace(/[^a-zA-Z\s\-']/g, ""))}
-              error={errors1.name}
-              leftIcon={<HugeiconsIcon icon={UserIcon} size={16} color={tokens.textMuted} />}
-            />
-          </View>
-        )}
-
-        {step === 2 && (
-          <View className="gap-5">
-            <Input
-              label="Email address"
-              placeholder="you@school.edu.gh"
-              keyboardType="email-address"
-              autoCapitalize="none"
-              value={email}
-              onChangeText={(text) => {
-                setEmail(text.replace(/[^a-zA-Z0-9@._+-]/g, ""));
-                setEmailCheckError("");
-              }}
-              onBlur={handleEmailBlur}
-              error={errors2.email || emailCheckError}
-              leftIcon={<HugeiconsIcon icon={Mail01Icon} size={16} color={tokens.textMuted} />}
-            />
-
-            <Input
-              label="Phone number"
-              placeholder="024 123 4567"
-              keyboardType="phone-pad"
-              value={phone}
-              onChangeText={(text) => {
-                setPhone(text.replace(/[^0-9+\s]/g, ""));
-                setPhoneCheckError("");
-              }}
-              onBlur={handlePhoneBlur}
-              error={errors2.phone || phoneCheckError}
-              leftIcon={
-                <HugeiconsIcon icon={SmartPhone01Icon} size={16} color={tokens.textMuted} />
-              }
-            />
-          </View>
-        )}
-
-        {step === 3 && (
-          <View className="gap-5">
-            <View>
               <Input
-                label="Password"
-                placeholder="Min 8 characters"
+                label="Full name"
+                placeholder="Kofi Mensah"
+                autoCapitalize="words"
+                value={name}
+                onChangeText={(text) => setName(text.replace(/[^a-zA-Z\s\-']/g, ""))}
+                error={errors1.name}
+                leftIcon={<HugeiconsIcon icon={UserIcon} size={16} color={tokens.textMuted} />}
+              />
+            </View>
+          )}
+
+          {step === 2 && (
+            <View className="gap-5">
+              <Input
+                label="Email address"
+                placeholder="you@school.edu.gh"
+                keyboardType="email-address"
+                autoCapitalize="none"
+                value={email}
+                onChangeText={(text) => {
+                  setEmail(text.replace(/[^a-zA-Z0-9@._+-]/g, ""));
+                  setEmailCheckError("");
+                }}
+                onBlur={handleEmailBlur}
+                error={errors2.email || emailCheckError}
+                leftIcon={<HugeiconsIcon icon={Mail01Icon} size={16} color={tokens.textMuted} />}
+              />
+
+              <Input
+                label="Phone number"
+                placeholder="024 123 4567"
+                keyboardType="phone-pad"
+                value={phone}
+                onChangeText={(text) => {
+                  setPhone(text.replace(/[^0-9+\s]/g, ""));
+                  setPhoneCheckError("");
+                }}
+                onBlur={handlePhoneBlur}
+                error={errors2.phone || phoneCheckError}
+                leftIcon={
+                  <HugeiconsIcon icon={SmartPhone01Icon} size={16} color={tokens.textMuted} />
+                }
+              />
+            </View>
+          )}
+
+          {step === 3 && (
+            <View className="gap-5">
+              <View>
+                <Input
+                  label="Password"
+                  placeholder="Min 8 characters"
+                  secureTextEntry
+                  textContentType="newPassword"
+                  autoComplete="password-new"
+                  value={password}
+                  onChangeText={setPassword}
+                  error={errors3.password}
+                  leftIcon={<HugeiconsIcon icon={LockIcon} size={16} color={tokens.textMuted} />}
+                />
+                <PasswordStrength password={password} />
+              </View>
+
+              <Input
+                label="Confirm password"
+                placeholder="Re-enter your password"
                 secureTextEntry
                 textContentType="newPassword"
                 autoComplete="password-new"
-                value={password}
-                onChangeText={setPassword}
-                error={errors3.password}
+                value={confirmPassword}
+                onChangeText={setConfirmPassword}
+                error={errors3.confirmPassword}
                 leftIcon={<HugeiconsIcon icon={LockIcon} size={16} color={tokens.textMuted} />}
               />
-              <PasswordStrength password={password} />
             </View>
+          )}
 
-            <Input
-              label="Confirm password"
-              placeholder="Re-enter your password"
-              secureTextEntry
-              textContentType="newPassword"
-              autoComplete="password-new"
-              value={confirmPassword}
-              onChangeText={setConfirmPassword}
-              error={errors3.confirmPassword}
-              leftIcon={<HugeiconsIcon icon={LockIcon} size={16} color={tokens.textMuted} />}
+          {registerMutation.error && step === 3 && (
+            <Announcement
+              type="error"
+              message={registerMutation.error?.message ?? "Registration failed. Please try again."}
+            />
+          )}
+
+          <View className="w-full mt-2">
+            <Button
+              title={step === 3 ? "Create Account" : "Continue"}
+              size="lg"
+              loading={
+                (registerMutation.isPending && step === 3) ||
+                (checkAvailability.isPending && step === 2)
+              }
+              onPress={handleNext}
             />
           </View>
-        )}
-
-        {registerMutation.error && step === 3 && (
-          <Announcement
-            type="error"
-            message={registerMutation.error?.message ?? "Registration failed. Please try again."}
-          />
-        )}
-
-        <View className="w-full mt-2">
-          <Button
-            title={step === 3 ? "Create Account" : "Continue"}
-            size="lg"
-            loading={
-              (registerMutation.isPending && step === 3) ||
-              (checkAvailability.isPending && step === 2)
-            }
-            onPress={handleNext}
-          />
         </View>
-      </View>
 
-      <SocialLogins roleIntent={role} />
+        <SocialLogins roleIntent={role} />
 
-      <View className="flex-row justify-center mt-10 gap-2">
-        <Text className="text-body-md text-muted-foreground font-body">
-          Already have an account?
-        </Text>
-        <TouchableOpacity onPress={() => router.replace("/(auth)/login")}>
-          <Text className="text-body-md text-primary font-bold font-body">Sign in</Text>
-        </TouchableOpacity>
+        <View className="flex-row justify-center mt-10 gap-2">
+          <Text className="text-body-md text-muted-foreground font-body">
+            Already have an account?
+          </Text>
+          <TouchableOpacity onPress={() => router.replace("/(auth)/login")}>
+            <Text className="text-body-md text-primary font-bold font-body">Sign in</Text>
+          </TouchableOpacity>
+        </View>
       </View>
     </ScrollView>
   );

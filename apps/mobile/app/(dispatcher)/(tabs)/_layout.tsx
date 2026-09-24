@@ -1,8 +1,9 @@
 import { tokens } from "@/theme/tokens";
 import { Tabs } from "expo-router";
-import { View, Text, TouchableOpacity } from "react-native";
+import { View, Text, TouchableOpacity, useWindowDimensions } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Icon } from "@/components/ui/Icon";
+import { Sidebar } from "@/components/ui/Sidebar";
 
 function TabIcon({ name, color }: { name: string; color: any }) {
   return <Icon name={name} color={color} size={24} />;
@@ -81,41 +82,51 @@ function CustomTabBar({ state, descriptors, navigation }: any) {
 }
 
 export default function TabsLayout() {
+  const { width } = useWindowDimensions();
+  const isLargeScreen = width >= 768; // md breakpoint
+
   return (
-    <Tabs
-      tabBar={(props) => <CustomTabBar {...props} />}
-      screenOptions={{
-        headerShown: false,
-      }}
-    >
-      <Tabs.Screen
-        name="(home)"
-        options={{
-          title: "Map",
-          tabBarIcon: ({ color }) => <TabIcon name="map" color={color} />,
-        }}
-      />
-      <Tabs.Screen
-        name="tasks"
-        options={{
-          title: "Tasks",
-          tabBarIcon: ({ color }) => <TabIcon name="list" color={color} />,
-        }}
-      />
-      <Tabs.Screen
-        name="(earnings)"
-        options={{
-          title: "Earnings",
-          tabBarIcon: ({ color }) => <TabIcon name="dollar-sign" color={color} />,
-        }}
-      />
-      <Tabs.Screen
-        name="profile"
-        options={{
-          title: "Profile",
-          tabBarIcon: ({ color }) => <TabIcon name="user" color={color} />,
-        }}
-      />
-    </Tabs>
+    <View style={{ flex: 1, flexDirection: isLargeScreen ? "row" : "column" }}>
+      {isLargeScreen && <Sidebar role="dispatcher" />}
+      <View style={{ flex: 1 }}>
+        <Tabs
+          tabBar={(props) =>
+            isLargeScreen ? <View style={{ display: "none" }} /> : <CustomTabBar {...props} />
+          }
+          screenOptions={{
+            headerShown: false,
+          }}
+        >
+          <Tabs.Screen
+            name="(home)"
+            options={{
+              title: "Map",
+              tabBarIcon: ({ color }) => <TabIcon name="map" color={color} />,
+            }}
+          />
+          <Tabs.Screen
+            name="tasks"
+            options={{
+              title: "Tasks",
+              tabBarIcon: ({ color }) => <TabIcon name="list" color={color} />,
+            }}
+          />
+          <Tabs.Screen
+            name="(earnings)"
+            options={{
+              title: "Earnings",
+              tabBarIcon: ({ color }) => <TabIcon name="dollar-sign" color={color} />,
+            }}
+          />
+          <Tabs.Screen
+            name="profile"
+            options={{
+              title: "Profile",
+              tabBarIcon: ({ color }) => <TabIcon name="user" color={color} />,
+            }}
+          />
+        </Tabs>
+      </View>
+    </View>
   );
 }

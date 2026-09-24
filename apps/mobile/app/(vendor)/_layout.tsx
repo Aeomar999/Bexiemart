@@ -1,8 +1,9 @@
 import { tokens } from "@/theme/tokens";
 import { Tabs } from "expo-router";
-import { View, Text, TouchableOpacity } from "react-native";
+import { View, Text, TouchableOpacity, useWindowDimensions } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Icon } from "../../src/components/ui/Icon";
+import { Sidebar } from "@/components/ui/Sidebar";
 
 function TabIcon({ name, color }: { name: string; color: any }) {
   return <Icon name={name} color={color} size={24} />;
@@ -81,61 +82,71 @@ function CustomTabBar({ state, descriptors, navigation }: any) {
 }
 
 export default function VendorLayout() {
+  const { width } = useWindowDimensions();
+  const isLargeScreen = width >= 768; // md breakpoint
+
   return (
-    <Tabs
-      tabBar={(props) => <CustomTabBar {...props} />}
-      screenOptions={{
-        headerShown: false,
-        headerStyle: { backgroundColor: "#FFFFFF" },
-        headerShadowVisible: false,
-        headerTitleStyle: {
-          fontFamily: "Raleway",
-          fontSize: 20,
-          fontWeight: "700",
-          color: "#1E293B",
-        },
-      }}
-    >
-      <Tabs.Screen
-        name="(dashboard)"
-        options={{
-          title: "Dashboard",
-          headerTitle: "BexieMart Vendor",
-          tabBarIcon: ({ color }) => <TabIcon name="grid" color={color} />,
-        }}
-      />
-      <Tabs.Screen
-        name="(products)"
-        options={{
-          title: "Listings",
-          headerTitle: "My Listings",
-          tabBarIcon: ({ color }) => <TabIcon name="package" color={color} />,
-        }}
-      />
-      <Tabs.Screen
-        name="(orders)"
-        options={{
-          title: "Orders",
-          headerTitle: "Orders",
-          tabBarIcon: ({ color }) => <TabIcon name="shopping-cart" color={color} />,
-        }}
-      />
-      <Tabs.Screen
-        name="(earnings)"
-        options={{
-          title: "Earnings",
-          headerTitle: "Earnings",
-          tabBarIcon: ({ color }) => <TabIcon name="dollar-sign" color={color} />,
-        }}
-      />
-      <Tabs.Screen
-        name="(settings)"
-        options={{
-          title: "Settings",
-          headerTitle: "Settings",
-          tabBarIcon: ({ color }) => <TabIcon name="settings" color={color} />,
-        }}
-      />
-    </Tabs>
+    <View style={{ flex: 1, flexDirection: isLargeScreen ? "row" : "column" }}>
+      {isLargeScreen && <Sidebar role="vendor" />}
+      <View style={{ flex: 1 }}>
+        <Tabs
+          tabBar={(props) =>
+            isLargeScreen ? <View style={{ display: "none" }} /> : <CustomTabBar {...props} />
+          }
+          screenOptions={{
+            headerShown: false,
+            headerStyle: { backgroundColor: "#FFFFFF" },
+            headerShadowVisible: false,
+            headerTitleStyle: {
+              fontFamily: "Raleway",
+              fontSize: 20,
+              fontWeight: "700",
+              color: "#1E293B",
+            },
+          }}
+        >
+          <Tabs.Screen
+            name="(dashboard)"
+            options={{
+              title: "Dashboard",
+              headerTitle: "BexieMart Vendor",
+              tabBarIcon: ({ color }) => <TabIcon name="grid" color={color} />,
+            }}
+          />
+          <Tabs.Screen
+            name="(products)"
+            options={{
+              title: "Listings",
+              headerTitle: "My Listings",
+              tabBarIcon: ({ color }) => <TabIcon name="package" color={color} />,
+            }}
+          />
+          <Tabs.Screen
+            name="(orders)"
+            options={{
+              title: "Orders",
+              headerTitle: "Orders",
+              tabBarIcon: ({ color }) => <TabIcon name="shopping-cart" color={color} />,
+            }}
+          />
+          <Tabs.Screen
+            name="(earnings)"
+            options={{
+              title: "Earnings",
+              headerTitle: "Earnings",
+              tabBarIcon: ({ color }) => <TabIcon name="dollar-sign" color={color} />,
+            }}
+          />
+          <Tabs.Screen
+            name="(settings)"
+            options={{
+              title: "Settings",
+              headerTitle: "Settings",
+              tabBarIcon: ({ color }) => <TabIcon name="settings" color={color} />,
+            }}
+          />
+        </Tabs>
+      </View>
+    </View>
   );
 }

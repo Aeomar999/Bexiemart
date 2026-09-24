@@ -395,9 +395,11 @@ export default function DispatcherTasks() {
           />
         }
       >
-        {activeTab === "available" && renderAvailable()}
-        {activeTab === "active" && renderActive()}
-        {activeTab === "completed" && renderCompleted()}
+        <View className="w-full max-w-2xl mx-auto pt-4">
+          {activeTab === "available" && renderAvailable()}
+          {activeTab === "active" && renderActive()}
+          {activeTab === "completed" && renderCompleted()}
+        </View>
       </ScrollView>
     </View>
   );

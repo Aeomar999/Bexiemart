@@ -148,195 +148,207 @@ export default function ProfileScreen() {
         contentContainerClassName="pb-10 pt-6 px-5"
         showsVerticalScrollIndicator={false}
       >
-        {/* Identity card — sign-in CTA for guests, edit affordance for members */}
-        <Pressable
-          accessibilityRole="button"
-          accessibilityLabel={isAuthenticated ? "Edit profile" : "Sign in or create an account"}
-          style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
-          className="bg-card rounded-2xl p-4 flex-row items-center border border-border mb-6"
-          onPress={() =>
-            router.push(isAuthenticated ? "/(customer)/edit-profile" : "/(auth)/login")
-          }
-        >
-          <View className="mr-4">
-            <Avatar
-              uri={user?.image}
-              name={user?.name || "Guest"}
-              size={64}
-              fallback={isAuthenticated ? "dicebear" : "icon"}
-              iconName="user"
-            />
-          </View>
-          <View className="flex-1 pr-2">
-            <Text className="text-[20px] font-heading font-bold text-foreground" numberOfLines={1}>
-              {isAuthenticated ? user?.name || "Bexiemart" : "Sign in or sign up"}
-            </Text>
-            <Text className="text-[13px] font-body text-muted-foreground mt-0.5" numberOfLines={1}>
-              {isAuthenticated
-                ? user?.email || "Tap to edit your profile"
-                : "Access your orders, wallet & rewards"}
-            </Text>
-            {isAuthenticated && user?.phoneNumber && (
+        <View className="w-full max-w-2xl mx-auto">
+          {/* Identity card — sign-in CTA for guests, edit affordance for members */}
+          <Pressable
+            accessibilityRole="button"
+            accessibilityLabel={isAuthenticated ? "Edit profile" : "Sign in or create an account"}
+            style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
+            className="bg-card rounded-2xl p-4 flex-row items-center border border-border mb-6"
+            onPress={() =>
+              router.push(isAuthenticated ? "/(customer)/edit-profile" : "/(auth)/login")
+            }
+          >
+            <View className="mr-4">
+              <Avatar
+                uri={user?.image}
+                name={user?.name || "Guest"}
+                size={64}
+                fallback={isAuthenticated ? "dicebear" : "icon"}
+                iconName="user"
+              />
+            </View>
+            <View className="flex-1 pr-2">
+              <Text
+                className="text-[20px] font-heading font-bold text-foreground"
+                numberOfLines={1}
+              >
+                {isAuthenticated ? user?.name || "Bexiemart" : "Sign in or sign up"}
+              </Text>
               <Text
                 className="text-[13px] font-body text-muted-foreground mt-0.5"
                 numberOfLines={1}
               >
-                {user.phoneNumber} {user.phoneNumberVerified ? "✓" : "(Unverified)"}
+                {isAuthenticated
+                  ? user?.email || "Tap to edit your profile"
+                  : "Access your orders, wallet & rewards"}
               </Text>
-            )}
-          </View>
-          {isAuthenticated ? (
-            <View className="w-10 h-10 rounded-full bg-background items-center justify-center border border-border">
-              <Icon name="edit-2" size={16} color={tokens.textSecondary} />
+              {isAuthenticated && user?.phoneNumber && (
+                <Text
+                  className="text-[13px] font-body text-muted-foreground mt-0.5"
+                  numberOfLines={1}
+                >
+                  {user.phoneNumber} {user.phoneNumberVerified ? "✓" : "(Unverified)"}
+                </Text>
+              )}
             </View>
-          ) : (
-            <View className="rounded-full bg-primary px-4 py-2">
-              <Text className="text-body-sm font-body font-bold text-white">Sign In</Text>
+            {isAuthenticated ? (
+              <View className="w-10 h-10 rounded-full bg-background items-center justify-center border border-border">
+                <Icon name="edit-2" size={16} color={tokens.textSecondary} />
+              </View>
+            ) : (
+              <View className="rounded-full bg-primary px-4 py-2">
+                <Text className="text-body-sm font-body font-bold text-white">Sign In</Text>
+              </View>
+            )}
+          </Pressable>
+
+          {/* Stat Cards (Wallet & Referrals) */}
+          {isAuthenticated && (
+            <View className="flex-row justify-between mb-8">
+              <Pressable
+                style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
+                className="w-[48%] h-[60px] bg-card rounded-xl border border-border flex-row items-center px-4 gap-3"
+                onPress={() => router.push("/(customer)/wallet")}
+              >
+                <View className="w-8 h-8 rounded-full bg-green-50 items-center justify-center">
+                  <Icon name="banknote" size={16} color={tokens.success} />
+                </View>
+                <Text className="text-[14px] font-bold text-foreground font-heading">
+                  My Wallet
+                </Text>
+              </Pressable>
+              <Pressable
+                style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
+                className="w-[48%] h-[60px] bg-card rounded-xl border border-border flex-row items-center px-4 gap-3"
+                onPress={() => router.push("/(customer)/referrals")}
+              >
+                <View className="w-8 h-8 rounded-full bg-blue-50 items-center justify-center">
+                  <Icon name="gift" size={16} color={tokens.primary} />
+                </View>
+                <Text className="text-[14px] font-bold text-foreground font-heading">
+                  Refer & Earn
+                </Text>
+              </Pressable>
             </View>
           )}
-        </Pressable>
 
-        {/* Stat Cards (Wallet & Referrals) */}
-        {isAuthenticated && (
-          <View className="flex-row justify-between mb-8">
-            <Pressable
-              style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
-              className="w-[48%] h-[60px] bg-card rounded-xl border border-border flex-row items-center px-4 gap-3"
-              onPress={() => router.push("/(customer)/wallet")}
-            >
-              <View className="w-8 h-8 rounded-full bg-green-50 items-center justify-center">
-                <Icon name="banknote" size={16} color={tokens.success} />
-              </View>
-              <Text className="text-[14px] font-bold text-foreground font-heading">My Wallet</Text>
-            </Pressable>
-            <Pressable
-              style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
-              className="w-[48%] h-[60px] bg-card rounded-xl border border-border flex-row items-center px-4 gap-3"
-              onPress={() => router.push("/(customer)/referrals")}
-            >
-              <View className="w-8 h-8 rounded-full bg-blue-50 items-center justify-center">
-                <Icon name="gift" size={16} color={tokens.primary} />
-              </View>
-              <Text className="text-[14px] font-bold text-foreground font-heading">
-                Refer & Earn
-              </Text>
-            </Pressable>
-          </View>
-        )}
+          {/* Sections */}
+          {PROFILE_SECTIONS.map((section, idx) => {
+            let items = section.items;
 
-        {/* Sections */}
-        {PROFILE_SECTIONS.map((section, idx) => {
-          let items = section.items;
+            return (
+              <View key={idx} className="mb-8">
+                <Text className="text-[12px] font-bold text-muted-foreground uppercase tracking-[0.1em] mb-6 px-1">
+                  {section.title}
+                </Text>
+                <View className="bg-card rounded-2xl border border-border overflow-hidden">
+                  {items.map((item, itemIdx) => {
+                    const isLast = itemIdx === items.length - 1;
 
-          return (
-            <View key={idx} className="mb-8">
-              <Text className="text-[12px] font-bold text-muted-foreground uppercase tracking-[0.1em] mb-6 px-1">
-                {section.title}
-              </Text>
-              <View className="bg-card rounded-2xl border border-border overflow-hidden">
-                {items.map((item, itemIdx) => {
-                  const isLast = itemIdx === items.length - 1;
-
-                  // Real Light/Dark/System control replaces the placeholder row
-                  // when the dark-mode flag is enabled; otherwise the default
-                  // "Coming soon" row renders below.
-                  if (item.id === "dark_mode" && darkModeEnabled) {
-                    return (
-                      <View key={item.id} className={!isLast ? "border-b border-border" : ""}>
-                        <ThemeControl />
-                      </View>
-                    );
-                  }
-
-                  const guestLocked = !!item.requiresAuth && !isAuthenticated;
-                  return (
-                    <Pressable
-                      key={item.id}
-                      accessibilityRole="button"
-                      accessibilityLabel={item.label}
-                      accessibilityHint={
-                        guestLocked
-                          ? "Requires sign in"
-                          : item.comingSoon
-                            ? "Coming soon"
-                            : undefined
-                      }
-                      style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
-                      className={`flex-row items-center justify-between h-[52px] px-4 ${!isLast ? "border-b border-border" : ""}`}
-                      onPress={() => {
-                        if (item.comingSoon) {
-                          Toast.show({
-                            type: "info",
-                            text1: "Coming soon",
-                            text2: `${item.label} isn't available yet.`,
-                          });
-                          return;
-                        }
-                        if (guestLocked) {
-                          router.push("/(auth)/login");
-                          return;
-                        }
-                        if (item.route && item.route !== "#") {
-                          router.push(item.route as any);
-                        }
-                      }}
-                    >
-                      <View className="flex-row items-center gap-3">
-                        <View
-                          className="w-8 h-8 rounded-xl items-center justify-center"
-                          style={{ backgroundColor: `${tokens.primary}15` }}
-                        >
-                          <Icon name={item.icon} size={16} color={tokens.primary} />
+                    // Real Light/Dark/System control replaces the placeholder row
+                    // when the dark-mode flag is enabled; otherwise the default
+                    // "Coming soon" row renders below.
+                    if (item.id === "dark_mode" && darkModeEnabled) {
+                      return (
+                        <View key={item.id} className={!isLast ? "border-b border-border" : ""}>
+                          <ThemeControl />
                         </View>
-                        <Text className="text-[15px] font-bold text-foreground">{item.label}</Text>
-                      </View>
+                      );
+                    }
 
-                      <View className="flex-row items-center gap-2">
-                        {item.value && (
-                          <Text className="text-[12px] text-muted-foreground mr-1">
-                            {item.value}
+                    const guestLocked = !!item.requiresAuth && !isAuthenticated;
+                    return (
+                      <Pressable
+                        key={item.id}
+                        accessibilityRole="button"
+                        accessibilityLabel={item.label}
+                        accessibilityHint={
+                          guestLocked
+                            ? "Requires sign in"
+                            : item.comingSoon
+                              ? "Coming soon"
+                              : undefined
+                        }
+                        style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
+                        className={`flex-row items-center justify-between h-[52px] px-4 ${!isLast ? "border-b border-border" : ""}`}
+                        onPress={() => {
+                          if (item.comingSoon) {
+                            Toast.show({
+                              type: "info",
+                              text1: "Coming soon",
+                              text2: `${item.label} isn't available yet.`,
+                            });
+                            return;
+                          }
+                          if (guestLocked) {
+                            router.push("/(auth)/login");
+                            return;
+                          }
+                          if (item.route && item.route !== "#") {
+                            router.push(item.route as any);
+                          }
+                        }}
+                      >
+                        <View className="flex-row items-center gap-3">
+                          <View
+                            className="w-8 h-8 rounded-xl items-center justify-center"
+                            style={{ backgroundColor: `${tokens.primary}15` }}
+                          >
+                            <Icon name={item.icon} size={16} color={tokens.primary} />
+                          </View>
+                          <Text className="text-[15px] font-bold text-foreground">
+                            {item.label}
                           </Text>
-                        )}
-                        {guestLocked ? (
-                          <Icon name="lock" size={16} color={tokens.textMuted} />
-                        ) : (
-                          <Icon name="chevron-right" size={16} color={tokens.textDisabled} />
-                        )}
-                      </View>
-                    </Pressable>
-                  );
-                })}
-              </View>
-            </View>
-          );
-        })}
+                        </View>
 
-        {/* Auth action: sign out for members, sign in for guests */}
-        {isAuthenticated ? (
-          <Pressable
-            accessibilityRole="button"
-            accessibilityLabel="Log out"
-            style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
-            className="flex-row items-center justify-center gap-2 p-4 bg-rose-50 rounded-xl mt-2 border border-rose-100"
-            onPress={handleLogout}
-          >
-            <Icon name="log-out" size={18} color={tokens.error} />
-            <Text className="text-body-lg font-body font-bold text-rose-500">Log Out</Text>
-          </Pressable>
-        ) : (
-          <Pressable
-            accessibilityRole="button"
-            accessibilityLabel="Sign in or create an account"
-            style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
-            className="flex-row items-center justify-center gap-2 p-4 bg-primary rounded-xl mt-2"
-            onPress={() => router.push("/(auth)/login")}
-          >
-            <Icon name="log-in" size={18} color={tokens.primaryText} />
-            <Text className="text-body-lg font-body font-bold text-white">
-              Sign In / Create Account
-            </Text>
-          </Pressable>
-        )}
+                        <View className="flex-row items-center gap-2">
+                          {item.value && (
+                            <Text className="text-[12px] text-muted-foreground mr-1">
+                              {item.value}
+                            </Text>
+                          )}
+                          {guestLocked ? (
+                            <Icon name="lock" size={16} color={tokens.textMuted} />
+                          ) : (
+                            <Icon name="chevron-right" size={16} color={tokens.textDisabled} />
+                          )}
+                        </View>
+                      </Pressable>
+                    );
+                  })}
+                </View>
+              </View>
+            );
+          })}
+
+          {/* Auth action: sign out for members, sign in for guests */}
+          {isAuthenticated ? (
+            <Pressable
+              accessibilityRole="button"
+              accessibilityLabel="Log out"
+              style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
+              className="flex-row items-center justify-center gap-2 p-4 bg-rose-50 rounded-xl mt-2 border border-rose-100"
+              onPress={handleLogout}
+            >
+              <Icon name="log-out" size={18} color={tokens.error} />
+              <Text className="text-body-lg font-body font-bold text-rose-500">Log Out</Text>
+            </Pressable>
+          ) : (
+            <Pressable
+              accessibilityRole="button"
+              accessibilityLabel="Sign in or create an account"
+              style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
+              className="flex-row items-center justify-center gap-2 p-4 bg-primary rounded-xl mt-2"
+              onPress={() => router.push("/(auth)/login")}
+            >
+              <Icon name="log-in" size={18} color={tokens.primaryText} />
+              <Text className="text-body-lg font-body font-bold text-white">
+                Sign In / Create Account
+              </Text>
+            </Pressable>
+          )}
+        </View>
       </ScrollView>
     </View>
   );

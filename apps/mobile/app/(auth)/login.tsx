@@ -74,7 +74,7 @@ export default function LoginScreen() {
       <View className="absolute top-4 left-2 z-10" style={{ top: insets.top + 8 }}>
         <BackButton />
       </View>
-      <View className="flex-1 justify-center py-12">
+      <View className="flex-1 justify-center py-12 w-full max-w-md mx-auto">
         <View className="mb-10 items-center">
           <View className="w-16 h-16 rounded-2xl bg-primary-subtle items-center justify-center mb-6">
             <HugeiconsIcon icon={Store01Icon} size={28} color={tokens.primary} />
