@@ -210,8 +210,6 @@ export default function ListingDetailsScreen() {
           </Text>
         </View>
 
-        <View className="h-px bg-secondary my-2 mb-6" />
-
         {/* Specifications */}
         <View className="mb-8">
           <Text className="text-heading-md font-heading font-bold text-foreground mb-4">

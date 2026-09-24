@@ -1,5 +1,13 @@
 import { tokens } from "@/theme/tokens";
-import { View, Text, FlatList, Pressable, RefreshControl, ScrollView } from "react-native";
+import {
+  View,
+  Text,
+  FlatList,
+  Pressable,
+  RefreshControl,
+  ScrollView,
+  useWindowDimensions,
+} from "react-native";
 import { useState } from "react";
 import { useRouter } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -23,6 +31,8 @@ export default function FavoritesScreen() {
   const router = useRouter();
   const addItem = useCartStore((s) => s.addItem);
   const insets = useSafeAreaInsets();
+  const { width } = useWindowDimensions();
+  const numColumns = width >= 1024 ? 4 : width >= 768 ? 3 : 2;
 
   const {
     data: allFavorites = [],
@@ -113,7 +123,7 @@ export default function FavoritesScreen() {
         className="px-5 pt-4 pb-4 bg-card border-b border-border"
         style={{ paddingTop: insets.top + 12 }}
       >
-        <View className="flex-row items-center gap-3">
+        <View className="flex-row items-center gap-3 w-full max-w-5xl mx-auto">
           <BackButton />
           <View className="flex-1">
             <Text className="text-display-sm font-heading font-black text-foreground">
@@ -136,7 +146,7 @@ export default function FavoritesScreen() {
         </View>
 
         {/* Collection Folders */}
-        <View className="mt-6">
+        <View className="mt-6 w-full max-w-5xl mx-auto">
           <ScrollView
             horizontal
             showsHorizontalScrollIndicator={false}
@@ -180,8 +190,10 @@ export default function FavoritesScreen() {
       </View>
 
       <FlatList
+        className="w-full max-w-5xl mx-auto"
+        key={numColumns}
         data={displayItems as any[]}
-        numColumns={2}
+        numColumns={numColumns}
         contentContainerStyle={[
           { paddingHorizontal: 20, paddingBottom: 30, gap: 14, paddingTop: 20 },
           displayItems.length === 0 && { flexGrow: 1 },

@@ -1,6 +1,18 @@
 import { apiClient } from "../api/client";
+import { Platform } from "react-native";
+
+const isMock = process.env.EXPO_PUBLIC_MOCK_API === "true";
 
 export async function uploadVideoToCloudinary(localUri: string) {
+  if (isMock) {
+    // Simulate network delay
+    await new Promise((resolve) => setTimeout(resolve, 1000));
+    return {
+      videoUrl: "https://res.cloudinary.com/demo/video/upload/v1355998632/dog.mp4",
+      thumbnailUrl: "https://res.cloudinary.com/demo/video/upload/v1355998632/dog.jpg",
+    };
+  }
+
   const { data: sig } = await apiClient.get("/upload/signature/video", {
     params: { folder: "reels" },
   });

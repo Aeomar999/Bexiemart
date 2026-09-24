@@ -1,10 +1,11 @@
 import { tokens } from "@/theme/tokens";
 import { Tabs } from "expo-router";
-import { View, Text, Platform, TouchableOpacity } from "react-native";
+import { View, Text, Platform, TouchableOpacity, useWindowDimensions } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useCartStore } from "@/lib/stores/cart-store";
 import { Badge } from "@/components/ui/Badge";
 import { Icon } from "@/components/ui/Icon";
+import { Sidebar } from "@/components/ui/Sidebar";
 
 function TabIcon({ name, color }: { name: string; color: any }) {
   return <Icon name={name} color={color} size={24} />;
@@ -96,48 +97,58 @@ function CustomTabBar({ state, descriptors, navigation }: any) {
 }
 
 export default function TabsLayout() {
+  const { width } = useWindowDimensions();
+  const isLargeScreen = width >= 768; // md breakpoint
+
   return (
-    <Tabs
-      tabBar={(props) => <CustomTabBar {...props} />}
-      screenOptions={{
-        headerShown: false,
-      }}
-    >
-      <Tabs.Screen
-        name="(home)"
-        options={{
-          title: "Home",
-          tabBarIcon: ({ color }) => <TabIcon name="home" color={color} />,
-        }}
-      />
-      <Tabs.Screen
-        name="(shop)"
-        options={{
-          title: "Shop",
-          tabBarIcon: ({ color }) => <TabIcon name="grid" color={color} />,
-        }}
-      />
-      <Tabs.Screen
-        name="reels"
-        options={{
-          title: "Reels",
-          tabBarIcon: ({ color }) => <TabIcon name="video" color={color} />,
-        }}
-      />
-      <Tabs.Screen
-        name="cart"
-        options={{
-          title: "Cart",
-          tabBarIcon: ({ color }) => <CartTabIcon color={color} />,
-        }}
-      />
-      <Tabs.Screen
-        name="profile"
-        options={{
-          title: "Profile",
-          tabBarIcon: ({ color }) => <TabIcon name="user" color={color} />,
-        }}
-      />
-    </Tabs>
+    <View style={{ flex: 1, flexDirection: isLargeScreen ? "row" : "column" }}>
+      {isLargeScreen && <Sidebar role="customer" />}
+      <View style={{ flex: 1 }}>
+        <Tabs
+          tabBar={(props) =>
+            isLargeScreen ? <View style={{ display: "none" }} /> : <CustomTabBar {...props} />
+          }
+          screenOptions={{
+            headerShown: false,
+          }}
+        >
+          <Tabs.Screen
+            name="(home)"
+            options={{
+              title: "Home",
+              tabBarIcon: ({ color }) => <TabIcon name="home" color={color} />,
+            }}
+          />
+          <Tabs.Screen
+            name="(shop)"
+            options={{
+              title: "Shop",
+              tabBarIcon: ({ color }) => <TabIcon name="grid" color={color} />,
+            }}
+          />
+          <Tabs.Screen
+            name="reels"
+            options={{
+              title: "Reels",
+              tabBarIcon: ({ color }) => <TabIcon name="video" color={color} />,
+            }}
+          />
+          <Tabs.Screen
+            name="cart"
+            options={{
+              title: "Cart",
+              tabBarIcon: ({ color }) => <CartTabIcon color={color} />,
+            }}
+          />
+          <Tabs.Screen
+            name="profile"
+            options={{
+              title: "Profile",
+              tabBarIcon: ({ color }) => <TabIcon name="user" color={color} />,
+            }}
+          />
+        </Tabs>
+      </View>
+    </View>
   );
 }

@@ -34,7 +34,7 @@ export default function AddProductScreen() {
   const [shippingRequired, setShippingRequired] = useState(true);
 
   const [localImages, setLocalImages] = useState<
-    { uri: string; type: string; name: string; url?: string }[]
+    { uri: string; type: string; name: string; url?: string; file?: any }[]
   >([]);
   const [uploadingImages, setUploadingImages] = useState(false);
   const { validate, errors } = useFormValidation(productSchema);
@@ -65,7 +65,12 @@ export default function AddProductScreen() {
         if (img.url) {
           uploadedImages.push({ url: img.url });
         } else {
-          const res = await uploadApi.uploadFile({ uri: img.uri, name: img.name, type: img.type });
+          const res = await uploadApi.uploadFile({
+            uri: img.uri,
+            name: img.name,
+            type: img.type,
+            file: img.file,
+          });
           uploadedImages.push({ url: res.url });
         }
       }
@@ -135,7 +140,7 @@ export default function AddProductScreen() {
         />
 
         <View className="gap-5">
-          <View>
+          <View className="bg-card p-5 rounded-2xl border border-border">
             <Text className="text-body-lg font-bold text-foreground mb-4">Basic Details</Text>
             <View className="gap-4">
               <Input
@@ -164,9 +169,7 @@ export default function AddProductScreen() {
             </View>
           </View>
 
-          <View className="h-px bg-secondary my-2" />
-
-          <View>
+          <View className="bg-card p-5 rounded-2xl border border-border">
             <Text className="text-body-lg font-bold text-foreground mb-4">Pricing</Text>
             <View className="flex-row gap-4">
               <View className="flex-1">
@@ -191,9 +194,7 @@ export default function AddProductScreen() {
             </View>
           </View>
 
-          <View className="h-px bg-secondary my-2" />
-
-          <View>
+          <View className="bg-card p-5 rounded-2xl border border-border">
             <Text className="text-body-lg font-bold text-foreground mb-4">Inventory</Text>
             <View className="flex-row gap-4">
               <View className="flex-1">
@@ -217,13 +218,11 @@ export default function AddProductScreen() {
             </View>
           </View>
 
-          <View className="h-px bg-secondary my-2" />
-
-          <View>
+          <View className="bg-card p-5 rounded-2xl border border-border">
             <Text className="text-body-lg font-bold text-foreground mb-4">Shipping</Text>
             <Pressable
               onPress={() => setShippingRequired(!shippingRequired)}
-              className="flex-row items-center justify-between p-4 bg-card rounded-xl border border-border"
+              className="flex-row items-center justify-between"
             >
               <View>
                 <Text className="text-body-lg font-bold text-foreground">Physical Product</Text>
@@ -235,7 +234,7 @@ export default function AddProductScreen() {
                 className={`w-12 h-7 rounded-full p-1 ${shippingRequired ? "bg-primary" : "bg-secondary"}`}
               >
                 <View
-                  className={`w-5 h-5 rounded-full bg-card ${shippingRequired ? "translate-x-5" : "translate-x-0"}`}
+                  className={`w-5 h-5 rounded-full bg-card shadow-sm ${shippingRequired ? "translate-x-5" : "translate-x-0"}`}
                 />
               </View>
             </Pressable>

@@ -1,5 +1,13 @@
 import { tokens } from "@/theme/tokens";
-import { View, Text, ActivityIndicator, TextInput, Modal, Pressable } from "react-native";
+import {
+  View,
+  Text,
+  ActivityIndicator,
+  TextInput,
+  Modal,
+  Pressable,
+  useWindowDimensions,
+} from "react-native";
 import { FlashList } from "@shopify/flash-list";
 import { Image } from "expo-image";
 import { useState, useMemo } from "react";
@@ -147,6 +155,11 @@ export default function ShopScreen() {
     );
   }
 
+  const { width } = useWindowDimensions();
+  let numColumns = 2;
+  if (width >= 1024) numColumns = 4;
+  else if (width >= 768) numColumns = 3;
+
   return (
     <View className="flex-1 bg-background">
       <View
@@ -215,8 +228,9 @@ export default function ShopScreen() {
         />
       </View>
       <FlashList
+        key={`flashlist-${numColumns}`}
         data={filteredProducts}
-        numColumns={2}
+        numColumns={numColumns}
         contentContainerStyle={[
           { paddingHorizontal: 20, paddingTop: 16, paddingBottom: 96, gap: 12 },
           filteredProducts.length === 0 && { flexGrow: 1 },
@@ -284,11 +298,11 @@ export default function ShopScreen() {
       >
         <Pressable
           style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
-          className="flex-1 bg-black/40 justify-end"
+          className="flex-1 bg-black/40 justify-end md:justify-center md:items-center"
           onPress={() => setShowSortModal(false)}
         >
           <View
-            className="bg-card rounded-t-3xl pt-6 pb-10 px-5"
+            className="bg-card rounded-t-3xl md:rounded-3xl pt-6 pb-10 px-5 md:w-full md:max-w-md"
             onStartShouldSetResponder={() => true}
           >
             <View className="w-10 h-1 bg-secondary rounded-full self-center mb-6" />

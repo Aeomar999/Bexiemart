@@ -185,7 +185,7 @@ export default function AddressesScreen() {
       </View>
 
       <ScrollView className="flex-1 px-5 pt-6 pb-10" showsVerticalScrollIndicator={false}>
-        <View className="gap-4">
+        <View className="gap-4 w-full max-w-2xl mx-auto">
           {addresses.map((address: any) => (
             <Pressable
               style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
@@ -284,13 +284,13 @@ export default function AddressesScreen() {
 
       {/* Address Form Modal */}
       {isModalVisible && (
-        <View className="absolute inset-0 z-50 flex-1 justify-end bg-black/50">
+        <View className="absolute inset-0 z-50 flex-1 justify-end md:justify-center md:items-center bg-black/50">
           <KeyboardAvoidingView
             behavior={Platform.OS === "ios" ? "padding" : "height"}
-            className="flex-1 justify-end"
+            className="flex-1 justify-end md:justify-center w-full md:max-w-md mx-auto"
           >
             <View
-              className="bg-card rounded-t-3xl p-6 pb-10"
+              className="bg-card rounded-t-3xl md:rounded-3xl p-6 pb-10"
               style={{ paddingBottom: Math.max(insets.bottom, 24) }}
             >
               <View className="flex-row justify-between items-center mb-6">

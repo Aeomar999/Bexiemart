@@ -104,7 +104,7 @@ export default function AddFoodScreen() {
         </Pressable>
 
         <View className="gap-5">
-          <View>
+          <View className="bg-card p-5 rounded-2xl border border-border">
             <Text className="text-body-lg font-bold text-foreground mb-4">Meal Details</Text>
             <View className="gap-4">
               <Input
@@ -147,9 +147,7 @@ export default function AddFoodScreen() {
             </View>
           </View>
 
-          <View className="h-px bg-secondary my-2" />
-
-          <View>
+          <View className="bg-card p-5 rounded-2xl border border-border">
             <Text className="text-body-lg font-bold text-foreground mb-4">Pricing & Timing</Text>
             <View className="flex-row gap-4">
               <View className="flex-1">
@@ -172,9 +170,7 @@ export default function AddFoodScreen() {
             </View>
           </View>
 
-          <View className="h-px bg-secondary my-2" />
-
-          <View>
+          <View className="bg-card p-5 rounded-2xl border border-border">
             <Text className="text-body-lg font-bold text-foreground mb-4">Dietary Tags</Text>
             <View className="flex-row flex-wrap gap-3">
               {[
@@ -207,9 +203,7 @@ export default function AddFoodScreen() {
             </View>
           </View>
 
-          <View className="h-px bg-secondary my-2" />
-
-          <View>
+          <View className="bg-card p-5 rounded-2xl border border-border">
             <Text className="text-body-lg font-bold text-foreground mb-4">Availability</Text>
             <View className="flex-row bg-muted p-1 rounded-xl">
               <Pressable

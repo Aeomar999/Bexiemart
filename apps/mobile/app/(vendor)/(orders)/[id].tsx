@@ -108,119 +108,125 @@ export default function OrderDetailsScreen() {
     <View className="flex-1 bg-background">
       {/* Custom Header */}
       <View
-        className="px-5 pb-4 bg-card border-b border-border flex-row items-center justify-between"
+        className="px-5 pb-4 bg-card border-b border-border"
         style={{ paddingTop: (insets.top || 12) + 12 }}
       >
-        <View className="flex-row items-center">
-          <BackButton
-            className="w-10 h-10 rounded-full bg-background items-center justify-center mr-3"
-            color={tokens.textPrimary}
-          />
-          <View>
-            <Text className="text-body-md text-muted-foreground font-bold mb-0.5">
-              Order Details
-            </Text>
-            <Text className="text-heading-md font-heading font-black text-foreground leading-tight">
-              {order.id}
+        <View className="flex-row items-center justify-between w-full max-w-2xl mx-auto">
+          <View className="flex-row items-center">
+            <BackButton
+              className="w-10 h-10 rounded-full bg-background items-center justify-center mr-3"
+              color={tokens.textPrimary}
+            />
+            <View>
+              <Text className="text-body-md text-muted-foreground font-bold mb-0.5">
+                Order Details
+              </Text>
+              <Text className="text-heading-md font-heading font-black text-foreground leading-tight">
+                {order.id}
+              </Text>
+            </View>
+          </View>
+          <View className="px-3 py-1 rounded-full bg-blue-100">
+            <Text className="text-body-sm font-bold text-blue-700">
+              {order.status.toUpperCase()}
             </Text>
           </View>
-        </View>
-        <View className="px-3 py-1 rounded-full bg-blue-100">
-          <Text className="text-body-sm font-bold text-blue-700">{order.status.toUpperCase()}</Text>
         </View>
       </View>
 
-      <ScrollView
-        className="flex-1 px-5"
-        contentContainerClassName="pb-12 pt-6 gap-6"
-        showsVerticalScrollIndicator={false}
-      >
-        {/* Customer Info */}
-        <View className="bg-card rounded-2xl border border-border p-5">
-          <Text className="text-body-lg font-bold text-foreground mb-4">Customer Info</Text>
-          <View className="flex-row items-center mb-4">
-            <View className="w-12 h-12 rounded-full bg-muted items-center justify-center mr-3">
-              <Icon name="user" size={20} color={tokens.textMuted} />
-            </View>
-            <View className="flex-1">
-              <Text className="text-body-lg font-bold text-foreground">{order.customer.name}</Text>
-              <Text className="text-body-md text-muted-foreground mt-0.5">
-                {order.customer.phone}
-              </Text>
-            </View>
-            <Pressable
-              accessibilityRole="button"
-              accessibilityLabel="Call customer"
-              hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
-              className="w-10 h-10 rounded-full bg-green-50 items-center justify-center"
-            >
-              <Icon name="phone" size={18} color={tokens.success} />
-            </Pressable>
-          </View>
-
-          <View className="bg-background rounded-lg p-3 flex-row items-start">
-            <Icon
-              name="map-pin"
-              size={16}
-              color={tokens.textMuted}
-              style={{ marginTop: 2, marginRight: 8 }}
-            />
-            <View className="flex-1">
-              <Text className="text-sm font-bold text-muted-foreground mb-0.5">{order.type}</Text>
-              <Text className="text-sm text-muted-foreground leading-relaxed">
-                {order.customer.address}
-              </Text>
-            </View>
-          </View>
-        </View>
-
-        {/* Order Items */}
-        <View className="bg-card rounded-2xl border border-border p-5">
-          <Text className="text-body-lg font-bold text-foreground mb-4">Order Items</Text>
-
-          <View className="gap-4 mb-4">
-            {order.items.map((item: any, index: number) => (
-              <View
-                key={item.id}
-                className={`flex-row justify-between ${index < order.items.length - 1 ? "pb-4 border-b border-border" : ""}`}
-              >
-                <View className="flex-row items-start flex-1 pr-4">
-                  <View className="w-6 h-6 rounded bg-muted items-center justify-center mr-3 mt-0.5">
-                    <Text className="text-body-sm font-bold text-muted-foreground">
-                      {item.quantity}x
-                    </Text>
-                  </View>
-                  <Text className="text-body-lg font-medium text-foreground">{item.name}</Text>
-                </View>
+      <ScrollView className="flex-1 px-5" showsVerticalScrollIndicator={false}>
+        <View className="w-full max-w-2xl mx-auto pb-12 pt-6 gap-6">
+          {/* Customer Info */}
+          <View className="bg-card rounded-2xl border border-border p-5">
+            <Text className="text-body-lg font-bold text-foreground mb-4">Customer Info</Text>
+            <View className="flex-row items-center mb-4">
+              <View className="w-12 h-12 rounded-full bg-muted items-center justify-center mr-3">
+                <Icon name="user" size={20} color={tokens.textMuted} />
+              </View>
+              <View className="flex-1">
                 <Text className="text-body-lg font-bold text-foreground">
-                  GHS {(item.price * item.quantity).toFixed(2)}
+                  {order.customer.name}
+                </Text>
+                <Text className="text-body-md text-muted-foreground mt-0.5">
+                  {order.customer.phone}
                 </Text>
               </View>
-            ))}
+              <Pressable
+                accessibilityRole="button"
+                accessibilityLabel="Call customer"
+                hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+                className="w-10 h-10 rounded-full bg-green-50 items-center justify-center"
+              >
+                <Icon name="phone" size={18} color={tokens.success} />
+              </Pressable>
+            </View>
+
+            <View className="bg-background rounded-lg p-3 flex-row items-start">
+              <Icon
+                name="map-pin"
+                size={16}
+                color={tokens.textMuted}
+                style={{ marginTop: 2, marginRight: 8 }}
+              />
+              <View className="flex-1">
+                <Text className="text-sm font-bold text-muted-foreground mb-0.5">{order.type}</Text>
+                <Text className="text-sm text-muted-foreground leading-relaxed">
+                  {order.customer.address}
+                </Text>
+              </View>
+            </View>
           </View>
 
-          <View className="border-t border-border pt-4 gap-2">
-            <View className="flex-row justify-between">
-              <Text className="text-body-md text-muted-foreground">Subtotal</Text>
-              <Text className="text-body-md text-foreground">GHS {order.subtotal.toFixed(2)}</Text>
+          {/* Order Items */}
+          <View className="bg-card rounded-2xl border border-border p-5">
+            <Text className="text-body-lg font-bold text-foreground mb-4">Order Items</Text>
+
+            <View className="gap-4 mb-4">
+              {order.items.map((item: any, index: number) => (
+                <View
+                  key={item.id}
+                  className={`flex-row justify-between ${index < order.items.length - 1 ? "pb-4 border-b border-border" : ""}`}
+                >
+                  <View className="flex-row items-start flex-1 pr-4">
+                    <View className="w-6 h-6 rounded bg-muted items-center justify-center mr-3 mt-0.5">
+                      <Text className="text-body-sm font-bold text-muted-foreground">
+                        {item.quantity}x
+                      </Text>
+                    </View>
+                    <Text className="text-body-lg font-medium text-foreground">{item.name}</Text>
+                  </View>
+                  <Text className="text-body-lg font-bold text-foreground">
+                    GHS {(item.price * item.quantity).toFixed(2)}
+                  </Text>
+                </View>
+              ))}
             </View>
-            <View className="flex-row justify-between">
-              <Text className="text-body-md text-muted-foreground">Delivery Fee</Text>
-              <Text className="text-body-md text-foreground">
-                GHS {order.deliveryFee.toFixed(2)}
-              </Text>
-            </View>
-            <View className="flex-row justify-between mt-2 pt-2 border-t border-border">
-              <Text className="text-body-lg font-bold text-foreground">Total</Text>
-              <Text className="text-heading-md font-black text-primary">
-                GHS {order.total.toFixed(2)}
-              </Text>
+
+            <View className="border-t border-border pt-4 gap-2">
+              <View className="flex-row justify-between">
+                <Text className="text-body-md text-muted-foreground">Subtotal</Text>
+                <Text className="text-body-md text-foreground">
+                  GHS {order.subtotal.toFixed(2)}
+                </Text>
+              </View>
+              <View className="flex-row justify-between">
+                <Text className="text-body-md text-muted-foreground">Delivery Fee</Text>
+                <Text className="text-body-md text-foreground">
+                  GHS {order.deliveryFee.toFixed(2)}
+                </Text>
+              </View>
+              <View className="flex-row justify-between mt-2 pt-2 border-t border-border">
+                <Text className="text-body-lg font-bold text-foreground">Total</Text>
+                <Text className="text-heading-md font-black text-primary">
+                  GHS {order.total.toFixed(2)}
+                </Text>
+              </View>
             </View>
           </View>
+
+          {/* Actions */}
+          <View className="mt-2 pb-6">{renderActionButtons()}</View>
         </View>
-
-        {/* Actions */}
-        <View className="mt-2 pb-6">{renderActionButtons()}</View>
       </ScrollView>
     </View>
   );
