@@ -10,6 +10,7 @@ export type PickerImage = {
   type: string;
   name: string;
   url?: string;
+  file?: any;
 };
 
 interface PhotoPickerProps {
@@ -31,18 +32,43 @@ export function PhotoPicker({
       return;
     }
 
-    const result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
-      allowsMultipleSelection,
-      selectionLimit: maxSelections - images.length,
-      quality: 0.8,
-    });
+    Alert.alert("Upload Photo", "Choose a photo from your gallery or take a new one.", [
+      {
+        text: "Camera",
+        onPress: async () => {
+          const result = await ImagePicker.launchCameraAsync({
+            mediaTypes: ImagePicker.MediaTypeOptions.Images,
+            quality: 0.8,
+          });
+          handleImageResult(result);
+        },
+      },
+      {
+        text: "Gallery",
+        onPress: async () => {
+          const result = await ImagePicker.launchImageLibraryAsync({
+            mediaTypes: ImagePicker.MediaTypeOptions.Images,
+            allowsMultipleSelection,
+            selectionLimit: maxSelections - images.length,
+            quality: 0.8,
+          });
+          handleImageResult(result);
+        },
+      },
+      {
+        text: "Cancel",
+        style: "cancel",
+      },
+    ]);
+  };
 
+  const handleImageResult = (result: ImagePicker.ImagePickerResult) => {
     if (!result.canceled) {
       const newImages = result.assets.map((asset) => ({
         uri: asset.uri,
         type: asset.mimeType || "image/jpeg",
         name: asset.fileName || `photo-${Date.now()}.jpg`,
+        file: (asset as any).file, // Needed for web
       }));
 
       const combined = [...images, ...newImages].slice(0, maxSelections);

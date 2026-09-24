@@ -34,7 +34,7 @@ export default function AddProductScreen() {
   const [shippingRequired, setShippingRequired] = useState(true);
 
   const [localImages, setLocalImages] = useState<
-    { uri: string; type: string; name: string; url?: string }[]
+    { uri: string; type: string; name: string; url?: string; file?: any }[]
   >([]);
   const [uploadingImages, setUploadingImages] = useState(false);
   const { validate, errors } = useFormValidation(productSchema);
@@ -65,7 +65,12 @@ export default function AddProductScreen() {
         if (img.url) {
           uploadedImages.push({ url: img.url });
         } else {
-          const res = await uploadApi.uploadFile({ uri: img.uri, name: img.name, type: img.type });
+          const res = await uploadApi.uploadFile({
+            uri: img.uri,
+            name: img.name,
+            type: img.type,
+            file: img.file,
+          });
           uploadedImages.push({ url: res.url });
         }
       }

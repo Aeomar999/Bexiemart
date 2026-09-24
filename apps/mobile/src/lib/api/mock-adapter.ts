@@ -445,6 +445,39 @@ const ROUTES: MockRouteHandler[] = [
   // Vendor
   { matcher: /\/vendor/, handler: () => ({ data: null }) },
 
+  // Upload
+  {
+    matcher: /\/upload\/signature\/video/,
+    handler: () => ({
+      timestamp: Math.round(Date.now() / 1000),
+      signature: "mock_signature",
+      api_key: "mock_api_key",
+      cloud_name: "mock_cloud_name",
+      folder: "reels",
+      resource_type: "video",
+      eager: "sp_auto/mp4",
+      eager_async: true,
+    }),
+  },
+  {
+    matcher: /\/upload\/signature/,
+    handler: () => ({
+      timestamp: Math.round(Date.now() / 1000),
+      signature: "mock_signature",
+      api_key: "mock_api_key",
+      cloud_name: "mock_cloud_name",
+      folder: "bexiemart",
+      allowed_formats: "jpg,png,webp,jpeg",
+    }),
+  },
+  {
+    matcher: /\/upload/,
+    handler: () => ({
+      url: "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=400",
+      filename: "mock_filename",
+    }),
+  },
+
   // PostHog
   { matcher: /\/posthog/, handler: () => ({}) },
 
