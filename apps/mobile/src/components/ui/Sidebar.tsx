@@ -118,7 +118,7 @@ export function Sidebar({ role = "customer" }: SidebarProps) {
                   marginLeft: 16,
                   fontSize: 16,
                   fontFamily: isFocused ? "Nunito_700Bold" : "Nunito_500Medium",
-                  color: isFocused ? tokens.primary : tokens.text,
+                  color: isFocused ? tokens.primary : tokens.textPrimary,
                 }}
               >
                 {tab.title}
