@@ -34,10 +34,27 @@ const FOOD_FILTERS = [
   { id: "draft", label: "Drafts" },
 ];
 
+type ListingTab = "products" | "food" | "services";
+
+// The API has no `status` column; derive one from isActive / stock / isAvailable
+// so it lines up with the filter ids above.
+function getListingStatus(item: any, tab: ListingTab): string {
+  if (typeof item.status === "string") return item.status;
+  if (tab === "products") {
+    if (item.isActive === false) return "draft";
+    return Number(item.stock ?? 0) <= 0 ? "out_of_stock" : "active";
+  }
+  if (tab === "food") {
+    if (item.isActive === false) return "draft";
+    return item.isAvailable === false ? "sold_out" : "available";
+  }
+  return item.isActive === false ? "paused" : "active";
+}
+
 export default function ListingsScreen() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
-  const [activeTab, setActiveTab] = useState<"products" | "food" | "services">("products");
+  const [activeTab, setActiveTab] = useState<ListingTab>("products");
   const [filter, setFilter] = useState("all");
   const [isAddModalVisible, setAddModalVisible] = useState(false);
 
@@ -67,7 +84,7 @@ export default function ListingsScreen() {
 
   const filteredItems = activeData.filter((item: any) => {
     if (filter === "all") return true;
-    return item.status === filter;
+    return getListingStatus(item, activeTab) === filter;
   });
 
   return (
@@ -192,21 +209,24 @@ export default function ListingsScreen() {
           keyExtractor={(item) => item.id}
           showsVerticalScrollIndicator={false}
           renderItem={({ item }: any) => {
+            const category = item.category?.name ?? item.category ?? "";
             const subtitle =
               activeTab === "products"
-                ? `${item.stock} in stock • ${item.category}`
+                ? `${item.stock} in stock • ${category}`
                 : activeTab === "food"
-                  ? `${item.prepTime} • ${item.category}`
-                  : `${item.duration} • ${item.category}`;
+                  ? `${item.prepTime} • ${category}`
+                  : `${item.duration} • ${category}`;
 
             const statusColors: Record<string, { bg: string; text: string }> = {
               active: { bg: "bg-emerald-100", text: "text-emerald-700" },
+              available: { bg: "bg-emerald-100", text: "text-emerald-700" },
               draft: { bg: "bg-gray-100", text: "text-gray-700" },
               out_of_stock: { bg: "bg-red-100", text: "text-red-700" },
               sold_out: { bg: "bg-red-100", text: "text-red-700" },
               paused: { bg: "bg-amber-100", text: "text-amber-700" },
             };
-            const style = statusColors[item.status] || statusColors.draft;
+            const status = getListingStatus(item, activeTab);
+            const style = statusColors[status] || statusColors.draft;
 
             return (
               <Pressable
@@ -237,7 +257,7 @@ export default function ListingsScreen() {
                     </Text>
                     <View className={`px-2 py-0.5 rounded-full ${style.bg}`}>
                       <Text className={`text-[10px] font-bold uppercase ${style.text}`}>
-                        {item.status.replace("_", " ")}
+                        {status.replace("_", " ")}
                       </Text>
                     </View>
                   </View>
