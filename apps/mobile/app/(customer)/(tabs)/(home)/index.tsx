@@ -305,17 +305,17 @@ export default function HomeScreen() {
                     className="w-full rounded-2xl overflow-hidden p-3.5 justify-between"
                     style={{ aspectRatio: 1.1, backgroundColor: tint }}
                   >
-                    {/* Exaggerated Text Watermark */}
+                    {/* Big Watermark Title */}
                     <Text
                       pointerEvents="none"
-                      className="absolute -left-2 top-2 font-heading font-black uppercase tracking-tighter"
+                      className="font-heading font-black uppercase tracking-tighter z-10"
                       style={{
-                        fontSize: 60,
-                        lineHeight: 60,
+                        fontSize: 36,
+                        lineHeight: 36,
                         color: fg,
-                        opacity: 0.08,
+                        opacity: 0.25,
                       }}
-                      numberOfLines={1}
+                      numberOfLines={3}
                     >
                       {cat.name}
                     </Text>
@@ -331,8 +331,15 @@ export default function HomeScreen() {
                               bottom: -10,
                               width: 120,
                               height: 120,
+                              zIndex: 5,
                             }
-                          : { position: "absolute", right: -10, bottom: -12, opacity: 0.12 }
+                          : {
+                              position: "absolute",
+                              right: -10,
+                              bottom: -12,
+                              opacity: 0.12,
+                              zIndex: 5,
+                            }
                       }
                     >
                       {asset ? (
@@ -346,29 +353,10 @@ export default function HomeScreen() {
                       )}
                     </View>
 
-                    {/* Medallion: real category image when present, icon fallback otherwise */}
-                    <View className="w-12 h-12 rounded-2xl bg-card items-center justify-center overflow-hidden">
-                      {cat.image ? (
-                        <Image
-                          source={{ uri: cat.image }}
-                          style={{ width: "100%", height: "100%" }}
-                          contentFit="cover"
-                        />
-                      ) : (
-                        <Icon name={icon} size={22} color={fg} />
-                      )}
-                    </View>
-
-                    <View>
+                    {/* Subtitle / Count */}
+                    <View className="z-10 mt-auto pt-4">
                       <Text
-                        className="text-body-md font-heading font-bold"
-                        style={{ color: fg }}
-                        numberOfLines={1}
-                      >
-                        {cat.name}
-                      </Text>
-                      <Text
-                        className="text-caption font-body mt-0.5"
+                        className="text-caption font-body font-bold"
                         style={{ color: fg, opacity: 0.8 }}
                       >
                         {cat.count} {cat.count === 1 ? "item" : "items"}
