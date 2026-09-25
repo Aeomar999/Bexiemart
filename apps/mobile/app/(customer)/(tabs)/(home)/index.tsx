@@ -310,14 +310,13 @@ export default function HomeScreen() {
                       pointerEvents="none"
                       className="font-heading font-black uppercase z-10"
                       style={{
-                        fontSize: 28,
-                        lineHeight: 28,
+                        fontSize: 32, // bump slightly since it will scale down anyway
                         color: fg,
                         opacity: 0.35,
                       }}
-                      numberOfLines={3}
+                      numberOfLines={1}
                       adjustsFontSizeToFit
-                      minimumFontScale={0.6}
+                      minimumFontScale={0.3}
                     >
                       {cat.name}
                     </Text>
