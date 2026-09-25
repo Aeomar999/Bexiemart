@@ -31,7 +31,7 @@ describe("WalletService", () => {
       expect(result).toEqual(wallet);
       expect(prisma.wallet.findUnique).toHaveBeenCalledWith({
         where: { userId: "u1" },
-        include: { user: true },
+        include: { user: { select: { id: true, name: true, email: true } } },
       });
     });
 
@@ -50,7 +50,41 @@ describe("WalletService", () => {
       expect(result).toEqual(newWallet);
       expect(prisma.wallet.create).toHaveBeenCalledWith({
         data: { userId: "u1", balance: 0, currency: "GHS", status: "ACTIVE" },
-        include: { user: true },
+        include: { user: { select: { id: true, name: true, email: true } } },
+      });
+    });
+  });
+
+  describe("getPublicWallet", () => {
+    it("should return only client-facing fields", async () => {
+      const createdAt = new Date("2026-01-01");
+      const updatedAt = new Date("2026-02-01");
+      prisma.wallet.findUnique.mockResolvedValue({
+        id: "w1",
+        userId: "u1",
+        balance: 100,
+        currency: "GHS",
+        status: "ACTIVE",
+        bexieCoins: 25,
+        pinHash: "$argon2id$v=19$m=65536,t=3,p=4$salt$hash",
+        pinFailures: 3,
+        pinLockedUntil: new Date(),
+        createdAt,
+        updatedAt,
+        user: { id: "u1", name: "Ama", email: "ama@example.com", password: "hash" },
+      });
+
+      const result = await service.getPublicWallet("u1");
+
+      expect(result).toEqual({
+        id: "w1",
+        balance: 100,
+        currency: "GHS",
+        status: "ACTIVE",
+        bexieCoins: 25,
+        createdAt,
+        updatedAt,
+        user: { name: "Ama" },
       });
     });
   });
@@ -90,12 +124,10 @@ describe("WalletService", () => {
         .mockResolvedValueOnce(wallet)
         .mockResolvedValue({ ...wallet, balance: 150 });
       prisma.transaction.findUnique.mockResolvedValue(transaction);
-      jest
-        .spyOn(globalThis, "fetch")
-        .mockResolvedValue({
-          ok: true,
-          json: async () => ({ status: true, data: { status: "success" } }),
-        } as any);
+      jest.spyOn(globalThis, "fetch").mockResolvedValue({
+        ok: true,
+        json: async () => ({ status: true, data: { status: "success" } }),
+      } as any);
       prisma.$transaction.mockImplementation((arg: any, opts?: any) =>
         typeof arg === "function" ? arg(prisma) : Promise.all(arg)
       );
@@ -150,14 +182,20 @@ describe("WalletService", () => {
   });
 
   describe("setPin", () => {
-    it("should hash pin with bcryptjs and update wallet", async () => {
+    it("should store an argon2 hash without returning it", async () => {
       const wallet = { id: "w1", userId: "u1", balance: 100 };
       prisma.wallet.findUnique.mockResolvedValue(wallet);
-      jest.spyOn(bcrypt, "hash").mockResolvedValue("hashed" as never);
-      const updated = { ...wallet, pinHash: "hashed", pinFailures: 0, pinLockedUntil: null };
-      prisma.wallet.update.mockResolvedValue(updated);
+      prisma.wallet.update.mockResolvedValue({ ...wallet, pinHash: "hashed" });
       const result = await service.setPin("u1", "1234");
-      expect(result).toEqual(updated);
+      expect(result).toEqual({ success: true });
+      expect(prisma.wallet.update).toHaveBeenCalledWith({
+        where: { id: "w1" },
+        data: {
+          pinHash: expect.stringMatching(/^\$argon2id\$/),
+          pinFailures: 0,
+          pinLockedUntil: null,
+        },
+      });
     });
   });
 

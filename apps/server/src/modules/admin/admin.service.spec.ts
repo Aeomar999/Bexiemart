@@ -111,6 +111,17 @@ describe("AdminService", () => {
       const result = await service.getUser("u1");
       expect(result).toEqual(user);
     });
+
+    it("selects wallet fields explicitly so the PIN hash is never loaded", async () => {
+      prisma.user.findUnique.mockResolvedValue({ id: "u1" });
+      await service.getUser("u1");
+      const walletQuery = prisma.user.findUnique.mock.calls[0][0].include.wallet;
+      expect(walletQuery).toEqual({ select: expect.any(Object) });
+      expect(walletQuery.select).not.toHaveProperty("pinHash");
+      expect(walletQuery.select).not.toHaveProperty("pinFailures");
+      expect(walletQuery.select).not.toHaveProperty("pinLockedUntil");
+      expect(walletQuery.select).toHaveProperty("balance", true);
+    });
   });
 
   describe("updateUserRole", () => {

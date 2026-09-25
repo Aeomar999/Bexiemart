@@ -12,6 +12,10 @@ import * as bcrypt from "bcryptjs";
 import * as argon2 from "argon2";
 import { CreateCardDto, UpdateCardDto } from "./dto/card.dto";
 
+// Internal callers only need the owner's name and email, so never load the rest
+// of the user row alongside the wallet.
+const WALLET_OWNER = { select: { id: true, name: true, email: true } } as const;
+
 @Injectable()
 export class WalletService {
   private readonly logger = new Logger(WalletService.name);
@@ -58,20 +62,43 @@ export class WalletService {
     return data.data;
   }
 
+  /**
+   * Internal: the full wallet row, including pinHash and lockout state. Never
+   * return this to a client — use getPublicWallet for responses.
+   */
   async getWallet(userId: string) {
     let wallet = await this.prisma.wallet.findUnique({
       where: { userId },
-      include: { user: true },
+      include: { user: WALLET_OWNER },
     });
 
     if (!wallet) {
       wallet = await this.prisma.wallet.create({
         data: { userId, balance: 0, currency: "GHS", status: "ACTIVE" },
-        include: { user: true },
+        include: { user: WALLET_OWNER },
       });
     }
 
     return wallet;
+  }
+
+  /**
+   * Client-facing wallet. An explicit allowlist rather than an omit-list: a PIN
+   * is only 4–6 digits, so a leaked pinHash can be brute-forced offline, which
+   * sidesteps the pinFailures/pinLockedUntil lockout entirely.
+   */
+  async getPublicWallet(userId: string) {
+    const wallet = await this.getWallet(userId);
+    return {
+      id: wallet.id,
+      balance: wallet.balance,
+      currency: wallet.currency,
+      status: wallet.status,
+      bexieCoins: wallet.bexieCoins,
+      createdAt: wallet.createdAt,
+      updatedAt: wallet.updatedAt,
+      user: { name: wallet.user.name },
+    };
   }
 
   async getTransactions(userId: string, page: number = 1, limit: number = 20) {
@@ -263,10 +290,12 @@ export class WalletService {
     }
 
     const pinHash = await argon2.hash(pin, { type: argon2.argon2id });
-    return this.prisma.wallet.update({
+    // Don't return the updated row: it carries the new pinHash.
+    await this.prisma.wallet.update({
       where: { id: wallet.id },
       data: { pinHash, pinFailures: 0, pinLockedUntil: null },
     });
+    return { success: true };
   }
 
   async verifyPin(userId: string, pin: string) {
@@ -322,10 +351,12 @@ export class WalletService {
 
     const wallet = await this.getWallet(userId);
     const pinHash = await argon2.hash(newPin, { type: argon2.argon2id });
-    return this.prisma.wallet.update({
+    // Don't return the updated row: it carries the new pinHash.
+    await this.prisma.wallet.update({
       where: { id: wallet.id },
       data: { pinHash, pinFailures: 0, pinLockedUntil: null },
     });
+    return { success: true };
   }
 
   async getPinStatus(userId: string) {
