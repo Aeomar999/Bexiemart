@@ -308,14 +308,16 @@ export default function HomeScreen() {
                     {/* Big Watermark Title */}
                     <Text
                       pointerEvents="none"
-                      className="font-heading font-black uppercase tracking-tighter z-10"
+                      className="font-heading font-black uppercase z-10"
                       style={{
-                        fontSize: 36,
-                        lineHeight: 36,
+                        fontSize: 28,
+                        lineHeight: 28,
                         color: fg,
-                        opacity: 0.25,
+                        opacity: 0.35,
                       }}
                       numberOfLines={3}
+                      adjustsFontSizeToFit
+                      minimumFontScale={0.6}
                     >
                       {cat.name}
                     </Text>
@@ -375,7 +377,7 @@ export default function HomeScreen() {
             <View className="flex-row items-center bg-[#F1F5F9] rounded-[12px] p-[3px]">
               <Pressable
                 onPress={() => setActiveTab("top")}
-                className={`h-[34px] px-3 rounded-[9px] items-center justify-center ${activeTab === "top" ? "bg-white " : ""}`}
+                className={`h-[34px] px-3 rounded-[9px] items-center justify-center ${activeTab === "top" ? "bg-white shadow-sm" : ""}`}
               >
                 <Text
                   className={`text-[13px] font-bold ${activeTab === "top" ? "text-foreground" : "text-muted-foreground"}`}
@@ -385,7 +387,7 @@ export default function HomeScreen() {
               </Pressable>
               <Pressable
                 onPress={() => setActiveTab("new")}
-                className={`h-[34px] px-3 rounded-[9px] items-center justify-center ${activeTab === "new" ? "bg-white " : ""}`}
+                className={`h-[34px] px-3 rounded-[9px] items-center justify-center ${activeTab === "new" ? "bg-white shadow-sm" : ""}`}
               >
                 <Text
                   className={`text-[13px] font-bold ${activeTab === "new" ? "text-foreground" : "text-muted-foreground"}`}
@@ -395,7 +397,7 @@ export default function HomeScreen() {
               </Pressable>
               <Pressable
                 onPress={() => setActiveTab("popular")}
-                className={`h-[34px] px-3 rounded-[9px] items-center justify-center ${activeTab === "popular" ? "bg-white " : ""}`}
+                className={`h-[34px] px-3 rounded-[9px] items-center justify-center ${activeTab === "popular" ? "bg-white shadow-sm" : ""}`}
               >
                 <Text
                   className={`text-[13px] font-bold ${activeTab === "popular" ? "text-foreground" : "text-muted-foreground"}`}
@@ -417,16 +419,16 @@ export default function HomeScreen() {
             horizontal
             showsHorizontalScrollIndicator={false}
             decelerationRate="fast"
-            snapToInterval={122} // 110px width + 12px gap
+            snapToInterval={152} // 140px width + 12px gap
             snapToAlignment="start"
             contentContainerStyle={{ paddingHorizontal: 20, gap: 12 }}
             keyExtractor={(item: any) => item.id}
             renderItem={({ item }: { item: any }) => (
               <Pressable
-                className="w-[110px] active:opacity-70"
+                className="w-[140px] active:opacity-70"
                 onPress={() => router.push(`/(customer)/product/${item.id}`)}
               >
-                <View className="w-full h-[110px] rounded-[16px] bg-muted mb-2 items-center justify-center overflow-hidden">
+                <View className="w-full h-[120px] rounded-[16px] bg-muted mb-2 items-center justify-center overflow-hidden">
                   {item.image ? (
                     <Image
                       source={{ uri: item.image }}
@@ -437,7 +439,7 @@ export default function HomeScreen() {
                     <Icon name="image" size={28} color={tokens.textDisabled} />
                   )}
                 </View>
-                <View className="px-1 gap-[2px]">
+                <View className="px-1 gap-[4px]">
                   <Text
                     className="text-[14px] font-semibold text-foreground leading-[20px]"
                     numberOfLines={1}
@@ -446,8 +448,10 @@ export default function HomeScreen() {
                   </Text>
                   <View className="flex-row items-center justify-between">
                     <Text
-                      className="text-[15px] font-extrabold text-foreground tracking-[-0.02em]"
+                      className="text-[14px] font-extrabold text-foreground tracking-tight flex-shrink pr-2"
                       style={{ fontVariant: ["tabular-nums"] }}
+                      numberOfLines={1}
+                      adjustsFontSizeToFit
                     >
                       GHS {item.price.toFixed(0)}
                     </Text>
@@ -458,7 +462,7 @@ export default function HomeScreen() {
                         color={tokens.warning}
                         style={{ marginRight: 2 }}
                       />
-                      <Text className="text-caption text-muted-foreground">
+                      <Text className="text-caption font-bold text-muted-foreground">
                         {item.rating || "4.5"}
                       </Text>
                     </View>
@@ -466,7 +470,7 @@ export default function HomeScreen() {
                 </View>
               </Pressable>
             )}
-            estimatedItemSize={110}
+            estimatedItemSize={140}
           />
         </View>
 
