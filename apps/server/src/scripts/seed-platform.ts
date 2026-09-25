@@ -18,10 +18,25 @@ import { randomBytes } from "crypto";
 const logger = new Logger("SeedPlatform");
 
 // This script deletes and recreates its seed accounts, so it must only ever run
-// against a disposable dev/staging database, and only when explicitly asked to.
-if (process.env.NODE_ENV === "production" || process.env.SEED_PLATFORM_CONFIRM !== "yes") {
+// against a disposable dev/staging database. The operator approves the exact
+// target by setting SEED_PLATFORM_CONFIRM to the database name in DATABASE_URL.
+function targetDatabaseName(): string | null {
+  try {
+    const name = new URL(process.env.DATABASE_URL ?? "").pathname.replace(/^\//, "");
+    return name ? decodeURIComponent(name) : null;
+  } catch {
+    return null;
+  }
+}
+const targetDb = targetDatabaseName();
+if (
+  process.env.NODE_ENV === "production" ||
+  !targetDb ||
+  process.env.SEED_PLATFORM_CONFIRM !== targetDb
+) {
   logger.error(
-    "Refusing to seed: set SEED_PLATFORM_CONFIRM=yes and run against a non-production database."
+    "Refusing to seed: set SEED_PLATFORM_CONFIRM to the database name in DATABASE_URL " +
+      "(it must be a disposable non-production database)."
   );
   process.exit(1);
 }
