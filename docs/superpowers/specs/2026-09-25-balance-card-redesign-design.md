@@ -98,7 +98,9 @@ export interface BalanceCardProps {
 
 ### Anatomy (size `md`)
 
-1. **Header row** — `label` in `caption` / `text-muted-foreground`, eye toggle on
+1. **Header row** — `label` in `caption` / `text-foreground-secondary` (new
+   Tailwind alias for `--color-text-secondary`; muted grey fails WCAG AA on
+   white), eye toggle on
    the right (44×44 hit area via `hitSlop`).
 2. **Amount** — currency code in `body-lg` bold + number in `display-lg`
    `font-heading font-black text-primary`, `fontVariant: ["tabular-nums"]`.
@@ -124,7 +126,7 @@ no ⓘ, no action pill. The whole card is pressable via `onPress`.
 | State | Rendering |
 |---|---|
 | `loading` | Card shell and header label stay; amount, bar, rows and pill are replaced by `Skeleton` blocks of the same size. **Never renders `0.00`.** Eye toggle still works. |
-| `error` | Card shell and header label stay; body shows a `cloud-off` icon in `error`, "Couldn't load your balance", helper "Your money is safe. Check your connection and try again.", and an outline `Retry` pill calling `onRetry`. **No numbers rendered.** |
+| `error` | Card shell and header label stay; body shows an `alert-circle` icon in `error`, "Couldn't load your balance", helper "Your money is safe. Check your connection and try again.", and an outline `Retry` pill calling `onRetry`. **No numbers rendered.** |
 | `ready`, hidden | Amount renders `GHS ••••••`; legend/compact values render `GHS ••••`; split bar renders as one neutral segment (no proportions). |
 | `ready`, zero | `GHS 0.00` with an empty track. |
 
@@ -178,8 +180,10 @@ is migrated; removing them is out of scope.
   (`bg-primary-subtle` circle, `primary` icon) replacing the rainbow colours.
   The BexieCoins strip below is unchanged except for the copy fix.
 - **Vendor & rider earnings:** "Today" and "This week" move out of the card into
-  two outlined stat tiles (`Card variant="outlined"`, radius `xl`) directly below
-  it; each tile pushes to the role's `analytics` route. Error state uses the
+  two outlined stat tiles (radius `xl`, `EarningsStatTiles` component) directly
+  below it; each tile pushes to the role's `analytics` route, and the tiles
+  respect the hide preference (they show the same "today" figure as the rider
+  home pill). Error state uses the
   card's `error` status with `onRetry` = the query's `refetch`, replacing the bare
   "Failed to load earnings" text. The full-screen `RowsSkeleton` is replaced by
   the card's `loading` status plus skeleton tiles.
@@ -196,14 +200,16 @@ is migrated; removing them is out of scope.
 Web mirror of the contract, read-only: `label`, `available`, optional `held`
 (`label`, `amount`), optional `footnote`. Same anatomy as mobile `md` minus the
 eye toggle, ⓘ toggle and action (admins always see figures; info text is shown
-as the row's `title` tooltip). Uses canonical CSS vars (`--color-surface`,
-`--color-border`, `--color-primary`, `--color-text-muted`), radius `2xl`, flat.
+as the row's `title` tooltip). Uses the admin CSS vars that exist today
+(`--color-card`, `--color-border`, `--color-primary`, `--color-text`,
+`--color-text-secondary`, `--color-text-muted`) plus a new
+`--color-money-held`; radius `2xl`, flat.
 Formats via a new `apps/admin/src/lib/money.ts#formatMoney` mirroring mobile
 output (`GHS 1,250.00`); the existing admin `formatCurrency` is untouched.
 
 | Page | `available` | `held` | `footnote` |
 |---|---|---|---|
-| `users/[id]` "Wallet" | `user.wallet.balance` | "Held in escrow" = `user.wallet.heldInEscrow`; plus, when the user has a vendor profile, a second card "Vendor pending clearance" = `user.vendorPendingClearance` | — |
+| `users/[id]` "Wallet" | `user.wallet.balance` | "Held in escrow" = `user.wallet.heldInEscrow` | When the user has a vendor profile: "Vendor pending clearance: GHS x" from `user.vendorPendingClearance` (one wallet per user, so no second card) |
 | `dispatchers/[id]` "Wallet" | `dispatcher.walletBalance` | "Pending payout" = `dispatcher.pendingPayout` | "Lifetime earnings GHS x" from `totalEarnings` |
 
 The "Total Escrow (Locked)" row reading the non-existent `lockedBalance` is removed.
