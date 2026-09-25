@@ -829,7 +829,9 @@ import { useBalanceVisibility } from "@/lib/stores/balance-visibility-store";
 
 describe("EarningsStatTiles", () => {
   beforeEach(() => {
-    act(() => useBalanceVisibility.setState({ hidden: false }));
+    act(() => {
+      useBalanceVisibility.setState({ hidden: false });
+    });
   });
 
   it("renders formatted today and this-week amounts", () => {
@@ -843,7 +845,9 @@ describe("EarningsStatTiles", () => {
   });
 
   it("masks amounts when balances are hidden", () => {
-    act(() => useBalanceVisibility.setState({ hidden: true }));
+    act(() => {
+      useBalanceVisibility.setState({ hidden: true });
+    });
     const { getAllByText, queryByText } = render(
       <EarningsStatTiles today={640} thisWeek={4320} onPress={jest.fn()} />
     );
@@ -1318,7 +1322,9 @@ const ready = {
 describe("Vendor EarningsDashboardScreen", () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    act(() => useBalanceVisibility.setState({ hidden: false }));
+    act(() => {
+      useBalanceVisibility.setState({ hidden: false });
+    });
   });
 
   it("shows available, pending clearance and the stat tiles", () => {
@@ -1608,7 +1614,9 @@ const ready = {
 describe("Rider EarningsDashboardScreen", () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    act(() => useBalanceVisibility.setState({ hidden: false }));
+    act(() => {
+      useBalanceVisibility.setState({ hidden: false });
+    });
   });
 
   it("shows available, pending clearance and the stat tiles", () => {
@@ -2168,7 +2176,9 @@ const txns = { data: { data: [] }, refetch: jest.fn() };
 describe("WalletScreen", () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    act(() => useBalanceVisibility.setState({ hidden: false }));
+    act(() => {
+      useBalanceVisibility.setState({ hidden: false });
+    });
     (useTransactions as jest.Mock).mockReturnValue(txns);
   });
 
