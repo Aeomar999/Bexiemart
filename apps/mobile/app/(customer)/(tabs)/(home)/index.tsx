@@ -12,7 +12,8 @@ import { ErrorState } from "@/components/ui/ErrorState";
 import { useProducts, useCategories } from "@/lib/hooks/use-products";
 import { useFavoritesStore } from "@/lib/stores/favorites-store";
 import { Product, Category } from "@/lib/stores/product-store";
-import { useRiderStore } from "@/lib/stores/rider-store";
+import { useActiveDelivery } from "@/lib/hooks/use-delivery";
+import { useAuthStore } from "@/lib/stores/auth-store";
 import { useCountdown } from "@/hooks/useCountdown";
 import { useFlashSalesEnabled } from "@/lib/feature-flags";
 
@@ -134,6 +135,15 @@ function getCategoryAsset(name: string) {
   return null;
 }
 
+const DELIVERY_BANNER_SUBTITLE: Record<string, string> = {
+  PENDING: "Locating your rider...",
+  ASSIGNED: "A rider has accepted your delivery",
+  EN_ROUTE_PICKUP: "Your rider is heading to pickup",
+  ARRIVED_PICKUP: "Your rider is at pickup",
+  PICKED_UP: "Your order has been picked up",
+  EN_ROUTE_DROPOFF: "Your rider is on the way",
+};
+
 export default function HomeScreen() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
@@ -153,14 +163,23 @@ export default function HomeScreen() {
     refetch: refetchCategories,
   } = useCategories();
 
+  const user = useAuthStore((s) => s.user);
+  // Guests can browse Home, but deliveries belong to a signed-in customer.
+  const { data: activeDelivery, refetch: refetchActiveDelivery } = useActiveDelivery({
+    enabled: !!user,
+  });
+
   const onRefresh = useCallback(async () => {
     setRefreshing(true);
-    await Promise.all([refetchProducts(), refetchCategories()]);
+    await Promise.all([
+      refetchProducts(),
+      refetchCategories(),
+      user ? refetchActiveDelivery() : undefined,
+    ]);
     setRefreshing(false);
-  }, [refetchProducts, refetchCategories]);
+  }, [refetchProducts, refetchCategories, refetchActiveDelivery, user]);
 
   const { toggleFavorite, isFavorite } = useFavoritesStore();
-  const activeRide = useRiderStore((s) => s.activeRide);
   const { flashSalesEnabled } = useFlashSalesEnabled();
 
   const allProducts = productsData?.pages?.flatMap((page: any) => page.data) ?? [];
@@ -257,21 +276,20 @@ export default function HomeScreen() {
         {/* ===== HERO BANNER ===== */}
         <PromoBanner placement="HOME" containerClassName="mt-4" />
 
-        {/* ===== ACTIVE RIDE BANNER ===== */}
-        {activeRide && (
+        {/* ===== ACTIVE DELIVERY BANNER ===== */}
+        {activeDelivery && (
           <StatusBanner
             className="px-5 mt-6"
             icon="map"
             title="Delivery in progress"
-            subtitle={
-              activeRide.status === "searching"
-                ? "Locating your rider..."
-                : activeRide.status === "on_the_way"
-                  ? "Your rider is arriving"
-                  : "Rider is outside"
-            }
+            subtitle={DELIVERY_BANNER_SUBTITLE[activeDelivery.status] ?? "Track your delivery"}
             actionLabel="Track"
-            onPress={() => router.push("/(customer)/track-order")}
+            onPress={() =>
+              router.push({
+                pathname: "/(customer)/track-order",
+                params: { id: activeDelivery.id },
+              })
+            }
           />
         )}
 

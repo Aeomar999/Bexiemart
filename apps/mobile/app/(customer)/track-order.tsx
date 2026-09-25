@@ -11,12 +11,17 @@ import { BackButton } from "@/components/ui/BackButton";
 import { Icon } from "@/components/ui/Icon";
 import { usePopupStore } from "@/lib/stores/popup-store";
 import { useEffect, useState, useRef, useMemo } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import MapView, { Marker, Polyline, PROVIDER_GOOGLE } from "react-native-maps";
 import { darkMapStyle } from "@/lib/constants/map-style";
 import { deliveryApi, DeliveryJob } from "@/lib/api/delivery";
 import { deliverySocketService } from "@/lib/delivery-socket";
 import { decodePolyline } from "@/lib/maps";
+import {
+  useActiveDelivery,
+  isActiveDeliveryStatus as isActive,
+  DELIVERY_KEYS,
+} from "@/lib/hooks/use-delivery";
 
 type Coords = { latitude: number; longitude: number };
 
@@ -32,14 +37,13 @@ const STATUS_LABEL: Record<string, string> = {
   CANCELLED: "Cancelled",
 };
 
-const isActive = (status: string) => !["DELIVERED", "CANCELLED", "EXPIRED"].includes(status);
-
 export default function TrackOrderScreen() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
   const { id: paramId } = useLocalSearchParams<{ id?: string }>();
   const showPopup = usePopupStore((s) => s.showPopup);
   const mapRef = useRef<MapView>(null);
+  const queryClient = useQueryClient();
 
   const [driverCoords, setDriverCoords] = useState<Coords | null>(null);
   const [liveStatus, setLiveStatus] = useState<string | null>(null);
@@ -47,14 +51,7 @@ export default function TrackOrderScreen() {
 
   // Entry points like the Home "Track" tile open this screen without an id —
   // fall back to the customer's most recent active job.
-  const latestActive = useQuery({
-    queryKey: ["delivery", "jobs", "latest-active"],
-    queryFn: async () => {
-      const { data } = await deliveryApi.myJobs();
-      return data.jobs.find((j) => isActive(j.status)) ?? null;
-    },
-    enabled: !paramId,
-  });
+  const latestActive = useActiveDelivery({ enabled: !paramId });
 
   const id = paramId ?? latestActive.data?.id;
 
@@ -137,6 +134,7 @@ export default function TrackOrderScreen() {
     setActioning(true);
     try {
       await deliveryApi.cancel(id);
+      queryClient.invalidateQueries({ queryKey: DELIVERY_KEYS.latestActive });
       showPopup({ type: "error", title: "Ride Cancelled", message: "Your request was cancelled." });
       router.replace("/(customer)/(tabs)/(home)");
     } catch {
@@ -155,6 +153,7 @@ export default function TrackOrderScreen() {
     setActioning(true);
     try {
       await deliveryApi.confirm(id);
+      queryClient.invalidateQueries({ queryKey: DELIVERY_KEYS.latestActive });
       showPopup({
         type: "success",
         title: "Delivery confirmed",
