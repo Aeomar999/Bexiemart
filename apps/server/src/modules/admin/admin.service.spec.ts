@@ -111,6 +111,24 @@ describe("AdminService", () => {
       const result = await service.getUser("u1");
       expect(result).toEqual(user);
     });
+
+    it("selects wallet fields explicitly so the PIN hash is never loaded", async () => {
+      prisma.user.findUnique.mockResolvedValue({ id: "u1" });
+      await service.getUser("u1");
+      // Exact allowlist: adding any field (sensitive or not) must fail here.
+      const walletQuery = prisma.user.findUnique.mock.calls[0][0].include.wallet;
+      expect(walletQuery).toEqual({
+        select: {
+          id: true,
+          balance: true,
+          currency: true,
+          status: true,
+          bexieCoins: true,
+          createdAt: true,
+          updatedAt: true,
+        },
+      });
+    });
   });
 
   describe("updateUserRole", () => {

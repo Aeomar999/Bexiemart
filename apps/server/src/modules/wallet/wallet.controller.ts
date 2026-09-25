@@ -38,7 +38,7 @@ export class WalletController {
   @Get()
   @ApiOperation({ summary: "Get wallet balance and details" })
   getWallet(@Req() req: AuthenticatedRequest) {
-    return this.walletService.getWallet(req.user.id);
+    return this.walletService.getPublicWallet(req.user.id);
   }
 
   @Get("transactions")
