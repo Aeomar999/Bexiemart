@@ -39,13 +39,13 @@ export function ProductCard({
     return (
       <Pressable
         style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
-        className="w-[140px] active:opacity-70 mb-2"
+        className="w-[120px] active:opacity-70 mb-2"
         onPress={onPress}
         accessibilityRole="button"
         accessibilityLabel={label}
       >
         <Card variant="flat" padding="none">
-          <View className="w-full h-[140px] rounded-[16px] bg-muted mb-2 items-center justify-center overflow-hidden relative">
+          <View className="w-full h-[120px] rounded-[16px] bg-muted mb-2 items-center justify-center relative overflow-hidden">
             {imageUrl ? (
               <Image
                 source={{ uri: imageUrl }}
@@ -55,8 +55,9 @@ export function ProductCard({
             ) : (
               <Icon name="image" size={28} color={tokens.textDisabled} />
             )}
+            {/* Floating Rating Badge */}
             {!!rating && (
-              <View className="absolute bottom-2 left-2 flex-row items-center bg-card/90 backdrop-blur-md px-1.5 py-0.5 rounded-full">
+              <View className="absolute bottom-2 left-2 flex-row items-center bg-card/90 px-1.5 py-0.5 rounded-full">
                 <Icon name="star" size={10} color={tokens.warning} />
                 <Text className="text-[10px] font-bold text-foreground ml-1">{rating}</Text>
               </View>
