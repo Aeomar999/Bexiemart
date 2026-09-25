@@ -19,6 +19,7 @@ type ProfileItem = {
   value?: string;
   requiresAuth?: boolean;
   comingSoon?: boolean;
+  color?: string; // Add color property for distinct icon backgrounds
 };
 
 type ProfileSection = {
@@ -28,25 +29,6 @@ type ProfileSection = {
 
 const PROFILE_SECTIONS: ProfileSection[] = [
   {
-    title: "Rewards & Wallet",
-    items: [
-      {
-        id: "wallet",
-        icon: "banknote",
-        label: "My Wallet",
-        route: "/(customer)/wallet",
-        requiresAuth: true,
-      },
-      {
-        id: "referrals",
-        icon: "gift",
-        label: "Refer & Earn",
-        route: "/(customer)/referrals",
-        requiresAuth: true,
-      },
-    ],
-  },
-  {
     title: "Account",
     items: [
       {
@@ -55,6 +37,7 @@ const PROFILE_SECTIONS: ProfileSection[] = [
         label: "Order History",
         route: "/(customer)/orders",
         requiresAuth: true,
+        color: "#3b82f6", // blue
       },
       {
         id: "favorites",
@@ -62,6 +45,7 @@ const PROFILE_SECTIONS: ProfileSection[] = [
         label: "My Collections",
         route: "/(customer)/favorites",
         requiresAuth: true,
+        color: "#ec4899", // pink
       },
       {
         id: "address",
@@ -69,6 +53,7 @@ const PROFILE_SECTIONS: ProfileSection[] = [
         label: "Delivery Addresses",
         route: "/(customer)/addresses",
         requiresAuth: true,
+        color: "#f59e0b", // amber
       },
       {
         id: "payment",
@@ -76,6 +61,7 @@ const PROFILE_SECTIONS: ProfileSection[] = [
         label: "Payment Methods",
         route: "/(customer)/payment",
         requiresAuth: true,
+        color: "#10b981", // green
       },
       {
         id: "drive",
@@ -83,6 +69,7 @@ const PROFILE_SECTIONS: ProfileSection[] = [
         label: "Drive for Bexiemart",
         route: "/(customer)/become-dispatcher",
         requiresAuth: true,
+        color: "#6366f1", // indigo
       },
     ],
   },
@@ -95,16 +82,43 @@ const PROFILE_SECTIONS: ProfileSection[] = [
         label: "Notifications",
         route: "/(customer)/notifications",
         requiresAuth: true,
+        color: "#8b5cf6", // violet
       },
-      { id: "dark_mode", icon: "moon", label: "Dark Mode", value: "Coming soon", comingSoon: true },
-      { id: "language", icon: "globe", label: "Language", value: "Coming soon", comingSoon: true },
+      {
+        id: "dark_mode",
+        icon: "moon",
+        label: "Dark Mode",
+        value: "Coming soon",
+        comingSoon: true,
+        color: "#334155",
+      }, // slate
+      {
+        id: "language",
+        icon: "globe",
+        label: "Language",
+        value: "Coming soon",
+        comingSoon: true,
+        color: "#14b8a6",
+      }, // teal
     ],
   },
   {
     title: "Support",
     items: [
-      { id: "help", icon: "help-circle", label: "Help Center", route: "/(customer)/help" },
-      { id: "contact", icon: "message-circle", label: "Contact Us", route: "/(customer)/contact" },
+      {
+        id: "help",
+        icon: "help-circle",
+        label: "Help Center",
+        route: "/(customer)/help",
+        color: "#f97316",
+      }, // orange
+      {
+        id: "contact",
+        icon: "message-circle",
+        label: "Contact Us",
+        route: "/(customer)/contact",
+        color: "#06b6d4",
+      }, // cyan
     ],
   },
 ];
@@ -184,12 +198,22 @@ export default function ProfileScreen() {
                   : "Access your orders, wallet & rewards"}
               </Text>
               {isAuthenticated && user?.phoneNumber && (
-                <Text
-                  className="text-[13px] font-body text-muted-foreground mt-0.5"
-                  numberOfLines={1}
-                >
-                  {user.phoneNumber} {user.phoneNumberVerified ? "✓" : "(Unverified)"}
-                </Text>
+                <View className="flex-row items-center mt-1 gap-1.5">
+                  <Text className="text-[13px] font-body text-muted-foreground" numberOfLines={1}>
+                    {user.phoneNumber}
+                  </Text>
+                  {user.phoneNumberVerified ? (
+                    <View className="bg-success/10 px-1.5 py-0.5 rounded">
+                      <Text className="text-[10px] font-bold text-success uppercase">Verified</Text>
+                    </View>
+                  ) : (
+                    <View className="bg-warning/10 px-1.5 py-0.5 rounded">
+                      <Text className="text-[10px] font-bold text-warning uppercase">
+                        Unverified
+                      </Text>
+                    </View>
+                  )}
+                </View>
               )}
             </View>
             {isAuthenticated ? (
@@ -239,7 +263,7 @@ export default function ProfileScreen() {
 
             return (
               <View key={idx} className="mb-8">
-                <Text className="text-[12px] font-bold text-muted-foreground uppercase tracking-[0.1em] mb-6 px-1">
+                <Text className="text-[12px] font-bold text-muted-foreground uppercase tracking-[0.1em] mb-3 px-2">
                   {section.title}
                 </Text>
                 <View className="bg-card rounded-2xl border border-border overflow-hidden">
@@ -293,9 +317,9 @@ export default function ProfileScreen() {
                         <View className="flex-row items-center gap-3">
                           <View
                             className="w-8 h-8 rounded-xl items-center justify-center"
-                            style={{ backgroundColor: `${tokens.primary}15` }}
+                            style={{ backgroundColor: `${item.color || tokens.primary}15` }}
                           >
-                            <Icon name={item.icon} size={16} color={tokens.primary} />
+                            <Icon name={item.icon} size={16} color={item.color || tokens.primary} />
                           </View>
                           <Text className="text-[15px] font-bold text-foreground">
                             {item.label}
