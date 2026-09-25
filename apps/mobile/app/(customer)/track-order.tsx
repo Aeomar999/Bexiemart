@@ -1,5 +1,7 @@
 import { LinearGradient } from "expo-linear-gradient";
 import { LoadingState } from "@/components/ui/LoadingState";
+import { EmptyState } from "@/components/ui/EmptyState";
+import { ErrorState } from "@/components/ui/ErrorState";
 import { tokens } from "@/theme/tokens";
 import Toast from "@/lib/toast-polyfill";
 import { View, Text, Pressable, Linking, ActivityIndicator } from "react-native";
@@ -35,7 +37,7 @@ const isActive = (status: string) => !["DELIVERED", "CANCELLED", "EXPIRED"].incl
 export default function TrackOrderScreen() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
-  const { id } = useLocalSearchParams<{ id: string }>();
+  const { id: paramId } = useLocalSearchParams<{ id?: string }>();
   const showPopup = usePopupStore((s) => s.showPopup);
   const mapRef = useRef<MapView>(null);
 
@@ -43,14 +45,28 @@ export default function TrackOrderScreen() {
   const [liveStatus, setLiveStatus] = useState<string | null>(null);
   const [actioning, setActioning] = useState(false);
 
+  // Entry points like the Home "Track" tile open this screen without an id —
+  // fall back to the customer's most recent active job.
+  const latestActive = useQuery({
+    queryKey: ["delivery", "jobs", "latest-active"],
+    queryFn: async () => {
+      const { data } = await deliveryApi.myJobs();
+      return data.jobs.find((j) => isActive(j.status)) ?? null;
+    },
+    enabled: !paramId,
+  });
+
+  const id = paramId ?? latestActive.data?.id;
+
   const {
     data: job,
     isLoading,
+    isError,
     refetch,
   } = useQuery({
     queryKey: ["delivery", "job", id],
     queryFn: async () => {
-      const { data } = await deliveryApi.getJob(id);
+      const { data } = await deliveryApi.getJob(id!);
       return data as DeliveryJob;
     },
     enabled: !!id,
@@ -152,6 +168,43 @@ export default function TrackOrderScreen() {
     }
   };
 
+  const goHome = () => router.replace("/(customer)/(tabs)/(home)");
+
+  if (!paramId && latestActive.isPending) {
+    return <LoadingState type="detail" />;
+  }
+
+  if (!paramId && latestActive.isError) {
+    return (
+      <ErrorState
+        fullScreen
+        message="We couldn't load your deliveries."
+        onRetry={() => latestActive.refetch()}
+      />
+    );
+  }
+
+  if (!id) {
+    return (
+      <View className="flex-1 bg-background" style={{ paddingTop: insets.top + 12 }}>
+        <View className="px-5 pb-4">
+          <BackButton onPress={goHome} />
+        </View>
+        <EmptyState
+          iconName="map-pin"
+          title="Nothing to track"
+          description="You don't have any active deliveries right now."
+          actionLabel="Book a Rider"
+          onAction={() => router.replace("/(customer)/book-rider")}
+        />
+      </View>
+    );
+  }
+
+  if (isError) {
+    return <ErrorState fullScreen message="We couldn't load this delivery." onRetry={refetch} />;
+  }
+
   if (isLoading || !job) {
     return <LoadingState type="detail" />;
   }
@@ -217,7 +270,7 @@ export default function TrackOrderScreen() {
       >
         <View className="flex-row items-center justify-between">
           <View className="flex-row items-center gap-3">
-            <BackButton onPress={() => router.replace("/(customer)/(tabs)/(home)")} />
+            <BackButton onPress={goHome} />
             <Text className="text-display-sm font-heading font-black text-foreground">
               Track Order
             </Text>
