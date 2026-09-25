@@ -26,4 +26,4 @@ jobs:
           token: ${{ secrets.EXPO_TOKEN }}
       - run: npm ci
       - name: Publish OTA Update to Preview / Production
-        run: eas update --auto --non-interactive
+        run: eas update --auto --message "${{ github.event.head_commit.message || 'Automated update' }}" --non-interactive

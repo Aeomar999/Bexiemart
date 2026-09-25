@@ -1,6 +1,9 @@
 import { tokens } from "@/theme/tokens";
-import { View, Text, ScrollView, Pressable } from "react-native";
+import { View, Text, ScrollView, Pressable, ActivityIndicator } from "react-native";
 import { useRouter } from "expo-router";
+import * as Application from "expo-application";
+import * as Updates from "expo-updates";
+import { useOTAUpdate } from "@/hooks/useOTAUpdate";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Icon } from "@/components/ui/Icon";
 import { useCurrentUser } from "@/lib/hooks/use-auth";
@@ -19,6 +22,7 @@ type ProfileItem = {
   value?: string;
   requiresAuth?: boolean;
   comingSoon?: boolean;
+  isUpdateCheck?: boolean;
   color?: string; // Add color property for distinct icon backgrounds
 };
 
@@ -77,6 +81,13 @@ const PROFILE_SECTIONS: ProfileSection[] = [
     title: "Settings",
     items: [
       {
+        id: "update",
+        icon: "refresh-cw",
+        label: "Check for Updates",
+        isUpdateCheck: true,
+        color: "#0ea5e9", // sky
+      },
+      {
         id: "notifications",
         icon: "bell",
         label: "Notifications",
@@ -130,6 +141,7 @@ export default function ProfileScreen() {
   const { logout, isAuthenticated } = useAuthStore();
   const { authEnabled } = useAuthEnabled();
   const { darkModeEnabled } = useDarkModeEnabled();
+  const { checkForUpdate, isChecking, isUpdateAvailable } = useOTAUpdate();
 
   const handleLogout = async () => {
     await logout();
@@ -296,7 +308,18 @@ export default function ProfileScreen() {
                         }
                         style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
                         className={`flex-row items-center justify-between h-[52px] px-4 ${!isLast ? "border-b border-border" : ""}`}
-                        onPress={() => {
+                        onPress={async () => {
+                          if (item.isUpdateCheck) {
+                            await checkForUpdate();
+                            if (!isUpdateAvailable) {
+                              Toast.show({
+                                type: "success",
+                                text1: "Up to date",
+                                text2: "You are on the latest version of BexieMart.",
+                              });
+                            }
+                            return;
+                          }
                           if (item.comingSoon) {
                             Toast.show({
                               type: "info",
@@ -327,7 +350,21 @@ export default function ProfileScreen() {
                         </View>
 
                         <View className="flex-row items-center gap-2">
-                          {item.value && (
+                          {item.isUpdateCheck && isChecking && (
+                            <ActivityIndicator
+                              size="small"
+                              color={tokens.primary}
+                              style={{ marginRight: 4 }}
+                            />
+                          )}
+                          {item.isUpdateCheck && !isChecking && (
+                            <Text className="text-[12px] text-muted-foreground mr-1">
+                              {Updates.updateId
+                                ? Updates.updateId.substring(0, 7)
+                                : Application.nativeApplicationVersion}
+                            </Text>
+                          )}
+                          {item.value && !item.isUpdateCheck && (
                             <Text className="text-[12px] text-muted-foreground mr-1">
                               {item.value}
                             </Text>

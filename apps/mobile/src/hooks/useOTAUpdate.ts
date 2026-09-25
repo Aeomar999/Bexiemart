@@ -3,6 +3,7 @@ import { AppState, AppStateStatus } from "react-native";
 import * as Updates from "expo-updates";
 import * as Sentry from "@sentry/react-native";
 import { logger } from "@/lib/logger";
+import { posthog } from "@/lib/posthog";
 
 interface OTAUpdateState {
   isChecking: boolean;
@@ -33,16 +34,19 @@ export function useOTAUpdate(): OTAUpdateState {
 
       if (update.isAvailable) {
         setIsUpdateAvailable(true);
+        posthog?.capture("ota_update_available");
         setIsDownloading(true);
         const fetchResult = await Updates.fetchUpdateAsync();
         if (fetchResult.isNew) {
           setIsUpdateReady(true);
+          posthog?.capture("ota_update_downloaded");
           logger.info("OTA Update downloaded and ready to apply");
         }
       }
     } catch (err: any) {
       logger.error("Failed to check or fetch OTA update:", err);
       Sentry.captureException(err);
+      posthog?.capture("ota_update_error", { error: err?.message || String(err) });
       setError(err instanceof Error ? err : new Error(String(err)));
     } finally {
       setIsChecking(false);
