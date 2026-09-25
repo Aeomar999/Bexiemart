@@ -28,8 +28,10 @@ if (process.env.NODE_ENV === "production" || process.env.SEED_PLATFORM_CONFIRM !
 
 // Seeded accounts share one password; take it from the environment or generate
 // a random one per run rather than committing a known credential.
-const SEED_PASSWORD =
-  process.env.SEED_USER_PASSWORD || `Seed!${randomBytes(9).toString("base64url")}`;
+function generateSeedCredential(): string {
+  return randomBytes(12).toString("base64url");
+}
+const SEED_PASSWORD = process.env.SEED_USER_PASSWORD || generateSeedCredential();
 
 const pool = new Pool({ connectionString: process.env.DATABASE_URL });
 const adapter = new PrismaPg(pool);
