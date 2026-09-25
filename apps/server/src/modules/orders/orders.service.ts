@@ -226,6 +226,8 @@ export class OrdersService {
         include: {
           items: true,
           shippingAddress: true,
+          // Lets the client deep-link an order to its live delivery tracking.
+          deliveryJob: { select: { id: true, status: true } },
         },
         orderBy: { createdAt: "desc" },
       }),

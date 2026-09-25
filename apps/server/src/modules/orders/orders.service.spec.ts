@@ -254,7 +254,11 @@ describe("OrdersService", () => {
       });
       expect(prisma.order.findMany).toHaveBeenCalledWith({
         where: { userId: "u1" },
-        include: { items: true, shippingAddress: true },
+        include: {
+          items: true,
+          shippingAddress: true,
+          deliveryJob: { select: { id: true, status: true } },
+        },
         orderBy: { createdAt: "desc" },
         skip: 0,
         take: 20,
