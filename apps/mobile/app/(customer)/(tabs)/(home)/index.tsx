@@ -305,6 +305,21 @@ export default function HomeScreen() {
                     className="w-full rounded-2xl overflow-hidden p-3.5 justify-between"
                     style={{ aspectRatio: 1.1, backgroundColor: tint }}
                   >
+                    {/* Exaggerated Text Watermark */}
+                    <Text
+                      pointerEvents="none"
+                      className="absolute -left-2 top-2 font-heading font-black uppercase tracking-tighter"
+                      style={{
+                        fontSize: 60,
+                        lineHeight: 60,
+                        color: fg,
+                        opacity: 0.08,
+                      }}
+                      numberOfLines={1}
+                    >
+                      {cat.name}
+                    </Text>
+
                     {/* Background illustration or fallback watermark */}
                     <View
                       pointerEvents="none"
