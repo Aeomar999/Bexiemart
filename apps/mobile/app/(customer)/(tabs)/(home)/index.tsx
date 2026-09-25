@@ -310,13 +310,14 @@ export default function HomeScreen() {
                       pointerEvents="none"
                       className="font-heading font-black uppercase z-10"
                       style={{
-                        fontSize: 32, // bump slightly since it will scale down anyway
+                        fontSize: 28,
+                        lineHeight: 28,
                         color: fg,
                         opacity: 0.35,
                       }}
-                      numberOfLines={1}
+                      numberOfLines={3}
                       adjustsFontSizeToFit
-                      minimumFontScale={0.3}
+                      minimumFontScale={0.6}
                     >
                       {cat.name}
                     </Text>
@@ -427,7 +428,7 @@ export default function HomeScreen() {
                 className="w-[140px] active:opacity-70"
                 onPress={() => router.push(`/(customer)/product/${item.id}`)}
               >
-                <View className="w-full h-[120px] rounded-[16px] bg-muted mb-2 items-center justify-center overflow-hidden">
+                <View className="w-full h-[120px] rounded-[16px] bg-muted mb-2 items-center justify-center overflow-hidden relative">
                   {item.image ? (
                     <Image
                       source={{ uri: item.image }}
@@ -437,35 +438,28 @@ export default function HomeScreen() {
                   ) : (
                     <Icon name="image" size={28} color={tokens.textDisabled} />
                   )}
+                  <View className="absolute bottom-2 left-2 flex-row items-center bg-card/90 px-1.5 py-0.5 rounded-full overflow-hidden">
+                    <Icon name="star" size={10} color={tokens.warning} />
+                    <Text className="text-[10px] font-bold text-foreground ml-1">
+                      {item.rating || "4.5"}
+                    </Text>
+                  </View>
                 </View>
-                <View className="px-1 gap-[4px]">
+                <View className="px-1 gap-[2px]">
                   <Text
                     className="text-[14px] font-semibold text-foreground leading-[20px]"
                     numberOfLines={1}
                   >
                     {item.name}
                   </Text>
-                  <View className="flex-row items-center justify-between">
-                    <Text
-                      className="text-[14px] font-extrabold text-foreground tracking-tight flex-shrink pr-2"
-                      style={{ fontVariant: ["tabular-nums"] }}
-                      numberOfLines={1}
-                      adjustsFontSizeToFit
-                    >
-                      GHS {item.price.toFixed(0)}
-                    </Text>
-                    <View className="flex-row items-center">
-                      <Icon
-                        name="star"
-                        size={10}
-                        color={tokens.warning}
-                        style={{ marginRight: 2 }}
-                      />
-                      <Text className="text-caption font-bold text-muted-foreground">
-                        {item.rating || "4.5"}
-                      </Text>
-                    </View>
-                  </View>
+                  <Text
+                    className="text-[14px] font-extrabold text-foreground tracking-tight"
+                    style={{ fontVariant: ["tabular-nums"] }}
+                    numberOfLines={1}
+                    adjustsFontSizeToFit
+                  >
+                    GHS {item.price.toFixed(0)}
+                  </Text>
                 </View>
               </Pressable>
             )}

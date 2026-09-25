@@ -45,7 +45,7 @@ export function ProductCard({
         accessibilityLabel={label}
       >
         <Card variant="flat" padding="none">
-          <View className="w-full h-[140px] rounded-[16px] bg-muted mb-2 items-center justify-center overflow-hidden">
+          <View className="w-full h-[140px] rounded-[16px] bg-muted mb-2 items-center justify-center overflow-hidden relative">
             {imageUrl ? (
               <Image
                 source={{ uri: imageUrl }}
@@ -55,30 +55,28 @@ export function ProductCard({
             ) : (
               <Icon name="image" size={28} color={tokens.textDisabled} />
             )}
+            {!!rating && (
+              <View className="absolute bottom-2 left-2 flex-row items-center bg-card/90 backdrop-blur-md px-1.5 py-0.5 rounded-full">
+                <Icon name="star" size={10} color={tokens.warning} />
+                <Text className="text-[10px] font-bold text-foreground ml-1">{rating}</Text>
+              </View>
+            )}
           </View>
-          <View className="px-1 gap-[4px]">
+          <View className="px-1 gap-[2px]">
             <Text
               className="text-[14px] font-semibold text-foreground leading-[20px]"
               numberOfLines={1}
             >
               {name}
             </Text>
-            <View className="flex-row items-center justify-between">
-              <Text
-                className="text-[14px] font-extrabold text-foreground tracking-tight flex-shrink pr-2"
-                style={{ fontVariant: ["tabular-nums"] }}
-                numberOfLines={1}
-                adjustsFontSizeToFit
-              >
-                GHS {numericPrice.toFixed(0)}
-              </Text>
-              <View className="flex-row items-center">
-                <Icon name="star" size={10} color={tokens.warning} style={{ marginRight: 2 }} />
-                <Text className="text-caption font-bold text-muted-foreground">
-                  {rating || "4.5"}
-                </Text>
-              </View>
-            </View>
+            <Text
+              className="text-[14px] font-extrabold text-foreground tracking-tight"
+              style={{ fontVariant: ["tabular-nums"] }}
+              numberOfLines={1}
+              adjustsFontSizeToFit
+            >
+              GHS {numericPrice.toFixed(0)}
+            </Text>
           </View>
         </Card>
       </Pressable>
