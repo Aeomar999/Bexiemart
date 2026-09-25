@@ -22,7 +22,7 @@ describe("ProductCard", () => {
 
   it("renders compact variant", () => {
     const { getByText } = render(<ProductCard {...baseProps} variant="compact" />);
-    expect(getByText(/GHS 50/)).toBeTruthy();
+    expect(getByText(/GHS 49.99/)).toBeTruthy();
   });
 
   it("renders old price when provided", () => {
@@ -50,7 +50,12 @@ describe("ProductCard", () => {
   it("calls onFavoriteToggle when favorite button pressed", () => {
     const onFavoriteToggle = jest.fn();
     const { getAllByRole } = render(
-      <ProductCard {...baseProps} isFavorite onFavoriteToggle={onFavoriteToggle} variant="horizontal" />
+      <ProductCard
+        {...baseProps}
+        isFavorite
+        onFavoriteToggle={onFavoriteToggle}
+        variant="horizontal"
+      />
     );
     const buttons = getAllByRole("button");
     fireEvent.press(buttons[buttons.length - 1]);

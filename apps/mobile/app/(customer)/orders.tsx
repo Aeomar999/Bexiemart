@@ -41,6 +41,20 @@ export default function OrdersScreen() {
       ? allOrders.find((o) => ["processing", "shipped"].includes(o.status))
       : null;
 
+  // Orders get a delivery job once they're paid and handed to dispatch.
+  const openTracking = (order: any) => {
+    const jobId = order?.deliveryJob?.id;
+    if (jobId) {
+      router.push({ pathname: "/(customer)/track-order", params: { id: jobId } });
+    } else {
+      Toast.show({
+        type: "info",
+        text1: "Not out for delivery yet",
+        text2: "Tracking will be available once a rider is assigned to this order.",
+      });
+    }
+  };
+
   const filteredOrders = allOrders
     .filter((order: any) => {
       if (filter === "all") return true;
@@ -112,7 +126,7 @@ export default function OrdersScreen() {
           <View className="px-5 mt-6 mb-2">
             <Pressable
               className="rounded-[20px] overflow-hidden border border-black/5 bg-black"
-              onPress={() => router.push("/(customer)/track-order")}
+              onPress={() => openTracking(activeOrderHero)}
               style={({ pressed }) => [
                 {
                   opacity: pressed ? 0.9 : 1,
@@ -190,7 +204,7 @@ export default function OrdersScreen() {
                 variant="customer"
                 onPress={() => {
                   if (item.status !== "delivered" && item.status !== "cancelled") {
-                    router.push("/(customer)/track-order");
+                    openTracking(item);
                   } else {
                     Toast.show({
                       type: "info",

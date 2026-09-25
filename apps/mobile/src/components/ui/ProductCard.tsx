@@ -39,13 +39,13 @@ export function ProductCard({
     return (
       <Pressable
         style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
-        className="w-[110px] active:opacity-70 mb-2"
+        className="w-[120px] active:opacity-70 mb-2"
         onPress={onPress}
         accessibilityRole="button"
         accessibilityLabel={label}
       >
         <Card variant="flat" padding="none">
-          <View className="w-full h-[150px] rounded-xl bg-muted mb-2 items-center justify-center overflow-hidden">
+          <View className="w-full h-[120px] rounded-[16px] bg-muted mb-2 items-center justify-center relative overflow-hidden">
             {imageUrl ? (
               <Image
                 source={{ uri: imageUrl }}
@@ -55,17 +55,29 @@ export function ProductCard({
             ) : (
               <Icon name="image" size={28} color={tokens.textDisabled} />
             )}
+            {/* Floating Rating Badge */}
+            {!!rating && (
+              <View className="absolute bottom-2 left-2 flex-row items-center bg-card/90 px-1.5 py-0.5 rounded-full">
+                <Icon name="star" size={10} color={tokens.warning} />
+                <Text className="text-[10px] font-bold text-foreground ml-1">{rating}</Text>
+              </View>
+            )}
           </View>
-          <View className="flex-row justify-between items-center px-1">
-            <View className="flex-row items-center">
-              <Text className="text-body-sm font-bold text-foreground">
-                GHS {numericPrice.toFixed(0)}
-              </Text>
-              {rating && (
-                <Icon name="star" size={10} color={tokens.warning} style={{ marginLeft: 4 }} />
-              )}
-            </View>
-            {rating && <Text className="text-caption text-muted-foreground">{rating}</Text>}
+          <View className="px-1 gap-[2px]">
+            <Text
+              className="text-[14px] font-semibold text-foreground leading-[20px]"
+              numberOfLines={1}
+            >
+              {name}
+            </Text>
+            <Text
+              className="text-[14px] font-extrabold text-foreground tracking-tight"
+              style={{ fontVariant: ["tabular-nums"] }}
+              numberOfLines={1}
+              adjustsFontSizeToFit
+            >
+              GHS {numericPrice.toFixed(2)}
+            </Text>
           </View>
         </Card>
       </Pressable>
@@ -120,7 +132,7 @@ export function ProductCard({
                 </Pressable>
               )}
             </View>
-            {subtitle && (
+            {!!subtitle && (
               <Text className="text-body-sm text-muted-foreground font-body mb-2" numberOfLines={1}>
                 {subtitle}
               </Text>
@@ -130,13 +142,13 @@ export function ProductCard({
                 <Text className="text-body-lg font-bold text-foreground">
                   GHS {numericPrice.toFixed(2)}
                 </Text>
-                {numericOldPrice && numericOldPrice > numericPrice && (
+                {!!numericOldPrice && numericOldPrice > numericPrice && (
                   <Text className="text-caption text-muted-foreground line-through">
                     GHS {numericOldPrice.toFixed(2)}
                   </Text>
                 )}
               </View>
-              {rating && (
+              {!!rating && (
                 <View className="flex-row items-center bg-background px-1.5 py-0.5 rounded-full">
                   <Icon name="star" size={10} color={tokens.warning} />
                   <Text className="text-caption font-bold text-muted-foreground ml-1">
@@ -175,7 +187,7 @@ export function ProductCard({
           ) : (
             <Icon name="image" size={32} color={tokens.textDisabled} />
           )}
-          {rating && (
+          {!!rating && (
             <View className="absolute bottom-2 left-2 flex-row items-center bg-card/90 backdrop-blur-md px-1.5 py-0.5 rounded-full">
               <Icon name="star" size={10} color={tokens.warning} />
               <Text className="text-[10px] font-bold text-foreground ml-1">{rating}</Text>
@@ -202,7 +214,7 @@ export function ProductCard({
           >
             {name}
           </Text>
-          {subtitle && (
+          {!!subtitle && (
             <Text
               className="text-[11px] text-muted-foreground font-body leading-[14px]"
               numberOfLines={1}
@@ -217,7 +229,7 @@ export function ProductCard({
             >
               GHS {numericPrice.toFixed(2)}
             </Text>
-            {numericOldPrice && numericOldPrice > numericPrice && (
+            {!!numericOldPrice && numericOldPrice > numericPrice && (
               <Text className="text-[11px] text-muted-foreground line-through">
                 GHS {numericOldPrice.toFixed(2)}
               </Text>

@@ -1,8 +1,12 @@
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useRef } from "react";
 import { AppState, AppStateStatus } from "react-native";
 import * as Updates from "expo-updates";
 import * as Sentry from "@sentry/react-native";
+import { create } from "zustand";
 import { logger } from "@/lib/logger";
+import { posthog } from "@/lib/posthog";
+
+export type OTACheckResult = "update-ready" | "up-to-date" | "error" | "skipped";
 
 interface OTAUpdateState {
   isChecking: boolean;
@@ -10,66 +14,78 @@ interface OTAUpdateState {
   isUpdateAvailable: boolean;
   isUpdateReady: boolean;
   error: Error | null;
-  checkForUpdate: () => Promise<void>;
+  checkForUpdate: () => Promise<OTACheckResult>;
   applyUpdate: () => Promise<void>;
 }
 
-export function useOTAUpdate(): OTAUpdateState {
-  const [isChecking, setIsChecking] = useState(false);
-  const [isDownloading, setIsDownloading] = useState(false);
-  const [isUpdateAvailable, setIsUpdateAvailable] = useState(false);
-  const [isUpdateReady, setIsUpdateReady] = useState(false);
-  const [error, setError] = useState<Error | null>(null);
+// Single shared owner of OTA state so the root auto-check, the banner and the
+// profile "check for updates" row all see the same download/ready status.
+export const useOTAStore = create<OTAUpdateState>()((set, get) => ({
+  isChecking: false,
+  isDownloading: false,
+  isUpdateAvailable: false,
+  isUpdateReady: false,
+  error: null,
 
-  const appState = useRef(AppState.currentState);
-
-  const checkForUpdate = async () => {
-    if (__DEV__) return;
+  checkForUpdate: async () => {
+    if (__DEV__) return "skipped";
+    if (get().isUpdateReady) return "update-ready";
+    if (get().isChecking) return "skipped";
 
     try {
-      setIsChecking(true);
-      setError(null);
+      set({ isChecking: true, error: null });
       const update = await Updates.checkForUpdateAsync();
 
-      if (update.isAvailable) {
-        setIsUpdateAvailable(true);
-        setIsDownloading(true);
-        const fetchResult = await Updates.fetchUpdateAsync();
-        if (fetchResult.isNew) {
-          setIsUpdateReady(true);
-          logger.info("OTA Update downloaded and ready to apply");
-        }
-      }
+      if (!update.isAvailable) return "up-to-date";
+
+      set({ isUpdateAvailable: true, isDownloading: true });
+      posthog?.capture("ota_update_available");
+      const fetchResult = await Updates.fetchUpdateAsync();
+      if (!fetchResult.isNew) return "up-to-date";
+
+      set({ isUpdateReady: true });
+      posthog?.capture("ota_update_downloaded");
+      logger.info("OTA Update downloaded and ready to apply");
+      return "update-ready";
     } catch (err: any) {
       logger.error("Failed to check or fetch OTA update:", err);
       Sentry.captureException(err);
-      setError(err instanceof Error ? err : new Error(String(err)));
+      posthog?.capture("ota_update_error", { error: err?.message || String(err) });
+      set({ error: err instanceof Error ? err : new Error(String(err)) });
+      return "error";
     } finally {
-      setIsChecking(false);
-      setIsDownloading(false);
+      set({ isChecking: false, isDownloading: false });
     }
-  };
+  },
 
-  const applyUpdate = async () => {
-    if (__DEV__ || !isUpdateReady) return;
+  applyUpdate: async () => {
+    if (__DEV__ || !get().isUpdateReady) return;
     try {
       await Updates.reloadAsync();
     } catch (err: any) {
       logger.error("Failed to reload app for OTA update:", err);
       Sentry.captureException(err);
-      setError(err instanceof Error ? err : new Error(String(err)));
+      set({ error: err instanceof Error ? err : new Error(String(err)) });
     }
-  };
+  },
+}));
+
+/**
+ * Reads the shared OTA state. Pass `autoCheck` from exactly one place (the root
+ * layout) to check on mount and whenever the app returns to the foreground.
+ */
+export function useOTAUpdate({ autoCheck = false }: { autoCheck?: boolean } = {}): OTAUpdateState {
+  const state = useOTAStore();
+  const appState = useRef(AppState.currentState);
 
   useEffect(() => {
-    if (__DEV__) return;
+    if (__DEV__ || !autoCheck) return;
+    const { checkForUpdate } = useOTAStore.getState();
 
-    // Check for updates on initial mount
     setTimeout(() => {
       checkForUpdate();
     }, 0);
 
-    // Check for updates when app returns to active state from background
     const subscription = AppState.addEventListener("change", (nextAppState: AppStateStatus) => {
       if (appState.current.match(/inactive|background/) && nextAppState === "active") {
         checkForUpdate();
@@ -80,15 +96,7 @@ export function useOTAUpdate(): OTAUpdateState {
     return () => {
       subscription.remove();
     };
-  }, []);
+  }, [autoCheck]);
 
-  return {
-    isChecking,
-    isDownloading,
-    isUpdateAvailable,
-    isUpdateReady,
-    error,
-    checkForUpdate,
-    applyUpdate,
-  };
+  return state;
 }

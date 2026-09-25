@@ -3,7 +3,7 @@ import { persist, createJSONStorage } from "zustand/middleware";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 interface FavoritesState {
-  favorites: Set<string>;
+  favorites: string[];
   toggleFavorite: (id: string) => void;
   isFavorite: (id: string) => boolean;
 }
@@ -11,22 +11,37 @@ interface FavoritesState {
 export const useFavoritesStore = create<FavoritesState>()(
   persist(
     (set, get) => ({
-      favorites: new Set<string>(),
+      favorites: [],
       toggleFavorite: (id: string) =>
         set((state) => {
-          const next = new Set(state.favorites);
-          if (next.has(id)) {
-            next.delete(id);
+          const currentFavs = Array.isArray(state.favorites) ? state.favorites : [];
+          const next = [...currentFavs];
+          const index = next.indexOf(id);
+          if (index !== -1) {
+            next.splice(index, 1);
           } else {
-            next.add(id);
+            next.push(id);
           }
           return { favorites: next };
         }),
-      isFavorite: (id: string) => get().favorites.has(id),
+      isFavorite: (id: string) => {
+        // Fallback to empty array if favorites somehow got corrupted to an object (e.g. from previous bad Set serialization)
+        const favs = Array.isArray(get().favorites) ? get().favorites : [];
+        return favs.includes(id);
+      },
     }),
     {
       name: "favorites-storage",
       storage: createJSONStorage(() => AsyncStorage),
+      // v0 persisted `favorites` as a Set, which serialized to `{}`.
+      version: 1,
+      migrate: (persistedState) => {
+        const state = (persistedState ?? {}) as Partial<FavoritesState>;
+        return {
+          ...state,
+          favorites: Array.isArray(state.favorites) ? state.favorites : [],
+        } as FavoritesState;
+      },
     }
   )
 );

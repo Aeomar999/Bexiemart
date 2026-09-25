@@ -15,6 +15,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { useAuthStore } from "../src/lib/stores/auth-store";
 import { useAuthEnabled } from "../src/lib/feature-flags";
 import { GlobalPopup } from "../src/components/ui/GlobalPopup";
+import { OTAUpdateBanner } from "../src/components/ui/OTAUpdateBanner";
 import { ErrorBoundary } from "../src/components/ui/ErrorBoundary";
 import { AnimatedSplashScreen } from "../src/components/screens/AnimatedSplashScreen";
 import { ThemeController } from "../src/components/ThemeController";
@@ -74,7 +75,7 @@ const queryClient = new QueryClient({
 });
 
 function RootLayout() {
-  useOTAUpdate();
+  useOTAUpdate({ autoCheck: true });
   const hydrate = useAuthStore((s) => s.hydrate);
   const isLoading = useAuthStore((s) => s.isLoading);
   const user = useAuthStore((s) => s.user);
@@ -227,6 +228,7 @@ function RootLayout() {
                   </View>
                 )}
                 <GlobalPopup />
+                <OTAUpdateBanner />
               </ErrorBoundary>
             </PaystackProvider>
           ) : (
@@ -260,6 +262,7 @@ function RootLayout() {
                   </View>
                 )}
                 <GlobalPopup />
+                <OTAUpdateBanner />
               </ErrorBoundary>
             </>
           )}

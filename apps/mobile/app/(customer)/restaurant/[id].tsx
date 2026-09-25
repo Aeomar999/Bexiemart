@@ -9,13 +9,14 @@ import { CoverHeader } from "@/components/ui/CoverHeader";
 import { useFoodRestaurant, useAddToFoodCart, useFoodCart } from "@/lib/hooks/use-food";
 import { usePopupStore } from "@/lib/stores/popup-store";
 import { DetailSkeleton } from "@/components/ui/Skeleton";
+import { ErrorState } from "@/components/ui/ErrorState";
 
 export default function RestaurantScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const router = useRouter();
   const insets = useSafeAreaInsets();
 
-  const { data: restaurant, isLoading } = useFoodRestaurant(id ?? "");
+  const { data: restaurant, isLoading, isError, refetch } = useFoodRestaurant(id ?? "");
   const { data: cartData } = useFoodCart();
   const addToCart = useAddToFoodCart();
   const showPopup = usePopupStore((s) => s.showPopup);
@@ -29,19 +30,25 @@ export default function RestaurantScreen() {
     0
   );
 
-  // Map menu groups from API: food items grouped by category
-  const menuGroups =
-    restaurant?.menu ??
-    (restaurant?.foodItems
-      ? Object.entries(
-          (restaurant.foodItems as any[]).reduce((acc: any, item: any) => {
-            const cat = item.category ?? "General";
-            if (!acc[cat]) acc[cat] = [];
-            acc[cat].push(item);
-            return acc;
-          }, {})
-        ).map(([category, items]: [string, any]) => ({ category, items }))
-      : []);
+  const rawMenu = restaurant?.menu;
+  // The API returns `menu` grouped by category: { [category]: items[] }.
+  const menuGroups = Array.isArray(rawMenu)
+    ? rawMenu
+    : rawMenu && typeof rawMenu === "object"
+      ? Object.entries(rawMenu as Record<string, any[]>).map(([category, items]) => ({
+          category,
+          items: Array.isArray(items) ? items : [],
+        }))
+      : restaurant?.foodItems
+        ? Object.entries(
+            (restaurant.foodItems as any[]).reduce((acc: any, item: any) => {
+              const cat = item.category ?? "General";
+              if (!acc[cat]) acc[cat] = [];
+              acc[cat].push(item);
+              return acc;
+            }, {})
+          ).map(([category, items]: [string, any]) => ({ category, items }))
+        : [];
 
   // Set initial category when menu loads
   if (!activeCategory && menuGroups.length > 0) {
@@ -57,7 +64,18 @@ export default function RestaurantScreen() {
     });
   };
 
-  if (isLoading) {
+  if (isError || (!isLoading && !restaurant)) {
+    return (
+      <ErrorState
+        fullScreen
+        title="Restaurant unavailable"
+        message="We couldn't load this restaurant."
+        onRetry={() => refetch()}
+      />
+    );
+  }
+
+  if (isLoading || !restaurant) {
     return (
       <View className="flex-1 bg-background items-center justify-center">
         <DetailSkeleton />
@@ -111,7 +129,9 @@ export default function RestaurantScreen() {
                 <Icon name="shopping-bag" size={16} color={tokens.textMuted} />
                 <Text className="text-body-lg font-bold text-foreground ml-1">
                   {restaurant._count?.foodItems ??
-                    menuGroups.reduce((sum: number, g: any) => sum + g.items.length, 0)}
+                    (Array.isArray(menuGroups)
+                      ? menuGroups.reduce((sum: number, g: any) => sum + (g.items?.length || 0), 0)
+                      : 0)}
                 </Text>
               </View>
               <Text className="text-body-sm text-muted-foreground mt-1">Menu Items</Text>
