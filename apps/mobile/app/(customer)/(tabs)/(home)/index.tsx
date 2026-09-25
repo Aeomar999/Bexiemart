@@ -421,7 +421,8 @@ export default function HomeScreen() {
             decelerationRate="fast"
             snapToInterval={132} // 120px width + 12px gap
             snapToAlignment="start"
-            contentContainerStyle={{ paddingHorizontal: 20, gap: 12 }}
+            contentContainerStyle={{ paddingHorizontal: 20 }}
+            ItemSeparatorComponent={() => <View style={{ width: 12 }} />}
             keyExtractor={(item: any) => item.id}
             renderItem={({ item }: { item: any }) => (
               <Pressable
