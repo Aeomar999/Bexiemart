@@ -18,7 +18,8 @@
 - **Never render `0.00` while loading.** Error states render **no** amounts.
 - Held/pending counts only escrow rows with `status: "HELD"` (disputed excluded).
 - No change to any code path that moves money. Server changes are read-only `aggregate` calls.
-- Design system (`docs/DESIGN-SYSTEM.md`): semantic tokens only; no raw hex outside token files; no arbitrary `[...]` Tailwind values in new code; no `shadow-*` / `elevation`; type from the named scale; buttons are the shared `Button` (pill).
+- Design system (`docs/DESIGN-SYSTEM.md`) for **new or changed code**: semantic tokens only; no raw hex outside token files; no arbitrary `[...]` Tailwind values; no `shadow-*` / `elevation`; type from the named scale; buttons are the shared `Button` (pill). Lines a task copies verbatim from the current file (screen headers, transaction lists, the BexieCoins strip) are exempt and stay untouched (user decision 2026-09-25).
+- The Recent Transactions list duplicated between the vendor and rider Earnings screens is pre-existing and out of scope; do not extract it in this plan (user decision 2026-09-25).
 - Tap targets ≥ 44×44 (use `hitSlop` of 12 on 14–18px icons).
 - Copy strings are exact as written in this plan (`HELD_INFO`, labels, error text).
 - BexieCoins strip (wallet) and rewards hero keep their current visual design; only the fabricated "Gold tier" wording is removed.
@@ -1592,7 +1593,16 @@ const ready = {
   pendingClearance: 134,
   todayRevenue: 84,
   thisWeekRevenue: 520,
-  recentTransactions: [],
+  recentTransactions: [
+    {
+      id: "t1",
+      type: "payout",
+      title: "Delivery payout",
+      amount: 12,
+      status: "completed",
+      date: "Sep 25",
+    },
+  ],
 };
 
 describe("Rider EarningsDashboardScreen", () => {
@@ -1614,6 +1624,8 @@ describe("Rider EarningsDashboardScreen", () => {
     ).toBeTruthy();
     expect(screen.getByText("GHS 84.00")).toBeTruthy();
     expect(screen.getByText("GHS 520.00")).toBeTruthy();
+    expect(screen.getByText("+GHS 12.00")).toBeTruthy();
+    expect(screen.queryByText(/GH₵/)).toBeNull();
   });
 
   it("has a labelled Withdraw action that opens withdraw", () => {
@@ -1684,13 +1696,13 @@ export default function EarningsDashboardScreen() {
     if (trx.type === "withdrawal") {
       Alert.alert(
         "Withdrawal Receipt",
-        `Transaction ID: ${trx.id}\nAmount: GH₵ ${Math.abs(trx.amount).toFixed(2)}\nStatus: ${trx.status.toUpperCase()}\nDate: ${trx.date}`,
+        `Transaction ID: ${trx.id}\nAmount: GHS ${Math.abs(trx.amount).toFixed(2)}\nStatus: ${trx.status.toUpperCase()}\nDate: ${trx.date}`,
         [{ text: "Close", style: "cancel" }]
       );
     } else {
       Alert.alert(
         "Delivery Payout",
-        `Transaction ID: ${trx.id}\nAmount: GH₵ ${trx.amount.toFixed(2)}\nStatus: ${trx.status.toUpperCase()}\nDate: ${trx.date}`,
+        `Transaction ID: ${trx.id}\nAmount: GHS ${trx.amount.toFixed(2)}\nStatus: ${trx.status.toUpperCase()}\nDate: ${trx.date}`,
         [{ text: "Close", style: "cancel" }]
       );
     }
@@ -1805,7 +1817,7 @@ export default function EarningsDashboardScreen() {
                             isWithdrawal ? "text-foreground" : "text-green-600"
                           }`}
                         >
-                          {isWithdrawal ? "" : "+"}GH₵ {Math.abs(trx.amount).toFixed(2)}
+                          {isWithdrawal ? "" : "+"}GHS {Math.abs(trx.amount).toFixed(2)}
                         </Text>
                         <Text className="text-[10px] text-muted-foreground uppercase font-bold mt-0.5">
                           {trx.status} • {trx.date}
@@ -1824,7 +1836,7 @@ export default function EarningsDashboardScreen() {
 }
 ```
 
-(Header, receipt alerts and the transaction list are unchanged from the current file. The transaction list is out of scope per the spec.)
+(Header, receipt alerts and the transaction list are copied from the current file, except that the three `GH₵` strings in the receipt alerts and list rows become `GHS` (user decision 2026-09-25). The list is otherwise out of scope.)
 
 - [ ] **Step 4: Run the test to verify it passes**
 
