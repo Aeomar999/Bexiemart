@@ -9,13 +9,14 @@ import { CoverHeader } from "@/components/ui/CoverHeader";
 import { useFoodRestaurant, useAddToFoodCart, useFoodCart } from "@/lib/hooks/use-food";
 import { usePopupStore } from "@/lib/stores/popup-store";
 import { DetailSkeleton } from "@/components/ui/Skeleton";
+import { ErrorState } from "@/components/ui/ErrorState";
 
 export default function RestaurantScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const router = useRouter();
   const insets = useSafeAreaInsets();
 
-  const { data: restaurant, isLoading } = useFoodRestaurant(id ?? "");
+  const { data: restaurant, isLoading, isError, refetch } = useFoodRestaurant(id ?? "");
   const { data: cartData } = useFoodCart();
   const addToCart = useAddToFoodCart();
   const showPopup = usePopupStore((s) => s.showPopup);
@@ -30,18 +31,24 @@ export default function RestaurantScreen() {
   );
 
   const rawMenu = restaurant?.menu;
+  // The API returns `menu` grouped by category: { [category]: items[] }.
   const menuGroups = Array.isArray(rawMenu)
     ? rawMenu
-    : restaurant?.foodItems
-      ? Object.entries(
-          (restaurant.foodItems as any[]).reduce((acc: any, item: any) => {
-            const cat = item.category ?? "General";
-            if (!acc[cat]) acc[cat] = [];
-            acc[cat].push(item);
-            return acc;
-          }, {})
-        ).map(([category, items]: [string, any]) => ({ category, items }))
-      : [];
+    : rawMenu && typeof rawMenu === "object"
+      ? Object.entries(rawMenu as Record<string, any[]>).map(([category, items]) => ({
+          category,
+          items: Array.isArray(items) ? items : [],
+        }))
+      : restaurant?.foodItems
+        ? Object.entries(
+            (restaurant.foodItems as any[]).reduce((acc: any, item: any) => {
+              const cat = item.category ?? "General";
+              if (!acc[cat]) acc[cat] = [];
+              acc[cat].push(item);
+              return acc;
+            }, {})
+          ).map(([category, items]: [string, any]) => ({ category, items }))
+        : [];
 
   // Set initial category when menu loads
   if (!activeCategory && menuGroups.length > 0) {
@@ -56,6 +63,17 @@ export default function RestaurantScreen() {
       message: `${item.name} has been added to your food cart.`,
     });
   };
+
+  if (isError || (!isLoading && !restaurant)) {
+    return (
+      <ErrorState
+        fullScreen
+        title="Restaurant unavailable"
+        message="We couldn't load this restaurant."
+        onRetry={() => refetch()}
+      />
+    );
+  }
 
   if (isLoading || !restaurant) {
     return (

@@ -75,7 +75,7 @@ const queryClient = new QueryClient({
 });
 
 function RootLayout() {
-  useOTAUpdate();
+  useOTAUpdate({ autoCheck: true });
   const hydrate = useAuthStore((s) => s.hydrate);
   const isLoading = useAuthStore((s) => s.isLoading);
   const user = useAuthStore((s) => s.user);

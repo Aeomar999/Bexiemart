@@ -439,13 +439,15 @@ export default function HomeScreen() {
                   ) : (
                     <Icon name="image" size={28} color={tokens.textDisabled} />
                   )}
-                  {/* Floating Rating Badge */}
-                  <View className="absolute bottom-2 left-2 flex-row items-center bg-card/90 px-1.5 py-0.5 rounded-full">
-                    <Icon name="star" size={10} color={tokens.warning} />
-                    <Text className="text-[10px] font-bold text-foreground ml-1">
-                      {item.rating || "4.5"}
-                    </Text>
-                  </View>
+                  {/* Floating Rating Badge — only for products that have a rating */}
+                  {item.rating != null && (
+                    <View className="absolute bottom-2 left-2 flex-row items-center bg-card/90 px-1.5 py-0.5 rounded-full">
+                      <Icon name="star" size={10} color={tokens.warning} />
+                      <Text className="text-[10px] font-bold text-foreground ml-1">
+                        {item.rating}
+                      </Text>
+                    </View>
+                  )}
                 </View>
                 <View className="px-1 gap-[2px]">
                   <Text

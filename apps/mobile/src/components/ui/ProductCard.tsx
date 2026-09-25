@@ -76,7 +76,7 @@ export function ProductCard({
               numberOfLines={1}
               adjustsFontSizeToFit
             >
-              GHS {numericPrice.toFixed(0)}
+              GHS {numericPrice.toFixed(2)}
             </Text>
           </View>
         </Card>

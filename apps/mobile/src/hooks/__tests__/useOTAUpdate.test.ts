@@ -1,7 +1,7 @@
 import { renderHook, act } from "@testing-library/react-native";
 import { AppState } from "react-native";
 import * as Updates from "expo-updates";
-import { useOTAUpdate } from "../useOTAUpdate";
+import { useOTAUpdate, useOTAStore } from "../useOTAUpdate";
 
 jest.mock("expo-updates", () => ({
   checkForUpdateAsync: jest.fn(),
@@ -23,8 +23,11 @@ jest.mock("@sentry/react-native", () => ({
 describe("useOTAUpdate", () => {
   const originalDev = __DEV__;
 
+  const initialState = useOTAStore.getState();
+
   beforeEach(() => {
     jest.clearAllMocks();
+    useOTAStore.setState(initialState, true);
     (global as any).__DEV__ = false;
   });
 
@@ -58,6 +61,48 @@ describe("useOTAUpdate", () => {
     });
 
     expect(Updates.checkForUpdateAsync).not.toHaveBeenCalled();
+  });
+
+  it("should report up-to-date when no update is available", async () => {
+    (Updates.checkForUpdateAsync as jest.Mock).mockResolvedValue({ isAvailable: false });
+
+    const { result } = renderHook(() => useOTAUpdate());
+
+    let outcome;
+    await act(async () => {
+      outcome = await result.current.checkForUpdate();
+    });
+
+    expect(outcome).toBe("up-to-date");
+    expect(Updates.fetchUpdateAsync).not.toHaveBeenCalled();
+  });
+
+  it("should report error when the check fails", async () => {
+    (Updates.checkForUpdateAsync as jest.Mock).mockRejectedValue(new Error("offline"));
+
+    const { result } = renderHook(() => useOTAUpdate());
+
+    let outcome;
+    await act(async () => {
+      outcome = await result.current.checkForUpdate();
+    });
+
+    expect(outcome).toBe("error");
+    expect(result.current.error?.message).toBe("offline");
+  });
+
+  it("should share state between hook instances", async () => {
+    (Updates.checkForUpdateAsync as jest.Mock).mockResolvedValue({ isAvailable: true });
+    (Updates.fetchUpdateAsync as jest.Mock).mockResolvedValue({ isNew: true });
+
+    const owner = renderHook(() => useOTAUpdate());
+    const banner = renderHook(() => useOTAUpdate());
+
+    await act(async () => {
+      await owner.result.current.checkForUpdate();
+    });
+
+    expect(banner.result.current.isUpdateReady).toBe(true);
   });
 
   it("should reload app when applyUpdate is called and update is ready", async () => {

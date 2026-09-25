@@ -141,7 +141,7 @@ export default function ProfileScreen() {
   const { logout, isAuthenticated } = useAuthStore();
   const { authEnabled } = useAuthEnabled();
   const { darkModeEnabled } = useDarkModeEnabled();
-  const { checkForUpdate, isChecking, isUpdateAvailable } = useOTAUpdate();
+  const { checkForUpdate, isChecking } = useOTAUpdate();
 
   const handleLogout = async () => {
     await logout();
@@ -310,12 +310,18 @@ export default function ProfileScreen() {
                         className={`flex-row items-center justify-between h-[52px] px-4 ${!isLast ? "border-b border-border" : ""}`}
                         onPress={async () => {
                           if (item.isUpdateCheck) {
-                            await checkForUpdate();
-                            if (!isUpdateAvailable) {
+                            const result = await checkForUpdate();
+                            if (result === "up-to-date") {
                               Toast.show({
                                 type: "success",
                                 text1: "Up to date",
                                 text2: "You are on the latest version of BexieMart.",
+                              });
+                            } else if (result === "error") {
+                              Toast.show({
+                                type: "error",
+                                text1: "Couldn't check for updates",
+                                text2: "Please try again later.",
                               });
                             }
                             return;

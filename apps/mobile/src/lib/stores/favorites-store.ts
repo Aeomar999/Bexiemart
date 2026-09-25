@@ -33,6 +33,15 @@ export const useFavoritesStore = create<FavoritesState>()(
     {
       name: "favorites-storage",
       storage: createJSONStorage(() => AsyncStorage),
+      // v0 persisted `favorites` as a Set, which serialized to `{}`.
+      version: 1,
+      migrate: (persistedState) => {
+        const state = (persistedState ?? {}) as Partial<FavoritesState>;
+        return {
+          ...state,
+          favorites: Array.isArray(state.favorites) ? state.favorites : [],
+        } as FavoritesState;
+      },
     }
   )
 );

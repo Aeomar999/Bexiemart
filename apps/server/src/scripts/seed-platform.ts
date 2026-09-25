@@ -13,8 +13,23 @@ import { PrismaPg } from "@prisma/adapter-pg";
 import { Logger } from "@nestjs/common";
 import { createAuth } from "../auth/better-auth";
 import { Pool } from "pg";
+import { randomBytes } from "crypto";
 
 const logger = new Logger("SeedPlatform");
+
+// This script deletes and recreates its seed accounts, so it must only ever run
+// against a disposable dev/staging database, and only when explicitly asked to.
+if (process.env.NODE_ENV === "production" || process.env.SEED_PLATFORM_CONFIRM !== "yes") {
+  logger.error(
+    "Refusing to seed: set SEED_PLATFORM_CONFIRM=yes and run against a non-production database."
+  );
+  process.exit(1);
+}
+
+// Seeded accounts share one password; take it from the environment or generate
+// a random one per run rather than committing a known credential.
+const SEED_PASSWORD =
+  process.env.SEED_USER_PASSWORD || `Seed!${randomBytes(9).toString("base64url")}`;
 
 const pool = new Pool({ connectionString: process.env.DATABASE_URL });
 const adapter = new PrismaPg(pool);
@@ -42,11 +57,11 @@ async function createTestUser(
 ) {
   let user = await prisma.user.findUnique({ where: { email } });
   if (user) {
-    logger.log(`User ${email} already exists. Deleting to re-seed (cascades)...`);
+    logger.log(`Seed user (${role}) already exists. Deleting to re-seed (cascades)...`);
     await prisma.user.delete({ where: { email } });
   }
 
-  logger.log(`Creating user ${email}...`);
+  logger.log(`Creating seed user (${role})...`);
   const res = await auth.api.signUpEmail({
     body: { email, password, name, callbackURL: "http://localhost:3000" },
     asResponse: true,
@@ -72,11 +87,14 @@ async function createTestUser(
 async function main() {
   try {
     logger.log("--- PHASE 1: Users & Profiles ---");
+    if (!process.env.SEED_USER_PASSWORD) {
+      logger.warn(`SEED_USER_PASSWORD not set; generated password for this run: ${SEED_PASSWORD}`);
+    }
 
     // 1. Vendors
     const techVendorUser = await createTestUser(
       "vendorbexiemart1@gmail.com",
-      "Password@123",
+      SEED_PASSWORD,
       "Tech Haven Owner",
       UserRole.VENDOR,
       "+233540000001"
@@ -99,7 +117,7 @@ async function main() {
 
     const foodVendorUser = await createTestUser(
       "foodbexiemart2@gmail.com",
-      "Password@123",
+      SEED_PASSWORD,
       "Bexie Bites Owner",
       UserRole.VENDOR,
       "+233540000002"
@@ -122,7 +140,7 @@ async function main() {
 
     const serviceVendorUser = await createTestUser(
       "cleanbexiemart3@gmail.com",
-      "Password@123",
+      SEED_PASSWORD,
       "Clean Pros Owner",
       UserRole.VENDOR,
       "+233540000003"
@@ -146,7 +164,7 @@ async function main() {
     // 2. Dispatchers
     const dispatcherUser = await createTestUser(
       "driverbexiemart4@gmail.com",
-      "Password@123",
+      SEED_PASSWORD,
       "Speedy Delivery",
       UserRole.DISPATCHER,
       "+233540000010"
@@ -163,14 +181,14 @@ async function main() {
     // 3. Customers
     const aliceUser = await createTestUser(
       "alicebexiemart5@gmail.com",
-      "Password@123",
+      SEED_PASSWORD,
       "Alice Smith",
       UserRole.CUSTOMER,
       "+233540000020"
     );
     const bobUser = await createTestUser(
       "bobbexiemart6@gmail.com",
-      "Password@123",
+      SEED_PASSWORD,
       "Bob Jones",
       UserRole.CUSTOMER,
       "+233540000021"
