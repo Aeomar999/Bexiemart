@@ -3,7 +3,7 @@ import { useFavoritesStore } from "./favorites-store";
 
 describe("Favorites Store", () => {
   beforeEach(() => {
-    useFavoritesStore.setState({ favorites: new Set<string>() });
+    useFavoritesStore.setState({ favorites: [] });
   });
 
   it("should toggle favorite on", () => {
@@ -12,7 +12,7 @@ describe("Favorites Store", () => {
   });
 
   it("should toggle favorite off", () => {
-    useFavoritesStore.setState({ favorites: new Set(["p1"]) });
+    useFavoritesStore.setState({ favorites: ["p1"] });
     useFavoritesStore.getState().toggleFavorite("p1");
     expect(useFavoritesStore.getState().isFavorite("p1")).toBe(false);
   });
