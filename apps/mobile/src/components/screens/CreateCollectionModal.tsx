@@ -25,7 +25,7 @@ export function CreateCollectionModal({ visible, onClose }: Props) {
 
   useEffect(() => {
     if (visible) {
-      setName("");
+      setTimeout(() => setName(""), 0);
       successHandled.current = false;
     }
   }, [visible]);
@@ -33,8 +33,10 @@ export function CreateCollectionModal({ visible, onClose }: Props) {
   useEffect(() => {
     if (createCollection.isSuccess && !successHandled.current) {
       successHandled.current = true;
-      setName("");
-      onClose();
+      setTimeout(() => {
+        setName("");
+        onClose();
+      }, 0);
     }
   }, [createCollection.isSuccess, onClose]);
 

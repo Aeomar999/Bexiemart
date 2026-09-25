@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useState } from "react";
 import { Animated, ViewStyle, DimensionValue } from "react-native";
 import { useReducedMotion } from "@/hooks/useReducedMotion";
 
@@ -10,7 +10,7 @@ interface SkeletonProps {
 }
 
 export function Skeleton({ width = "100%", height = 20, borderRadius = 4, style }: SkeletonProps) {
-  const opacity = useRef(new Animated.Value(0.3)).current;
+  const [opacity] = useState(() => new Animated.Value(0.3));
   const reducedMotion = useReducedMotion();
 
   useEffect(() => {

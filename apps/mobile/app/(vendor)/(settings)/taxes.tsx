@@ -33,7 +33,7 @@ export default function TaxesDocumentsScreen() {
 
   useEffect(() => {
     if (profile?.taxId) {
-      setTin(profile.taxId);
+      setTimeout(() => setTin(profile.taxId), 0);
     }
   }, [profile?.taxId]);
 

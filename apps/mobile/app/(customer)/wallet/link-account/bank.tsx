@@ -80,8 +80,10 @@ export default function AddBankAccountScreen() {
       const timer = setTimeout(resolveAccount, 800);
       return () => clearTimeout(timer);
     } else {
-      setResolvedName("");
-      setResolveError("");
+      setTimeout(() => {
+        setResolvedName("");
+        setResolveError("");
+      }, 0);
     }
   }, [selectedBank, accountNumber, resolveAccount]);
 

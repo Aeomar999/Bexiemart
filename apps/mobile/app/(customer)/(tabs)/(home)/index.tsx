@@ -117,6 +117,23 @@ function getCategoryIcon(name: string): string {
   return "grid";
 }
 
+function getCategoryAsset(name: string) {
+  const n = name.toLowerCase();
+  if (/beaut|health|cosmet|care|wellness|pharma/.test(n))
+    return require("@assets/images/category-cards/No bg/category_beauty_health_pink_1790294230506.png");
+  if (/book|stationer|office|paper/.test(n))
+    return require("@assets/images/category-cards/No bg/category_books_stationery_mint_1790294240063.png");
+  if (/comput|laptop|pc|mac/.test(n))
+    return require("@assets/images/category-cards/No bg/category_computers_peach_1790294249335.png");
+  if (/electron|phone|tablet|gadget|device|tech/.test(n))
+    return require("@assets/images/category-cards/No bg/category_electronics_blue_1790294279063.png");
+  if (/entertain|game|gaming|console|music|audio|sound|headphone|movie|tv/.test(n))
+    return require("@assets/images/category-cards/No bg/category_entertainment_lavender_1790294287340.png");
+  if (/fashion|cloth|apparel|wear|shoe|bag|accessor|jewel/.test(n))
+    return require("@assets/images/category-cards/No bg/category_fashion_yellow_1790294294935.png");
+  return null;
+}
+
 export default function HomeScreen() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
@@ -275,6 +292,7 @@ export default function HomeScreen() {
             {categories.slice(0, 6).map((cat: Category, index: number) => {
               const { tint, fg } = CATEGORY_PALETTE[index % CATEGORY_PALETTE.length];
               const icon = getCategoryIcon(cat.name);
+              const asset = getCategoryAsset(cat.name);
               return (
                 <Pressable
                   key={cat.id}
@@ -287,35 +305,60 @@ export default function HomeScreen() {
                     className="w-full rounded-2xl overflow-hidden p-3.5 justify-between"
                     style={{ aspectRatio: 1.1, backgroundColor: tint }}
                   >
-                    {/* Brand-tinted glyph watermark for texture + per-tile identity */}
+                    {/* Big Watermark Title */}
+                    <Text
+                      pointerEvents="none"
+                      className="font-heading font-black uppercase tracking-tighter z-10"
+                      style={{
+                        fontSize: 36,
+                        lineHeight: 36,
+                        color: fg,
+                        opacity: 0.25,
+                      }}
+                      numberOfLines={3}
+                    >
+                      {cat.name}
+                    </Text>
+
+                    {/* Background illustration or fallback watermark */}
                     <View
                       pointerEvents="none"
-                      style={{ position: "absolute", right: -10, bottom: -12, opacity: 0.12 }}
+                      style={
+                        asset
+                          ? {
+                              position: "absolute",
+                              right: -10,
+                              bottom: -10,
+                              width: 120,
+                              height: 120,
+                              zIndex: 5,
+                            }
+                          : {
+                              position: "absolute",
+                              right: -10,
+                              bottom: -12,
+                              opacity: 0.12,
+                              zIndex: 5,
+                            }
+                      }
                     >
-                      <Icon name={icon} size={104} color={fg} />
-                    </View>
-
-                    {/* Medallion: real category image when present, icon fallback otherwise */}
-                    <View className="w-12 h-12 rounded-2xl bg-card items-center justify-center overflow-hidden">
-                      {cat.image ? (
+                      {asset ? (
                         <Image
-                          source={{ uri: cat.image }}
+                          source={asset}
                           style={{ width: "100%", height: "100%" }}
-                          contentFit="cover"
+                          contentFit="contain"
                         />
                       ) : (
-                        <Icon name={icon} size={22} color={fg} />
+                        <Icon name={icon} size={104} color={fg} />
                       )}
                     </View>
 
-                    <View>
+                    {/* Subtitle / Count */}
+                    <View className="z-10 mt-auto pt-4">
                       <Text
-                        className="text-body-md font-heading font-bold text-foreground"
-                        numberOfLines={1}
+                        className="text-caption font-body font-bold"
+                        style={{ color: fg, opacity: 0.8 }}
                       >
-                        {cat.name}
-                      </Text>
-                      <Text className="text-caption font-body text-muted-foreground mt-0.5">
                         {cat.count} {cat.count === 1 ? "item" : "items"}
                       </Text>
                     </View>

@@ -43,11 +43,13 @@ export default function EditCardScreen() {
     if (cards && cards.length > 0) {
       const card = cards.find((c: any) => c.id === id);
       if (card) {
-        setName(card.cardholderName || "");
-        setExpiry(`${card.expiryMonth}/${card.expiryYear.slice(-2)}`);
-        setIsDefault(card.isDefault || false);
-        setCardType(card.type || "CARD");
-        setLast4(card.last4 || "");
+        setTimeout(() => {
+          setName(card.cardholderName || "");
+          setExpiry(`${card.expiryMonth}/${card.expiryYear.slice(-2)}`);
+          setIsDefault(card.isDefault || false);
+          setCardType(card.type || "CARD");
+          setLast4(card.last4 || "");
+        }, 0);
       }
     }
   }, [cards, id]);

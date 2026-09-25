@@ -56,11 +56,11 @@ export default function BookRiderScreen() {
   // Re-quote whenever both endpoints are known.
   useEffect(() => {
     if (!pickupCoords || !dropoffCoords) {
-      setQuotes(null);
+      setTimeout(() => setQuotes(null), 0);
       return;
     }
     let cancelled = false;
-    setQuoting(true);
+    setTimeout(() => setQuoting(true), 0);
     deliveryApi
       .quoteAll({
         pickupLat: pickupCoords.latitude,

@@ -26,13 +26,13 @@ describe("Input", () => {
   });
 
   it("shows password toggle when secureTextEntry is true", () => {
-    const { getByText } = render(<Input label="Password" secureTextEntry />);
-    expect(getByText("Show")).toBeTruthy();
+    const { getByLabelText } = render(<Input label="Password" secureTextEntry />);
+    expect(getByLabelText("Show password")).toBeTruthy();
   });
 
   it("toggles password visibility when Show/Hide pressed", () => {
-    const { getByText } = render(<Input label="Password" secureTextEntry />);
-    fireEvent.press(getByText("Show"));
-    expect(getByText("Hide")).toBeTruthy();
+    const { getByLabelText } = render(<Input label="Password" secureTextEntry />);
+    fireEvent.press(getByLabelText("Show password"));
+    expect(getByLabelText("Hide password")).toBeTruthy();
   });
 });

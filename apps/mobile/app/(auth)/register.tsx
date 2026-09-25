@@ -1,6 +1,6 @@
 import { tokens } from "@/theme/tokens";
 import { BackButton } from "../../src/components/ui/BackButton";
-import { View, Text, ScrollView, TouchableOpacity, Dimensions } from "react-native";
+import { View, Text, ScrollView, TouchableOpacity } from "react-native";
 import { router } from "expo-router";
 import { Input } from "../../src/components/ui/Input";
 import { PasswordStrength } from "../../src/components/auth/PasswordStrength";
@@ -25,8 +25,6 @@ import {
   registerStep2Schema,
   registerStep3Schema,
 } from "../../src/lib/validation/schemas";
-
-const { width } = Dimensions.get("window");
 
 export default function RegisterScreen() {
   const registerMutation = useRegister();
@@ -81,7 +79,7 @@ export default function RegisterScreen() {
         if (!hasError && res?.data?.isAvailable) {
           setStep(3);
         }
-      } catch (err) {
+      } catch {
         // If the check fails, we might still want to proceed and let the actual registration catch it,
         // or show a toast. For now, we'll just proceed if we can't verify.
         setStep(3);

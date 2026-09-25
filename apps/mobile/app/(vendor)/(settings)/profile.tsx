@@ -41,12 +41,14 @@ export default function VendorProfileScreen() {
 
   useEffect(() => {
     if (profile) {
-      setStoreName(profile.shopName ?? storeName);
-      setDescription(profile.description ?? "");
-      setPhone(profile.phone ?? "");
-      setAddress(profile.address ?? "");
-      setLogoUrl(profile.logo ?? "");
-      setBannerUrl(profile.banner ?? "");
+      setTimeout(() => {
+        setStoreName(profile.shopName ?? storeName);
+        setDescription(profile.description ?? "");
+        setPhone(profile.phone ?? "");
+        setAddress(profile.address ?? "");
+        setLogoUrl(profile.logo ?? "");
+        setBannerUrl(profile.banner ?? "");
+      }, 0);
     }
   }, [profile]);
 

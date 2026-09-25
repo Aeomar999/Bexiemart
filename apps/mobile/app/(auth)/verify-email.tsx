@@ -1,15 +1,7 @@
 import { tokens } from "@/theme/tokens";
-import {
-  View,
-  Text,
-  TouchableOpacity,
-  TextInput,
-  ActivityIndicator,
-  KeyboardAvoidingView,
-  Platform,
-} from "react-native";
+import { View, Text, TouchableOpacity, KeyboardAvoidingView, Platform } from "react-native";
 import { router, useLocalSearchParams } from "expo-router";
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState } from "react";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Button } from "../../src/components/ui/Button";
 import { Announcement } from "../../src/components/ui/Announcement";
@@ -37,7 +29,6 @@ export default function VerifyEmailScreen() {
   const verifyEmailOtp = useVerifyEmailOtp();
   const resendVerification = useResendVerification();
   const insets = useSafeAreaInsets();
-  const inputRef = useRef<TextInput>(null);
 
   const [status, setStatus] = useState<"idle" | "verifying" | "success" | "error">(
     token ? "verifying" : "idle"
@@ -61,26 +52,7 @@ export default function VerifyEmailScreen() {
         },
       });
     }
-  }, [token]);
-
-  useEffect(() => {
-    if (code.length === 6 && status === "idle" && email) {
-      setStatus("verifying");
-      setErrorMessage("");
-      verifyEmailOtp.mutate(
-        { email, code },
-        {
-          onSuccess: () => {
-            setStatus("success");
-          },
-          onError: (err: any) => {
-            setErrorMessage(err?.message || "Invalid or expired code.");
-            setStatus("error");
-          },
-        }
-      );
-    }
-  }, [code, status, email]);
+  }, [token, verifyEmail]);
 
   const handleResend = () => {
     if (!email) return;
@@ -191,7 +163,25 @@ export default function VerifyEmailScreen() {
             {/* Segmented Agency-Tier OTP Bezel Input */}
             <SegmentedOtpInput
               code={code}
-              onChangeCode={setCode}
+              onChangeCode={(newCode) => {
+                setCode(newCode);
+                if (newCode.length === 6 && status === "idle" && email) {
+                  setStatus("verifying");
+                  setErrorMessage("");
+                  verifyEmailOtp.mutate(
+                    { email, code: newCode },
+                    {
+                      onSuccess: () => {
+                        setStatus("success");
+                      },
+                      onError: (err: any) => {
+                        setErrorMessage(err?.message || "Invalid or expired code.");
+                        setStatus("error");
+                      },
+                    }
+                  );
+                }
+              }}
               status={otpStatus}
               disabled={otpDisabled}
             />

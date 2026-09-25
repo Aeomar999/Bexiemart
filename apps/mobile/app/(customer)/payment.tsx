@@ -32,7 +32,6 @@ export default function PaymentMethodsScreen() {
   const addPaymentMethod = useAddPaymentMethod();
   const removePaymentMethod = useRemovePaymentMethod();
   const setDefaultPaymentMethod = useSetDefaultPaymentMethod();
-  const {} = useWallet();
   const initializePayment = useInitializePayment();
 
   const [isModalVisible, setIsModalVisible] = useState(false);
@@ -116,6 +115,21 @@ export default function PaymentMethodsScreen() {
     );
   };
 
+  const handleAddPaymentMethod = () => {
+    try {
+      setFormData({
+        type: "card",
+        provider: "visa",
+        details: "",
+        holderName: "",
+        expiry: "",
+      });
+      setIsModalVisible(true);
+    } catch (err) {
+      console.error("Error opening modal:", err);
+    }
+  };
+
   return (
     <View className="flex-1 bg-background">
       {/* Header */}
@@ -135,16 +149,7 @@ export default function PaymentMethodsScreen() {
           hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
           style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
           className="w-10 h-10 rounded-full bg-primary-subtle items-center justify-center border border-border"
-          onPress={() => {
-            setFormData({
-              type: "card",
-              provider: "visa",
-              details: "",
-              holderName: "",
-              expiry: "",
-            });
-            setIsModalVisible(true);
-          }}
+          onPress={handleAddPaymentMethod}
         >
           <Icon name="plus" size={20} color={tokens.primary} />
         </Pressable>

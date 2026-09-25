@@ -34,6 +34,18 @@ describe("PhotoPicker", () => {
     });
 
     const { getByText } = render(<PhotoPicker images={[]} onChange={onChange} />);
+
+    // Mock Alert.alert to instantly call the second option (Gallery)
+    const alertSpy = jest.spyOn(require("react-native").Alert, "alert");
+    // @ts-ignore
+    alertSpy.mockImplementation((title: any, message: any, buttons: any) => {
+      // Find the Gallery button and call its onPress
+      const galleryButton = buttons?.find((b: any) => b.text === "Gallery");
+      if (galleryButton && galleryButton.onPress) {
+        galleryButton.onPress();
+      }
+    });
+
     fireEvent.press(getByText("Add Photos"));
 
     await waitFor(() => {
@@ -41,6 +53,8 @@ describe("PhotoPicker", () => {
         { uri: "file://new.jpg", type: "image/jpeg", name: "new.jpg" },
       ]);
     });
+
+    alertSpy.mockRestore();
   });
 
   it("hides add button when max selections reached", () => {

@@ -1,4 +1,4 @@
-﻿import { tokens } from "@/theme/tokens";
+import { tokens } from "@/theme/tokens";
 import { BackButton } from "@/components/ui/BackButton";
 import {
   View,
@@ -17,7 +17,7 @@ import { Image } from "expo-image";
 import { useRouter } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Icon } from "@/components/ui/Icon";
-import { useState, useRef, useCallback, useEffect } from "react";
+import { useState, useRef, useCallback, useEffect, useMemo } from "react";
 import { usePopupStore } from "@/lib/stores/popup-store";
 import { useRequireAuth } from "@/lib/hooks/use-require-auth";
 import { useAddToCart } from "@/lib/hooks/use-cart";
@@ -248,8 +248,13 @@ export default function ReelsScreen() {
   const addComment = useAddReelComment();
 
   // Track which reel is currently in view
-  const viewabilityConfig = useRef({ itemVisiblePercentThreshold: 70 }).current;
-  const onViewableItemsChanged = useRef(
+  const viewabilityConfig = useMemo(() => ({ itemVisiblePercentThreshold: 70 }), []);
+  const reelsRef = useRef(reels);
+  useEffect(() => {
+    reelsRef.current = reels;
+  }, [reels]);
+
+  const onViewableItemsChanged = useCallback(
     ({ viewableItems }: { viewableItems: Array<{ index: number | null }> }) => {
       if (
         viewableItems.length > 0 &&
@@ -258,13 +263,14 @@ export default function ReelsScreen() {
       ) {
         const newIndex = viewableItems[0].index;
         setActiveReelIndex(newIndex);
-        const item = reels[newIndex];
+        const item = reelsRef.current[newIndex];
         if (item?.id) {
           incrementView.mutate(item.id);
         }
       }
-    }
-  ).current;
+    },
+    [incrementView]
+  );
 
   const handleShare = async (reel: any) => {
     try {
