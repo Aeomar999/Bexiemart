@@ -29,10 +29,10 @@ export default function RestaurantScreen() {
     0
   );
 
-  // Map menu groups from API: food items grouped by category
-  const menuGroups =
-    restaurant?.menu ??
-    (restaurant?.foodItems
+  const rawMenu = restaurant?.menu;
+  const menuGroups = Array.isArray(rawMenu)
+    ? rawMenu
+    : restaurant?.foodItems
       ? Object.entries(
           (restaurant.foodItems as any[]).reduce((acc: any, item: any) => {
             const cat = item.category ?? "General";
@@ -41,7 +41,7 @@ export default function RestaurantScreen() {
             return acc;
           }, {})
         ).map(([category, items]: [string, any]) => ({ category, items }))
-      : []);
+      : [];
 
   // Set initial category when menu loads
   if (!activeCategory && menuGroups.length > 0) {
@@ -57,7 +57,7 @@ export default function RestaurantScreen() {
     });
   };
 
-  if (isLoading) {
+  if (isLoading || !restaurant) {
     return (
       <View className="flex-1 bg-background items-center justify-center">
         <DetailSkeleton />
@@ -111,7 +111,9 @@ export default function RestaurantScreen() {
                 <Icon name="shopping-bag" size={16} color={tokens.textMuted} />
                 <Text className="text-body-lg font-bold text-foreground ml-1">
                   {restaurant._count?.foodItems ??
-                    menuGroups.reduce((sum: number, g: any) => sum + g.items.length, 0)}
+                    (Array.isArray(menuGroups)
+                      ? menuGroups.reduce((sum: number, g: any) => sum + (g.items?.length || 0), 0)
+                      : 0)}
                 </Text>
               </View>
               <Text className="text-body-sm text-muted-foreground mt-1">Menu Items</Text>
