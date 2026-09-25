@@ -1,5 +1,5 @@
 import React from "react";
-import { render, fireEvent } from "@testing-library/react-native";
+import { render, fireEvent, waitFor } from "@testing-library/react-native";
 import TaxesDocumentsScreen from "../../../../app/(vendor)/(settings)/taxes";
 import { useVendorProfile, useUpdateTaxInfo } from "@/lib/hooks/use-vendor";
 import { useVendorDocuments } from "@/lib/hooks/use-vendor-documents";
@@ -30,7 +30,7 @@ describe("TaxesDocumentsScreen", () => {
     });
   });
 
-  it("renders status and existing TIN when vendor profile has pending status", () => {
+  it("renders status and existing TIN when vendor profile has pending status", async () => {
     (useVendorProfile as jest.Mock).mockReturnValue({
       data: {
         taxId: "TIN-123456",
@@ -44,11 +44,14 @@ describe("TaxesDocumentsScreen", () => {
     });
 
     const { getByText, getByDisplayValue } = render(<TaxesDocumentsScreen />);
-    expect(getByText("Status: PENDING")).toBeTruthy();
-    expect(getByDisplayValue("TIN-123456")).toBeTruthy();
+
+    await waitFor(() => {
+      expect(getByText("Status: PENDING")).toBeTruthy();
+      expect(getByDisplayValue("TIN-123456")).toBeTruthy();
+    });
   });
 
-  it("calls updateTaxInfo mutation on submit when TIN and documents exist", () => {
+  it("calls updateTaxInfo mutation on submit when TIN and documents exist", async () => {
     (useVendorProfile as jest.Mock).mockReturnValue({
       data: {
         taxId: "TIN-123456",
@@ -61,7 +64,12 @@ describe("TaxesDocumentsScreen", () => {
       isLoading: false,
     });
 
-    const { getByText } = render(<TaxesDocumentsScreen />);
+    const { getByText, getByDisplayValue } = render(<TaxesDocumentsScreen />);
+
+    await waitFor(() => {
+      expect(getByDisplayValue("TIN-123456")).toBeTruthy();
+    });
+
     const submitBtn = getByText("Submit for Verification");
     fireEvent.press(submitBtn);
 

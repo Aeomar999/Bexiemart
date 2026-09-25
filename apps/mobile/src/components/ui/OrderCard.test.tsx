@@ -7,7 +7,10 @@ const baseOrder = {
   date: "2024-01-15",
   status: "processing" as const,
   total: 129.99,
-  items: [{ name: "Item A", qty: 2 }, { name: "Item B", qty: 1 }],
+  items: [
+    { name: "Item A", qty: 2 },
+    { name: "Item B", qty: 1 },
+  ],
 };
 
 describe("OrderCard", () => {
@@ -15,8 +18,7 @@ describe("OrderCard", () => {
     const { getByText } = render(<OrderCard {...baseOrder} />);
     expect(getByText("Order #ORD-123")).toBeTruthy();
     expect(getByText("2024-01-15")).toBeTruthy();
-    expect(getByText("2x Item A")).toBeTruthy();
-    expect(getByText("1x Item B")).toBeTruthy();
+    expect(getByText("2x Item A, 1x Item B")).toBeTruthy();
     expect(getByText(/GHS 129.99/)).toBeTruthy();
   });
 
@@ -32,7 +34,9 @@ describe("OrderCard", () => {
   });
 
   it("renders customer name when provided", () => {
-    const { getByText } = render(<OrderCard {...baseOrder} customerName="John Doe" />);
+    const { getByText } = render(
+      <OrderCard {...baseOrder} variant="vendor" customerName="John Doe" />
+    );
     expect(getByText("John Doe")).toBeTruthy();
   });
 

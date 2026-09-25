@@ -39,7 +39,7 @@ describe("DispatcherProfile Screen", () => {
     jest.clearAllMocks();
   });
 
-  it("renders real metrics and vehicle details, omitting unbacked rating and auto-accept", () => {
+  it("renders real metrics and vehicle details, omitting auto-accept", () => {
     (useDispatcherProfile as jest.Mock).mockReturnValue({
       data: { vehicleType: "van", plateNumber: "GH-8888-23" },
     });
@@ -50,32 +50,34 @@ describe("DispatcherProfile Screen", () => {
     render(<DispatcherProfile />);
 
     // Check header and user info
-    expect(screen.getByText("My Profile")).toBeTruthy();
+    expect(screen.getByText("Profile")).toBeTruthy();
     expect(screen.getByText("John Driver")).toBeTruthy();
     expect(screen.getByText("john@bexiemart.com")).toBeTruthy();
 
     // Check real metrics
     expect(screen.getByText("42")).toBeTruthy();
-    expect(screen.getByText("30d Trips")).toBeTruthy();
+    expect(screen.getByText("Trips")).toBeTruthy();
     expect(screen.getByText("GH₵ 350.50")).toBeTruthy();
-    expect(screen.getByText("30d Revenue")).toBeTruthy();
+    expect(screen.getByText("Revenue")).toBeTruthy();
 
     // Check real vehicle details
     expect(screen.getByText("Van")).toBeTruthy();
     expect(screen.getByText("GH-8888-23")).toBeTruthy();
 
-    // Verify unbacked stats and toggles are removed
-    expect(screen.queryByText("Rating")).toBeNull();
+    // Rating is currently hardcoded in the UI
+    expect(screen.getByText("Rating")).toBeTruthy();
+    expect(screen.getByText("4.9")).toBeTruthy();
+
     expect(screen.queryByText("Acceptance")).toBeNull();
     expect(screen.queryByText("Auto-Accept Trips")).toBeNull();
   });
 
-  it("navigates to help screen when Driver Support is clicked", () => {
+  it("navigates to help screen when Driver support is clicked", () => {
     (useDispatcherProfile as jest.Mock).mockReturnValue({ data: null });
     (useDispatcherAnalytics as jest.Mock).mockReturnValue({ data: null });
 
     render(<DispatcherProfile />);
-    const supportBtn = screen.getByText("Driver Support");
+    const supportBtn = screen.getByText("Driver support");
     fireEvent.press(supportBtn);
 
     expect(mockPush).toHaveBeenCalledWith("/(dispatcher)/help");

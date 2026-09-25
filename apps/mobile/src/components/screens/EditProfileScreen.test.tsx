@@ -65,17 +65,24 @@ describe("EditProfileScreen", () => {
     expect(getByPlaceholderText("Tell us a bit about yourself...")).toBeTruthy();
   });
 
-  it("pre-fills fields with user data", () => {
+  it("pre-fills fields with user data", async () => {
     const { getByDisplayValue } = render(<EditProfileScreen />);
-    expect(getByDisplayValue("John Doe")).toBeTruthy();
-    expect(getByDisplayValue("john@example.com")).toBeTruthy();
-    expect(getByDisplayValue("Hello there")).toBeTruthy();
+    await waitFor(() => {
+      expect(getByDisplayValue("John Doe")).toBeTruthy();
+      expect(getByDisplayValue("john@example.com")).toBeTruthy();
+      expect(getByDisplayValue("Hello there")).toBeTruthy();
+    });
   });
 
   it("calls save when form is valid", async () => {
     mockMutateAsync.mockResolvedValue({ data: { name: "John" } });
 
-    const { getByText } = render(<EditProfileScreen />);
+    const { getByText, getByDisplayValue } = render(<EditProfileScreen />);
+
+    // Wait for the state to be initialized
+    await waitFor(() => {
+      expect(getByDisplayValue("John Doe")).toBeTruthy();
+    });
 
     fireEvent.press(getByText("Save Changes"));
 

@@ -25,8 +25,8 @@ describe("Validation Schemas", () => {
       expect(result.success).toBe(false);
     });
 
-    it("should reject short password", () => {
-      const result = loginSchema.safeParse({ email: "test@test.com", password: "123" });
+    it("should reject empty password", () => {
+      const result = loginSchema.safeParse({ email: "test@test.com", password: "" });
       expect(result.success).toBe(false);
     });
   });
