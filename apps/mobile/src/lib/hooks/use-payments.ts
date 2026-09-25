@@ -16,7 +16,7 @@ export function useInitializePayment() {
 export function usePaymentMethods() {
   return useQuery({
     queryKey: PAYMENT_KEYS.all,
-    queryFn: () => customerPaymentMethodsApi.getAll().then((r) => r.data),
+    queryFn: () => customerPaymentMethodsApi.getAll().then((r) => r.data.data ?? []),
   });
 }
 
@@ -58,8 +58,7 @@ export function useAddPaymentMethod() {
 export function useRemovePaymentMethod() {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: (id: string) =>
-      customerPaymentMethodsApi.remove(id).then((r) => r.data),
+    mutationFn: (id: string) => customerPaymentMethodsApi.remove(id).then((r) => r.data),
     onSuccess: () => qc.invalidateQueries({ queryKey: PAYMENT_KEYS.all }),
   });
 }
@@ -67,8 +66,7 @@ export function useRemovePaymentMethod() {
 export function useSetDefaultPaymentMethod() {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: (id: string) =>
-      customerPaymentMethodsApi.setDefault(id).then((r) => r.data),
+    mutationFn: (id: string) => customerPaymentMethodsApi.setDefault(id).then((r) => r.data),
     onSuccess: () => qc.invalidateQueries({ queryKey: PAYMENT_KEYS.all }),
   });
 }
