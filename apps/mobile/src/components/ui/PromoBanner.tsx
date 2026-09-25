@@ -7,7 +7,7 @@ import { Icon } from "./Icon";
 import { Skeleton } from "./Skeleton";
 import { useBanners } from "@/lib/hooks/use-banners";
 import { Banner, BannerPlacement } from "@/lib/api/banners";
-import { tokens } from "@/theme/tokens";
+import { LinearGradient } from "expo-linear-gradient";
 
 interface PromoBannerProps {
   /** Which screen's banners to load (HOME | FOOD | SERVICES). */
@@ -18,14 +18,7 @@ interface PromoBannerProps {
 
 const SCREEN_WIDTH = Dimensions.get("window").width;
 
-/**
- * Reusable promotional banner carousel. Dimensions and styling are locked to the
- * customer home hero banner (180px card, rounded-2xl, 20px gutter, image + dark
- * overlay, optional badge/CTA, paging dots). Content is backend-driven via the
- * `useBanners` hook — never mocked. Renders nothing when a placement has no
- * active banners so screens degrade cleanly.
- */
-export function PromoBanner({ placement, containerClassName = "mt-4" }: PromoBannerProps) {
+export function PromoBanner({ placement, containerClassName = "mt-4 mb-4" }: PromoBannerProps) {
   const router = useRouter();
   const { data, isPending, isError } = useBanners(placement);
   const [activeIndex, setActiveIndex] = useState(0);
@@ -41,7 +34,7 @@ export function PromoBanner({ placement, containerClassName = "mt-4" }: PromoBan
     return (
       <View className={containerClassName}>
         <View style={{ paddingHorizontal: 20 }}>
-          <Skeleton width="100%" height={180} borderRadius={16} />
+          <Skeleton width="100%" height={160} borderRadius={16} />
         </View>
       </View>
     );
@@ -51,7 +44,7 @@ export function PromoBanner({ placement, containerClassName = "mt-4" }: PromoBan
   if (isError || banners.length === 0) return null;
 
   return (
-    <View className={containerClassName}>
+    <View className={containerClassName} style={{ position: "relative" }}>
       <FlashList
         data={banners}
         horizontal
@@ -66,11 +59,14 @@ export function PromoBanner({ placement, containerClassName = "mt-4" }: PromoBan
         renderItem={({ item }) => <BannerCard banner={item} onPress={handlePress(router, item)} />}
       />
       {banners.length > 1 && (
-        <View className="flex-row justify-center items-center mt-3 gap-1.5">
+        <View
+          className="absolute bottom-4 left-0 right-0 flex-row justify-center items-center gap-1.5"
+          pointerEvents="none"
+        >
           {banners.map((_, i) => (
             <View
               key={i}
-              className={`h-1.5 rounded-full ${i === activeIndex ? "w-4 bg-primary" : "w-1.5 bg-secondary"}`}
+              className={`h-[4px] rounded-full ${i === activeIndex ? "w-4 bg-white" : "w-1.5 bg-white/40"}`}
             />
           ))}
         </View>
@@ -84,65 +80,62 @@ function handlePress(router: ReturnType<typeof useRouter>, banner: Banner) {
   return () => router.push(banner.ctaRoute as never);
 }
 
-import { LinearGradient } from "expo-linear-gradient";
-
 function BannerCard({ banner, onPress }: { banner: Banner; onPress?: () => void }) {
   const cardClass =
-    "w-full h-[128px] rounded-[16px] overflow-hidden relative bg-surface-900" +
-    (onPress ? " active:opacity-70" : "");
+    "w-full h-[170px] rounded-2xl overflow-hidden relative bg-black" +
+    (onPress ? " active:opacity-90" : "");
 
   return (
-    <View style={{ width: SCREEN_WIDTH, paddingHorizontal: 20, paddingBottom: 16 }}>
-      <View className="rounded-[16px] border border-black/5 bg-black" style={{}}>
-        <Pressable
-          className={cardClass}
-          onPress={onPress}
-          disabled={!onPress}
-          accessibilityRole={onPress ? "button" : "none"}
-          accessibilityLabel={`${banner.title}, ${banner.subtitle}`}
-        >
-          <Image
-            source={{ uri: banner.imageUrl }}
-            style={{ width: "100%", height: "100%", position: "absolute" }}
-            contentFit="cover"
-          />
-          <LinearGradient
-            colors={[tokens.moneyGrad1, tokens.moneyGrad2]}
-            start={{ x: 0, y: 0 }}
-            end={{ x: 1, y: 0 }}
-            className="absolute inset-0 opacity-90"
-          />
+    <View style={{ width: SCREEN_WIDTH, paddingHorizontal: 20 }}>
+      <Pressable
+        className={cardClass}
+        onPress={onPress}
+        disabled={!onPress}
+        accessibilityRole={onPress ? "button" : "none"}
+        accessibilityLabel={`${banner.title}, ${banner.subtitle}`}
+      >
+        <Image
+          source={{ uri: banner.imageUrl }}
+          style={{ width: "100%", height: "100%", position: "absolute" }}
+          contentFit="cover"
+        />
+        <LinearGradient
+          colors={["rgba(0,0,0,0.85)", "rgba(0,0,0,0.15)"]}
+          start={{ x: 0, y: 0.5 }}
+          end={{ x: 1, y: 0.5 }}
+          className="absolute inset-0"
+        />
 
-          <View className="flex-1 p-4 justify-center">
-            {banner.badge ? (
-              <View className="bg-success self-start px-2 py-1 rounded-md mb-1">
-                <Text className="text-caption font-bold text-white uppercase tracking-wider">
-                  {banner.badge}
-                </Text>
-              </View>
-            ) : null}
+        <View className="flex-1 p-5 justify-center">
+          {banner.badge ? (
+            <View className="bg-success self-start px-2 py-0.5 rounded flex-row items-center mb-2">
+              <Text className="text-[10px] font-bold text-white uppercase tracking-[0.1em]">
+                {banner.badge}
+              </Text>
+            </View>
+          ) : null}
 
-            <Text className="text-white text-[24px] leading-[28px] font-heading font-black w-3/4 mb-0.5 tracking-[-0.01em]">
-              {banner.title}
-            </Text>
+          <Text
+            className="text-white text-[26px] leading-[28px] font-heading font-black w-[75%] mb-1.5 tracking-[-0.02em]"
+            numberOfLines={2}
+          >
+            {banner.title}
+          </Text>
 
-            {banner.subtitle ? (
-              <Text className="text-white/90 text-[12px] font-body mb-2">{banner.subtitle}</Text>
-            ) : (
-              <View className="mb-2" />
-            )}
+          {banner.subtitle ? (
+            <Text className="text-white/80 text-[13px] font-body mb-3">{banner.subtitle}</Text>
+          ) : (
+            <View className="mb-3" />
+          )}
 
-            {banner.ctaLabel ? (
-              <View className="bg-card self-start flex-row items-center rounded-full px-3 py-1.5">
-                <Text className="text-foreground font-bold text-[11px] mr-1">
-                  {banner.ctaLabel}
-                </Text>
-                <Icon name="arrow-right" size={12} color={tokens.textPrimary} />
-              </View>
-            ) : null}
-          </View>
-        </Pressable>
-      </View>
+          {banner.ctaLabel ? (
+            <View className="bg-white self-start flex-row items-center rounded-full px-4 py-[6px]">
+              <Text className="text-black font-bold text-[12px] mr-1.5">{banner.ctaLabel}</Text>
+              <Icon name="arrow-right" size={12} color="#000" />
+            </View>
+          ) : null}
+        </View>
+      </Pressable>
     </View>
   );
 }
