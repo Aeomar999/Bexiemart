@@ -172,6 +172,7 @@ const iconMap: Record<string, any> = {
   shield: Shield01Icon,
   zap: ZapIcon,
   "trending-up": ArrowUpRight01Icon,
+  "arrow-up-right": ArrowUpRight01Icon,
   "trending-down": ArrowDownRight01Icon,
   briefcase: Briefcase01Icon,
   award: Award01Icon,

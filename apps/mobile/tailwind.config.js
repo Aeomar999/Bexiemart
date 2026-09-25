@@ -80,6 +80,8 @@ module.exports = {
         border: "var(--color-border)",
         muted: "var(--color-surface-hover)",
         "muted-foreground": "var(--color-text-muted)",
+        "foreground-secondary": "var(--color-text-secondary)",
+        "money-held": "var(--color-money-held)",
       },
       fontFamily: {
         heading: ["Raleway_700Bold", "Raleway_600SemiBold", "Raleway_400Regular", "sans-serif"],
