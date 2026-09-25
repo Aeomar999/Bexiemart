@@ -310,7 +310,13 @@ export default function HomeScreen() {
                       pointerEvents="none"
                       style={
                         asset
-                          ? { position: "absolute", right: -5, bottom: -5, width: 90, height: 90 }
+                          ? {
+                              position: "absolute",
+                              right: -10,
+                              bottom: -10,
+                              width: 120,
+                              height: 120,
+                            }
                           : { position: "absolute", right: -10, bottom: -12, opacity: 0.12 }
                       }
                     >
@@ -340,12 +346,16 @@ export default function HomeScreen() {
 
                     <View>
                       <Text
-                        className="text-body-md font-heading font-bold text-foreground"
+                        className="text-body-md font-heading font-bold"
+                        style={{ color: fg }}
                         numberOfLines={1}
                       >
                         {cat.name}
                       </Text>
-                      <Text className="text-caption font-body text-muted-foreground mt-0.5">
+                      <Text
+                        className="text-caption font-body mt-0.5"
+                        style={{ color: fg, opacity: 0.8 }}
+                      >
                         {cat.count} {cat.count === 1 ? "item" : "items"}
                       </Text>
                     </View>
