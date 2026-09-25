@@ -37,7 +37,8 @@ describe("PhotoPicker", () => {
 
     // Mock Alert.alert to instantly call the second option (Gallery)
     const alertSpy = jest.spyOn(require("react-native").Alert, "alert");
-    alertSpy.mockImplementation((title, message, buttons) => {
+    // @ts-ignore
+    alertSpy.mockImplementation((title: any, message: any, buttons: any) => {
       // Find the Gallery button and call its onPress
       const galleryButton = buttons?.find((b: any) => b.text === "Gallery");
       if (galleryButton && galleryButton.onPress) {
