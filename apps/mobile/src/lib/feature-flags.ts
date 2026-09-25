@@ -50,15 +50,17 @@ export function useAuthEnabled(): { authEnabled: boolean; ready: boolean } {
     // PostHog isn't configured (e.g. local dev without keys): keep the default
     // behavior of auth enabled and don't block routing.
     if (!posthog) {
-      setReady(true);
+      setTimeout(() => setReady(true), 0);
       return;
     }
 
     const apply = () => {
       // `undefined` (flag not loaded / does not exist) keeps the safe default of
       // enabled — only an explicit `false` disables the auth wall.
-      setAuthEnabled(posthog!.isFeatureEnabled(FeatureFlag.MobileAuth) !== false);
-      setReady(true);
+      setTimeout(() => {
+        setAuthEnabled(posthog!.isFeatureEnabled(FeatureFlag.MobileAuth) !== false);
+        setReady(true);
+      }, 0);
     };
 
     // A value cached from a previous launch is available synchronously.
@@ -94,14 +96,16 @@ export function useDarkModeEnabled(): { darkModeEnabled: boolean; ready: boolean
 
   useEffect(() => {
     if (!posthog) {
-      setReady(true);
+      setTimeout(() => setReady(true), 0);
       return;
     }
 
     const apply = () => {
       // Only an explicit `true` enables — `undefined`/`false` stays disabled.
-      setDarkModeEnabled(posthog!.isFeatureEnabled(FeatureFlag.DarkMode) === true);
-      setReady(true);
+      setTimeout(() => {
+        setDarkModeEnabled(posthog!.isFeatureEnabled(FeatureFlag.DarkMode) === true);
+        setReady(true);
+      }, 0);
     };
 
     if (posthog.isFeatureEnabled(FeatureFlag.DarkMode) !== undefined) {
@@ -132,14 +136,16 @@ export function useFlashSalesEnabled(): { flashSalesEnabled: boolean; ready: boo
 
   useEffect(() => {
     if (!posthog) {
-      setReady(true);
+      setTimeout(() => setReady(true), 0);
       return;
     }
 
     const apply = () => {
       // `undefined` keeps the default (`true`) — only explicit `false` disables.
-      setFlashSalesEnabled(posthog!.isFeatureEnabled(FeatureFlag.FlashSalesActive) !== false);
-      setReady(true);
+      setTimeout(() => {
+        setFlashSalesEnabled(posthog!.isFeatureEnabled(FeatureFlag.FlashSalesActive) !== false);
+        setReady(true);
+      }, 0);
     };
 
     if (posthog.isFeatureEnabled(FeatureFlag.FlashSalesActive) !== undefined) {

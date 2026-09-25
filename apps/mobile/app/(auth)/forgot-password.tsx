@@ -1,6 +1,6 @@
 import { tokens } from "@/theme/tokens";
 import { BackButton } from "@/components/ui/BackButton";
-import { View, Text, Alert, TouchableOpacity } from "react-native";
+import { View, Text, Alert } from "react-native";
 import { router } from "expo-router";
 import { useState } from "react";
 import { Input } from "../../src/components/ui/Input";

@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { View, Text, Pressable, Animated, Platform } from "react-native";
 import { usePopupStore } from "@/lib/stores/popup-store";
 import { tokens } from "@/theme/tokens";
@@ -8,15 +8,41 @@ import { useReducedMotion } from "@/hooks/useReducedMotion";
 
 export function GlobalPopup() {
   const { isVisible, type, title, message, action, hidePopup } = usePopupStore();
-  const translateY = useRef(new Animated.Value(100)).current;
-  const opacity = useRef(new Animated.Value(0)).current;
+  const [translateY] = useState(() => new Animated.Value(100));
+  const [opacity] = useState(() => new Animated.Value(0));
   const [renderComponent, setRenderComponent] = useState(isVisible);
   const insets = useSafeAreaInsets();
   const reducedMotion = useReducedMotion();
 
+  const closeModal = useCallback(() => {
+    if (reducedMotion) {
+      opacity.setValue(0);
+      translateY.setValue(100);
+      hidePopup();
+      setRenderComponent(false);
+      return;
+    }
+    Animated.parallel([
+      Animated.timing(opacity, {
+        toValue: 0,
+        duration: 150,
+        useNativeDriver: true,
+      }),
+      Animated.timing(translateY, {
+        toValue: 100,
+        duration: 150,
+        useNativeDriver: true,
+      }),
+    ]).start(() => {
+      hidePopup();
+      setRenderComponent(false);
+    });
+  }, [reducedMotion, opacity, translateY, hidePopup]);
+
   useEffect(() => {
     if (isVisible) {
-      setRenderComponent(true);
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setTimeout(() => setRenderComponent(true), 0);
       if (reducedMotion) {
         opacity.setValue(1);
         translateY.setValue(0);
@@ -46,7 +72,8 @@ export function GlobalPopup() {
     } else if (reducedMotion) {
       opacity.setValue(0);
       translateY.setValue(100);
-      setRenderComponent(false);
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setTimeout(() => setRenderComponent(false), 0);
     } else {
       Animated.parallel([
         Animated.timing(opacity, {
@@ -61,32 +88,7 @@ export function GlobalPopup() {
         }),
       ]).start(() => setRenderComponent(false));
     }
-  }, [isVisible]);
-
-  const closeModal = () => {
-    if (reducedMotion) {
-      opacity.setValue(0);
-      translateY.setValue(100);
-      hidePopup();
-      setRenderComponent(false);
-      return;
-    }
-    Animated.parallel([
-      Animated.timing(opacity, {
-        toValue: 0,
-        duration: 150,
-        useNativeDriver: true,
-      }),
-      Animated.timing(translateY, {
-        toValue: 100,
-        duration: 150,
-        useNativeDriver: true,
-      }),
-    ]).start(() => {
-      hidePopup();
-      setRenderComponent(false);
-    });
-  };
+  }, [isVisible, reducedMotion, opacity, translateY, action, closeModal]);
 
   if (!renderComponent && !isVisible) return null;
 

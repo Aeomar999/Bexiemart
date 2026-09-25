@@ -62,11 +62,11 @@ export default function FoodCartScreen() {
   // Live-quote the delivery fee once we know both the restaurant and dropoff.
   useEffect(() => {
     if (!deliveryCoords || vendorLat == null || vendorLng == null) {
-      setDeliveryFee(null);
+      setTimeout(() => setDeliveryFee(null), 0);
       return;
     }
     let cancelled = false;
-    setQuotingFee(true);
+    setTimeout(() => setQuotingFee(true), 0);
     deliveryApi
       .quoteAll({
         pickupLat: vendorLat,

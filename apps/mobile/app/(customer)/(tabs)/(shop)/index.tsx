@@ -49,6 +49,7 @@ export default function ShopScreen() {
   const addToCartMutation = useAddToCart();
   const requireAuth = useRequireAuth();
   const { isFavorite, toggleFavorite } = useFavoritesStore();
+  const { width } = useWindowDimensions();
 
   const products = productsData?.pages.flatMap((page: any) => page.data) ?? [];
   const categories = categoriesData ?? [];
@@ -155,7 +156,6 @@ export default function ShopScreen() {
     );
   }
 
-  const { width } = useWindowDimensions();
   let numColumns = 2;
   if (width >= 1024) numColumns = 4;
   else if (width >= 768) numColumns = 3;

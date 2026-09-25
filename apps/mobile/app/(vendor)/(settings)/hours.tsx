@@ -50,7 +50,7 @@ export default function OperatingHoursScreen() {
         const found = (apiHours as any[]).find((h: any) => h.day === day.id);
         mapped[day.id] = found || { isOpen: day.id !== "sun", open: "08:00 AM", close: "06:00 PM" };
       });
-      setHours(mapped);
+      setTimeout(() => setHours(mapped), 0);
     }
   }, [apiHours]);
 

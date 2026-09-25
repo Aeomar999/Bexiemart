@@ -26,7 +26,7 @@ import { useFormValidation } from "../../src/lib/hooks/use-form-validation";
 import { loginSchema } from "../../src/lib/validation/schemas";
 
 export default function LoginScreen() {
-  const { isAuthenticated, setAuth } = useAuthStore();
+  const { isAuthenticated } = useAuthStore();
   const login = useLogin();
   const resendVerification = useResendVerification();
 

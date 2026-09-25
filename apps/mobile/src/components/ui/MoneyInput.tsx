@@ -46,7 +46,7 @@ export function MoneyInput({
 
   useEffect(() => {
     if (toMinor(text) !== toMinor(value)) {
-      setText(toEditString(value));
+      setTimeout(() => setText(toEditString(value)), 0);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [value]);

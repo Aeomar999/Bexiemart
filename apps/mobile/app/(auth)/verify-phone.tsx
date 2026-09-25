@@ -1,4 +1,4 @@
-﻿import { tokens } from "@/theme/tokens";
+import { tokens } from "@/theme/tokens";
 import {
   View,
   Text,
@@ -6,14 +6,10 @@ import {
   Platform,
   TouchableOpacity,
   ActivityIndicator,
-  TextInput,
 } from "react-native";
 import { router, useLocalSearchParams } from "expo-router";
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { Button } from "../../src/components/ui/Button";
-import { Announcement } from "../../src/components/ui/Announcement";
-import { Input } from "../../src/components/ui/Input";
 import { SegmentedOtpInput } from "../../src/components/ui/SegmentedOtpInput";
 import { authClient } from "../../src/lib/api/better-auth";
 import { HugeiconsIcon } from "@hugeicons/react-native";
@@ -22,40 +18,12 @@ import { Tick01Icon } from "@hugeicons/core-free-icons";
 export default function VerifyPhoneScreen() {
   const { phone, email } = useLocalSearchParams<{ phone: string; email: string }>();
   const insets = useSafeAreaInsets();
-  const inputRef = useRef<TextInput>(null);
-
   const [code, setCode] = useState("");
   const [status, setStatus] = useState<"sending" | "idle" | "verifying" | "success" | "error">(
-    "sending"
+    phone ? "sending" : "error"
   );
-  const [errorMessage, setErrorMessage] = useState("");
+  const [errorMessage, setErrorMessage] = useState(phone ? "" : "No phone number provided.");
   const [countdown, setCountdown] = useState(60);
-
-  // Auto-send OTP on mount
-  useEffect(() => {
-    if (phone) {
-      sendOTP();
-    } else {
-      setStatus("error");
-      setErrorMessage("No phone number provided.");
-    }
-  }, [phone]);
-
-  // Handle countdown timer
-  useEffect(() => {
-    let timer: ReturnType<typeof setTimeout>;
-    if (countdown > 0) {
-      timer = setTimeout(() => setCountdown(countdown - 1), 1000);
-    }
-    return () => clearTimeout(timer);
-  }, [countdown]);
-
-  // Auto-verify when 6 digits are entered
-  useEffect(() => {
-    if (code.length === 6 && status === "idle") {
-      verifyOTP();
-    }
-  }, [code]);
 
   const maskPhone = (p?: string) => {
     if (!p) return "";
@@ -71,7 +39,8 @@ export default function VerifyPhoneScreen() {
     return `${maskedUser}@${domain}`;
   };
 
-  const getNormalizedPhone = () => {
+  const getNormalizedPhone = useCallback(() => {
+    if (!phone) return "";
     let normalizedPhone = (phone as string).trim().replace(/\s+/g, "");
     if (normalizedPhone.startsWith("0")) {
       normalizedPhone = "+233" + normalizedPhone.slice(1);
@@ -79,9 +48,9 @@ export default function VerifyPhoneScreen() {
       normalizedPhone = "+" + normalizedPhone;
     }
     return normalizedPhone;
-  };
+  }, [phone]);
 
-  const sendOTP = async () => {
+  const sendOTP = useCallback(async () => {
     setStatus("sending");
     setErrorMessage("");
     try {
@@ -98,35 +67,56 @@ export default function VerifyPhoneScreen() {
       setErrorMessage(err.message || "An unexpected error occurred.");
       setStatus("error");
     }
-  };
+  }, [getNormalizedPhone]);
 
-  const verifyOTP = async () => {
-    setStatus("verifying");
-    setErrorMessage("");
-    try {
-      const normalizedPhone = getNormalizedPhone();
-      const res = await authClient.phoneNumber.verify({
-        phoneNumber: normalizedPhone,
-        code,
-      });
+  const verifyOTP = useCallback(
+    async (codeToVerify: string) => {
+      setStatus("verifying");
+      setErrorMessage("");
+      try {
+        const normalizedPhone = getNormalizedPhone();
+        const res = await authClient.phoneNumber.verify({
+          phoneNumber: normalizedPhone,
+          code: codeToVerify,
+        });
 
-      if (res.error) {
-        setErrorMessage(res.error.message || "Invalid or expired code.");
+        if (res.error) {
+          setErrorMessage(res.error.message || "Invalid or expired code.");
+          setStatus("error");
+        } else {
+          setStatus("success");
+          setTimeout(() => {
+            router.replace(
+              `/(auth)/verify-email?email=${encodeURIComponent(email as string)}&phoneVerified=true`
+            );
+          }, 1500);
+        }
+      } catch (err: any) {
+        setErrorMessage(err.message || "An unexpected error occurred.");
         setStatus("error");
-      } else {
-        setStatus("success");
-        // Show success briefly before moving to email verification
-        setTimeout(() => {
-          router.replace(
-            `/(auth)/verify-email?email=${encodeURIComponent(email as string)}&phoneVerified=true`
-          );
-        }, 1500);
       }
-    } catch (err: any) {
-      setErrorMessage(err.message || "An unexpected error occurred.");
-      setStatus("error");
+    },
+    [email, getNormalizedPhone]
+  );
+
+  // Auto-send OTP on mount
+  useEffect(() => {
+    if (phone) {
+      const timer = setTimeout(() => {
+        sendOTP();
+      }, 0);
+      return () => clearTimeout(timer);
     }
-  };
+  }, [phone, sendOTP]);
+
+  // Handle countdown timer
+  useEffect(() => {
+    let timer: ReturnType<typeof setTimeout>;
+    if (countdown > 0) {
+      timer = setTimeout(() => setCountdown(countdown - 1), 1000);
+    }
+    return () => clearTimeout(timer);
+  }, [countdown]);
 
   return (
     <KeyboardAvoidingView
@@ -166,6 +156,9 @@ export default function VerifyPhoneScreen() {
                   setErrorMessage("");
                 }
                 setCode(text);
+                if (text.length === 6) {
+                  verifyOTP(text);
+                }
               }}
               status={status}
               disabled={status === "verifying" || status === "sending"}

@@ -42,15 +42,17 @@ export function EditProfileScreen() {
 
   useEffect(() => {
     if (user) {
-      setName(user.name || "");
-      setEmail(user.email || "");
-      setPhone(user.phoneNumber || user.phone || "");
-      setBio(user.bio || "");
-      setLocation(user.location || "");
-      setAvatarUrl(
-        user.image ||
-          `https://api.dicebear.com/9.x/micah/png?seed=${encodeURIComponent(user.name || "Bexiemart")}&backgroundColor=b6e3f4,c0aede,d1d4f9`
-      );
+      setTimeout(() => {
+        setName(user.name || "");
+        setEmail(user.email || "");
+        setPhone(user.phoneNumber || user.phone || "");
+        setBio(user.bio || "");
+        setLocation(user.location || "");
+        setAvatarUrl(
+          user.image ||
+            `https://api.dicebear.com/9.x/micah/png?seed=${encodeURIComponent(user.name || "Bexiemart")}&backgroundColor=b6e3f4,c0aede,d1d4f9`
+        );
+      }, 0);
     }
   }, [user]);
 

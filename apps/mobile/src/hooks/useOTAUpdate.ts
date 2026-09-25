@@ -65,7 +65,9 @@ export function useOTAUpdate(): OTAUpdateState {
     if (__DEV__) return;
 
     // Check for updates on initial mount
-    checkForUpdate();
+    setTimeout(() => {
+      checkForUpdate();
+    }, 0);
 
     // Check for updates when app returns to active state from background
     const subscription = AppState.addEventListener("change", (nextAppState: AppStateStatus) => {

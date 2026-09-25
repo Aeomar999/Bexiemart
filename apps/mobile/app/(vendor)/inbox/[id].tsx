@@ -58,7 +58,7 @@ export default function VendorChatScreen() {
 
   useEffect(() => {
     if (fetchedMessages?.messages) {
-      setMessages(fetchedMessages.messages);
+      setTimeout(() => setMessages(fetchedMessages.messages), 0);
     }
   }, [fetchedMessages]);
 

@@ -1,6 +1,6 @@
 import { tokens } from "@/theme/tokens";
-import React, { useRef, useState, useEffect } from "react";
-import { View, Text, Animated, PanResponder, StyleSheet, Dimensions } from "react-native";
+import React, { useState } from "react";
+import { View, Text, Animated, PanResponder, StyleSheet } from "react-native";
 import { Icon } from "./Icon";
 
 interface SwipeButtonProps {
@@ -22,10 +22,10 @@ export const SwipeButton: React.FC<SwipeButtonProps> = ({
 }) => {
   const [containerWidth, setContainerWidth] = useState(0);
   const sliderWidth = 56;
-  const pan = useRef(new Animated.ValueXY()).current;
+  const [pan] = useState(() => new Animated.ValueXY());
   const [isCompleted, setIsCompleted] = useState(false);
 
-  const panResponder = useRef(
+  const [panResponder] = useState(() =>
     PanResponder.create({
       onStartShouldSetPanResponder: () => true,
       onPanResponderMove: (_, gestureState) => {
@@ -74,7 +74,7 @@ export const SwipeButton: React.FC<SwipeButtonProps> = ({
         }
       },
     })
-  ).current;
+  );
 
   // The colored background fills up behind the slider
   const fillWidth = pan.x.interpolate({
