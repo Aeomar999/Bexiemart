@@ -21,7 +21,7 @@ export interface BalanceCardProps {
   testID?: string;
 }
 
-const HIT_SLOP = { top: 12, bottom: 12, left: 12, right: 12 };
+const HIT_SLOP = { top: 15, bottom: 15, left: 15, right: 15 };
 const TABULAR = { fontVariant: ["tabular-nums" as const] };
 
 function summaryLabel(
@@ -189,7 +189,7 @@ export function BalanceCard({
         <Button
           title="Retry"
           variant="outline"
-          size="sm"
+          size="md"
           onPress={onRetry}
           testID={`${testID}-retry`}
           leftIcon={<Icon name="refresh-cw" size={16} color={colors.primary} />}
