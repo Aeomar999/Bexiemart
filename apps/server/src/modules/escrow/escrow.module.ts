@@ -7,5 +7,6 @@ import { AdminModule } from "../admin/admin.module";
   imports: [AdminModule],
   controllers: [EscrowController],
   providers: [EscrowService],
+  exports: [EscrowService],
 })
 export class EscrowModule {}
