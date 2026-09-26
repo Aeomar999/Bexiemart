@@ -114,6 +114,9 @@ export function createMockPrisma(): any {
       create: jest.fn(),
       update: jest.fn(),
       count: jest.fn(),
+      aggregate: jest
+        .fn()
+        .mockResolvedValue({ _sum: { amount: null, netAmount: null, commission: null } }),
     },
     user: {
       findUnique: jest.fn(),
@@ -322,6 +325,8 @@ export function createMockPrisma(): any {
       create: jest.fn(),
       update: jest.fn(),
       delete: jest.fn(),
+      count: jest.fn(),
+      updateMany: jest.fn(),
     },
     story: {
       findUnique: jest.fn(),

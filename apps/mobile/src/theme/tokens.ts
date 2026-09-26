@@ -25,6 +25,7 @@ export const lightTokens = {
   primarySubtle: "#f0f7fb", // brand-50
   primaryText: "#ffffff",
   moneyGrad1: "#04365b", // brand-800
+  moneyHeld: "#88b7da", // brand-300 — held/pending segment of the BalanceCard split bar
 
   // Secondary / accent
   secondary: "#0ea5e9", // accent-500
@@ -58,6 +59,7 @@ export const darkTokens: ThemeColors = {
   primarySubtle: "#022d4d", // brand-900
   primaryText: "#ffffff",
   moneyGrad1: "#04365b", // brand-800 - dark mode can use same or matched
+  moneyHeld: "#1b5b8b", // brand-600
 
   // Secondary / accent
   secondary: "#38bdf8", // accent-400

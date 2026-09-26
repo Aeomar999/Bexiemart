@@ -8,7 +8,8 @@ import { Icon } from "@/components/ui/Icon";
 import { OrderCard, OrderItem } from "@/components/ui/OrderCard";
 import { useAuthStore } from "@/lib/stores/auth-store";
 import { useVendorStats, useVendorOrders, useVendorEarnings } from "@/lib/hooks/use-vendor";
-import { LinearGradient } from "expo-linear-gradient";
+import { BalanceCard } from "@/components/ui/BalanceCard";
+import { HELD_INFO } from "@/lib/balance";
 
 const STAT_ITEMS = [
   {
@@ -77,7 +78,12 @@ export default function DashboardScreen() {
     refetch: refetchStats,
   } = useVendorStats();
   const { data: ordersData, refetch: refetchOrders } = useVendorOrders();
-  const { data: earningsData, refetch: refetchEarnings } = useVendorEarnings();
+  const {
+    data: earningsData,
+    isLoading: earningsLoading,
+    isError: earningsError,
+    refetch: refetchEarnings,
+  } = useVendorEarnings();
 
   const onRefresh = useCallback(async () => {
     setRefreshing(true);
@@ -139,49 +145,25 @@ export default function DashboardScreen() {
           />
         }
       >
-        {/* ===== HERO / EARNINGS ===== */}
+        {/* ===== BALANCE ===== */}
         <View className="px-5 mb-8">
-          <View
-            className="rounded-[20px] p-6 overflow-hidden border border-black/5 bg-black"
-            style={{}}
-          >
-            <LinearGradient
-              colors={[tokens.moneyGrad1, tokens.moneyGrad2]}
-              start={{ x: 0, y: 0 }}
-              end={{ x: 1, y: 1 }}
-              style={{ position: "absolute", top: 0, left: 0, right: 0, bottom: 0 }}
-            />
-            <Text className="text-white text-[11px] font-bold tracking-[0.1em] uppercase mb-[2px]">
-              Available Balance
-            </Text>
-            <View className="flex-row items-baseline mb-4 mt-[2px]">
-              <Text
-                className="font-heading text-[44px] leading-[48px] font-black tracking-[-1px] text-white"
-                style={{ fontVariant: ["tabular-nums"] }}
-              >
-                {earningsData?.availableBalance?.toFixed(2) ?? "0.00"}
-              </Text>
-              <Text className="text-[16px] font-bold text-white/80 ml-[8px]">GH₵</Text>
-            </View>
-
-            <View className="flex-row items-center justify-between border-t border-white/10 pt-4">
-              <View>
-                <Text className="text-[11px] text-white/70 uppercase tracking-[0.08em] font-bold mb-[2px]">
-                  Pending Clearance
-                </Text>
-                <Text className="text-[18px] font-heading font-bold text-white tracking-tight">
-                  GH₵ {earningsData?.pendingClearance?.toFixed(2) ?? "0.00"}
-                </Text>
-              </View>
-              <Pressable
-                style={({ pressed }) => [{ opacity: pressed ? 0.9 : 1 }]}
-                onPress={() => router.push("/(vendor)/(earnings)")}
-                className="w-10 h-10 rounded-full items-center justify-center bg-white/10"
-              >
-                <Icon name="arrow-up-right" size={18} color="white" />
-              </Pressable>
-            </View>
-          </View>
+          <BalanceCard
+            testID="vendor-dashboard-balance"
+            size="sm"
+            label="Available to withdraw"
+            available={Number(earningsData?.availableBalance ?? 0)}
+            held={{
+              label: "Pending clearance",
+              amount: Number(earningsData?.pendingClearance ?? 0),
+              info: HELD_INFO.vendor,
+            }}
+            onPress={() => router.push("/(vendor)/(earnings)")}
+            pressHint="View earnings"
+            status={
+              earningsLoading ? "loading" : earningsError && !earningsData ? "error" : "ready"
+            }
+            onRetry={() => refetchEarnings()}
+          />
         </View>
 
         {/* ===== QUICK ACTIONS ===== */}

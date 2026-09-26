@@ -131,9 +131,6 @@ export default function RewardsScreen() {
               >
                 {balance.toLocaleString()}
               </Text>
-              <Text className="text-body-lg text-white/80 font-medium font-body mb-1">
-                Gold Tier Member
-              </Text>
               <Text className="text-sm text-white/60 font-body mb-6">100 coins = GHS 1.00</Text>
 
               <Button

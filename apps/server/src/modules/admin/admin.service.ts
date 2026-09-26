@@ -70,7 +70,34 @@ export class AdminService {
       },
     });
     if (!user) throw new NotFoundException("User not found");
-    return user;
+
+    // Read-only escrow totals for the admin balance card. HELD only.
+    const [buyerHeld, vendorHeld] = await Promise.all([
+      user.wallet
+        ? this.prisma.escrow.aggregate({
+            where: {
+              buyerWalletId: user.wallet.id,
+              status: "HELD",
+              order: { status: { notIn: ["delivered", "cancelled", "refunded"] } },
+            },
+            _sum: { amount: true },
+          })
+        : null,
+      user.vendorProfile
+        ? this.prisma.escrow.aggregate({
+            where: { vendorId: user.vendorProfile.id, status: "HELD" },
+            _sum: { netAmount: true },
+          })
+        : null,
+    ]);
+
+    return {
+      ...user,
+      wallet: user.wallet
+        ? { ...user.wallet, heldInEscrow: Number(buyerHeld?._sum.amount ?? 0) }
+        : null,
+      vendorPendingClearance: user.vendorProfile ? Number(vendorHeld?._sum.netAmount ?? 0) : null,
+    };
   }
 
   async updateUserRole(id: string, role: UserRole) {
@@ -662,7 +689,12 @@ export class AdminService {
       }),
     };
 
-    return { ...dispatcher, stats };
+    const wallet = await this.prisma.wallet.findUnique({
+      where: { userId: dispatcher.userId },
+      select: { balance: true },
+    });
+
+    return { ...dispatcher, stats, walletBalance: wallet ? Number(wallet.balance) : 0 };
   }
 
   async updateDispatcherStatus(id: string, status: string) {

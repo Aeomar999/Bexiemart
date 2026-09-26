@@ -42,7 +42,13 @@ const mockPrisma = (): any => ({
   },
   orderItem: { findMany: jest.fn(), create: jest.fn() },
   shippingAddress: { create: jest.fn() },
-  escrow: { findUnique: jest.fn(), findMany: jest.fn(), create: jest.fn(), update: jest.fn() },
+  escrow: {
+    findUnique: jest.fn(),
+    findMany: jest.fn(),
+    create: jest.fn(),
+    update: jest.fn(),
+    aggregate: jest.fn(),
+  },
   user: { findUnique: jest.fn(), findMany: jest.fn(), update: jest.fn(), count: jest.fn() },
   vendorProfile: {
     findUnique: jest.fn(),
@@ -301,19 +307,18 @@ describe("VendorService", () => {
   });
 
   describe("getEarnings", () => {
-    it("returns availableBalance, pendingClearance, todayRevenue, thisWeekRevenue, and recentTransactions", async () => {
+    beforeEach(() => {
       prisma.vendorProfile.findUnique.mockResolvedValue({
         id: "vp1",
         userId: "u1",
         totalEarnings: 10000,
-        pendingPayout: 2500,
+        pendingPayout: 2500, // legacy column, never written — must be ignored
       });
-      prisma.wallet.findUnique.mockResolvedValue({
-        id: "w1",
-        userId: "u1",
-        balance: 1500,
-      });
+      prisma.wallet.findUnique.mockResolvedValue({ id: "w1", userId: "u1", balance: 1500 });
+    });
 
+    it("returns availableBalance, pendingClearance, todayRevenue, thisWeekRevenue, and recentTransactions", async () => {
+      prisma.escrow.aggregate.mockResolvedValue({ _sum: { netAmount: 2150 } });
       const today = new Date();
       prisma.transaction.findMany.mockResolvedValue([
         { type: "EARNINGS", status: "COMPLETED", amount: 500, createdAt: today, reference: "t1" },
@@ -329,11 +334,28 @@ describe("VendorService", () => {
 
       const result = await service.getEarnings("u1");
       expect(result.availableBalance).toBe(1500);
-      expect(result.pendingClearance).toBe(2500);
+      expect(result.pendingClearance).toBe(2150);
       expect(result.todayRevenue).toBe(1500);
       expect(result.thisWeekRevenue).toBe(1500);
       expect(result.recentTransactions).toHaveLength(3);
       expect(result.recentTransactions[0].id).toBe("t1");
+    });
+
+    it("sums only HELD escrow netAmount for this vendor", async () => {
+      prisma.escrow.aggregate.mockResolvedValue({ _sum: { netAmount: 2150 } });
+      prisma.transaction.findMany.mockResolvedValue([]);
+      await service.getEarnings("u1");
+      expect(prisma.escrow.aggregate).toHaveBeenCalledWith({
+        where: { vendorId: "vp1", status: "HELD" },
+        _sum: { netAmount: true },
+      });
+    });
+
+    it("returns 0 pending clearance when nothing is held", async () => {
+      prisma.escrow.aggregate.mockResolvedValue({ _sum: { netAmount: null } });
+      prisma.transaction.findMany.mockResolvedValue([]);
+      const result = await service.getEarnings("u1");
+      expect(result.pendingClearance).toBe(0);
     });
   });
 });

@@ -1,7 +1,8 @@
-import { mockPrisma } from '../../prisma/prisma.mock';
-import { VendorPaymentMethodsService } from './vendor-payment-methods.service';
+import { mockPrisma } from "../../prisma/prisma.mock";
+import { VendorPaymentMethodsService } from "./vendor-payment-methods.service";
+import { NotFoundException } from "@nestjs/common";
 
-describe('VendorPaymentMethodsService', () => {
+describe("VendorPaymentMethodsService", () => {
   let service: VendorPaymentMethodsService;
   let prisma: ReturnType<typeof mockPrisma>;
 
@@ -10,51 +11,96 @@ describe('VendorPaymentMethodsService', () => {
     service = new VendorPaymentMethodsService(prisma as any);
   });
 
-  it('should be defined', () => {
+  it("should be defined", () => {
     expect(service).toBeDefined();
   });
 
-  it('should find all payment methods', async () => {
-    prisma.wallet.findUnique.mockResolvedValue({ id: 'w-1' } as any);
+  it("should find all payment methods", async () => {
+    prisma.wallet.findUnique.mockResolvedValue({ id: "w-1" } as any);
     prisma.bankAccount.findMany.mockResolvedValue([]);
     prisma.momoAccount.findMany.mockResolvedValue([]);
-    const result = await service.findAll('user-1');
+    const result = await service.findAll("user-1");
     expect(result.bankAccounts).toEqual([]);
     expect(result.momoAccounts).toEqual([]);
   });
 
-  it('should add a bank account', async () => {
+  it("should add a bank account with masked response", async () => {
     prisma.wallet.findUnique.mockResolvedValue(null);
-    prisma.wallet.create.mockResolvedValue({ id: 'w-1' } as any);
+    prisma.wallet.create.mockResolvedValue({ id: "w-1" } as any);
     prisma.bankAccount.count.mockResolvedValue(0);
-    prisma.bankAccount.create.mockResolvedValue({ id: 'b-1', bankName: 'GTBank' } as any);
-    const result = await service.addBank('user-1', { bankName: 'GTBank', bankCode: '123', accountNumber: '0000000000', accountName: 'Test' });
-    expect(result.bankName).toBe('GTBank');
+    prisma.bankAccount.create.mockResolvedValue({
+      id: "b-1",
+      bankName: "GTBank",
+      bankCode: "123",
+      accountNumber: "0000000000",
+      accountName: "Test",
+      isDefault: true,
+      isVerified: false,
+    } as any);
+    const result = await service.addBank("user-1", {
+      bankName: "GTBank",
+      bankCode: "123",
+      accountNumber: "0000000000",
+      accountName: "Test",
+    });
+    expect(result.bankName).toBe("GTBank");
+    expect(result.accountNumber).toBe("******0000");
+    expect(result.isDefault).toBe(true);
   });
 
-  it('should add a momo account', async () => {
+  it("should add a momo account with masked response", async () => {
     prisma.wallet.findUnique.mockResolvedValue(null);
-    prisma.wallet.create.mockResolvedValue({ id: 'w-1' } as any);
+    prisma.wallet.create.mockResolvedValue({ id: "w-1" } as any);
     prisma.momoAccount.findUnique.mockResolvedValue(null);
     prisma.momoAccount.count.mockResolvedValue(0);
-    prisma.momoAccount.create.mockResolvedValue({ id: 'm-1', provider: 'MTN' } as any);
-    const result = await service.addMomo('user-1', { provider: 'MTN', phoneNumber: '0240000000', accountName: 'Test' });
-    expect(result.provider).toBe('MTN');
+    prisma.momoAccount.create.mockResolvedValue({
+      id: "m-1",
+      provider: "MTN",
+      phoneNumber: "0240000000",
+      accountName: "Test",
+      isDefault: true,
+      isVerified: false,
+    } as any);
+    const result = await service.addMomo("user-1", {
+      provider: "MTN",
+      phoneNumber: "0240000000",
+      accountName: "Test",
+    });
+    expect(result.provider).toBe("MTN");
+    expect(result.phoneNumber).toBe("******0000");
+    expect(result.isDefault).toBe(true);
   });
 
-  it('should remove a payment method', async () => {
-    prisma.wallet.findUnique.mockResolvedValue({ id: 'w-1' } as any);
-    prisma.bankAccount.findFirst.mockResolvedValue({ id: 'b-1', walletId: 'w-1' } as any);
+  it("should remove a payment method", async () => {
+    prisma.wallet.findUnique.mockResolvedValue({ id: "w-1" } as any);
+    prisma.bankAccount.findFirst.mockResolvedValue({ id: "b-1", walletId: "w-1" } as any);
     prisma.bankAccount.delete.mockResolvedValue({} as any);
-    const result = await service.remove('user-1', 'bank', 'b-1');
+    const result = await service.remove("user-1", "bank", "b-1");
     expect(result).toEqual({ success: true });
   });
 
-  it('should set default method', async () => {
-    prisma.wallet.findUnique.mockResolvedValue({ id: 'w-1' } as any);
+  it("should set default method", async () => {
+    prisma.wallet.findUnique.mockResolvedValue({ id: "w-1" } as any);
+    prisma.bankAccount.findFirst.mockResolvedValue({ id: "b-1", walletId: "w-1" } as any);
     prisma.bankAccount.updateMany.mockResolvedValue({} as any);
-    prisma.bankAccount.update.mockResolvedValue({ id: 'b-1', isDefault: true } as any);
-    const result = await service.setDefault('user-1', 'bank', 'b-1');
-    expect(result.isDefault).toBe(true);
+    prisma.bankAccount.update.mockResolvedValue({ id: "b-1", isDefault: true } as any);
+    const result = await service.setDefault("user-1", "bank", "b-1");
+    expect(result).toEqual({ success: true });
+  });
+
+  it("should throw NotFoundException when setting default on bank account owned by another wallet", async () => {
+    prisma.wallet.findUnique.mockResolvedValue({ id: "w-1" } as any);
+    prisma.bankAccount.findFirst.mockResolvedValue(null);
+    await expect(service.setDefault("user-1", "bank", "b-2")).rejects.toThrow(NotFoundException);
+    expect(prisma.bankAccount.updateMany).not.toHaveBeenCalled();
+    expect(prisma.bankAccount.update).not.toHaveBeenCalled();
+  });
+
+  it("should throw NotFoundException when setting default on momo account owned by another wallet", async () => {
+    prisma.wallet.findUnique.mockResolvedValue({ id: "w-1" } as any);
+    prisma.momoAccount.findFirst.mockResolvedValue(null);
+    await expect(service.setDefault("user-1", "momo", "m-2")).rejects.toThrow(NotFoundException);
+    expect(prisma.momoAccount.updateMany).not.toHaveBeenCalled();
+    expect(prisma.momoAccount.update).not.toHaveBeenCalled();
   });
 });

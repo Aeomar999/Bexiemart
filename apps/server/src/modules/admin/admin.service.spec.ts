@@ -38,7 +38,13 @@ const mockPrisma = (): any => ({
   },
   orderItem: { findMany: jest.fn(), create: jest.fn() },
   shippingAddress: { create: jest.fn() },
-  escrow: { findUnique: jest.fn(), findMany: jest.fn(), create: jest.fn(), update: jest.fn() },
+  escrow: {
+    findUnique: jest.fn(),
+    findMany: jest.fn(),
+    create: jest.fn(),
+    update: jest.fn(),
+    aggregate: jest.fn(),
+  },
   user: { findUnique: jest.fn(), findMany: jest.fn(), update: jest.fn(), count: jest.fn() },
   vendorProfile: {
     findUnique: jest.fn(),
@@ -98,18 +104,48 @@ describe("AdminService", () => {
       await expect(service.getUser("u1")).rejects.toThrow(NotFoundException);
     });
 
-    it("returns user with relations", async () => {
+    it("returns user with relations and null balances when there is no wallet or vendor profile", async () => {
       const user = {
         id: "u1",
         name: "Alice",
         orders: [],
         payments: [],
-        wallet: {},
-        vendorProfile: {},
+        wallet: null,
+        vendorProfile: null,
       };
       prisma.user.findUnique.mockResolvedValue(user);
       const result = await service.getUser("u1");
-      expect(result).toEqual(user);
+      expect(result).toEqual({ ...user, vendorPendingClearance: null });
+      expect(prisma.escrow.aggregate).not.toHaveBeenCalled();
+    });
+
+    it("adds buyer escrow held and vendor pending clearance", async () => {
+      prisma.user.findUnique.mockResolvedValue({
+        id: "u1",
+        orders: [],
+        payments: [],
+        wallet: { id: "w1", balance: 100 },
+        vendorProfile: { id: "vp1" },
+      });
+      prisma.escrow.aggregate
+        .mockResolvedValueOnce({ _sum: { amount: 180 } })
+        .mockResolvedValueOnce({ _sum: { netAmount: 2150 } });
+
+      const result: any = await service.getUser("u1");
+      expect(result.wallet.heldInEscrow).toBe(180);
+      expect(result.vendorPendingClearance).toBe(2150);
+      expect(prisma.escrow.aggregate).toHaveBeenCalledWith({
+        where: {
+          buyerWalletId: "w1",
+          status: "HELD",
+          order: { status: { notIn: ["delivered", "cancelled", "refunded"] } },
+        },
+        _sum: { amount: true },
+      });
+      expect(prisma.escrow.aggregate).toHaveBeenCalledWith({
+        where: { vendorId: "vp1", status: "HELD" },
+        _sum: { netAmount: true },
+      });
     });
 
     it("selects wallet fields explicitly so the PIN hash is never loaded", async () => {
@@ -128,6 +164,31 @@ describe("AdminService", () => {
           updatedAt: true,
         },
       });
+    });
+  });
+
+  describe("getDispatcher", () => {
+    beforeEach(() => {
+      prisma.dispatcherProfile = { findUnique: jest.fn() };
+      prisma.deliveryJob = { count: jest.fn().mockResolvedValue(0) };
+    });
+
+    it("adds the dispatcher's wallet balance", async () => {
+      prisma.dispatcherProfile.findUnique.mockResolvedValue({ id: "d1", userId: "u9", jobs: [] });
+      prisma.wallet.findUnique.mockResolvedValue({ balance: 312.4 });
+      const result: any = await service.getDispatcher("d1");
+      expect(result.walletBalance).toBe(312.4);
+      expect(prisma.wallet.findUnique).toHaveBeenCalledWith({
+        where: { userId: "u9" },
+        select: { balance: true },
+      });
+    });
+
+    it("returns 0 wallet balance when the dispatcher has no wallet", async () => {
+      prisma.dispatcherProfile.findUnique.mockResolvedValue({ id: "d1", userId: "u9", jobs: [] });
+      prisma.wallet.findUnique.mockResolvedValue(null);
+      const result: any = await service.getDispatcher("d1");
+      expect(result.walletBalance).toBe(0);
     });
   });
 

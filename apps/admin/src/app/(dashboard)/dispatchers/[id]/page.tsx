@@ -8,6 +8,8 @@ import { DashboardLayout } from "../../../../components/layout/DashboardLayout";
 import { Badge } from "../../../../components/ui/Badge";
 import { Card, CardContent, CardHeader, CardTitle } from "../../../../components/ui/Card";
 import { Button } from "../../../../components/ui/Button";
+import { BalanceCard } from "../../../../components/ui/BalanceCard";
+import { formatMoney } from "../../../../lib/money";
 import { toast } from "sonner";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { ArrowLeftIcon, UserIcon, BikeIcon, MapPinIcon, NavigationIcon } from "@hugeicons/core-free-icons";
@@ -139,7 +141,7 @@ export default function DispatcherDetailsPage() {
               <CardHeader>
                 <CardTitle className="flex items-center">
                   <HugeiconsIcon icon={BikeIcon} className="mr-2 h-5 w-5 text-[var(--color-primary)]" />
-                  Vehicle & Earnings
+                  Vehicle
                 </CardTitle>
               </CardHeader>
               <CardContent>
@@ -152,17 +154,20 @@ export default function DispatcherDetailsPage() {
                     <p className="text-sm text-[var(--color-text-muted)]">Plate Number</p>
                     <p className="text-lg font-bold">{dispatcher.plateNumber}</p>
                   </div>
-                  <div className="rounded-lg border border-[var(--color-border)] p-4 bg-[var(--color-surface-50)]">
-                    <p className="text-sm text-[var(--color-text-muted)]">Total Earnings</p>
-                    <p className="text-lg font-bold text-[var(--color-success)]">GH₵ {dispatcher.totalEarnings}</p>
-                  </div>
-                  <div className="rounded-lg border border-[var(--color-border)] p-4 bg-[var(--color-surface-50)]">
-                    <p className="text-sm text-[var(--color-text-muted)]">Pending Payout</p>
-                    <p className="text-lg font-bold text-[var(--color-warning)]">GH₵ {dispatcher.pendingPayout}</p>
-                  </div>
                 </div>
               </CardContent>
             </Card>
+
+            <BalanceCard
+              label="Wallet"
+              available={Number(dispatcher.walletBalance ?? 0)}
+              held={{
+                label: "Pending payout",
+                amount: Number(dispatcher.pendingPayout ?? 0),
+                info: "Delivery payouts awaiting customer confirmation.",
+              }}
+              footnote={`Lifetime earnings: ${formatMoney(Number(dispatcher.totalEarnings ?? 0))}`}
+            />
 
             <Card>
               <CardHeader>

@@ -41,7 +41,8 @@ export default function WithdrawFundsScreen() {
   const [amount, setAmount] = useState(0);
   const [selectedMethod, setSelectedMethod] = useState("");
 
-  const availableBalance = Number(earnings?.pendingClearance ?? 0);
+  // Withdrawals are enforced server-side against wallet.balance; show that.
+  const availableBalance = Number(earnings?.availableBalance ?? 0);
   const methods = [
     ...bankAccounts.map((b: any) => ({
       id: b.id,
@@ -218,7 +219,7 @@ export default function WithdrawFundsScreen() {
                 <View className="flex-row items-center bg-primary-subtle px-3 py-1.5 rounded-full border border-border">
                   <Icon name="info" size={14} color={tokens.primary} style={{ marginRight: 6 }} />
                   <Text className="text-body-sm font-bold text-primary-hover">
-                    Available: GHS {availableBalance.toFixed(2)}
+                    {`Available: ${formatMoney(availableBalance)}`}
                   </Text>
                 </View>
                 <Pressable onPress={handleMaxAmount} className="bg-muted px-3 py-1.5 rounded-full">

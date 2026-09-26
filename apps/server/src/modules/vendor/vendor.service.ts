@@ -340,6 +340,14 @@ export class VendorService {
     const profile = await this.getVendorProfile(userId);
     const wallet = await this.prisma.wallet.findUnique({ where: { userId } });
 
+    // Pending = money still in escrow for this vendor's orders. It moves into
+    // the wallet (as netAmount) when EscrowService.release runs. Disputed rows
+    // are excluded on purpose; VendorProfile.pendingPayout is never written.
+    const heldEscrow = await this.prisma.escrow.aggregate({
+      where: { vendorId: profile.id, status: "HELD" },
+      _sum: { netAmount: true },
+    });
+
     const transactions = await this.prisma.transaction.findMany({
       where: {
         wallet: { user: { vendorProfile: { id: profile.id } } },
@@ -379,7 +387,7 @@ export class VendorService {
 
     return {
       availableBalance: wallet ? Number(wallet.balance) : 0,
-      pendingClearance: Number(profile.pendingPayout),
+      pendingClearance: Number(heldEscrow._sum.netAmount ?? 0),
       todayRevenue,
       thisWeekRevenue,
       recentTransactions: formattedTransactions.slice(0, 10),
