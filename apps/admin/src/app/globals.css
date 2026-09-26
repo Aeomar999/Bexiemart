@@ -71,6 +71,7 @@
     --color-primary: var(--color-brand-700);
     --color-primary-hover: var(--color-brand-800);
     --color-primary-subtle: var(--color-brand-50);
+    --color-money-held: var(--color-brand-300);
     --color-secondary: var(--color-accent-500);
     --color-bg: var(--color-surface-50);
     --color-card: #ffffff;
@@ -84,6 +85,7 @@
     --color-primary: var(--color-brand-400);
     --color-primary-hover: var(--color-brand-300);
     --color-primary-subtle: var(--color-brand-950);
+    --color-money-held: var(--color-brand-600);
     --color-bg: var(--color-surface-950);
     --color-card: var(--color-surface-900);
     --color-border: var(--color-surface-700);
