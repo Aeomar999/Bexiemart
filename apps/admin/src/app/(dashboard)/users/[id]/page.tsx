@@ -7,7 +7,8 @@ import { DashboardLayout } from "../../../../components/layout/DashboardLayout";
 import { Card, CardHeader, CardTitle, CardContent } from "../../../../components/ui/Card";
 import { Badge } from "../../../../components/ui/Badge";
 import { Button } from "../../../../components/ui/Button";
-import { formatCurrency } from "../../../../lib/utils";
+import { BalanceCard } from "../../../../components/ui/BalanceCard";
+import { formatMoney } from "../../../../lib/money";
 
 export default function UserDetailPage() {
   const { id } = useParams();
@@ -96,26 +97,21 @@ export default function UserDetailPage() {
             </CardContent>
           </Card>
 
-          {/* Wallet Card */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Wallet Details</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div>
-                <p className="text-sm text-[var(--color-text-muted)]">Balance</p>
-                <p className="text-2xl font-bold text-[var(--color-primary)]">
-                  {formatCurrency(user.wallet?.balance || 0)}
-                </p>
-              </div>
-              <div>
-                <p className="text-sm text-[var(--color-text-muted)]">Total Escrow (Locked)</p>
-                <p className="font-medium text-[var(--color-text-secondary)]">
-                  {formatCurrency(user.wallet?.lockedBalance || 0)}
-                </p>
-              </div>
-            </CardContent>
-          </Card>
+          {/* Wallet */}
+          <BalanceCard
+            label="Wallet"
+            available={Number(user.wallet?.balance ?? 0)}
+            held={{
+              label: "Held in escrow",
+              amount: Number(user.wallet?.heldInEscrow ?? 0),
+              info: "Paid into escrow for orders that haven't been delivered yet.",
+            }}
+            footnote={
+              user.vendorProfile
+                ? `Vendor pending clearance: ${formatMoney(Number(user.vendorPendingClearance ?? 0))}`
+                : undefined
+            }
+          />
 
           {/* Stats Card */}
           <Card>

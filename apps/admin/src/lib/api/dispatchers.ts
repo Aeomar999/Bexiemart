@@ -30,6 +30,7 @@ export interface DispatcherDetails extends Dispatcher {
     totalDeliveries: number;
   };
   jobs: any[];
+  walletBalance: number;
 }
 
 export interface Delivery {
