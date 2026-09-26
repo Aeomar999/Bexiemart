@@ -13,6 +13,7 @@ import { PricingService, PricingQuote, VehicleType } from "./pricing.service";
 import { DeliveryGateway } from "./delivery.gateway";
 import { LatLng, RoutesService } from "../maps/routes.service";
 import { LoyaltyService } from "../loyalty/loyalty.service";
+import { EscrowService } from "../escrow/escrow.service";
 import { CreateParcelJobDto } from "./dto/delivery.dto";
 
 const ALL_VEHICLES: VehicleType[] = ["bike", "car", "van"];
@@ -45,7 +46,9 @@ export class DeliveryService {
     private readonly routes: RoutesService,
     private readonly loyalty: LoyaltyService,
     @Inject(forwardRef(() => DeliveryGateway))
-    private readonly gateway: DeliveryGateway
+    private readonly gateway: DeliveryGateway,
+    @Inject(forwardRef(() => EscrowService))
+    private readonly escrow: EscrowService
   ) {}
 
   // ─── Quoting ───────────────────────────────────────────────────────────────
@@ -419,6 +422,15 @@ export class DeliveryService {
         data: { balance: { increment: payout } },
       });
     });
+
+    // Release vendor escrow for this order (if any)
+    if (job.orderId) {
+      try {
+        await this.escrow.releaseForDelivery(job.orderId);
+      } catch (err) {
+        this.logger.error(`Failed to release escrow for order ${job.orderId}`, err);
+      }
+    }
 
     return job;
   }

@@ -2,6 +2,7 @@ import { Injectable, Logger } from "@nestjs/common";
 import { Cron, CronExpression } from "@nestjs/schedule";
 import { PrismaService } from "../../prisma/prisma.service";
 import { ConfigService } from "@nestjs/config";
+import { EscrowService } from "../escrow/escrow.service";
 
 @Injectable()
 export class VendorPayoutsService {
@@ -10,7 +11,8 @@ export class VendorPayoutsService {
 
   constructor(
     private readonly prisma: PrismaService,
-    private readonly config: ConfigService
+    private readonly config: ConfigService,
+    private readonly escrow: EscrowService
   ) {}
 
   private get paystackSecretKey(): string {
@@ -172,5 +174,112 @@ export class VendorPayoutsService {
 
       throw err;
     }
+  }
+
+  /**
+   * Auto-release escrow after delivery confirmation window passes.
+   * Runs every 6 hours.
+   * - 72h after order marked 'delivered' (if buyer hasn't confirmed)
+   * - 14 days after order marked 'shipped' (if never delivered, no dispute)
+   */
+  @Cron("0 */6 * * *") // Every 6 hours
+  async autoReleaseEscrow() {
+    this.logger.log("Running auto-release escrow check...");
+
+    const escrows = await this.prisma.escrow.findMany({
+      where: {
+        status: "HELD",
+        order: {
+          status: { in: ["delivered", "shipped"] },
+        },
+      },
+      include: { order: true, vendor: true },
+    });
+
+    let released = 0;
+    for (const escrow of escrows) {
+      const order = escrow.order;
+      if (!order) continue;
+
+      const now = Date.now();
+      const updatedAt = order.updatedAt ? new Date(order.updatedAt).getTime() : 0;
+      const hoursSinceUpdate = (now - updatedAt) / (1000 * 60 * 60);
+      const daysSinceUpdate = hoursSinceUpdate / 24;
+
+      let shouldRelease = false;
+
+      if (order.status === "delivered" && hoursSinceUpdate >= 72) {
+        // 72 hours after delivered, buyer hasn't confirmed
+        shouldRelease = true;
+      } else if (order.status === "shipped" && daysSinceUpdate >= 14) {
+        // 14 days after shipped, never delivered, no dispute
+        // Check no dispute exists
+        const dispute = await this.prisma.escrow.findFirst({
+          where: { orderId: order.id, status: "DISPUTED" },
+        });
+        if (!dispute) shouldRelease = true;
+      }
+
+      if (shouldRelease) {
+        try {
+          await this.escrow.releaseForDelivery(escrow.id);
+          released++;
+          this.logger.log(`Auto-released escrow ${escrow.id} for order ${order.id}`);
+        } catch (err) {
+          this.logger.error(`Failed to auto-release escrow ${escrow.id}`, err);
+        }
+      }
+    }
+
+    this.logger.log(`Auto-release complete: ${released} escrows released`);
+    return { success: true, released };
+  }
+
+  /**
+   * Auto-refund escrow if order never shipped after 14 days.
+   * Runs daily at 2 AM.
+   */
+  @Cron("0 2 * * *") // Daily at 2 AM
+  async autoRefundEscrow() {
+    this.logger.log("Running auto-refund escrow check...");
+
+    const escrows = await this.prisma.escrow.findMany({
+      where: {
+        status: "HELD",
+        order: {
+          status: "confirmed",
+        },
+      },
+      include: { order: true },
+    });
+
+    let refunded = 0;
+    for (const escrow of escrows) {
+      const order = escrow.order;
+      if (!order) continue;
+
+      const now = Date.now();
+      const updatedAt = order.updatedAt ? new Date(order.updatedAt).getTime() : 0;
+      const daysSinceConfirmed = (now - updatedAt) / (1000 * 60 * 60 * 24);
+
+      // Check no dispute exists
+      const dispute = await this.prisma.escrow.findFirst({
+        where: { orderId: order.id, status: "DISPUTED" },
+      });
+      if (dispute) continue;
+
+      if (daysSinceConfirmed >= 14) {
+        try {
+          await this.escrow.refundForCancellation(escrow.id);
+          refunded++;
+          this.logger.log(`Auto-refunded escrow ${escrow.id} for order ${order.id}`);
+        } catch (err) {
+          this.logger.error(`Failed to auto-refund escrow ${escrow.id}`, err);
+        }
+      }
+    }
+
+    this.logger.log(`Auto-refund complete: ${refunded} escrows refunded`);
+    return { success: true, refunded };
   }
 }

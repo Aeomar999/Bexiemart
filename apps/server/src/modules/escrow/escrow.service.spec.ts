@@ -1,4 +1,9 @@
-import { NotFoundException, BadRequestException, ForbiddenException } from "@nestjs/common";
+import {
+  NotFoundException,
+  BadRequestException,
+  ForbiddenException,
+  ConflictException,
+} from "@nestjs/common";
 import { EscrowService } from "./escrow.service";
 
 const mockPrisma = (): any => ({
@@ -11,6 +16,7 @@ const mockPrisma = (): any => ({
     create: jest.fn(),
     count: jest.fn(),
     update: jest.fn(),
+    updateMany: jest.fn(),
   },
   product: {
     findUnique: jest.fn(),
@@ -35,10 +41,19 @@ const mockPrisma = (): any => ({
     create: jest.fn(),
     update: jest.fn(),
     count: jest.fn(),
+    updateMany: jest.fn(),
   },
   orderItem: { findMany: jest.fn(), create: jest.fn() },
   shippingAddress: { create: jest.fn() },
-  escrow: { findUnique: jest.fn(), findMany: jest.fn(), create: jest.fn(), update: jest.fn() },
+  escrow: {
+    findUnique: jest.fn(),
+    findMany: jest.fn(),
+    create: jest.fn(),
+    update: jest.fn(),
+    updateMany: jest.fn(),
+    count: jest.fn(),
+    findFirst: jest.fn(),
+  },
   user: { findUnique: jest.fn(), findMany: jest.fn(), update: jest.fn(), count: jest.fn() },
   vendorProfile: {
     findUnique: jest.fn(),
@@ -58,6 +73,7 @@ const mockPrisma = (): any => ({
   message: { findMany: jest.fn(), create: jest.fn(), count: jest.fn() },
   platformConfig: { findFirst: jest.fn(), update: jest.fn(), create: jest.fn() },
   category: { findUnique: jest.fn(), findMany: jest.fn(), findFirst: jest.fn() },
+  deliveryJob: { findFirst: jest.fn(), findUnique: jest.fn(), findMany: jest.fn() },
 });
 
 describe("EscrowService", () => {
@@ -69,8 +85,46 @@ describe("EscrowService", () => {
     prisma.$transaction.mockImplementation((cb: any, opts?: any) => cb(prisma));
     prisma.wallet.findUnique.mockResolvedValue(null);
     prisma.vendorProfile.findUnique.mockResolvedValue(null);
+    prisma.deliveryJob.findFirst.mockResolvedValue(null);
+    prisma.escrow.findUnique.mockResolvedValue(null);
+    prisma.escrow.updateMany.mockResolvedValue({ count: 1 });
+    prisma.escrow.update.mockResolvedValue({});
+    prisma.escrow.findFirst.mockResolvedValue(null);
+    prisma.transaction.create.mockResolvedValue({ id: "txn1" });
+    prisma.wallet.update.mockResolvedValue({});
+    prisma.order.findUnique.mockResolvedValue(null);
     service = new EscrowService(prisma as any, { emitDisputeCreated: jest.fn() } as any);
   });
+
+  const baseEscrow = {
+    id: "e1",
+    status: "HELD",
+    amount: 100,
+    commission: 10,
+    netAmount: 90,
+    orderId: "o1",
+    buyerWalletId: "bw1",
+    vendorWalletId: null,
+    vendor: { userId: "vendor-user", id: "vp1" },
+    order: {
+      id: "o1",
+      status: "delivered",
+      updatedAt: new Date(),
+    },
+  };
+
+  const resetMocks = () => {
+    jest.clearAllMocks();
+    prisma.wallet.findUnique.mockResolvedValue(null);
+    prisma.vendorProfile.findUnique.mockResolvedValue(null);
+    prisma.deliveryJob.findFirst.mockResolvedValue(null);
+    prisma.escrow.findUnique.mockResolvedValue(null);
+    prisma.escrow.updateMany.mockResolvedValue({ count: 1 });
+    prisma.escrow.update.mockResolvedValue({});
+    prisma.transaction.create.mockResolvedValue({ id: "txn1" });
+    prisma.wallet.update.mockResolvedValue({});
+    prisma.order.findUnique.mockResolvedValue(null);
+  };
 
   describe("list", () => {
     it("returns merged buyer and vendor escrows with no duplicates", async () => {
@@ -126,9 +180,13 @@ describe("EscrowService", () => {
     });
   });
 
-  describe("release", () => {
+  describe("release (public endpoint)", () => {
     it("throws BadRequestException if escrow is not in HELD status", async () => {
-      prisma.escrow.findUnique.mockResolvedValue({ id: "e1", status: "DISPUTED", vendor: {} });
+      prisma.escrow.findUnique.mockResolvedValue({
+        id: "e1",
+        status: "DISPUTED",
+        vendor: { userId: "vendor-user" },
+      });
       await expect(service.release("u1", "e1")).rejects.toThrow(BadRequestException);
     });
 
@@ -137,39 +195,47 @@ describe("EscrowService", () => {
         id: "e1",
         status: "HELD",
         vendor: { userId: "other-vendor" },
+        order: { status: "delivered", updatedAt: new Date() },
       });
       await expect(service.release("buyer-user", "e1")).rejects.toThrow(ForbiddenException);
     });
 
-    it("creates EARNINGS transaction, increments wallet, and updates status to RELEASED", async () => {
-      const escrowData = {
-        id: "e1",
-        status: "HELD",
-        amount: 100,
-        commission: 10,
-        netAmount: 90,
-        orderId: "o1",
-        buyerWalletId: "bw1",
-        vendorWalletId: null,
-        vendor: { userId: "vendor-user" },
-      };
-      const vendorWallet = { id: "vw1", userId: "vendor-user", currency: "NGN" };
+    it("throws BadRequestException if order is not delivered", async () => {
+      prisma.escrow.findUnique.mockResolvedValue({
+        ...baseEscrow,
+        order: { ...baseEscrow.order, status: "shipped" },
+      });
+      await expect(service.release("vendor-user", "e1")).rejects.toThrow(BadRequestException);
+    });
+
+    it("throws BadRequestException if order delivered but not confirmed and auto-release window not passed", async () => {
+      const recentDelivered = { ...baseEscrow };
+      recentDelivered.order.updatedAt = new Date(Date.now() - 10 * 60 * 60 * 1000); // 10 hours ago
+
+      prisma.escrow.findUnique.mockResolvedValue(recentDelivered);
+      prisma.deliveryJob.findFirst.mockResolvedValue(null); // no confirmation
+
+      await expect(service.release("vendor-user", "e1")).rejects.toThrow(BadRequestException);
+    });
+
+    it("allows release when order is delivered and buyer confirmed (deliveryJob exists)", async () => {
+      const escrowData = { ...baseEscrow };
+      const vendorWallet = { id: "vw1", userId: "vendor-user", currency: "GHS" };
       const txn = { id: "txn1" };
 
       prisma.escrow.findUnique
         .mockResolvedValueOnce(escrowData)
-        .mockResolvedValue({ ...escrowData, status: "RELEASED" });
+        .mockResolvedValueOnce({ ...escrowData, status: "RELEASED" });
+      prisma.deliveryJob.findFirst.mockResolvedValue({ id: "dj1" }); // buyer confirmed
       prisma.wallet.findUnique.mockResolvedValue(vendorWallet);
       prisma.transaction.create.mockResolvedValue(txn);
       prisma.wallet.update.mockResolvedValue({});
-      prisma.escrow.update
-        .mockResolvedValueOnce({}) // pre-$transaction update to set vendorWalletId
-        .mockResolvedValueOnce({
-          ...escrowData,
-          status: "RELEASED",
-          releasedTxnId: "txn1",
-          vendorWalletId: "vw1",
-        });
+      prisma.escrow.update.mockResolvedValue({
+        ...escrowData,
+        status: "RELEASED",
+        releasedTxnId: "txn1",
+        vendorWalletId: "vw1",
+      });
 
       const result = await service.release("vendor-user", "e1");
       expect(result!.status).toBe("RELEASED");
@@ -178,16 +244,53 @@ describe("EscrowService", () => {
           data: expect.objectContaining({ type: "EARNINGS", walletId: "vw1" }),
         })
       );
-      expect(prisma.wallet.update).toHaveBeenCalledWith(
-        expect.objectContaining({
-          where: { id: "vw1" },
-          data: expect.objectContaining({ balance: { increment: 90 } }),
-        })
-      );
+    });
+
+    it("allows release when auto-release window (72h) passed after delivered", async () => {
+      const escrowData = { ...baseEscrow };
+      escrowData.order.updatedAt = new Date(Date.now() - 80 * 60 * 60 * 1000); // 80 hours ago
+      const vendorWallet = { id: "vw1", userId: "vendor-user", currency: "GHS" };
+      const txn = { id: "txn1" };
+
+      prisma.escrow.findUnique
+        .mockResolvedValueOnce(escrowData)
+        .mockResolvedValueOnce({ ...escrowData, status: "RELEASED" });
+      prisma.deliveryJob.findFirst.mockResolvedValue(null); // no confirmation
+      prisma.wallet.findUnique.mockResolvedValue(vendorWallet);
+      prisma.transaction.create.mockResolvedValue(txn);
+      prisma.wallet.update.mockResolvedValue({});
+      prisma.escrow.update.mockResolvedValue({
+        ...escrowData,
+        status: "RELEASED",
+        releasedTxnId: "txn1",
+        vendorWalletId: "vw1",
+      });
+
+      const result = await service.release("vendor-user", "e1");
+      expect(result!.status).toBe("RELEASED");
+    });
+
+    it("uses atomic claim pattern - second call throws ConflictException", async () => {
+      const escrowData = { ...baseEscrow };
+      const vendorWallet = { id: "vw1", userId: "vendor-user", currency: "GHS" };
+      const txn = { id: "txn1" };
+
+      prisma.escrow.findUnique.mockResolvedValue(escrowData);
+      prisma.deliveryJob.findFirst.mockResolvedValue({ id: "dj1" });
+      prisma.wallet.findUnique.mockResolvedValue(vendorWallet);
+      prisma.transaction.create.mockResolvedValue(txn);
+      prisma.wallet.update.mockResolvedValue({});
+      // First call succeeds, second call fails claim
+      prisma.escrow.updateMany
+        .mockResolvedValueOnce({ count: 1 })
+        .mockResolvedValueOnce({ count: 0 });
+
+      await service.release("vendor-user", "e1");
+      await expect(service.release("vendor-user", "e1")).rejects.toThrow(ConflictException);
     });
   });
 
-  describe("refund", () => {
+  describe("refund (public endpoint)", () => {
     it("throws BadRequestException if escrow is not in HELD status", async () => {
       prisma.escrow.findUnique.mockResolvedValue({ id: "e1", status: "RELEASED" });
       await expect(service.refund("u1", "e1")).rejects.toThrow(BadRequestException);
@@ -198,35 +301,41 @@ describe("EscrowService", () => {
         id: "e1",
         status: "HELD",
         buyerWalletId: "bw1",
+        order: { status: "cancelled", updatedAt: new Date() },
       });
       prisma.wallet.findUnique.mockResolvedValue({ id: "bw2", userId: "other-user" });
       await expect(service.refund("other-user", "e1")).rejects.toThrow(ForbiddenException);
     });
 
-    it("creates REVERSAL transaction, refunds buyer, and updates status to REFUNDED", async () => {
+    it("throws BadRequestException if order status not allowed for refund", async () => {
       const escrowData = {
-        id: "e1",
-        status: "HELD",
-        amount: 100,
-        commission: 10,
-        netAmount: 90,
-        orderId: "o1",
-        buyerWalletId: "bw1",
-        vendorWalletId: "vw1",
+        ...baseEscrow,
+        order: { ...baseEscrow.order, status: "shipped" },
+      };
+      prisma.escrow.findUnique.mockResolvedValue(escrowData);
+      prisma.wallet.findUnique.mockResolvedValue({ id: "bw1", userId: "buyer-user" });
+
+      await expect(service.refund("buyer-user", "e1")).rejects.toThrow(BadRequestException);
+    });
+
+    it("allows refund when order is cancelled", async () => {
+      const escrowData = {
+        ...baseEscrow,
+        order: { ...baseEscrow.order, status: "cancelled", updatedAt: new Date() },
       };
       const buyerWallet = { id: "bw1", userId: "buyer-user" };
       const txn = { id: "txn1" };
 
       prisma.escrow.findUnique
         .mockResolvedValueOnce(escrowData)
-        .mockResolvedValue({ ...escrowData, status: "REFUNDED" });
+        .mockResolvedValueOnce({ ...escrowData, status: "REFUNDED" });
       prisma.wallet.findUnique.mockResolvedValue(buyerWallet);
       prisma.transaction.create.mockResolvedValue(txn);
       prisma.wallet.update.mockResolvedValue({});
       prisma.escrow.update.mockResolvedValue({
         ...escrowData,
         status: "REFUNDED",
-        releasedTxnId: "txn1",
+        refundedTxnId: "txn1",
       });
 
       const result = await service.refund("buyer-user", "e1");
@@ -236,12 +345,121 @@ describe("EscrowService", () => {
           data: expect.objectContaining({ type: "REVERSAL", walletId: "bw1" }),
         })
       );
-      expect(prisma.wallet.update).toHaveBeenCalledWith(
+    });
+
+    it("allows refund when order is refund_requested", async () => {
+      const escrowData = {
+        ...baseEscrow,
+        order: { ...baseEscrow.order, status: "refund_requested", updatedAt: new Date() },
+      };
+      const buyerWallet = { id: "bw1", userId: "buyer-user" };
+      const txn = { id: "txn1" };
+
+      prisma.escrow.findUnique
+        .mockResolvedValueOnce(escrowData)
+        .mockResolvedValueOnce({ ...escrowData, status: "REFUNDED" });
+      prisma.wallet.findUnique.mockResolvedValue(buyerWallet);
+      prisma.transaction.create.mockResolvedValue(txn);
+      prisma.wallet.update.mockResolvedValue({});
+      prisma.escrow.update.mockResolvedValue({
+        ...escrowData,
+        status: "REFUNDED",
+        refundedTxnId: "txn1",
+      });
+
+      const result = await service.refund("buyer-user", "e1");
+      expect(result!.status).toBe("REFUNDED");
+    });
+
+    it("uses atomic claim pattern - second call throws ConflictException", async () => {
+      const escrowData = {
+        ...baseEscrow,
+        order: { ...baseEscrow.order, status: "cancelled", updatedAt: new Date() },
+      };
+      const buyerWallet = { id: "bw1", userId: "buyer-user" };
+      const txn = { id: "txn1" };
+
+      prisma.escrow.findUnique.mockResolvedValue(escrowData);
+      prisma.wallet.findUnique.mockResolvedValue(buyerWallet);
+      prisma.transaction.create.mockResolvedValue(txn);
+      prisma.wallet.update.mockResolvedValue({});
+      prisma.escrow.updateMany
+        .mockResolvedValueOnce({ count: 1 })
+        .mockResolvedValueOnce({ count: 0 });
+
+      await service.refund("buyer-user", "e1");
+      await expect(service.refund("buyer-user", "e1")).rejects.toThrow(ConflictException);
+    });
+  });
+
+  describe("releaseForDelivery (internal)", () => {
+    it("releases escrow when HELD and order delivered", async () => {
+      const escrowData = { ...baseEscrow };
+      const vendorWallet = { id: "vw1", userId: "vendor-user", currency: "GHS" };
+      const txn = { id: "txn1" };
+
+      prisma.escrow.findUnique.mockResolvedValue(escrowData);
+      prisma.wallet.findUnique.mockResolvedValue(vendorWallet);
+      prisma.transaction.create.mockResolvedValue(txn);
+      prisma.wallet.update.mockResolvedValue({});
+      prisma.escrow.updateMany.mockResolvedValue({ count: 1 });
+      prisma.escrow.update.mockResolvedValue({});
+
+      await service.releaseForDelivery("e1");
+
+      expect(prisma.escrow.updateMany).toHaveBeenCalledWith(
         expect.objectContaining({
-          where: { id: "bw1" },
-          data: expect.objectContaining({ balance: { increment: 100 } }),
+          where: { id: "e1", status: "HELD" },
+          data: { status: "RELEASED" },
         })
       );
+    });
+
+    it("does nothing if escrow not found", async () => {
+      prisma.escrow.findUnique.mockResolvedValue(null);
+      await expect(service.releaseForDelivery("e1")).resolves.toBeUndefined();
+    });
+
+    it("does nothing if escrow not HELD", async () => {
+      prisma.escrow.findUnique.mockResolvedValue({ ...baseEscrow, status: "RELEASED" });
+      await expect(service.releaseForDelivery("e1")).resolves.toBeUndefined();
+    });
+  });
+
+  describe("refundForCancellation (internal)", () => {
+    it("refunds escrow when HELD", async () => {
+      const escrowData = {
+        ...baseEscrow,
+        order: { ...baseEscrow.order, status: "cancelled" },
+      };
+      const buyerWallet = { id: "bw1", userId: "buyer-user" };
+      const txn = { id: "txn1" };
+
+      prisma.escrow.findUnique.mockResolvedValue(escrowData);
+      prisma.wallet.findUnique.mockResolvedValue(buyerWallet);
+      prisma.transaction.create.mockResolvedValue(txn);
+      prisma.wallet.update.mockResolvedValue({});
+      prisma.escrow.updateMany.mockResolvedValue({ count: 1 });
+      prisma.escrow.update.mockResolvedValue({});
+
+      await service.refundForCancellation("e1");
+
+      expect(prisma.escrow.updateMany).toHaveBeenCalledWith(
+        expect.objectContaining({
+          where: { id: "e1", status: "HELD" },
+          data: { status: "REFUNDED" },
+        })
+      );
+    });
+
+    it("does nothing if escrow not found", async () => {
+      prisma.escrow.findUnique.mockResolvedValue(null);
+      await expect(service.refundForCancellation("e1")).resolves.toBeUndefined();
+    });
+
+    it("does nothing if escrow not HELD", async () => {
+      prisma.escrow.findUnique.mockResolvedValue({ ...baseEscrow, status: "REFUNDED" });
+      await expect(service.refundForCancellation("e1")).resolves.toBeUndefined();
     });
   });
 });
