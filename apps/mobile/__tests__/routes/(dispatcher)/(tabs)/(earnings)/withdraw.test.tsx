@@ -41,7 +41,9 @@ describe("WithdrawFundsScreen (Dispatcher)", () => {
   });
 
   it("renders 'No payout account' guard when methods are empty", () => {
-    (useDispatcherEarnings as jest.Mock).mockReturnValue({ data: { pendingClearance: 100 } });
+    (useDispatcherEarnings as jest.Mock).mockReturnValue({
+      data: { availableBalance: 100, pendingClearance: 999 },
+    });
     (useBankAccounts as jest.Mock).mockReturnValue({ data: [] });
     (useMomoAccounts as jest.Mock).mockReturnValue({ data: [] });
     (usePinStatus as jest.Mock).mockReturnValue({ data: { hasPin: true } });
@@ -53,7 +55,9 @@ describe("WithdrawFundsScreen (Dispatcher)", () => {
   });
 
   it("renders 'Set a withdrawal PIN' guard when methods exist but pin not set", () => {
-    (useDispatcherEarnings as jest.Mock).mockReturnValue({ data: { pendingClearance: 100 } });
+    (useDispatcherEarnings as jest.Mock).mockReturnValue({
+      data: { availableBalance: 100, pendingClearance: 999 },
+    });
     (useBankAccounts as jest.Mock).mockReturnValue({
       data: [{ id: "b1", bankName: "Ecobank", accountNumber: "1234" }],
     });
@@ -67,7 +71,9 @@ describe("WithdrawFundsScreen (Dispatcher)", () => {
   });
 
   it("renders withdraw form when methods and PIN are set", () => {
-    (useDispatcherEarnings as jest.Mock).mockReturnValue({ data: { pendingClearance: 250 } });
+    (useDispatcherEarnings as jest.Mock).mockReturnValue({
+      data: { availableBalance: 250, pendingClearance: 999 },
+    });
     (useBankAccounts as jest.Mock).mockReturnValue({
       data: [{ id: "b1", bankName: "Ecobank", accountNumber: "1234" }],
     });
@@ -82,5 +88,21 @@ describe("WithdrawFundsScreen (Dispatcher)", () => {
     expect(screen.getByText("Transfer To")).toBeTruthy();
     expect(screen.getByText("Ecobank")).toBeTruthy();
     expect(screen.getByText("MTN")).toBeTruthy();
+  });
+
+  it("shows the withdrawable wallet balance, not pending clearance, with grouping", () => {
+    (useDispatcherEarnings as jest.Mock).mockReturnValue({
+      data: { availableBalance: 12480.5, pendingClearance: 999 },
+    });
+    (useBankAccounts as jest.Mock).mockReturnValue({
+      data: [{ id: "b1", bankName: "Ecobank", accountNumber: "1234" }],
+    });
+    (useMomoAccounts as jest.Mock).mockReturnValue({ data: [] });
+    (usePinStatus as jest.Mock).mockReturnValue({ data: { hasPin: true } });
+    (useWithdraw as jest.Mock).mockReturnValue({ mutate: jest.fn(), isPending: false });
+
+    render(<WithdrawFundsScreen />);
+    expect(screen.getByText("Available: GHS 12,480.50")).toBeTruthy();
+    expect(screen.queryByText("Available: GHS 999.00")).toBeNull();
   });
 });

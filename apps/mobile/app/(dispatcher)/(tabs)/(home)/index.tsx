@@ -15,7 +15,10 @@ import {
   useMyTasks,
   useAcceptTask,
   useUpdateTaskStatus,
+  useDispatcherEarnings,
 } from "@/lib/hooks/use-dispatcher";
+import { useBalanceVisibility } from "@/lib/stores/balance-visibility-store";
+import { displayMoney } from "@/lib/balance";
 import { dispatcherApi } from "@/lib/api/dispatcher";
 import { deliverySocketService } from "@/lib/delivery-socket";
 
@@ -34,6 +37,8 @@ export default function DispatcherMap() {
   );
   const insets = useSafeAreaInsets();
   const mapRef = useRef<MapView>(null);
+  const { data: earnings, isSuccess: earningsLoaded } = useDispatcherEarnings();
+  const balancesHidden = useBalanceVisibility((s) => s.hidden);
 
   // Sync online status with backend + connect the live dispatch socket.
   useEffect(() => {
@@ -508,9 +513,9 @@ export default function DispatcherMap() {
                 {isOnline ? "Online" : "Offline"}
               </Text>
             </View>
-            {isOnline && (
-              <Text className="text-muted-foreground text-[11px] font-bold mt-0.5 ml-4">
-                GH₵ 84.00 today · 6 trips
+            {isOnline && earningsLoaded && (
+              <Text className="text-muted-foreground text-caption font-bold mt-0.5 ml-4">
+                {`${displayMoney(Number(earnings?.todayRevenue ?? 0), balancesHidden)} today`}
               </Text>
             )}
           </View>
