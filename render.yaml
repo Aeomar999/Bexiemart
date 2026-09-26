@@ -1,0 +1,84 @@
+services:
+  - type: web
+    name: bexiemart-api
+    runtime: docker
+    dockerfilePath: apps/server/Dockerfile
+    dockerContext: .
+    buildCommand: ""
+    startCommand: "sh -c 'npx prisma migrate deploy && node dist/main.js'"
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: "3000"
+      - key: DATABASE_URL
+        fromDatabase:
+          name: bexiemart-db
+          property: connectionString
+      - key: PAYSTACK_SECRET_KEY
+        sync: false
+      - key: PAYSTACK_PUBLIC_KEY
+        sync: false
+      - key: PAYSTACK_WEBHOOK_SECRET
+        sync: false
+      - key: BETTER_AUTH_SECRET
+        sync: false
+      - key: BETTER_AUTH_URL
+        sync: false
+      - key: JWT_SECRET
+        sync: false
+      - key: SENTRY_DSN
+        sync: false
+      - key: CLOUDINARY_CLOUD_NAME
+        sync: false
+      - key: CLOUDINARY_API_KEY
+        sync: false
+      - key: CLOUDINARY_API_SECRET
+        sync: false
+      - key: EXPO_PUBLIC_PAYSTACK_PUBLIC_KEY
+        sync: false
+      - key: EXPO_PUBLIC_POSTHOG_API_KEY
+        sync: false
+      - key: EXPO_PUBLIC_POSTHOG_HOST
+        sync: false
+      - key: EXPO_PUBLIC_CLOUDINARY_CLOUD_NAME
+        sync: false
+      - key: EXPO_PUBLIC_BETTER_AUTH_KV_URL
+        sync: false
+      - key: ADMIN_EMAIL
+        sync: false
+      - key: ADMIN_PASSWORD
+        sync: false
+      - key: PLATFORM_CONFIG_DEFAULTS
+        value: '{"minTopup":5,"maxTopup":5000,"minWithdrawal":10,"dailyWithdrawalLimit":5000,"withdrawalFeeFlat":2}'
+    healthCheckPath: /api/v1/health
+    autoDeploy: true
+
+  - type: web
+    name: bexiemart-admin
+    runtime: docker
+    dockerfilePath: apps/admin/Dockerfile
+    dockerContext: .
+    buildCommand: ""
+    startCommand: "node server.js"
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: "3001"
+      - key: NEXT_PUBLIC_API_URL
+        value: "https://bexiemart-api.onrender.com/api/v1"
+      - key: NEXT_PUBLIC_SOCKET_URL
+        value: "wss://bexiemart-api.onrender.com"
+      - key: PAYSTACK_PUBLIC_KEY
+        sync: false
+      - key: SENTRY_DSN
+        sync: false
+    healthCheckPath: /health
+    autoDeploy: true
+
+databases:
+  - name: bexiemart-db
+    databaseName: bexiemart
+    user: bexiemart
+    plan: free
