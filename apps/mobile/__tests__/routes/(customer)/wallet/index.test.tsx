@@ -100,4 +100,18 @@ describe("WalletScreen", () => {
     expect(screen.queryByText(/Gold tier/i)).toBeNull();
     expect(screen.getByText("BexieCoins")).toBeTruthy();
   });
+
+  it("keeps showing the last balance when a background refresh fails", () => {
+    (useWallet as jest.Mock).mockReturnValue({
+      data: { balance: 1250, heldInEscrow: 180, currency: "GHS" },
+      isLoading: false,
+      isError: true,
+      refetch: jest.fn(),
+    });
+    render(<WalletScreen />);
+    expect(
+      screen.getByLabelText("Wallet balance, GHS 1,250.00. On hold for orders, GHS 180.00.")
+    ).toBeTruthy();
+    expect(screen.queryByText("Couldn't load your balance")).toBeNull();
+  });
 });

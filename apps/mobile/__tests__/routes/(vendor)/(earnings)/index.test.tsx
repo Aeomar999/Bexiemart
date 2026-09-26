@@ -88,4 +88,20 @@ describe("Vendor EarningsDashboardScreen", () => {
     fireEvent.press(screen.getByText("Retry"));
     expect(refetch).toHaveBeenCalledTimes(1);
   });
+
+  it("keeps showing the last balance when a background refresh fails", () => {
+    (useVendorEarnings as jest.Mock).mockReturnValue({
+      data: ready,
+      isLoading: false,
+      isError: true,
+      refetch: jest.fn(),
+    });
+    render(<EarningsDashboardScreen />);
+    expect(
+      screen.getByLabelText(
+        "Available to withdraw, GHS 12,480.50. Pending clearance, GHS 2,150.00."
+      )
+    ).toBeTruthy();
+    expect(screen.queryByText("Couldn't load your balance")).toBeNull();
+  });
 });

@@ -43,7 +43,7 @@ export default function WalletScreen() {
 
   const currency = walletData?.currency ?? "GHS";
   const transactions = txnData?.data ?? [];
-  const walletStatus = walletLoading ? "loading" : walletError ? "error" : "ready";
+  const walletStatus = walletLoading ? "loading" : walletError && !walletData ? "error" : "ready";
 
   const onRefresh = useCallback(async () => {
     setRefreshing(true);

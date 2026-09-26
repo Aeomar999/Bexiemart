@@ -95,4 +95,18 @@ describe("Rider EarningsDashboardScreen", () => {
     fireEvent.press(screen.getByText("Retry"));
     expect(refetch).toHaveBeenCalledTimes(1);
   });
+
+  it("keeps showing the last balance when a background refresh fails", () => {
+    (useDispatcherEarnings as jest.Mock).mockReturnValue({
+      data: ready,
+      isLoading: false,
+      isError: true,
+      refetch: jest.fn(),
+    });
+    render(<EarningsDashboardScreen />);
+    expect(
+      screen.getByLabelText("Available to withdraw, GHS 312.40. Pending clearance, GHS 134.00.")
+    ).toBeTruthy();
+    expect(screen.queryByText("Couldn't load your balance")).toBeNull();
+  });
 });

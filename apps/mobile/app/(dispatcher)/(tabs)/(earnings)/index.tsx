@@ -12,7 +12,7 @@ export default function EarningsDashboardScreen() {
   const insets = useSafeAreaInsets();
   const router = useRouter();
   const { data: earnings, isLoading, isError, refetch } = useDispatcherEarnings();
-  const status = isLoading ? "loading" : isError ? "error" : "ready";
+  const status = isLoading ? "loading" : isError && !earnings ? "error" : "ready";
 
   const handleTransactionPress = (trx: any) => {
     if (trx.type === "withdrawal") {

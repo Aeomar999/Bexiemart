@@ -159,7 +159,9 @@ export default function DashboardScreen() {
             }}
             onPress={() => router.push("/(vendor)/(earnings)")}
             pressHint="View earnings"
-            status={earningsLoading ? "loading" : earningsError ? "error" : "ready"}
+            status={
+              earningsLoading ? "loading" : earningsError && !earningsData ? "error" : "ready"
+            }
             onRetry={() => refetchEarnings()}
           />
         </View>
