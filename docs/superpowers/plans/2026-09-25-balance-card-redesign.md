@@ -50,7 +50,7 @@ Found while mapping the code; each keeps the spec's intent:
 | Mobile screens (6) | Adopt the card; honesty fixes |
 | `apps/server/src/modules/vendor/vendor.service.ts` | Vendor pending = HELD escrow `netAmount` |
 | `apps/server/src/modules/admin/admin.service.ts` | Admin user/dispatcher balance fields |
-| `apps/server/src/modules/wallet/wallet.service.ts` + controller | Customer `heldInEscrow` (gated, Task 13) |
+| `apps/server/src/modules/wallet/wallet.service.ts` | Customer `heldInEscrow` on the public wallet (Task 13) |
 | `apps/admin/src/lib/money.ts` (new) | Admin `formatMoney` mirror |
 | `apps/admin/src/components/ui/BalanceCard.tsx` (new) | Admin read-only card |
 | Admin pages (2) | Adopt the admin card |
@@ -1091,11 +1091,11 @@ git commit -m "fix(server): derive vendor pending clearance from held escrow"
 
 ### Task 5: Server — admin user and dispatcher balance fields
 
-> If background task `task_5f1292e8` (GET /wallet leak fix) has already merged and changed `getUser`'s `include` to a `select`, keep its `select` exactly and add the new fields on top of whatever it returns.
+> Builds on PR #43 (merged into this branch at `1591b2b`): `getUser` loads the wallet through an exact `select` allowlist, and `admin.service.spec.ts` has a test "selects wallet fields explicitly so the PIN hash is never loaded" pinning that allowlist. **Keep both unchanged.** The new fields are computed after the query and added to the returned object.
 
 **Files:**
-- Modify: `apps/server/src/modules/admin/admin.service.ts` (`getUser` ~line 51, `getDispatcher` ~line 632)
-- Modify: `apps/server/src/modules/admin/admin.service.spec.ts` (escrow mock line 41; `describe("getUser")`; new `describe("getDispatcher")`)
+- Modify: `apps/server/src/modules/admin/admin.service.ts` (`getUser` ~line 51, `getDispatcher`)
+- Modify: `apps/server/src/modules/admin/admin.service.spec.ts` (escrow mock; `describe("getUser")`; new `describe("getDispatcher")`)
 
 **Interfaces:**
 - Produces:
@@ -1104,7 +1104,7 @@ git commit -m "fix(server): derive vendor pending clearance from held escrow"
 
 - [ ] **Step 1: Add `aggregate` to the admin spec escrow mock**
 
-In `apps/server/src/modules/admin/admin.service.spec.ts`, replace line 41:
+In `apps/server/src/modules/admin/admin.service.spec.ts`, in the local `mockPrisma` factory, replace:
 
 ```ts
   escrow: { findUnique: jest.fn(), findMany: jest.fn(), create: jest.fn(), update: jest.fn() },
@@ -1124,15 +1124,11 @@ with:
 
 - [ ] **Step 2: Write the failing tests**
 
-Replace the whole `describe("getUser", ...)` block with:
+Inside `describe("getUser", ...)`:
+- Keep the tests "throws NotFoundException if user not found" and "selects wallet fields explicitly so the PIN hash is never loaded" exactly as they are.
+- Replace the test "returns user with relations" with these two tests:
 
 ```ts
-  describe("getUser", () => {
-    it("throws NotFoundException if user not found", async () => {
-      prisma.user.findUnique.mockResolvedValue(null);
-      await expect(service.getUser("u1")).rejects.toThrow(NotFoundException);
-    });
-
     it("returns user with relations and null balances when there is no wallet or vendor profile", async () => {
       const user = {
         id: "u1",
@@ -1172,8 +1168,11 @@ Replace the whole `describe("getUser", ...)` block with:
         _sum: { netAmount: true },
       });
     });
-  });
+```
 
+Then, directly after the closing `});` of `describe("getUser", ...)`, add:
+
+```ts
   describe("getDispatcher", () => {
     beforeEach(() => {
       prisma.dispatcherProfile = { findUnique: jest.fn() };
@@ -1200,14 +1199,16 @@ Replace the whole `describe("getUser", ...)` block with:
   });
 ```
 
+(If the spec's `mockPrisma` already defines `dispatcherProfile` / `deliveryJob`, the `beforeEach` assignments simply replace them for this block.)
+
 - [ ] **Step 3: Run the tests to verify they fail**
 
 Run: `cd apps/server && npx jest src/modules/admin/admin.service.spec.ts -t "getUser|getDispatcher"`
-Expected: FAIL. `vendorPendingClearance`, `heldInEscrow` and `walletBalance` are undefined.
+Expected: FAIL. `vendorPendingClearance`, `heldInEscrow` and `walletBalance` are undefined. The allowlist test still passes.
 
 - [ ] **Step 4: Implement `getUser`**
 
-Replace `getUser` in `apps/server/src/modules/admin/admin.service.ts` with:
+Replace `getUser` in `apps/server/src/modules/admin/admin.service.ts` with the following. The `include.wallet.select` block is PR #43's allowlist, kept exactly:
 
 ```ts
   async getUser(id: string) {
@@ -1216,7 +1217,18 @@ Replace `getUser` in `apps/server/src/modules/admin/admin.service.ts` with:
       include: {
         orders: true,
         payments: true,
-        wallet: true,
+        // Never `wallet: true` — that ships the user's pinHash to the admin client.
+        wallet: {
+          select: {
+            id: true,
+            balance: true,
+            currency: true,
+            status: true,
+            bexieCoins: true,
+            createdAt: true,
+            updatedAt: true,
+          },
+        },
         vendorProfile: true,
       },
     });
@@ -1266,7 +1278,7 @@ In `getDispatcher`, replace the final line `return { ...dispatcher, stats };` wi
 - [ ] **Step 6: Run the tests to verify they pass**
 
 Run: `cd apps/server && npx jest src/modules/admin`
-Expected: PASS (service and controller specs green).
+Expected: PASS (service and controller specs green, including PR #43's allowlist test).
 
 - [ ] **Step 7: Commit**
 
@@ -2848,21 +2860,21 @@ git commit -m "feat(admin): user and dispatcher pages show BalanceCard with real
 
 ---
 
-### Task 13: Server — customer `heldInEscrow` on `GET /wallet` (GATED)
+### Task 13: Server — customer `heldInEscrow` on `GET /wallet`
 
-> **Gate:** do not start until background task `task_5f1292e8` ("Stop GET /wallet leaking pinHash and password hash") has merged to `main`. Then run `git merge main` on `feat/balance-card-redesign` and resolve any conflicts. That task changes what `GET /wallet` returns; this task adds one field on top of its sanitized shape.
+> Gate satisfied: PR #43 (`task_5f1292e8`) merged into this branch at `1591b2b`. `GET /wallet` now returns `WalletService.getPublicWallet(userId)`, an explicit allowlist. This task adds `heldInEscrow` to that allowlist. The controller does not change. The e2e test pins the response's exact key set, so it gets the new key too.
 
 **Files:**
-- Modify: `apps/server/src/prisma/prisma.mock.ts` (escrow mock, line ~80–88)
-- Modify: `apps/server/src/modules/wallet/wallet.service.ts` (new method)
+- Modify: `apps/server/src/prisma/prisma.mock.ts` (escrow mock)
+- Modify: `apps/server/test/helpers.ts` (`createMockPrisma` escrow mock)
+- Modify: `apps/server/src/modules/wallet/wallet.service.ts` (new `getHeldInEscrow`; `getPublicWallet`)
 - Modify: `apps/server/src/modules/wallet/wallet.service.spec.ts`
-- Modify: `apps/server/src/modules/wallet/wallet.controller.ts` (`getWallet`)
-- Modify: `apps/server/src/modules/wallet/wallet.controller.spec.ts`
+- Modify: `apps/server/test/wallet.e2e-spec.ts`
 
 **Interfaces:**
-- Produces: `WalletService.getHeldInEscrow(walletId: string): Promise<number>`; `GET /wallet` response gains `heldInEscrow: number`. Mobile `useWallet()` already reads it (Task 10).
+- Produces: `WalletService.getHeldInEscrow(walletId: string): Promise<number>`. The `GET /wallet` response gains `heldInEscrow: number` (sum of `Escrow.amount` where `buyerWalletId = wallet.id AND status = "HELD"`). Mobile `useWallet()` already reads it (Task 10).
 
-- [ ] **Step 1: Add `aggregate` to the shared prisma mock**
+- [ ] **Step 1: Add `aggregate` to both escrow mocks**
 
 In `apps/server/src/prisma/prisma.mock.ts`, inside the `escrow: { ... }` object, after `count: jest.fn(),` add:
 
@@ -2870,9 +2882,55 @@ In `apps/server/src/prisma/prisma.mock.ts`, inside the `escrow: { ... }` object,
     aggregate: jest.fn(),
 ```
 
-- [ ] **Step 2: Write the failing service test**
+In `apps/server/test/helpers.ts`, inside `createMockPrisma()`'s `escrow: { ... }` object, after `count: jest.fn(),` add a default that resolves to an empty sum, so every e2e request that reads a wallet gets a well-formed aggregate:
 
-Add to `apps/server/src/modules/wallet/wallet.service.spec.ts`, inside `describe("WalletService")`:
+```ts
+      aggregate: jest.fn().mockResolvedValue({ _sum: { amount: null, netAmount: null, commission: null } }),
+```
+
+- [ ] **Step 2: Write the failing unit tests**
+
+In `apps/server/src/modules/wallet/wallet.service.spec.ts`:
+
+Replace the test "should return only client-facing fields" inside `describe("getPublicWallet")` with:
+
+```ts
+    it("should return only client-facing fields plus money held in escrow", async () => {
+      const createdAt = new Date("2026-01-01");
+      const updatedAt = new Date("2026-02-01");
+      prisma.wallet.findUnique.mockResolvedValue({
+        id: "w1",
+        userId: "u1",
+        balance: 100,
+        currency: "GHS",
+        status: "ACTIVE",
+        bexieCoins: 25,
+        pinHash: "$argon2id$v=19$m=65536,t=3,p=4$salt$hash",
+        pinFailures: 3,
+        pinLockedUntil: new Date(),
+        createdAt,
+        updatedAt,
+        user: { id: "u1", name: "Ama", email: "ama@example.com", password: "hash" },
+      });
+      prisma.escrow.aggregate.mockResolvedValue({ _sum: { amount: 180 } });
+
+      const result = await service.getPublicWallet("u1");
+
+      expect(result).toEqual({
+        id: "w1",
+        balance: 100,
+        currency: "GHS",
+        status: "ACTIVE",
+        bexieCoins: 25,
+        heldInEscrow: 180,
+        createdAt,
+        updatedAt,
+        user: { name: "Ama" },
+      });
+    });
+```
+
+Directly after the closing `});` of `describe("getPublicWallet")`, add:
 
 ```ts
   describe("getHeldInEscrow", () => {
@@ -2892,39 +2950,42 @@ Add to `apps/server/src/modules/wallet/wallet.service.spec.ts`, inside `describe
   });
 ```
 
-- [ ] **Step 3: Write the failing controller test**
+- [ ] **Step 3: Update the e2e test**
 
-In `apps/server/src/modules/wallet/wallet.controller.spec.ts`, add `getHeldInEscrow: jest.fn(),` to the `mockService` object, and replace the `describe("getWallet", ...)` block with:
-
-```ts
-  describe("getWallet", () => {
-    it("returns the wallet with heldInEscrow", async () => {
-      mockService.getWallet.mockResolvedValue({ id: "w1", balance: 1000 });
-      mockService.getHeldInEscrow.mockResolvedValue(180);
-      const req = { user: { id: "user-1" } } as AuthenticatedRequest;
-
-      const result: any = await controller.getWallet(req);
-      expect(result.balance).toBe(1000);
-      expect(result.heldInEscrow).toBe(180);
-      expect(mockService.getWallet).toHaveBeenCalledWith("user-1");
-      expect(mockService.getHeldInEscrow).toHaveBeenCalledWith("w1");
-    });
-  });
-```
-
-If the merged security task changed `getWallet` in the controller to call a different service method (for example a sanitized `getPublicWallet`), mock that method in this test instead of `getWallet`. Keep its existing assertions that `pinHash` / `password` are absent, and add the two `heldInEscrow` assertions above.
+In `apps/server/test/wallet.e2e-spec.ts`:
+- In `expectNoSecrets`, add `"heldInEscrow",` to the expected key array (after `"bexieCoins",`).
+- In the test "should get wallet balance", after `prismaMock.wallet.findUnique.mockResolvedValue(mockWallet);` add `prismaMock.escrow.aggregate.mockResolvedValue({ _sum: { amount: 180 } });`, and after `expect(res.body.currency).toBe("GHS");` add `expect(res.body.heldInEscrow).toBe(180);`.
 
 - [ ] **Step 4: Run the tests to verify they fail**
 
-Run: `cd apps/server && npx jest src/modules/wallet/wallet.service.spec.ts src/modules/wallet/wallet.controller.spec.ts -t "getHeldInEscrow|getWallet"`
-Expected: FAIL. `service.getHeldInEscrow is not a function`; `heldInEscrow` is undefined.
+Run: `cd apps/server && npx jest src/modules/wallet/wallet.service.spec.ts -t "getPublicWallet|getHeldInEscrow"`
+Expected: FAIL. `service.getHeldInEscrow is not a function`; `getPublicWallet` has no `heldInEscrow`.
 
-- [ ] **Step 5: Implement the service method**
+Run: `cd apps/server && npx jest --config ./test/jest-e2e.json test/wallet.e2e-spec.ts -t "GET /api/v1/wallet"`
+Expected: FAIL. The key-set assertion is missing `heldInEscrow`, and `res.body.heldInEscrow` is undefined.
 
-Add to `WalletService` in `apps/server/src/modules/wallet/wallet.service.ts`, directly after `getWallet`:
+- [ ] **Step 5: Implement**
+
+In `apps/server/src/modules/wallet/wallet.service.ts`, replace the body of `getPublicWallet` and add `getHeldInEscrow` directly after it:
 
 ```ts
-  /** Money this wallet has paid into escrow for orders not yet delivered. */
+  async getPublicWallet(userId: string) {
+    const wallet = await this.getWallet(userId);
+    const heldInEscrow = await this.getHeldInEscrow(wallet.id);
+    return {
+      id: wallet.id,
+      balance: wallet.balance,
+      currency: wallet.currency,
+      status: wallet.status,
+      bexieCoins: wallet.bexieCoins,
+      heldInEscrow,
+      createdAt: wallet.createdAt,
+      updatedAt: wallet.updatedAt,
+      user: { name: wallet.user.name },
+    };
+  }
+
+  /** Money this wallet has paid into escrow for orders not yet delivered. HELD only. */
   async getHeldInEscrow(walletId: string): Promise<number> {
     const held = await this.prisma.escrow.aggregate({
       where: { buyerWalletId: walletId, status: "HELD" },
@@ -2934,37 +2995,17 @@ Add to `WalletService` in `apps/server/src/modules/wallet/wallet.service.ts`, di
   }
 ```
 
-- [ ] **Step 6: Implement the controller change**
+Keep the existing doc comment above `getPublicWallet` exactly as it is.
 
-In `apps/server/src/modules/wallet/wallet.controller.ts`, replace:
+- [ ] **Step 6: Run the wallet unit and e2e suites**
 
-```ts
-  getWallet(@Req() req: AuthenticatedRequest) {
-    return this.walletService.getWallet(req.user.id);
-  }
-```
+Run: `cd apps/server && npx jest src/modules/wallet && npx jest --config ./test/jest-e2e.json test/wallet.e2e-spec.ts`
+Expected: PASS, including PR #43's secret-leak assertions.
 
-with:
-
-```ts
-  async getWallet(@Req() req: AuthenticatedRequest) {
-    const wallet = await this.walletService.getWallet(req.user.id);
-    const heldInEscrow = await this.walletService.getHeldInEscrow(wallet.id);
-    return { ...wallet, heldInEscrow };
-  }
-```
-
-If the merged security task already returns a sanitized object from this handler, keep its sanitizing call exactly and spread *its* result instead of `wallet`. For example: `const publicWallet = <its existing call>; return { ...publicWallet, heldInEscrow: await this.walletService.getHeldInEscrow(publicWallet.id) };`. Make sure the sanitized object still carries `id`; if it doesn't, fetch the id the same way the security task does.
-
-- [ ] **Step 7: Run the wallet suites**
-
-Run: `cd apps/server && npx jest src/modules/wallet`
-Expected: PASS (all wallet specs, including the security task's leak assertions).
-
-- [ ] **Step 8: Commit**
+- [ ] **Step 7: Commit**
 
 ```bash
-git add apps/server/src/prisma/prisma.mock.ts apps/server/src/modules/wallet/wallet.service.ts apps/server/src/modules/wallet/wallet.service.spec.ts apps/server/src/modules/wallet/wallet.controller.ts apps/server/src/modules/wallet/wallet.controller.spec.ts
+git add apps/server/src/prisma/prisma.mock.ts apps/server/test/helpers.ts apps/server/src/modules/wallet/wallet.service.ts apps/server/src/modules/wallet/wallet.service.spec.ts apps/server/test/wallet.e2e-spec.ts
 git commit -m "feat(server): expose customer heldInEscrow on GET /wallet"
 ```
 
