@@ -1,4 +1,3 @@
-import { tokens } from "@/theme/tokens";
 import { View, Text, ScrollView, Pressable, RefreshControl } from "react-native";
 import { useState, useCallback } from "react";
 import { LinearGradient } from "expo-linear-gradient";
@@ -7,68 +6,50 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { BackButton } from "@/components/ui/BackButton";
 import { Icon } from "@/components/ui/Icon";
 import { EmptyState } from "@/components/ui/EmptyState";
-import { useWallet, useTransactions, useCards } from "@/lib/hooks/use-wallet";
+import { BalanceCard } from "@/components/ui/BalanceCard";
+import { useWallet, useTransactions } from "@/lib/hooks/use-wallet";
 import { useWalletStore } from "@/lib/stores/wallet-store";
+import { useThemeColors } from "@/theme/useThemeColors";
+import { HELD_INFO } from "@/lib/balance";
 import {
   getTransactionIcon,
   getTransactionColors,
   getAmountPrefix,
   formatDate,
-  getCardColors,
 } from "@/lib/utils/wallet";
 
+// Top up lives on the balance card; the row holds the other money actions.
 const QUICK_ACTIONS = [
-  {
-    id: "topup",
-    label: "Top Up",
-    icon: "plus",
-    color: tokens.primary,
-    route: "/(customer)/wallet/topup",
-  },
-  {
-    id: "send",
-    label: "Send",
-    icon: "send",
-    color: "#7c3aed",
-    route: "/(customer)/wallet/transfer",
-  },
-  {
-    id: "cards",
-    label: "Cards",
-    icon: "credit-card",
-    color: "#e11d48",
-    route: "/(customer)/wallet/cards",
-  },
-  {
-    id: "request",
-    label: "Request",
-    icon: "arrow-down-left",
-    color: "#059669",
-    route: "/(customer)/wallet/request",
-  },
+  { id: "send", label: "Send", icon: "send", route: "/(customer)/wallet/transfer" },
+  { id: "request", label: "Request", icon: "arrow-down-left", route: "/(customer)/wallet/request" },
+  { id: "cards", label: "Cards", icon: "credit-card", route: "/(customer)/wallet/cards" },
+  { id: "link", label: "Link account", icon: "link", route: "/(customer)/wallet/link-account" },
 ];
 
 export default function WalletScreen() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
-  const [showBalance, setShowBalance] = useState(true);
+  const colors = useThemeColors();
   const [refreshing, setRefreshing] = useState(false);
 
-  const { data: walletData, refetch: refetchWallet } = useWallet();
+  const {
+    data: walletData,
+    isLoading: walletLoading,
+    isError: walletError,
+    refetch: refetchWallet,
+  } = useWallet();
   const { data: txnData, refetch: refetchTxns } = useTransactions();
-  const { data: cards, refetch: refetchCards } = useCards();
   const { bexieCoins } = useWalletStore();
 
-  const balance = walletData?.balance ?? 0;
   const currency = walletData?.currency ?? "GHS";
   const transactions = txnData?.data ?? [];
-  const defaultCard = cards?.find((c: any) => c.isDefault) || cards?.[0];
+  const walletStatus = walletLoading ? "loading" : walletError ? "error" : "ready";
 
   const onRefresh = useCallback(async () => {
     setRefreshing(true);
-    await Promise.all([refetchWallet(), refetchTxns(), refetchCards()]);
+    await Promise.all([refetchWallet(), refetchTxns()]);
     setRefreshing(false);
-  }, [refetchWallet, refetchTxns, refetchCards]);
+  }, [refetchWallet, refetchTxns]);
 
   return (
     <View className="flex-1 bg-background">
@@ -87,199 +68,42 @@ export default function WalletScreen() {
         refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
       >
         <View className="px-5 pt-4">
-          <View
-            className="mb-8 mt-2 items-center"
-            style={{
-              height: 196,
-              width: "100%",
-              position: "relative",
-            }}
-          >
-            {/* Layer 1: Back-most strip — only show when 2+ cards */}
-            {(cards?.length ?? 0) >= 2 && (
-              <LinearGradient
-                colors={getCardColors(cards[1]?.id, cards[1]?.type) as any}
-                start={{ x: 0, y: 0 }}
-                end={{ x: 1, y: 0 }}
-                style={{
-                  position: "absolute",
-                  top: 0,
-                  left: "8%",
-                  width: "84%",
-                  height: 30,
-                  borderTopLeftRadius: 16,
-                  borderTopRightRadius: 16,
-                  opacity: 0.7,
-                }}
-              />
-            )}
-
-            {/* Layer 2: Middle Card — only show when 1+ cards */}
-            {(cards?.length ?? 0) >= 1 && (
-              <Pressable
-                onPress={() => router.push("/(customer)/wallet/cards")}
-                className="absolute z-10"
-                style={{
-                  top: 10,
-                  left: "4%",
-                  width: "92%",
-                  height: 78,
-                  zIndex: 10,
-                }}
-              >
-                <LinearGradient
-                  colors={getCardColors(cards[0]?.id, cards[0]?.type) as any}
-                  start={{ x: 0, y: 0 }}
-                  end={{ x: 1, y: 1 }}
-                  style={{
-                    flex: 1,
-                    borderTopLeftRadius: 18,
-                    borderTopRightRadius: 18,
-                    paddingTop: 12,
-                    paddingHorizontal: 18,
-                  }}
-                >
-                  <View className="flex-row justify-between items-start">
-                    <View className="flex-1 pr-4">
-                      <Text
-                        className="text-white text-body-lg font-bold tracking-wide"
-                        numberOfLines={1}
-                      >
-                        {cards[0]?.cardholderName}
-                      </Text>
-                      <Text className="text-white text-sm mt-1.5 font-mono tracking-[0.15em]">
-                        •••• •••• •••• {cards[0]?.last4}
-                      </Text>
-                    </View>
-                    <View className="items-end">
-                      <View className="flex-row items-center justify-end">
-                        <View
-                          style={{ transform: [{ rotate: "90deg" }], marginRight: 8, marginTop: 4 }}
-                        >
-                          <Icon name="wifi" size={16} color="rgba(255,255,255,0.7)" />
-                        </View>
-                        <Text className="text-white text-display-md font-black italic tracking-widest">
-                          {cards[0]?.type?.toUpperCase() || "CARD"}
-                        </Text>
-                      </View>
-                    </View>
-                  </View>
-                </LinearGradient>
-              </Pressable>
-            )}
-
-            {/* Layer 3: Front Pocket (Balance) */}
-            <View
-              className="z-20"
-              style={{
-                position: "absolute",
-                top: 60,
-                left: 0,
-                width: "100%",
-                height: 136,
-                zIndex: 20,
+          <View className="mb-6 mt-2">
+            <BalanceCard
+              testID="wallet-balance"
+              label="Wallet balance"
+              available={Number(walletData?.balance ?? 0)}
+              held={{
+                label: "On hold for orders",
+                amount: Number(walletData?.heldInEscrow ?? 0),
+                info: HELD_INFO.customer,
               }}
-            >
-              <LinearGradient
-                colors={["#4f2ae8", "#3013a5"]}
-                start={{ x: 0, y: 0 }}
-                end={{ x: 1, y: 1 }}
-                style={{
-                  flex: 1,
-                  borderRadius: 24,
-                  paddingTop: 16,
-                  paddingHorizontal: 18,
-                  paddingBottom: 16,
-                  overflow: "hidden",
-                  justifyContent: "space-between",
-                }}
-              >
-                {/* Abstract Pattern inside the card */}
-                <View className="absolute top-[-50px] right-[-30px] w-[150px] h-[150px] rounded-full bg-white/5" />
-
-                <View>
-                  <Text className="text-[11px] font-bold tracking-[0.12em] uppercase text-white/70">
-                    Total balance
-                  </Text>
-                  <View className="flex-row items-baseline mt-[2px]">
-                    <Text className="font-heading text-[44px] leading-[48px] font-black tracking-[-1px] text-white">
-                      {showBalance
-                        ? Number(balance).toLocaleString("en-US", {
-                            minimumFractionDigits: 2,
-                            maximumFractionDigits: 2,
-                          })
-                        : "••••••"}
-                    </Text>
-                    <Text className="text-[16px] font-bold text-white ml-[8px]">{currency}</Text>
-                  </View>
-                </View>
-
-                <View className="flex-row justify-between items-center">
-                  <Pressable
-                    onPress={() => router.push("/(customer)/wallet/link-account")}
-                    className="flex-row items-center gap-[7px] px-4 py-[9px] rounded-full"
-                    style={{
-                      backgroundColor: "rgba(255,255,255,0.2)",
-                    }}
-                  >
-                    <Icon name="link" size={15} color="#fff" />
-                    <Text className="text-[13px] font-bold text-white">Link account</Text>
-                  </Pressable>
-
-                  <View className="flex-row gap-3">
-                    <Pressable
-                      accessibilityRole="button"
-                      className="w-10 h-10 rounded-full items-center justify-center"
-                      style={{
-                        backgroundColor: "rgba(255,255,255,0.15)",
-                      }}
-                      onPress={onRefresh}
-                    >
-                      <Icon name="refresh-cw" size={17} color="#fff" />
-                    </Pressable>
-                    <Pressable
-                      accessibilityRole="button"
-                      className="w-10 h-10 rounded-full items-center justify-center"
-                      style={{
-                        backgroundColor: "rgba(255,255,255,0.15)",
-                      }}
-                      onPress={() => setShowBalance(!showBalance)}
-                    >
-                      <Icon name={showBalance ? "eye-off" : "eye"} size={17} color="#fff" />
-                    </Pressable>
-                  </View>
-                </View>
-              </LinearGradient>
-            </View>
+              action={{
+                title: "Top up",
+                icon: "plus",
+                onPress: () => router.push("/(customer)/wallet/topup"),
+              }}
+              status={walletStatus}
+              onRetry={() => refetchWallet()}
+            />
           </View>
 
-          <View
-            style={{
-              flexDirection: "row",
-              justifyContent: "space-between",
-              marginBottom: 24,
-              paddingHorizontal: 4,
-            }}
-          >
+          <View className="flex-row justify-between mb-6 px-1">
             {QUICK_ACTIONS.map((action) => (
               <Pressable
                 key={action.id}
                 onPress={() => router.push(action.route as any)}
-                style={{ alignItems: "center", gap: 7 }}
+                accessibilityRole="button"
+                accessibilityLabel={action.label}
+                className="items-center gap-2"
+                style={{ width: "22%" }}
               >
-                <View
-                  style={{
-                    width: 52,
-                    height: 52,
-                    borderRadius: 26,
-                    alignItems: "center",
-                    justifyContent: "center",
-                    backgroundColor: action.color,
-                  }}
-                >
-                  <Icon name={action.icon} size={22} color="#fff" />
+                <View className="w-12 h-12 rounded-full items-center justify-center bg-primary-subtle">
+                  <Icon name={action.icon} size={22} color={colors.primary} />
                 </View>
-                <Text className="text-[11px] font-bold text-foreground">{action.label}</Text>
+                <Text className="text-caption font-body font-bold text-foreground text-center">
+                  {action.label}
+                </Text>
               </Pressable>
             ))}
           </View>
@@ -308,7 +132,7 @@ export default function WalletScreen() {
                 </View>
                 <View style={{ flex: 1, minWidth: 0 }}>
                   <Text className="text-[11px] font-bold tracking-[0.1em] uppercase text-white/85">
-                    Gold tier · BexieCoins
+                    BexieCoins
                   </Text>
                   <Text className="font-heading text-[28px] leading-[32px] font-black tracking-[-0.02em] text-white mt-[1px]">
                     {bexieCoins.toLocaleString()}
@@ -348,7 +172,7 @@ export default function WalletScreen() {
           ) : (
             <View className="bg-card rounded-2xl border border-border overflow-hidden">
               {transactions.slice(0, 5).map((tx: any, index: number) => {
-                const colors = getTransactionColors(tx.type);
+                const txColors = getTransactionColors(tx.type);
                 const prefix = getAmountPrefix(tx.type);
                 const isPositive = prefix === "+";
                 const isLast = index === Math.min(transactions.length, 5) - 1;
@@ -362,9 +186,9 @@ export default function WalletScreen() {
                   >
                     <View
                       className="w-10 h-10 rounded-full items-center justify-center mr-3"
-                      style={{ backgroundColor: colors.bg }}
+                      style={{ backgroundColor: txColors.bg }}
                     >
-                      <Icon name={getTransactionIcon(tx.type)} size={18} color={colors.icon} />
+                      <Icon name={getTransactionIcon(tx.type)} size={18} color={txColors.icon} />
                     </View>
                     <View className="flex-1">
                       <Text

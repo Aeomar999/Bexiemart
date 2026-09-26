@@ -75,5 +75,6 @@ describe("RewardsScreen", () => {
     expect(redeemBtn.props.accessibilityState?.disabled).toBeFalsy();
     expect(screen.getByText("2 completed")).toBeTruthy();
     expect(screen.getByText("1 referred")).toBeTruthy();
+    expect(screen.queryByText(/Gold Tier/i)).toBeNull();
   });
 });
