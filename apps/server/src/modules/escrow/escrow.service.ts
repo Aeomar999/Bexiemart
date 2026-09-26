@@ -3,6 +3,7 @@ import {
   NotFoundException,
   BadRequestException,
   ForbiddenException,
+  ConflictException,
 } from "@nestjs/common";
 import { PrismaService } from "../../prisma/prisma.service";
 import { AdminGateway } from "../admin/admin.gateway";
@@ -13,6 +14,10 @@ export class EscrowService {
     private readonly prisma: PrismaService,
     private readonly adminGateway: AdminGateway
   ) {}
+
+  private readonly AUTO_RELEASE_HOURS_AFTER_DELIVERED = 72;
+  private readonly AUTO_RELEASE_DAYS_AFTER_SHIPPED = 14;
+  private readonly AUTO_REFUND_DAYS_AFTER_CONFIRMED = 14;
 
   async list(userId: string) {
     const wallet = await this.prisma.wallet.findUnique({ where: { userId } });
@@ -78,7 +83,7 @@ export class EscrowService {
   async release(userId: string, id: string) {
     const escrow = await this.prisma.escrow.findUnique({
       where: { id },
-      include: { vendor: true },
+      include: { vendor: true, order: true },
     });
 
     if (!escrow) throw new NotFoundException("Escrow not found");
@@ -88,23 +93,114 @@ export class EscrowService {
       throw new ForbiddenException("Only the vendor can release escrow");
     }
 
+    // Vendor can only release if order is delivered AND (buyer confirmed OR auto-release window passed)
+    if (escrow.order.status !== "delivered") {
+      throw new BadRequestException("Escrow can only be released after order is delivered");
+    }
+
+    const isConfirmed = await this.prisma.deliveryJob.findFirst({
+      where: { orderId: escrow.orderId, status: "DELIVERED" },
+      select: { id: true },
+    });
+    const hoursSinceDelivered = escrow.order.updatedAt
+      ? (Date.now() - new Date(escrow.order.updatedAt).getTime()) / (1000 * 60 * 60)
+      : Infinity;
+    const autoReleaseWindowPassed = hoursSinceDelivered >= this.AUTO_RELEASE_HOURS_AFTER_DELIVERED;
+
+    if (!isConfirmed && !autoReleaseWindowPassed) {
+      throw new BadRequestException(
+        "Escrow can only be released after buyer confirms delivery or auto-release window (72h) passes"
+      );
+    }
+
+    const reference = `esc_rel_${id}_${Date.now()}`;
+    await this.releaseEscrow(escrow, reference);
+    return this.prisma.escrow.findUnique({ where: { id }, include: { vendor: true, order: true } });
+  }
+
+  async refund(userId: string, id: string) {
+    const escrow = await this.prisma.escrow.findUnique({
+      where: { id },
+      include: { order: true },
+    });
+
+    if (!escrow) throw new NotFoundException("Escrow not found");
+    if (escrow.status !== "HELD") throw new BadRequestException("Escrow is not in HELD status");
+
+    const buyerWallet = await this.prisma.wallet.findUnique({
+      where: { userId },
+    });
+
+    if (!buyerWallet || buyerWallet.id !== escrow.buyerWalletId) {
+      throw new ForbiddenException("Only the buyer can refund escrow");
+    }
+
+    // Buyer can only refund if order is cancelled or refund_requested (admin approved)
+    // Auto-refund timeout is handled by cron job only
+    const allowedStatuses = ["cancelled", "refund_requested"];
+
+    if (!allowedStatuses.includes(escrow.order.status)) {
+      throw new BadRequestException(
+        "Refund only allowed for cancelled orders or approved refund requests"
+      );
+    }
+
+    const reference = `esc_ref_${id}_${Date.now()}`;
+    await this.refundEscrow(escrow, reference);
+    return this.prisma.escrow.findUnique({ where: { id }, include: { order: true } });
+  }
+
+  /** Internal: release escrow after delivery confirmation or auto-release. Uses atomic claim pattern. */
+  async releaseForDelivery(escrowId: string): Promise<void> {
+    const escrow = await this.prisma.escrow.findUnique({
+      where: { id: escrowId },
+      include: { vendor: true, order: true },
+    });
+
+    if (!escrow || escrow.status !== "HELD") return;
+
+    const reference = `esc_rel_${escrowId}_${Date.now()}`;
+    await this.releaseEscrow(escrow, reference);
+  }
+
+  /** Internal: refund escrow for cancellation or auto-refund. Uses atomic claim pattern. */
+  async refundForCancellation(escrowId: string): Promise<void> {
+    const escrow = await this.prisma.escrow.findUnique({
+      where: { id: escrowId },
+      include: { order: true },
+    });
+
+    if (!escrow || escrow.status !== "HELD") return;
+
+    const reference = `esc_ref_${escrowId}_${Date.now()}`;
+    await this.refundEscrow(escrow, reference);
+  }
+
+  private async releaseEscrow(escrow: any, reference: string) {
     const vendorWallet = await this.prisma.wallet.findUnique({
       where: { userId: escrow.vendor.userId },
     });
 
     if (!vendorWallet) throw new BadRequestException("Vendor wallet not found");
 
-    if (!escrow.vendorWalletId) {
-      await this.prisma.escrow.update({
-        where: { id },
-        data: { vendorWalletId: vendorWallet.id },
-      });
-    }
-
-    const reference = `esc_rel_${id}_${Date.now()}`;
-
-    const updatedEscrow = await this.prisma.$transaction(
+    await this.prisma.$transaction(
       async (tx) => {
+        // Atomic claim: only one caller (delivery confirm, auto-release cron, vendor endpoint) can flip HELD→RELEASED
+        const claim = await tx.escrow.updateMany({
+          where: { id: escrow.id, status: "HELD" },
+          data: { status: "RELEASED" },
+        });
+        if (claim.count === 0) {
+          throw new ConflictException("Escrow has already been resolved");
+        }
+
+        if (!escrow.vendorWalletId) {
+          await tx.escrow.update({
+            where: { id: escrow.id },
+            data: { vendorWalletId: vendorWallet.id },
+          });
+        }
+
         const txn = await tx.transaction.create({
           data: {
             walletId: vendorWallet.id,
@@ -124,10 +220,9 @@ export class EscrowService {
           data: { balance: { increment: Number(escrow.netAmount) } },
         });
 
-        return tx.escrow.update({
-          where: { id },
+        await tx.escrow.update({
+          where: { id: escrow.id },
           data: {
-            status: "RELEASED",
             releasedAt: new Date(),
             releasedTxnId: txn.id,
             vendorWalletId: vendorWallet.id,
@@ -136,30 +231,26 @@ export class EscrowService {
       },
       { isolationLevel: "Serializable" }
     );
-
-    return updatedEscrow;
   }
 
-  async refund(userId: string, id: string) {
-    const escrow = await this.prisma.escrow.findUnique({
-      where: { id },
-    });
-
-    if (!escrow) throw new NotFoundException("Escrow not found");
-    if (escrow.status !== "HELD") throw new BadRequestException("Escrow is not in HELD status");
-
+  private async refundEscrow(escrow: any, reference: string) {
     const buyerWallet = await this.prisma.wallet.findUnique({
-      where: { userId },
+      where: { id: escrow.buyerWalletId },
     });
 
-    if (!buyerWallet || buyerWallet.id !== escrow.buyerWalletId) {
-      throw new ForbiddenException("Only the buyer can refund escrow");
-    }
+    if (!buyerWallet) throw new BadRequestException("Buyer wallet not found");
 
-    const reference = `esc_ref_${id}_${Date.now()}`;
-
-    const updatedEscrow = await this.prisma.$transaction(
+    await this.prisma.$transaction(
       async (tx) => {
+        // Atomic claim: only one caller (cancellation, auto-refund cron, buyer endpoint) can flip HELD→REFUNDED
+        const claim = await tx.escrow.updateMany({
+          where: { id: escrow.id, status: "HELD" },
+          data: { status: "REFUNDED" },
+        });
+        if (claim.count === 0) {
+          throw new ConflictException("Escrow has already been resolved");
+        }
+
         const txn = await tx.transaction.create({
           data: {
             walletId: buyerWallet.id,
@@ -179,10 +270,9 @@ export class EscrowService {
           data: { balance: { increment: Number(escrow.amount) } },
         });
 
-        return tx.escrow.update({
-          where: { id },
+        await tx.escrow.update({
+          where: { id: escrow.id },
           data: {
-            status: "REFUNDED",
             refundedAt: new Date(),
             refundedTxnId: txn.id,
           },
@@ -190,8 +280,6 @@ export class EscrowService {
       },
       { isolationLevel: "Serializable" }
     );
-
-    return updatedEscrow;
   }
 
   private async assertOwner(userId: string, escrow: any) {
