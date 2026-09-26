@@ -3,6 +3,17 @@ import * as request from "supertest";
 import * as bcrypt from "bcryptjs";
 import { setupTestApp, MOCK_USER, createAuthenticatedRequest } from "./helpers";
 
+/** Paths of every property named in `keys`, at any depth of `value`. */
+function findKeysDeep(value: unknown, keys: string[], path = "$"): string[] {
+  if (value === null || typeof value !== "object") return [];
+  return Object.entries(value).flatMap(([key, child]) => [
+    ...(keys.includes(key) ? [`${path}.${key}`] : []),
+    ...findKeysDeep(child, keys, `${path}.${key}`),
+  ]);
+}
+
+const SECRET_KEYS = ["password", "pinHash", "pinFailures", "pinLockedUntil"];
+
 describe("Wallet (e2e)", () => {
   let app: INestApplication;
   let prismaMock: any;
@@ -60,6 +71,61 @@ describe("Wallet (e2e)", () => {
       expect(res.body.id).toBe("w1");
       expect(res.body.balance).toBe(1000);
       expect(res.body.currency).toBe("GHS");
+    });
+
+    // Worst-case row: a real PIN hash plus a `password` on the joined user. The
+    // response must be an allowlist, so nothing beyond it can get out.
+    const walletRowWithSecrets = {
+      ...mockWallet,
+      bexieCoins: 40,
+      pinHash: "$argon2id$v=19$m=65536,t=3,p=4$c2FsdHNhbHQ$aGFzaGhhc2g",
+      pinFailures: 2,
+      pinLockedUntil: new Date(),
+      user: {
+        ...MOCK_USER,
+        password: "$2a$10$abcdefghijklmnopqrstuv",
+        pushToken: "ExponentPushToken[xxxx]",
+        isSuperAdmin: false,
+      },
+    };
+
+    const expectNoSecrets = (body: any) => {
+      expect(Object.keys(body).sort()).toEqual(
+        [
+          "id",
+          "balance",
+          "currency",
+          "status",
+          "bexieCoins",
+          "createdAt",
+          "updatedAt",
+          "user",
+        ].sort()
+      );
+      expect(body.user).toEqual({ name: MOCK_USER.name });
+      expect(body.pinHash).toBeUndefined();
+      expect(body.user.password).toBeUndefined();
+      expect(findKeysDeep(body, SECRET_KEYS)).toEqual([]);
+    };
+
+    it("should not expose the PIN hash or any password", async () => {
+      prismaMock.wallet.findUnique.mockResolvedValue(walletRowWithSecrets);
+
+      const res = await createAuthenticatedRequest(app, prismaMock).get("/api/v1/wallet");
+
+      expect(res.status).toBe(200);
+      expectNoSecrets(res.body);
+      expect(res.body.bexieCoins).toBe(40);
+    });
+
+    it("should not expose secrets when the wallet is created on first access", async () => {
+      prismaMock.wallet.findUnique.mockResolvedValue(null);
+      prismaMock.wallet.create.mockResolvedValue(walletRowWithSecrets);
+
+      const res = await createAuthenticatedRequest(app, prismaMock).get("/api/v1/wallet");
+
+      expect(res.status).toBe(200);
+      expectNoSecrets(res.body);
     });
   });
 
@@ -188,7 +254,7 @@ describe("Wallet (e2e)", () => {
   });
 
   describe("POST /api/v1/wallet/pin", () => {
-    it("should set PIN", async () => {
+    it("should set PIN without echoing the PIN hash", async () => {
       prismaMock.wallet.findUnique.mockResolvedValue(mockWallet);
       prismaMock.wallet.update.mockResolvedValue({
         ...mockWallet,
@@ -202,7 +268,29 @@ describe("Wallet (e2e)", () => {
         .send({ pin: "1234" });
 
       expect(res.status).toBe(201);
-      expect(res.body.pinFailures).toBe(0);
+      expect(res.body).toEqual({ success: true });
+      expect(findKeysDeep(res.body, SECRET_KEYS)).toEqual([]);
+    });
+  });
+
+  describe("POST /api/v1/wallet/pin/change", () => {
+    it("should change PIN without echoing the PIN hash", async () => {
+      const pinHash = bcrypt.hashSync("1234", 10);
+      prismaMock.wallet.findUnique.mockResolvedValue({ ...mockWallet, pinHash });
+      prismaMock.wallet.update.mockResolvedValue({
+        ...mockWallet,
+        pinHash: "new_hashed_pin",
+        pinFailures: 0,
+        pinLockedUntil: null,
+      });
+
+      const res = await createAuthenticatedRequest(app, prismaMock)
+        .post("/api/v1/wallet/pin/change")
+        .send({ currentPin: "1234", newPin: "5678" });
+
+      expect(res.status).toBe(201);
+      expect(res.body).toEqual({ success: true });
+      expect(findKeysDeep(res.body, SECRET_KEYS)).toEqual([]);
     });
   });
 });

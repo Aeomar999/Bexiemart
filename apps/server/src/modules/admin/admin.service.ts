@@ -54,7 +54,18 @@ export class AdminService {
       include: {
         orders: true,
         payments: true,
-        wallet: true,
+        // Never `wallet: true` — that ships the user's pinHash to the admin client.
+        wallet: {
+          select: {
+            id: true,
+            balance: true,
+            currency: true,
+            status: true,
+            bexieCoins: true,
+            createdAt: true,
+            updatedAt: true,
+          },
+        },
         vendorProfile: true,
       },
     });

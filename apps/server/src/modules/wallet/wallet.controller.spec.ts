@@ -10,6 +10,7 @@ describe("WalletController", () => {
 
   const mockService = {
     getWallet: jest.fn(),
+    getPublicWallet: jest.fn(),
     getTransactions: jest.fn(),
     initializeTopUp: jest.fn(),
     verifyTopUp: jest.fn(),
@@ -56,13 +57,14 @@ describe("WalletController", () => {
   });
 
   describe("getWallet", () => {
-    it("should call service.getWallet with user id", async () => {
+    it("should return the public wallet, never the raw row", async () => {
       const result = { balance: 1000 };
-      mockService.getWallet.mockResolvedValue(result);
+      mockService.getPublicWallet.mockResolvedValue(result);
       const req = { user: { id: "user-1" } } as AuthenticatedRequest;
 
       expect(await controller.getWallet(req)).toEqual(result);
-      expect(mockService.getWallet).toHaveBeenCalledWith("user-1");
+      expect(mockService.getPublicWallet).toHaveBeenCalledWith("user-1");
+      expect(mockService.getWallet).not.toHaveBeenCalled();
     });
   });
 
