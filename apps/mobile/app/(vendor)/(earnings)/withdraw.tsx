@@ -211,7 +211,7 @@ export default function WithdrawFundsScreen() {
                 <View className="flex-row items-center bg-primary-subtle px-3 py-1.5 rounded-full border border-border">
                   <Icon name="info" size={14} color={tokens.primary} style={{ marginRight: 6 }} />
                   <Text className="text-body-sm font-bold text-primary-hover">
-                    Available: GHS {availableBalance.toFixed(2)}
+                    {`Available: ${formatMoney(availableBalance)}`}
                   </Text>
                 </View>
                 <Pressable onPress={handleMaxAmount} className="bg-muted px-3 py-1.5 rounded-full">

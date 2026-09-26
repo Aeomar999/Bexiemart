@@ -83,4 +83,17 @@ describe("WithdrawFundsScreen (Vendor)", () => {
     expect(screen.getByText("Ecobank")).toBeTruthy();
     expect(screen.getByText("MTN")).toBeTruthy();
   });
+
+  it("groups thousands in the available amount", () => {
+    (useVendorEarnings as jest.Mock).mockReturnValue({ data: { availableBalance: 12480.5 } });
+    (useBankAccounts as jest.Mock).mockReturnValue({
+      data: [{ id: "b1", bankName: "Ecobank", accountNumber: "1234" }],
+    });
+    (useMomoAccounts as jest.Mock).mockReturnValue({ data: [] });
+    (usePinStatus as jest.Mock).mockReturnValue({ data: { hasPin: true } });
+    (useWithdraw as jest.Mock).mockReturnValue({ mutate: jest.fn(), isPending: false });
+
+    render(<WithdrawFundsScreen />);
+    expect(screen.getByText("Available: GHS 12,480.50")).toBeTruthy();
+  });
 });
