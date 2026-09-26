@@ -16,6 +16,32 @@ import { CreateCardDto, UpdateCardDto } from "./dto/card.dto";
 // of the user row alongside the wallet.
 const WALLET_OWNER = { select: { id: true, name: true, email: true } } as const;
 
+// Client-facing card shape: allowlist of fields that are safe to return.
+// authorizationCode (Paystack reusable token) and bin are excluded.
+function toPublicCard(card: {
+  id: string;
+  type: string;
+  cardholderName: string;
+  last4: string;
+  expiryMonth: string;
+  expiryYear: string;
+  isDefault: boolean;
+  createdAt: Date;
+  updatedAt: Date;
+}) {
+  return {
+    id: card.id,
+    type: card.type,
+    cardholderName: card.cardholderName,
+    last4: card.last4,
+    expiryMonth: card.expiryMonth,
+    expiryYear: card.expiryYear,
+    isDefault: card.isDefault,
+    createdAt: card.createdAt,
+    updatedAt: card.updatedAt,
+  };
+}
+
 @Injectable()
 export class WalletService {
   private readonly logger = new Logger(WalletService.name);
@@ -474,16 +500,17 @@ export class WalletService {
           bank: auth.bank,
         },
       });
-      return newCard;
+      return toPublicCard(newCard);
     });
   }
 
   async getCards(userId: string) {
     const wallet = await this.getWallet(userId);
-    return this.prisma.card.findMany({
+    const cards = await this.prisma.card.findMany({
       where: { walletId: wallet.id },
       orderBy: { createdAt: "desc" },
     });
+    return cards.map(toPublicCard);
   }
 
   async addCard(userId: string, data: CreateCardDto) {
@@ -499,7 +526,7 @@ export class WalletService {
       });
     }
 
-    return this.prisma.card.create({
+    const card = await this.prisma.card.create({
       data: {
         walletId: wallet.id,
         type: data.type,
@@ -510,6 +537,7 @@ export class WalletService {
         isDefault,
       },
     });
+    return toPublicCard(card);
   }
 
   async updateCard(userId: string, cardId: string, data: UpdateCardDto) {
@@ -527,10 +555,11 @@ export class WalletService {
       });
     }
 
-    return this.prisma.card.update({
+    const updated = await this.prisma.card.update({
       where: { id: cardId },
       data,
     });
+    return toPublicCard(updated);
   }
 
   async deleteCard(userId: string, cardId: string) {

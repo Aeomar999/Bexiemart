@@ -329,6 +329,8 @@ export const mockPrisma = (): any => ({
     create: jest.fn(),
     update: jest.fn(),
     delete: jest.fn(),
+    count: jest.fn(),
+    updateMany: jest.fn(),
   },
   story: {
     findUnique: jest.fn(),
@@ -382,6 +384,7 @@ export const mockPrisma = (): any => ({
     update: jest.fn(),
     delete: jest.fn(),
     count: jest.fn(),
+    updateMany: jest.fn(),
   },
   vendorStaff: {
     findUnique: jest.fn(),

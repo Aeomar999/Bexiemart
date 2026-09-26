@@ -12,7 +12,14 @@ function findKeysDeep(value: unknown, keys: string[], path = "$"): string[] {
   ]);
 }
 
-const SECRET_KEYS = ["password", "pinHash", "pinFailures", "pinLockedUntil"];
+const SECRET_KEYS = [
+  "authorizationCode",
+  "bin",
+  "password",
+  "pinHash",
+  "pinFailures",
+  "pinLockedUntil",
+];
 
 describe("Wallet (e2e)", () => {
   let app: INestApplication;
@@ -294,6 +301,114 @@ describe("Wallet (e2e)", () => {
       expect(res.status).toBe(201);
       expect(res.body).toEqual({ success: true });
       expect(findKeysDeep(res.body, SECRET_KEYS)).toEqual([]);
+    });
+  });
+
+  describe("GET /api/v1/wallet/cards", () => {
+    it("should get cards without exposing authorizationCode or bin", async () => {
+      const mockCard = {
+        id: "c1",
+        walletId: "w1",
+        type: "VISA",
+        cardholderName: "John Doe",
+        last4: "1234",
+        expiryMonth: "12",
+        expiryYear: "2028",
+        isDefault: true,
+        authorizationCode: "auth_secret_123",
+        bin: "424242",
+        bank: "Test Bank",
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      };
+
+      prismaMock.wallet.findUnique.mockResolvedValue(mockWallet);
+      prismaMock.card.findMany.mockResolvedValue([mockCard]);
+
+      const res = await createAuthenticatedRequest(app, prismaMock).get("/api/v1/wallet/cards");
+
+      expect(res.status).toBe(200);
+      expect(res.body).toHaveLength(1);
+      expect(res.body[0]).toEqual({
+        id: "c1",
+        type: "VISA",
+        cardholderName: "John Doe",
+        last4: "1234",
+        expiryMonth: "12",
+        expiryYear: "2028",
+        isDefault: true,
+        createdAt: mockCard.createdAt.toISOString(),
+        updatedAt: mockCard.updatedAt.toISOString(),
+      });
+      expect(findKeysDeep(res.body, ["authorizationCode", "bin"])).toEqual([]);
+    });
+  });
+
+  describe("POST /api/v1/wallet/cards/verify-save", () => {
+    it("should verify and save card without exposing authorizationCode or bin", async () => {
+      const cardBindRef = "card_bind_ref_123";
+      const savedCard = {
+        id: "c1",
+        walletId: "w1",
+        type: "VISA",
+        cardholderName: "John Doe",
+        last4: "1234",
+        expiryMonth: "12",
+        expiryYear: "2028",
+        isDefault: true,
+        authorizationCode: "auth_secret_123",
+        bin: "424242",
+        bank: "Test Bank",
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      };
+
+      prismaMock.wallet.findUnique.mockResolvedValue(mockWallet);
+      prismaMock.transaction.findUnique.mockResolvedValue(null);
+      global.fetch = jest.fn().mockResolvedValue({
+        ok: true,
+        json: () =>
+          Promise.resolve({
+            status: true,
+            data: {
+              status: "success",
+              customer: { email: MOCK_USER.email },
+              amount: 100,
+              metadata: { purpose: "card_verification" },
+              authorization: {
+                card_type: "visa",
+                last4: "1234",
+                exp_month: "12",
+                exp_year: "2028",
+                authorization_code: "auth_secret_123",
+                bin: "424242",
+                bank: "Test Bank",
+              },
+            },
+          }),
+      });
+      prismaMock.$transaction = jest.fn((cb: any) => cb(prismaMock));
+      prismaMock.card.create.mockResolvedValue(savedCard);
+      prismaMock.wallet.update.mockResolvedValue({ ...mockWallet, balance: 1001 });
+      prismaMock.transaction.create.mockResolvedValue({});
+
+      const res = await createAuthenticatedRequest(app, prismaMock)
+        .post("/api/v1/wallet/cards/verify-save")
+        .send({ reference: "ref_123", cardholderName: "John Doe", isDefault: true });
+
+      expect(res.status).toBe(201);
+      expect(res.body).toEqual({
+        id: "c1",
+        type: "VISA",
+        cardholderName: "John Doe",
+        last4: "1234",
+        expiryMonth: "12",
+        expiryYear: "2028",
+        isDefault: true,
+        createdAt: savedCard.createdAt.toISOString(),
+        updatedAt: savedCard.updatedAt.toISOString(),
+      });
+      expect(findKeysDeep(res.body, ["authorizationCode", "bin"])).toEqual([]);
     });
   });
 });

@@ -325,6 +325,8 @@ export function createMockPrisma(): any {
       create: jest.fn(),
       update: jest.fn(),
       delete: jest.fn(),
+      count: jest.fn(),
+      updateMany: jest.fn(),
     },
     story: {
       findUnique: jest.fn(),

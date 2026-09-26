@@ -3,13 +3,38 @@ import { mockPrisma } from "../../prisma/prisma.mock";
 import * as bcrypt from "bcryptjs";
 import { BadRequestException, NotFoundException, ForbiddenException } from "@nestjs/common";
 
+/** Paths of every property named in `keys`, at any depth of `value`. */
+function findKeysDeep(value: unknown, keys: string[], path = "$"): string[] {
+  if (value === null || typeof value !== "object") return [];
+  return Object.entries(value).flatMap(([key, child]) => [
+    ...(keys.includes(key) ? [`${path}.${key}`] : []),
+    ...findKeysDeep(child, keys, `${path}.${key}`),
+  ]);
+}
+
+const SECRET_KEYS = [
+  "authorizationCode",
+  "bin",
+  "password",
+  "pinHash",
+  "pinFailures",
+  "pinLockedUntil",
+];
+
 describe("WalletService", () => {
   let service: WalletService;
   let prisma: ReturnType<typeof mockPrisma>;
 
   beforeEach(() => {
     prisma = mockPrisma();
-    service = new WalletService(prisma as any, { get: jest.fn() } as any);
+    const configMock = {
+      get: jest.fn((key: string) => {
+        if (key === "PAYSTACK_SECRET_KEY") return "test_secret_key";
+        if (key === "BETTER_AUTH_URL") return "http://localhost:3000";
+        return undefined;
+      }),
+    };
+    service = new WalletService(prisma as any, configMock as any);
   });
 
   afterEach(() => {
@@ -303,6 +328,223 @@ describe("WalletService", () => {
       prisma.wallet.findUnique.mockResolvedValue(wallet);
       const result = await service.getPinStatus("u1");
       expect(result).toEqual({ hasPin: true, isLocked: false, failuresRemaining: 3 });
+    });
+  });
+
+  describe("getCards", () => {
+    it("should return cards without authorizationCode or bin", async () => {
+      const wallet = { id: "w1", userId: "u1", balance: 100, currency: "GHS", status: "ACTIVE" };
+      prisma.wallet.findUnique.mockResolvedValue(wallet);
+      const cards = [
+        {
+          id: "c1",
+          type: "VISA",
+          cardholderName: "John Doe",
+          last4: "1234",
+          expiryMonth: "12",
+          expiryYear: "2028",
+          isDefault: true,
+          authorizationCode: "auth_secret_123",
+          bin: "424242",
+          bank: "Test Bank",
+          createdAt: new Date("2026-01-01"),
+          updatedAt: new Date("2026-01-01"),
+        },
+      ];
+      prisma.card.findMany.mockResolvedValue(cards);
+
+      const result = await service.getCards("u1");
+
+      expect(result).toHaveLength(1);
+      expect(result[0]).toEqual({
+        id: "c1",
+        type: "VISA",
+        cardholderName: "John Doe",
+        last4: "1234",
+        expiryMonth: "12",
+        expiryYear: "2028",
+        isDefault: true,
+        createdAt: cards[0].createdAt,
+        updatedAt: cards[0].updatedAt,
+      });
+      expect(findKeysDeep(result, ["authorizationCode", "bin"])).toEqual([]);
+    });
+  });
+
+  describe("verifyAndSaveCard", () => {
+    beforeEach(() => {
+      process.env.PAYSTACK_SECRET_KEY = "test_secret_key";
+    });
+
+    afterEach(() => {
+      delete process.env.PAYSTACK_SECRET_KEY;
+    });
+
+    it("should return saved card without authorizationCode or bin", async () => {
+      const wallet = {
+        id: "w1",
+        userId: "u1",
+        balance: 100,
+        currency: "GHS",
+        status: "ACTIVE",
+        user: { id: "u1", email: "test@example.com", name: "Test" },
+      };
+      prisma.wallet.findUnique.mockResolvedValue(wallet);
+      prisma.transaction.findUnique.mockResolvedValue(null);
+      jest.spyOn(globalThis, "fetch").mockResolvedValue({
+        ok: true,
+        json: async () => ({
+          status: true,
+          data: {
+            status: "success",
+            customer: { email: "test@example.com" },
+            amount: 100,
+            metadata: { purpose: "card_verification" },
+            authorization: {
+              card_type: "visa",
+              last4: "1234",
+              exp_month: "12",
+              exp_year: "2028",
+              authorization_code: "auth_secret_123",
+              bin: "424242",
+              bank: "Test Bank",
+            },
+          },
+        }),
+      } as any);
+      prisma.$transaction.mockImplementation((arg: any) => {
+        const tx = mockPrisma();
+        tx.card.create.mockResolvedValue({
+          id: "c1",
+          type: "VISA",
+          cardholderName: "John Doe",
+          last4: "1234",
+          expiryMonth: "12",
+          expiryYear: "2028",
+          isDefault: true,
+          authorizationCode: "auth_secret_123",
+          bin: "424242",
+          bank: "Test Bank",
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        });
+        return arg(tx);
+      });
+
+      const result = await service.verifyAndSaveCard("u1", "ref123", "John Doe", true);
+
+      expect(result).toEqual({
+        id: "c1",
+        type: "VISA",
+        cardholderName: "John Doe",
+        last4: "1234",
+        expiryMonth: "12",
+        expiryYear: "2028",
+        isDefault: true,
+        createdAt: expect.any(Date),
+        updatedAt: expect.any(Date),
+      });
+      expect(findKeysDeep(result, ["authorizationCode", "bin"])).toEqual([]);
+    });
+  });
+
+  describe("addCard", () => {
+    it("should add card and return without authorizationCode or bin", async () => {
+      const wallet = { id: "w1", userId: "u1", balance: 100, currency: "GHS", status: "ACTIVE" };
+      prisma.wallet.findUnique.mockResolvedValue(wallet);
+      prisma.card.count.mockResolvedValue(0);
+      prisma.card.create.mockResolvedValue({
+        id: "c1",
+        type: "MASTERCARD",
+        cardholderName: "Jane Doe",
+        last4: "5678",
+        expiryMonth: "06",
+        expiryYear: "2027",
+        isDefault: true,
+        authorizationCode: null,
+        bin: null,
+        bank: null,
+        createdAt: new Date("2026-01-01"),
+        updatedAt: new Date("2026-01-01"),
+      });
+
+      const result = await service.addCard("u1", {
+        type: "MASTERCARD",
+        cardholderName: "Jane Doe",
+        last4: "5678",
+        expiryMonth: "06",
+        expiryYear: "2027",
+      });
+
+      expect(result).toEqual({
+        id: "c1",
+        type: "MASTERCARD",
+        cardholderName: "Jane Doe",
+        last4: "5678",
+        expiryMonth: "06",
+        expiryYear: "2027",
+        isDefault: true,
+        createdAt: new Date("2026-01-01"),
+        updatedAt: new Date("2026-01-01"),
+      });
+      expect(findKeysDeep(result, ["authorizationCode", "bin"])).toEqual([]);
+    });
+  });
+
+  describe("updateCard", () => {
+    it("should update card and return without authorizationCode or bin", async () => {
+      const wallet = { id: "w1", userId: "u1", balance: 100, currency: "GHS", status: "ACTIVE" };
+      prisma.wallet.findUnique.mockResolvedValue(wallet);
+      prisma.card.findUnique.mockResolvedValue({
+        id: "c1",
+        walletId: "w1",
+        type: "VISA",
+        cardholderName: "John Doe",
+        last4: "1234",
+        expiryMonth: "12",
+        expiryYear: "2028",
+        isDefault: false,
+        authorizationCode: "auth_secret_123",
+        bin: "424242",
+        bank: "Test Bank",
+        createdAt: new Date("2026-01-01"),
+        updatedAt: new Date("2026-01-01"),
+      });
+      prisma.card.updateMany.mockResolvedValue({});
+      prisma.card.update.mockResolvedValue({
+        id: "c1",
+        walletId: "w1",
+        type: "VISA",
+        cardholderName: "John Updated",
+        last4: "1234",
+        expiryMonth: "12",
+        expiryYear: "2029",
+        isDefault: true,
+        authorizationCode: "auth_secret_123",
+        bin: "424242",
+        bank: "Test Bank",
+        createdAt: new Date("2026-01-01"),
+        updatedAt: new Date("2026-02-01"),
+      });
+
+      const result = await service.updateCard("u1", "c1", {
+        cardholderName: "John Updated",
+        expiryYear: "2029",
+        isDefault: true,
+      });
+
+      expect(result).toEqual({
+        id: "c1",
+        type: "VISA",
+        cardholderName: "John Updated",
+        last4: "1234",
+        expiryMonth: "12",
+        expiryYear: "2029",
+        isDefault: true,
+        createdAt: new Date("2026-01-01"),
+        updatedAt: new Date("2026-02-01"),
+      });
+      expect(findKeysDeep(result, ["authorizationCode", "bin"])).toEqual([]);
     });
   });
 });
