@@ -90,12 +90,10 @@ describe("WalletService", () => {
         .mockResolvedValueOnce(wallet)
         .mockResolvedValue({ ...wallet, balance: 150 });
       prisma.transaction.findUnique.mockResolvedValue(transaction);
-      jest
-        .spyOn(globalThis, "fetch")
-        .mockResolvedValue({
-          ok: true,
-          json: async () => ({ status: true, data: { status: "success" } }),
-        } as any);
+      jest.spyOn(globalThis, "fetch").mockResolvedValue({
+        ok: true,
+        json: async () => ({ status: true, data: { status: "success" } }),
+      } as any);
       prisma.$transaction.mockImplementation((arg: any, opts?: any) =>
         typeof arg === "function" ? arg(prisma) : Promise.all(arg)
       );
@@ -243,6 +241,112 @@ describe("WalletService", () => {
       prisma.wallet.findUnique.mockResolvedValue(wallet);
       const result = await service.getPinStatus("u1");
       expect(result).toEqual({ hasPin: true, isLocked: false, failuresRemaining: 3 });
+    });
+  });
+
+  describe("cards", () => {
+    // A Paystack-tokenized row. authorizationCode can charge the card again via
+    // /transaction/charge_authorization, so no card method may return it.
+    const createdAt = new Date("2026-01-01");
+    const updatedAt = new Date("2026-02-01");
+    const cardRow = {
+      id: "c1",
+      walletId: "w1",
+      type: "VISA",
+      cardholderName: "Ama",
+      last4: "4081",
+      expiryMonth: "12",
+      expiryYear: "2030",
+      isDefault: true,
+      authorizationCode: "AUTH_secret",
+      bin: "408408",
+      bank: "TEST BANK",
+      createdAt,
+      updatedAt,
+    };
+    const publicCard = {
+      id: "c1",
+      type: "VISA",
+      cardholderName: "Ama",
+      last4: "4081",
+      expiryMonth: "12",
+      expiryYear: "2030",
+      isDefault: true,
+      bank: "TEST BANK",
+      createdAt,
+      updatedAt,
+    };
+
+    beforeEach(() => {
+      prisma.wallet.findUnique.mockResolvedValue({
+        id: "w1",
+        userId: "u1",
+        user: { id: "u1", email: "ama@example.com" },
+      });
+    });
+
+    it("getCards should return only client-facing fields", async () => {
+      prisma.card.findMany.mockResolvedValue([cardRow]);
+      expect(await service.getCards("u1")).toStrictEqual([publicCard]);
+    });
+
+    it("addCard should return only client-facing fields", async () => {
+      prisma.card.count.mockResolvedValue(0);
+      prisma.card.create.mockResolvedValue(cardRow);
+      const result = await service.addCard("u1", {
+        type: "VISA",
+        cardholderName: "Ama",
+        last4: "4081",
+        expiryMonth: "12",
+        expiryYear: "2030",
+      });
+      expect(result).toStrictEqual(publicCard);
+    });
+
+    it("updateCard should return only client-facing fields", async () => {
+      prisma.card.findUnique.mockResolvedValue(cardRow);
+      prisma.card.update.mockResolvedValue({ ...cardRow, cardholderName: "Kofi" });
+      const result = await service.updateCard("u1", "c1", { cardholderName: "Kofi" });
+      expect(result).toStrictEqual({ ...publicCard, cardholderName: "Kofi" });
+    });
+
+    it("verifyAndSaveCard should store the authorization code but not return it", async () => {
+      const originalKey = process.env.PAYSTACK_SECRET_KEY;
+      process.env.PAYSTACK_SECRET_KEY = "sk_test_unit";
+      try {
+        prisma.transaction.findUnique.mockResolvedValue(null);
+        jest.spyOn(globalThis, "fetch").mockResolvedValue({
+          json: async () => ({
+            status: true,
+            data: {
+              status: "success",
+              amount: 100,
+              customer: { email: "ama@example.com" },
+              metadata: { purpose: "card_verification" },
+              authorization: {
+                authorization_code: "AUTH_secret",
+                card_type: "visa",
+                last4: "4081",
+                exp_month: "12",
+                exp_year: "2030",
+                bin: "408408",
+                bank: "TEST BANK",
+              },
+            },
+          }),
+        } as any);
+        prisma.$transaction.mockImplementation((cb: any) => cb(prisma));
+        prisma.card.create.mockResolvedValue(cardRow);
+
+        const result = await service.verifyAndSaveCard("u1", "ref1", "Ama", true);
+
+        expect(result).toStrictEqual(publicCard);
+        expect(prisma.card.create).toHaveBeenCalledWith({
+          data: expect.objectContaining({ authorizationCode: "AUTH_secret", bin: "408408" }),
+        });
+      } finally {
+        process.env.PAYSTACK_SECRET_KEY = originalKey;
+      }
     });
   });
 });

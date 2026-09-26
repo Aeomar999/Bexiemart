@@ -10,7 +10,43 @@ import { ConfigService } from "@nestjs/config";
 import { PrismaService } from "../../prisma/prisma.service";
 import * as bcrypt from "bcryptjs";
 import * as argon2 from "argon2";
+import type { Card } from "@prisma/client";
 import { CreateCardDto, UpdateCardDto } from "./dto/card.dto";
+
+export type PublicCard = Pick<
+  Card,
+  | "id"
+  | "type"
+  | "cardholderName"
+  | "last4"
+  | "expiryMonth"
+  | "expiryYear"
+  | "isDefault"
+  | "bank"
+  | "createdAt"
+  | "updatedAt"
+>;
+
+/**
+ * Client-facing card. An explicit allowlist rather than an omit-list: the row
+ * also holds the Paystack authorizationCode, a reusable token that can charge
+ * the card via /transaction/charge_authorization, so it must never leave the
+ * server. The BIN is dropped too since no client reads it.
+ */
+export function toPublicCard(card: Card): PublicCard {
+  return {
+    id: card.id,
+    type: card.type,
+    cardholderName: card.cardholderName,
+    last4: card.last4,
+    expiryMonth: card.expiryMonth,
+    expiryYear: card.expiryYear,
+    isDefault: card.isDefault,
+    bank: card.bank,
+    createdAt: card.createdAt,
+    updatedAt: card.updatedAt,
+  };
+}
 
 @Injectable()
 export class WalletService {
@@ -428,16 +464,17 @@ export class WalletService {
           bank: auth.bank,
         },
       });
-      return newCard;
+      return toPublicCard(newCard);
     });
   }
 
-  async getCards(userId: string) {
+  async getCards(userId: string): Promise<PublicCard[]> {
     const wallet = await this.getWallet(userId);
-    return this.prisma.card.findMany({
+    const cards = await this.prisma.card.findMany({
       where: { walletId: wallet.id },
       orderBy: { createdAt: "desc" },
     });
+    return cards.map(toPublicCard);
   }
 
   async addCard(userId: string, data: CreateCardDto) {
@@ -453,7 +490,7 @@ export class WalletService {
       });
     }
 
-    return this.prisma.card.create({
+    const card = await this.prisma.card.create({
       data: {
         walletId: wallet.id,
         type: data.type,
@@ -464,6 +501,7 @@ export class WalletService {
         isDefault,
       },
     });
+    return toPublicCard(card);
   }
 
   async updateCard(userId: string, cardId: string, data: UpdateCardDto) {
@@ -481,10 +519,11 @@ export class WalletService {
       });
     }
 
-    return this.prisma.card.update({
+    const updated = await this.prisma.card.update({
       where: { id: cardId },
       data,
     });
+    return toPublicCard(updated);
   }
 
   async deleteCard(userId: string, cardId: string) {
