@@ -64,6 +64,7 @@ describe("Wallet (e2e)", () => {
   describe("GET /api/v1/wallet", () => {
     it("should get wallet balance", async () => {
       prismaMock.wallet.findUnique.mockResolvedValue(mockWallet);
+      prismaMock.escrow.aggregate.mockResolvedValue({ _sum: { amount: 180 } });
 
       const res = await createAuthenticatedRequest(app, prismaMock).get("/api/v1/wallet");
 
@@ -71,6 +72,7 @@ describe("Wallet (e2e)", () => {
       expect(res.body.id).toBe("w1");
       expect(res.body.balance).toBe(1000);
       expect(res.body.currency).toBe("GHS");
+      expect(res.body.heldInEscrow).toBe(180);
     });
 
     // Worst-case row: a real PIN hash plus a `password` on the joined user. The
@@ -97,6 +99,7 @@ describe("Wallet (e2e)", () => {
           "currency",
           "status",
           "bexieCoins",
+          "heldInEscrow",
           "createdAt",
           "updatedAt",
           "user",

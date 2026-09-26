@@ -89,16 +89,27 @@ export class WalletService {
    */
   async getPublicWallet(userId: string) {
     const wallet = await this.getWallet(userId);
+    const heldInEscrow = await this.getHeldInEscrow(wallet.id);
     return {
       id: wallet.id,
       balance: wallet.balance,
       currency: wallet.currency,
       status: wallet.status,
       bexieCoins: wallet.bexieCoins,
+      heldInEscrow,
       createdAt: wallet.createdAt,
       updatedAt: wallet.updatedAt,
       user: { name: wallet.user.name },
     };
+  }
+
+  /** Money this wallet has paid into escrow for orders not yet delivered. HELD only. */
+  async getHeldInEscrow(walletId: string): Promise<number> {
+    const held = await this.prisma.escrow.aggregate({
+      where: { buyerWalletId: walletId, status: "HELD" },
+      _sum: { amount: true },
+    });
+    return Number(held._sum.amount ?? 0);
   }
 
   async getTransactions(userId: string, page: number = 1, limit: number = 20) {

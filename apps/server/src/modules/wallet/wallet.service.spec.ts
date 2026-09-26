@@ -56,7 +56,7 @@ describe("WalletService", () => {
   });
 
   describe("getPublicWallet", () => {
-    it("should return only client-facing fields", async () => {
+    it("should return only client-facing fields plus money held in escrow", async () => {
       const createdAt = new Date("2026-01-01");
       const updatedAt = new Date("2026-02-01");
       prisma.wallet.findUnique.mockResolvedValue({
@@ -73,6 +73,7 @@ describe("WalletService", () => {
         updatedAt,
         user: { id: "u1", name: "Ama", email: "ama@example.com", password: "hash" },
       });
+      prisma.escrow.aggregate.mockResolvedValue({ _sum: { amount: 180 } });
 
       const result = await service.getPublicWallet("u1");
 
@@ -82,10 +83,27 @@ describe("WalletService", () => {
         currency: "GHS",
         status: "ACTIVE",
         bexieCoins: 25,
+        heldInEscrow: 180,
         createdAt,
         updatedAt,
         user: { name: "Ama" },
       });
+    });
+  });
+
+  describe("getHeldInEscrow", () => {
+    it("sums only HELD escrow the wallet paid in", async () => {
+      prisma.escrow.aggregate.mockResolvedValue({ _sum: { amount: 180 } });
+      await expect(service.getHeldInEscrow("w1")).resolves.toBe(180);
+      expect(prisma.escrow.aggregate).toHaveBeenCalledWith({
+        where: { buyerWalletId: "w1", status: "HELD" },
+        _sum: { amount: true },
+      });
+    });
+
+    it("returns 0 when nothing is held", async () => {
+      prisma.escrow.aggregate.mockResolvedValue({ _sum: { amount: null } });
+      await expect(service.getHeldInEscrow("w1")).resolves.toBe(0);
     });
   });
 

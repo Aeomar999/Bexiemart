@@ -85,6 +85,7 @@ export const mockPrisma = (): any => ({
     update: jest.fn(),
     upsert: jest.fn(),
     count: jest.fn(),
+    aggregate: jest.fn(),
   },
   user: {
     findUnique: jest.fn(),
