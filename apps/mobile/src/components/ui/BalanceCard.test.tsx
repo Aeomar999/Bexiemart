@@ -167,4 +167,12 @@ describe("BalanceCard", () => {
     fireEvent.press(getByLabelText("View earnings"));
     expect(onPress).toHaveBeenCalledTimes(1);
   });
+
+  it("renders an empty track when available is NaN and nothing is held", () => {
+    const { getByTestId, queryByTestId } = render(
+      <BalanceCard label="x" available={Number.NaN} held={{ ...held, amount: 0 }} />
+    );
+    expect(getByTestId("balance-card-bar-empty")).toBeTruthy();
+    expect(queryByTestId("balance-card-bar-available")).toBeNull();
+  });
 });

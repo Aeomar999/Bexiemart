@@ -12,7 +12,7 @@ export interface BalanceCardProps {
 // Read-only: admins always see figures, so no hide toggle and no actions.
 export function BalanceCard({ label, available, held, footnote }: BalanceCardProps) {
   const heldAmount = held?.amount ?? 0;
-  const empty = available + heldAmount <= 0;
+  const empty = !(available > 0) && !(heldAmount > 0);
 
   return (
     <section

@@ -36,4 +36,10 @@ describe("BalanceCard (admin)", () => {
     render(<BalanceCard label="Wallet" available={1} footnote="Lifetime earnings: GHS 9.00" />);
     expect(screen.getByText("Lifetime earnings: GHS 9.00")).toBeInTheDocument();
   });
+
+  it("renders an empty track when available is NaN and nothing is held", () => {
+    render(<BalanceCard label="Wallet" available={Number.NaN} held={{ label: "Held", amount: 0 }} />);
+    expect(screen.getByTestId("bar-empty")).toBeInTheDocument();
+    expect(screen.queryByTestId("bar-available")).toBeNull();
+  });
 });

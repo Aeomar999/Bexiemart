@@ -46,7 +46,7 @@ function SplitBar({
   hidden: boolean;
   testID: string;
 }) {
-  if (hidden || available + held <= 0) {
+  if (hidden || (!(available > 0) && !(held > 0))) {
     return (
       <View
         testID={`${testID}-bar-empty`}
