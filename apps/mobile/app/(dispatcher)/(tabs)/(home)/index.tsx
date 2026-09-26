@@ -19,6 +19,7 @@ import {
 } from "@/lib/hooks/use-dispatcher";
 import { useBalanceVisibility } from "@/lib/stores/balance-visibility-store";
 import { displayMoney } from "@/lib/balance";
+import { formatMoney } from "@/lib/money";
 import { dispatcherApi } from "@/lib/api/dispatcher";
 import { deliverySocketService } from "@/lib/delivery-socket";
 
@@ -276,7 +277,7 @@ export default function DispatcherMap() {
                         : "New ride request"}
                   </Text>
                   <Text className="font-black text-foreground text-[28px] font-heading">
-                    GH₵ {Number(displayRide.driverPayout).toFixed(2)}
+                    {formatMoney(Number(displayRide.driverPayout))}
                   </Text>
                 </View>
                 <View className="items-end pb-1.5">
@@ -460,7 +461,7 @@ export default function DispatcherMap() {
                         Toast.show({
                           type: "success",
                           text1: "Delivery Complete!",
-                          text2: `GH₵ ${Number(displayRide.driverPayout).toFixed(2)} added to your earnings.`,
+                          text2: `${formatMoney(Number(displayRide.driverPayout))} added to your pending earnings.`,
                         }),
                     }
                   );
