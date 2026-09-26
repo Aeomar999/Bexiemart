@@ -92,11 +92,15 @@ describe("WalletService", () => {
   });
 
   describe("getHeldInEscrow", () => {
-    it("sums only HELD escrow the wallet paid in", async () => {
+    it("sums only HELD escrow for the wallet's open orders", async () => {
       prisma.escrow.aggregate.mockResolvedValue({ _sum: { amount: 180 } });
       await expect(service.getHeldInEscrow("w1")).resolves.toBe(180);
       expect(prisma.escrow.aggregate).toHaveBeenCalledWith({
-        where: { buyerWalletId: "w1", status: "HELD" },
+        where: {
+          buyerWalletId: "w1",
+          status: "HELD",
+          order: { status: { notIn: ["delivered", "cancelled", "refunded"] } },
+        },
         _sum: { amount: true },
       });
     });

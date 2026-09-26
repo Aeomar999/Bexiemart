@@ -135,7 +135,11 @@ describe("AdminService", () => {
       expect(result.wallet.heldInEscrow).toBe(180);
       expect(result.vendorPendingClearance).toBe(2150);
       expect(prisma.escrow.aggregate).toHaveBeenCalledWith({
-        where: { buyerWalletId: "w1", status: "HELD" },
+        where: {
+          buyerWalletId: "w1",
+          status: "HELD",
+          order: { status: { notIn: ["delivered", "cancelled", "refunded"] } },
+        },
         _sum: { amount: true },
       });
       expect(prisma.escrow.aggregate).toHaveBeenCalledWith({

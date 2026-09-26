@@ -104,7 +104,7 @@ export default function UserDetailPage() {
             held={{
               label: "Held in escrow",
               amount: Number(user.wallet?.heldInEscrow ?? 0),
-              info: "Paid into escrow for orders that haven't been delivered yet.",
+              info: "Paid into escrow for orders that are still open (not yet delivered, cancelled or refunded).",
             }}
             footnote={
               user.vendorProfile

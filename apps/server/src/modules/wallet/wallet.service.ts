@@ -103,10 +103,14 @@ export class WalletService {
     };
   }
 
-  /** Money this wallet has paid into escrow for orders not yet delivered. HELD only. */
+  /** Money this wallet paid into escrow for orders that are still open (not delivered, cancelled or refunded). HELD only. */
   async getHeldInEscrow(walletId: string): Promise<number> {
     const held = await this.prisma.escrow.aggregate({
-      where: { buyerWalletId: walletId, status: "HELD" },
+      where: {
+        buyerWalletId: walletId,
+        status: "HELD",
+        order: { status: { notIn: ["delivered", "cancelled", "refunded"] } },
+      },
       _sum: { amount: true },
     });
     return Number(held._sum.amount ?? 0);

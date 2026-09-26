@@ -75,7 +75,11 @@ export class AdminService {
     const [buyerHeld, vendorHeld] = await Promise.all([
       user.wallet
         ? this.prisma.escrow.aggregate({
-            where: { buyerWalletId: user.wallet.id, status: "HELD" },
+            where: {
+              buyerWalletId: user.wallet.id,
+              status: "HELD",
+              order: { status: { notIn: ["delivered", "cancelled", "refunded"] } },
+            },
             _sum: { amount: true },
           })
         : null,

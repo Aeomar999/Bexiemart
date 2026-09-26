@@ -9,7 +9,8 @@ export function displayMoney(amount: number, hidden: boolean): string {
 // One-line explanations shown by the ⓘ toggle on each role's held amount.
 export const HELD_INFO = {
   customer:
-    "Paid for orders that haven't been delivered yet. Released to the seller on delivery, or refunded here if cancelled.",
-  vendor: "From orders still in escrow. Moves to Available when the buyer confirms delivery.",
+    "Money you've paid for orders that haven't been delivered yet. It's held in escrow, separate from your wallet balance.",
+  vendor:
+    "Payments for your orders that are held in escrow. They move to Available when the escrow is released.",
   rider: "From deliveries awaiting customer confirmation.",
 } as const;

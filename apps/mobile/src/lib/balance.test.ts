@@ -15,4 +15,13 @@ describe("balance helpers", () => {
     expect(Object.keys(HELD_INFO).sort()).toEqual(["customer", "rider", "vendor"]);
     expect(HELD_INFO.rider).toBe("From deliveries awaiting customer confirmation.");
   });
+
+  it("explains held funds accurately for customer and vendor", () => {
+    expect(HELD_INFO.customer).toBe(
+      "Money you've paid for orders that haven't been delivered yet. It's held in escrow, separate from your wallet balance."
+    );
+    expect(HELD_INFO.vendor).toBe(
+      "Payments for your orders that are held in escrow. They move to Available when the escrow is released."
+    );
+  });
 });
