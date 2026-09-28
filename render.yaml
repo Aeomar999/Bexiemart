@@ -140,7 +140,7 @@ services:
   - type: web
     name: bexiemart-admin
     runtime: docker
-    dockerfilePath: apps/admin/Dockerfile
+    dockerfilePath: Dockerfile
     dockerContext: apps/admin
     buildCommand: ""
     startCommand: "node server.js"
