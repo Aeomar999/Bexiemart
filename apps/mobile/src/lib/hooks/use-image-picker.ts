@@ -9,6 +9,13 @@ type PickerOptions = {
   allowsMultipleSelection?: boolean;
 };
 
+const toFile = (asset: ImagePicker.ImagePickerAsset) => ({
+  uri: asset.uri,
+  name: asset.fileName ?? `photo_${Date.now()}.jpg`,
+  type: asset.mimeType ?? "image/jpeg",
+  file: asset.file, // web only: the browser File behind the blob URI
+});
+
 export function useImagePicker(options: PickerOptions = {}) {
   const [image, setImage] = useState<string | null>(null);
   const [images, setImages] = useState<string[]>([]);
@@ -41,20 +48,12 @@ export function useImagePicker(options: PickerOptions = {}) {
 
       if (!result.canceled && result.assets.length > 0) {
         const asset = result.assets[0];
-        const file = {
-          uri: asset.uri,
-          name: asset.fileName ?? `photo_${Date.now()}.jpg`,
-          type: asset.mimeType ?? "image/jpeg",
-        };
+        const file = toFile(asset);
 
         if (options.allowsMultipleSelection && result.assets.length > 1) {
           const uris = result.assets.map((a) => a.uri);
           setImages(uris);
-          return result.assets.map((a) => ({
-            uri: a.uri,
-            name: a.fileName ?? `photo_${Date.now()}.jpg`,
-            type: a.mimeType ?? "image/jpeg",
-          }));
+          return result.assets.map(toFile);
         }
 
         setImage(asset.uri);
@@ -78,6 +77,7 @@ export function useImagePicker(options: PickerOptions = {}) {
     setLoading(true);
     try {
       const result = await ImagePicker.launchCameraAsync({
+        mediaTypes: ["images"],
         allowsEditing: options.allowsEditing ?? true,
         aspect: options.aspect ?? [4, 3],
         quality: options.quality ?? 0.8,
@@ -85,11 +85,7 @@ export function useImagePicker(options: PickerOptions = {}) {
 
       if (!result.canceled && result.assets.length > 0) {
         const asset = result.assets[0];
-        const file = {
-          uri: asset.uri,
-          name: asset.fileName ?? `photo_${Date.now()}.jpg`,
-          type: asset.mimeType ?? "image/jpeg",
-        };
+        const file = toFile(asset);
         setImage(asset.uri);
         return file;
       }

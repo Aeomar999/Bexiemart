@@ -1,12 +1,39 @@
 services:
+  # ──────────────────────────────────────────────────────────────────────────
+  # 1) PostgreSQL Database
+  # ──────────────────────────────────────────────────────────────────────────
+  - type: pserv
+    name: bexiemart-db
+    databaseName: bexiemart
+    user: bexiemart
+    plan: starter            # free tier doesn't exist for PG on Render; starter = $7/mo
+    region: oregon           # choose closest to your users (frankfurt, singapore, etc.)
+    ipAllowList: []          # empty = allow all (Render internal services only)
+
+  # ──────────────────────────────────────────────────────────────────────────
+  # 2) Redis (for session caching, rate limiting, cache)
+  # ──────────────────────────────────────────────────────────────────────────
+  - type: redis
+    name: bexiemart-redis
+    plan: starter            # $5/mo for 25MB; free tier doesn't exist
+    region: oregon
+    maxmemoryPolicy: allkeys-lru
+
+  # ──────────────────────────────────────────────────────────────────────────
+  # 3) NestJS API Server (Docker)
+  # ──────────────────────────────────────────────────────────────────────────
   - type: web
     name: bexiemart-api
     runtime: docker
     dockerfilePath: apps/server/Dockerfile
     dockerContext: .
     buildCommand: ""
-    startCommand: "sh -c 'npx prisma migrate deploy && node dist/main.js'"
+    startCommand: >
+      sh -c 'npx prisma migrate deploy &&
+             (node dist/scripts/seed-admin.js || echo "seed-admin skipped") &&
+             exec node dist/main.js'
     envVars:
+      # Core / Runtime
       - key: NODE_ENV
         value: production
       - key: PORT
@@ -15,50 +42,106 @@ services:
         fromDatabase:
           name: bexiemart-db
           property: connectionString
+      - key: REDIS_URL
+        fromService:
+          name: bexiemart-redis
+          type: redis
+          property: connectionString
+      - key: REDIS_PASSWORD
+        fromService:
+          name: bexiemart-redis
+          type: redis
+          property: password
+
+      # Auth (Better-Auth) — ALL required
+      - key: BETTER_AUTH_SECRET
+        sync: false
+      - key: BETTER_AUTH_URL
+        sync: false
+      - key: BETTER_AUTH_API_KEY
+        sync: false
+      - key: BETTER_AUTH_API_URL
+        sync: false
+      - key: BETTER_AUTH_KV_URL
+        sync: false
+      - key: JWT_SECRET
+        sync: false
+      - key: CORS_ORIGIN
+        sync: false
+      - key: ENFORCE_HTTPS
+        value: "true"
+
+      # Email (Resend — HTTP-based, works on Render)
+      - key: RESEND_API_KEY
+        sync: false
+      - key: EMAIL_FROM
+        sync: false
+
+      # Google OAuth
+      - key: GOOGLE_CLIENT_ID
+        sync: false
+      - key: GOOGLE_CLIENT_SECRET
+        sync: false
+
+      # Paystack
       - key: PAYSTACK_SECRET_KEY
         sync: false
       - key: PAYSTACK_PUBLIC_KEY
         sync: false
       - key: PAYSTACK_WEBHOOK_SECRET
         sync: false
-      - key: BETTER_AUTH_SECRET
-        sync: false
-      - key: BETTER_AUTH_URL
-        sync: false
-      - key: JWT_SECRET
-        sync: false
-      - key: SENTRY_DSN
-        sync: false
+
+      # Cloudinary
       - key: CLOUDINARY_CLOUD_NAME
         sync: false
       - key: CLOUDINARY_API_KEY
         sync: false
       - key: CLOUDINARY_API_SECRET
         sync: false
-      - key: EXPO_PUBLIC_PAYSTACK_PUBLIC_KEY
+
+      # Maps / Geocoding (Google Maps Platform)
+      - key: GOOGLE_MAPS_API_KEY
         sync: false
-      - key: EXPO_PUBLIC_POSTHOG_API_KEY
+
+      # SMS (Arkesel)
+      - key: ARKESEL_API_KEY
         sync: false
-      - key: EXPO_PUBLIC_POSTHOG_HOST
+      - key: ARKESEL_SENDER_ID
+        value: "BexieMart"
+
+      # Observability
+      - key: SENTRY_DSN
         sync: false
-      - key: EXPO_PUBLIC_CLOUDINARY_CLOUD_NAME
+      - key: POSTHOG_API_KEY
         sync: false
-      - key: EXPO_PUBLIC_BETTER_AUTH_KV_URL
-        sync: false
+      - key: POSTHOG_HOST
+        value: "https://us.i.posthog.com"
+
+      # Platform config (optional; falls back to defaults in Prisma)
+      - key: PLATFORM_CONFIG_DEFAULTS
+        value: '{"minTopup":5,"maxTopup":5000,"minWithdrawal":10,"dailyWithdrawalLimit":5000,"withdrawalFeeFlat":2}'
+
+      # Admin seeding (run once, then can remove)
       - key: ADMIN_EMAIL
         sync: false
       - key: ADMIN_PASSWORD
         sync: false
-      - key: PLATFORM_CONFIG_DEFAULTS
-        value: '{"minTopup":5,"maxTopup":5000,"minWithdrawal":10,"dailyWithdrawalLimit":5000,"withdrawalFeeFlat":2}'
+
     healthCheckPath: /api/v1/health
     autoDeploy: true
+    # Scale up later when needed:
+    # scaling:
+    #   minInstances: 1
+    #   maxInstances: 3
 
+  # ──────────────────────────────────────────────────────────────────────────
+  # 4) Next.js Admin Dashboard (Docker, standalone output)
+  # ──────────────────────────────────────────────────────────────────────────
   - type: web
     name: bexiemart-admin
     runtime: docker
     dockerfilePath: apps/admin/Dockerfile
-    dockerContext: .
+    dockerContext: apps/admin
     buildCommand: ""
     startCommand: "node server.js"
     envVars:
@@ -74,11 +157,31 @@ services:
         sync: false
       - key: SENTRY_DSN
         sync: false
+      - key: POSTHOG_API_KEY
+        sync: false
     healthCheckPath: /health
     autoDeploy: true
 
-databases:
-  - name: bexiemart-db
-    databaseName: bexiemart
-    user: bexiemart
-    plan: free
+  # ──────────────────────────────────────────────────────────────────────────
+  # 5) Nginx Reverse Proxy (terminates TLS, rate limits, routes /api & /socket.io)
+  # ──────────────────────────────────────────────────────────────────────────
+  - type: web
+    name: bexiemart-nginx
+    runtime: docker
+    dockerfilePath: nginx/Dockerfile
+    dockerContext: .
+    buildCommand: ""
+    startCommand: "nginx -g 'daemon off;'"
+    envVars:
+      - key: API_HOST
+        value: "bexiemart-api"
+      - key: ADMIN_HOST
+        value: "bexiemart-admin"
+      - key: API_PORT
+        value: "3000"
+      - key: ADMIN_PORT
+        value: "3001"
+    # No healthCheckPath — nginx doesn't serve one by default; rely on upstream checks
+    autoDeploy: true
+
+databases: []  # defined above as pserv type

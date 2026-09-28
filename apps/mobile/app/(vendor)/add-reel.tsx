@@ -15,20 +15,21 @@ import { Image } from "expo-image";
 import { useRouter } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Icon } from "@/components/ui/Icon";
-import { ListSkeleton } from "@/components/ui/Skeleton";
 import { Button } from "@/components/ui/Button";
 import { useState } from "react";
-import { useProductStore } from "@/lib/stores/product-store";
+import { useVendorProducts } from "@/lib/hooks/use-vendor";
 import { usePopupStore } from "@/lib/stores/popup-store";
 import { useCreateReel } from "@/lib/hooks/use-vendor-reels";
 import * as ImagePicker from "expo-image-picker";
-import { uploadVideoToCloudinary } from "@/lib/upload/upload-video";
+import { uploadVideoToCloudinary, MAX_REEL_DURATION_MS } from "@/lib/upload/upload-video";
+import { uploadErrorMessage } from "@/lib/api/upload";
 
 export default function AddReelScreen() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
   const createReel = useCreateReel();
-  const products = useProductStore((s) => s.products);
+  const { data: vendorProducts } = useVendorProducts();
+  const products: any[] = Array.isArray(vendorProducts) ? vendorProducts : [];
   const showPopup = usePopupStore((s) => s.showPopup);
 
   const [videoUrl, setVideoUrl] = useState<string | null>(null);
@@ -39,6 +40,7 @@ export default function AddReelScreen() {
   const [isUploadModalVisible, setUploadModalVisible] = useState(false);
   const [isProductModalVisible, setProductModalVisible] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState(0);
   const [isPublishing, setIsPublishing] = useState(false);
 
   const handleUploadOption = async (source: "camera" | "library") => {
@@ -46,14 +48,15 @@ export default function AddReelScreen() {
       const picker =
         source === "camera" ? ImagePicker.launchCameraAsync : ImagePicker.launchImageLibraryAsync;
       const result = await picker({
-        mediaTypes: ImagePicker.MediaTypeOptions.Videos,
-        videoMaxDuration: 60,
-        quality: 1,
+        mediaTypes: ["videos"],
+        videoMaxDuration: MAX_REEL_DURATION_MS / 1000,
       });
       if (result.canceled) return;
+      setUploadProgress(0);
       setIsUploading(true);
       const { videoUrl: url, thumbnailUrl: thumb } = await uploadVideoToCloudinary(
-        result.assets[0].uri
+        result.assets[0],
+        { onProgress: setUploadProgress }
       );
       setVideoUrl(url);
       setThumbnailUrl(thumb);
@@ -62,9 +65,12 @@ export default function AddReelScreen() {
       showPopup({
         type: "error",
         title: "Upload failed",
-        message: getUserFriendlyErrorMessage(
+        message: uploadErrorMessage(
           e,
-          "We couldn't upload your video. Please ensure it's a supported format and try again."
+          getUserFriendlyErrorMessage(
+            e,
+            "We couldn't upload your video. Please ensure it's a supported format and try again."
+          )
         ),
       });
     } finally {
@@ -229,7 +235,7 @@ export default function AddReelScreen() {
                   {linkedProduct.name}
                 </Text>
                 <Text className="text-body-md text-primary font-bold">
-                  GHS {linkedProduct.price.toFixed(2)}
+                  GHS {Number(linkedProduct.price).toFixed(2)}
                 </Text>
               </View>
               <View className="w-8 h-8 bg-primary-subtle rounded-full items-center justify-center">
@@ -290,12 +296,23 @@ export default function AddReelScreen() {
 
             {isUploading ? (
               <View className="py-10 items-center justify-center">
-                <ListSkeleton />
-                <Text className="mt-6 text-heading-md font-heading font-bold text-foreground tracking-tight">
-                  Processing video...
+                <Text className="text-heading-md font-heading font-bold text-foreground tracking-tight">
+                  {uploadProgress < 1
+                    ? `Uploading video… ${Math.round(uploadProgress * 100)}%`
+                    : "Finishing up…"}
                 </Text>
-                <Text className="mt-2 text-body-md text-muted-foreground text-center px-10">
-                  Optimizing for the best playback experience on mobile devices.
+                <View
+                  className="mt-4 h-2 w-full bg-muted rounded-full overflow-hidden"
+                  accessibilityRole="progressbar"
+                  accessibilityValue={{ min: 0, max: 100, now: Math.round(uploadProgress * 100) }}
+                >
+                  <View
+                    className="h-full bg-primary rounded-full"
+                    style={{ width: `${Math.round(uploadProgress * 100)}%` }}
+                  />
+                </View>
+                <Text className="mt-3 text-body-md text-muted-foreground text-center px-10">
+                  Keep the app open until the upload finishes.
                 </Text>
               </View>
             ) : (
@@ -390,6 +407,13 @@ export default function AddReelScreen() {
             </View>
 
             <ScrollView className="flex-1 p-5" showsVerticalScrollIndicator={false}>
+              {products.length === 0 && (
+                <Text className="text-body-md text-muted-foreground text-center py-10 px-6">
+                  {
+                    "You don't have any products yet. Add a product first, then tag it in your reel."
+                  }
+                </Text>
+              )}
               {products.map((product) => (
                 <Pressable
                   key={product.id}
@@ -410,10 +434,10 @@ export default function AddReelScreen() {
                       {product.name}
                     </Text>
                     <Text className="text-sm text-muted-foreground font-body mb-1">
-                      {product.category}
+                      {product.category?.name ?? product.category}
                     </Text>
                     <Text className="text-body-md text-primary font-bold">
-                      GHS {product.price.toFixed(2)}
+                      GHS {Number(product.price).toFixed(2)}
                     </Text>
                   </View>
                   <View

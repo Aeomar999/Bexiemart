@@ -11,6 +11,7 @@ import { Image } from "expo-image";
 import { useAuthStore } from "@/lib/stores/auth-store";
 import { useVendorProfile, useUpdateShop } from "@/lib/hooks/use-vendor";
 import { useUpload } from "@/lib/hooks/use-upload";
+import { uploadErrorMessage } from "@/lib/api/upload";
 import { useImagePicker } from "@/lib/hooks/use-image-picker";
 import { useFormValidation } from "@/lib/hooks/use-form-validation";
 import { shopSchema } from "@/lib/validation/schemas";
@@ -57,26 +58,47 @@ export default function VendorProfileScreen() {
   const logoPicker = useImagePicker({ allowsEditing: true, aspect: [1, 1], quality: 0.8 });
   const bannerPicker = useImagePicker({ allowsEditing: true, aspect: [16, 9], quality: 0.7 });
 
-  const handlePhotoOption = async (option: string) => {
-    const picker = photoTarget === "banner" ? bannerPicker : logoPicker;
+  const handlePhotoOption = async (option: "camera" | "library") => {
+    const target = photoTarget;
+    const picker = target === "banner" ? bannerPicker : logoPicker;
     const result = option === "camera" ? await picker.takePhoto() : await picker.pickImage();
-    if (!result) {
+    if (!result || !target) {
       setPhotoModalVisible(false);
       return;
     }
     const file = Array.isArray(result) ? result[0] : result;
     setIsUploading(true);
     try {
-      const res = await upload.mutateAsync(file);
-      if (photoTarget === "banner") setBannerUrl(res.url);
-      else setLogoUrl(res.url);
+      const { url } = await upload.mutateAsync(file);
+      // Save right away so the new photo sticks even if the vendor leaves
+      // without tapping "Save Changes".
+      await updateShop.mutateAsync({ [target]: url });
+      if (target === "banner") setBannerUrl(url);
+      else setLogoUrl(url);
       setPhotoModalVisible(false);
       Alert.alert(
         "Success",
-        `${photoTarget === "banner" ? "Cover photo" : "Logo"} updated successfully!`
+        `${target === "banner" ? "Cover photo" : "Logo"} updated successfully!`
       );
+    } catch (e) {
+      Alert.alert(
+        "Upload Failed",
+        uploadErrorMessage(e, "Could not update your photo. Please try again.")
+      );
+    } finally {
+      setIsUploading(false);
+      setPhotoTarget(null);
+    }
+  };
+
+  const handleRemoveLogo = async () => {
+    setIsUploading(true);
+    try {
+      await updateShop.mutateAsync({ logo: "" });
+      setLogoUrl("");
+      setPhotoModalVisible(false);
     } catch {
-      Alert.alert("Upload Failed", "Could not upload image.");
+      Alert.alert("Error", "Could not remove your logo. Please try again.");
     } finally {
       setIsUploading(false);
       setPhotoTarget(null);
@@ -293,14 +315,11 @@ export default function VendorProfileScreen() {
                   </View>
                 </Pressable>
 
-                {photoTarget === "logo" && (
+                {photoTarget === "logo" && !!logoUrl && (
                   <Pressable
                     style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
                     className="flex-row items-center p-4 bg-rose-50 border border-rose-100 rounded-2xl mt-2"
-                    onPress={() => {
-                      setPhotoModalVisible(false);
-                      setPhotoTarget(null);
-                    }}
+                    onPress={handleRemoveLogo}
                   >
                     <View className="w-12 h-12 bg-card rounded-full items-center justify-center border border-rose-100">
                       <Icon name="trash-2" size={20} color={tokens.error} />

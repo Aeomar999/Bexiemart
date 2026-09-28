@@ -7,6 +7,7 @@ import { useState } from "react";
 import { useAuthStore } from "@/lib/stores/auth-store";
 import { useAuthEnabled } from "@/lib/feature-flags";
 import { Avatar } from "@/components/ui/Avatar";
+import { UpdateCheckRow } from "@/components/ui/UpdateCheckRow";
 
 const SETTINGS_SECTIONS = [
   {
@@ -17,7 +18,7 @@ const SETTINGS_SECTIONS = [
         icon: "store",
         label: "Store Profile",
         route: "/(vendor)/(settings)/profile",
-        color: tokens.primary,
+        color: "#3b82f6", // blue
       },
       {
         id: "hours",
@@ -25,14 +26,14 @@ const SETTINGS_SECTIONS = [
         label: "Operating Hours",
         value: "08:00 - 21:00",
         route: "/(vendor)/(settings)/hours",
-        color: tokens.primary,
+        color: "#0ea5e9", // sky
       },
       {
         id: "staff",
         icon: "users",
         label: "Staff Management",
         route: "/(vendor)/(settings)/staff",
-        color: tokens.primary,
+        color: "#ec4899", // pink
       },
     ],
   },
@@ -45,7 +46,7 @@ const SETTINGS_SECTIONS = [
         label: "Promotions",
         value: "2 live",
         route: "/(vendor)/(settings)/promotions",
-        color: tokens.primary,
+        color: "#d946ef", // fuchsia
       },
       {
         id: "reviews",
@@ -53,7 +54,7 @@ const SETTINGS_SECTIONS = [
         label: "Customer reviews",
         value: "4.8 • 62",
         route: "/(vendor)/(settings)/reviews",
-        color: tokens.primary,
+        color: "#f59e0b", // amber
       },
     ],
   },
@@ -66,14 +67,14 @@ const SETTINGS_SECTIONS = [
         label: "Payout method",
         value: "MTN •••• 4821",
         route: "/(vendor)/(settings)/payment",
-        color: tokens.primary,
+        color: "#10b981", // green
       },
       {
         id: "taxes",
         icon: "file-text",
         label: "Taxes & documents",
         route: "/(vendor)/(settings)/taxes",
-        color: tokens.primary,
+        color: "#14b8a6", // teal
       },
     ],
   },
@@ -85,15 +86,21 @@ const SETTINGS_SECTIONS = [
         icon: "bell",
         label: "Notifications",
         route: "/(vendor)/(settings)/notification-settings",
-        color: tokens.primary,
+        color: "#8b5cf6", // violet
       },
-      { id: "dark_mode", icon: "moon", label: "Dark Mode", type: "toggle", color: tokens.primary },
+      {
+        id: "dark_mode",
+        icon: "moon",
+        label: "Dark Mode",
+        type: "toggle",
+        color: "#334155", // slate
+      },
       {
         id: "security",
         icon: "shield",
         label: "Security",
         route: "/(vendor)/(settings)/security",
-        color: tokens.primary,
+        color: "#6366f1", // indigo
       },
     ],
   },
@@ -105,14 +112,21 @@ const SETTINGS_SECTIONS = [
         icon: "help-circle",
         label: "Help Center",
         route: "/(vendor)/(settings)/help",
-        color: tokens.primary,
+        color: "#f97316", // orange
       },
       {
         id: "contact",
         icon: "message-circle",
         label: "Contact Us",
         route: "/(vendor)/(settings)/contact",
-        color: tokens.primary,
+        color: "#06b6d4", // cyan
+      },
+      {
+        id: "update",
+        icon: "refresh-cw",
+        label: "Check for Updates",
+        type: "update",
+        color: "#0ea5e9", // sky
       },
     ],
   },
@@ -185,12 +199,15 @@ export default function VendorSettingsScreen() {
         <View className="gap-8 mb-6">
           {SETTINGS_SECTIONS.map((section, idx) => (
             <View key={idx}>
-              <Text className="text-[12px] font-bold tracking-[0.1em] uppercase text-muted-foreground mb-6">
+              <Text className="text-[12px] font-bold tracking-[0.1em] uppercase text-muted-foreground mb-3 px-2">
                 {section.title}
               </Text>
               <View className="bg-card rounded-2xl border border-border overflow-hidden">
                 {section.items.map((item, itemIdx) => {
                   const isLast = itemIdx === section.items.length - 1;
+                  if ((item as any).type === "update") {
+                    return <UpdateCheckRow key={item.id} tint={item.color} last={isLast} />;
+                  }
                   return (
                     <Pressable
                       style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
@@ -204,7 +221,10 @@ export default function VendorSettingsScreen() {
                       }}
                     >
                       <View className="flex-row items-center gap-3">
-                        <View className="w-8 h-8 rounded-xl items-center justify-center bg-[#f0f7fb]">
+                        <View
+                          className="w-8 h-8 rounded-xl items-center justify-center"
+                          style={{ backgroundColor: `${item.color}15` }}
+                        >
                           <Icon name={item.icon} size={16} color={item.color} />
                         </View>
                         <Text className="text-[15px] font-bold text-foreground">{item.label}</Text>

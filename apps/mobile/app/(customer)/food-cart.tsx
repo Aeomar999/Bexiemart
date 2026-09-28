@@ -54,6 +54,7 @@ export default function FoodCartScreen() {
     0
   );
   const itemCount = items.reduce((acc: number, item: any) => acc + item.quantity, 0);
+  const hasUnavailableItems = items.some((item: any) => item.isAvailable === false);
 
   // The restaurant pickup coordinates (null until the vendor has been geocoded).
   const vendorLat = cartData?.vendor?.latitude as number | null | undefined;
@@ -170,12 +171,14 @@ export default function FoodCartScreen() {
         });
         router.replace("/(customer)/food");
       })
-      .catch(() => {
+      .catch((err: any) => {
+        const message = err?.response?.data?.message
+          ? err.response.data.message
+          : "We couldn't place your order right now. Don't worry, you haven't been charged. Please try again.";
         showPopup({
           type: "error",
           title: "Order Failed",
-          message:
-            "We couldn't place your order right now. Don't worry, you haven't been charged. Please try again.",
+          message,
         });
       });
   };
@@ -259,68 +262,93 @@ export default function FoodCartScreen() {
           </Text>
 
           <View className="bg-card rounded-2xl border border-border overflow-hidden">
-            {items.map((item: any, index: number) => (
-              <View
-                key={item.id}
-                className={`p-4 ${index !== items.length - 1 ? "border-b border-border" : ""}`}
-              >
-                <View className="flex-row justify-between mb-3">
-                  <View className="flex-1 pr-4">
-                    <Text className="text-body-lg font-bold text-foreground mb-1">
-                      {item.foodItem?.name ?? item.name}
-                    </Text>
-                    <Text className="text-body-lg font-bold text-primary">
-                      GHS {Number(item.price).toFixed(2)}
-                    </Text>
+            {items.map((item: any, index: number) => {
+              const isUnavailable = item.isAvailable === false;
+              return (
+                <View
+                  key={item.id}
+                  className={`p-4 ${index !== items.length - 1 ? "border-b border-border" : ""} ${isUnavailable ? "opacity-50 bg-muted/30" : ""}`}
+                >
+                  <View className="flex-row justify-between mb-3">
+                    <View className="flex-1 pr-4">
+                      <View className="flex-row items-center gap-2 mb-1">
+                        <Text className="text-body-lg font-bold text-foreground">
+                          {item.foodItem?.name ?? item.name}
+                        </Text>
+                        {isUnavailable && (
+                          <View className="bg-error/10 border border-error text-error text-xs px-2 py-0.5 rounded-full">
+                            Unavailable
+                          </View>
+                        )}
+                      </View>
+                      <Text className="text-body-lg font-bold text-primary">
+                        GHS {Number(item.price).toFixed(2)}
+                      </Text>
+                    </View>
+                    <Pressable
+                      accessibilityRole="button"
+                      accessibilityLabel="Remove item"
+                      hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+                      style={({ pressed }) => [{ opacity: pressed ? 0.5 : 1 }]}
+                      onPress={() => removeItem.mutate(item.id)}
+                      className="p-2"
+                    >
+                      <Icon name="trash-2" size={18} color={tokens.error} />
+                    </Pressable>
                   </View>
-                  <Pressable
-                    accessibilityRole="button"
-                    accessibilityLabel="Remove item"
-                    hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
-                    style={({ pressed }) => [{ opacity: pressed ? 0.5 : 1 }]}
-                    onPress={() => removeItem.mutate(item.id)}
-                    className="p-2"
-                  >
-                    <Icon name="trash-2" size={18} color={tokens.error} />
-                  </Pressable>
-                </View>
 
-                <View className="flex-row items-center justify-between">
-                  <View className="flex-row items-center bg-background rounded-full border border-border">
-                    <Pressable
-                      accessibilityRole="button"
-                      accessibilityLabel="Decrease quantity"
-                      hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
-                      style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
-                      className="w-10 h-10 items-center justify-center"
-                      onPress={() => handleUpdateQty(item.id, item.quantity - 1)}
-                    >
-                      <Icon
-                        name="minus"
-                        size={16}
-                        color={item.quantity <= 1 ? tokens.textDisabled : tokens.textSecondary}
-                      />
-                    </Pressable>
-                    <Text className="text-body-lg font-bold text-foreground w-6 text-center">
-                      {item.quantity}
+                  <View className="flex-row items-center justify-between">
+                    <View className="flex-row items-center bg-background rounded-full border border-border">
+                      <Pressable
+                        accessibilityRole="button"
+                        accessibilityLabel="Decrease quantity"
+                        hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+                        style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
+                        className="w-10 h-10 items-center justify-center"
+                        onPress={() => handleUpdateQty(item.id, item.quantity - 1)}
+                        disabled={isUnavailable}
+                      >
+                        <Icon
+                          name="minus"
+                          size={16}
+                          color={
+                            item.quantity <= 1 || isUnavailable
+                              ? tokens.textDisabled
+                              : tokens.textSecondary
+                          }
+                        />
+                      </Pressable>
+                      <Text className="text-body-lg font-bold text-foreground w-6 text-center">
+                        {item.quantity}
+                      </Text>
+                      <Pressable
+                        accessibilityRole="button"
+                        accessibilityLabel="Increase quantity"
+                        hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+                        style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
+                        className="w-10 h-10 items-center justify-center"
+                        onPress={() => handleUpdateQty(item.id, item.quantity + 1)}
+                        disabled={isUnavailable}
+                      >
+                        <Icon
+                          name="plus"
+                          size={16}
+                          color={isUnavailable ? tokens.textDisabled : tokens.textSecondary}
+                        />
+                      </Pressable>
+                    </View>
+                    <Text className="text-body-lg font-bold text-foreground">
+                      GHS {(Number(item.price) * item.quantity).toFixed(2)}
                     </Text>
-                    <Pressable
-                      accessibilityRole="button"
-                      accessibilityLabel="Increase quantity"
-                      hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
-                      style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
-                      className="w-10 h-10 items-center justify-center"
-                      onPress={() => handleUpdateQty(item.id, item.quantity + 1)}
-                    >
-                      <Icon name="plus" size={16} color={tokens.textSecondary} />
-                    </Pressable>
                   </View>
-                  <Text className="text-body-lg font-bold text-foreground">
-                    GHS {(Number(item.price) * item.quantity).toFixed(2)}
-                  </Text>
+                  {isUnavailable && (
+                    <Text className="text-body-sm text-error mt-2 text-center">
+                      This item is no longer available and cannot be ordered.
+                    </Text>
+                  )}
                 </View>
-              </View>
-            ))}
+              );
+            })}
           </View>
         </View>
 
@@ -389,18 +417,47 @@ export default function FoodCartScreen() {
                 Delivery fee is added based on distance to your address.
               </Text>
             )}
+            {hasUnavailableItems && (
+              <View className="mt-4 p-4 bg-error/10 border border-error rounded-xl">
+                <View className="flex-row items-start gap-3">
+                  <Icon
+                    name="alert-circle"
+                    size={18}
+                    color={tokens.error}
+                    style={{ marginTop: 2 }}
+                  />
+                  <View className="flex-1">
+                    <Text className="text-body-sm font-bold text-error">
+                      Some items are no longer available
+                    </Text>
+                    <Text className="text-body-sm text-error/80 mt-1">
+                      Items marked "Unavailable" have been removed or sold out by the restaurant.
+                      Please remove them from your cart before placing your order.
+                    </Text>
+                  </View>
+                </View>
+              </View>
+            )}
           </View>
         </View>
       </ScrollView>
 
       {/* Checkout Footer */}
       <View className="absolute bottom-0 left-0 right-0 bg-card border-t border-border p-4 pb-8">
+        {hasUnavailableItems && (
+          <View className="mb-3 p-3 bg-error/10 border border-error rounded-xl flex-row items-center gap-2">
+            <Icon name="alert-circle" size={16} color={tokens.error} />
+            <Text className="text-body-sm text-error flex-1">
+              Remove unavailable items to place your order
+            </Text>
+          </View>
+        )}
         <Button
           title={deliveryCoords ? "Place Food Order" : "Select Delivery Address"}
           size="lg"
           className="w-full rounded-full"
           loading={checkout.isPending}
-          disabled={!deliveryCoords}
+          disabled={!deliveryCoords || hasUnavailableItems}
           onPress={handleCheckout}
         />
       </View>

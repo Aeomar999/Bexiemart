@@ -4,6 +4,8 @@ import * as Updates from "expo-updates";
 import { useOTAUpdate, useOTAStore } from "../useOTAUpdate";
 
 jest.mock("expo-updates", () => ({
+  __esModule: true,
+  isEnabled: true,
   checkForUpdateAsync: jest.fn(),
   fetchUpdateAsync: jest.fn(),
   reloadAsync: jest.fn(),
@@ -29,6 +31,7 @@ describe("useOTAUpdate", () => {
     jest.clearAllMocks();
     useOTAStore.setState(initialState, true);
     (global as any).__DEV__ = false;
+    (Updates as any).isEnabled = true;
   });
 
   afterAll(() => {
@@ -61,6 +64,42 @@ describe("useOTAUpdate", () => {
     });
 
     expect(Updates.checkForUpdateAsync).not.toHaveBeenCalled();
+  });
+
+  it("should skip when expo-updates is disabled in the binary", async () => {
+    (Updates as any).isEnabled = false;
+
+    const { result } = renderHook(() => useOTAUpdate());
+
+    let outcome;
+    await act(async () => {
+      outcome = await result.current.checkForUpdate();
+    });
+
+    expect(outcome).toBe("skipped");
+    expect(Updates.checkForUpdateAsync).not.toHaveBeenCalled();
+  });
+
+  it("should fetch and stage a roll-back-to-embedded directive", async () => {
+    (Updates.checkForUpdateAsync as jest.Mock).mockResolvedValue({
+      isAvailable: false,
+      isRollBackToEmbedded: true,
+    });
+    (Updates.fetchUpdateAsync as jest.Mock).mockResolvedValue({
+      isNew: false,
+      isRollBackToEmbedded: true,
+    });
+
+    const { result } = renderHook(() => useOTAUpdate());
+
+    let outcome;
+    await act(async () => {
+      outcome = await result.current.checkForUpdate();
+    });
+
+    expect(outcome).toBe("update-ready");
+    expect(Updates.fetchUpdateAsync).toHaveBeenCalled();
+    expect(result.current.isUpdateReady).toBe(true);
   });
 
   it("should report up-to-date when no update is available", async () => {

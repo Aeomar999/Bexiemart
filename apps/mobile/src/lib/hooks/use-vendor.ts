@@ -32,6 +32,14 @@ export function useVendorProducts() {
   });
 }
 
+export function useVendorProduct(id?: string) {
+  return useQuery({
+    queryKey: [...VENDOR_KEYS.products, id],
+    queryFn: () => vendorApi.getProduct(id!).then((r) => r.data),
+    enabled: !!id,
+  });
+}
+
 import { PRODUCT_KEYS } from "./use-products";
 
 export function useCreateProduct() {

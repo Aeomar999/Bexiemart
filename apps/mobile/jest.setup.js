@@ -115,6 +115,30 @@ jest.mock("expo-image-picker", () => ({
   MediaTypeOptions: { Images: "Images", Videos: "Videos", All: "All" },
 }));
 
+// expo-image-manipulator — renders a 100x100 image and saves it as a JPEG.
+jest.mock("expo-image-manipulator", () => {
+  const image = {
+    width: 100,
+    height: 100,
+    saveAsync: jest.fn(() =>
+      Promise.resolve({ uri: "file:///processed.jpg", width: 100, height: 100 })
+    ),
+  };
+  const context = {
+    resize: jest.fn(() => context),
+    renderAsync: jest.fn(() => Promise.resolve(image)),
+  };
+  return {
+    ImageManipulator: { manipulate: jest.fn(() => context) },
+    SaveFormat: { JPEG: "jpeg", PNG: "png", WEBP: "webp" },
+  };
+});
+
+// expo-document-picker
+jest.mock("expo-document-picker", () => ({
+  getDocumentAsync: jest.fn(() => Promise.resolve({ canceled: true, assets: null })),
+}));
+
 // expo-location
 jest.mock("expo-location", () => ({
   requestForegroundPermissionsAsync: jest.fn(() => Promise.resolve({ status: "granted" })),

@@ -13,6 +13,7 @@ describe("DispatcherController", () => {
     getProfile: jest.fn(),
     createProfile: jest.fn(),
     updateStatus: jest.fn(),
+    updateProfile: jest.fn(),
     updateLocation: jest.fn(),
     getAvailableTasks: jest.fn(),
     getMyTasks: jest.fn(),
@@ -73,6 +74,18 @@ describe("DispatcherController", () => {
 
       expect(await controller.createProfile(req, dto)).toEqual(result);
       expect(mockService.createProfile).toHaveBeenCalledWith("user-1", dto);
+    });
+  });
+
+  describe("updateProfile", () => {
+    it("should call service.updateProfile with the caller's id and return result", async () => {
+      const result = { id: "disp-1", vehicleType: "car", plateNumber: "AS-1234-21" };
+      mockService.updateProfile.mockResolvedValue(result);
+      const req = { user: { id: "user-1" } } as AuthenticatedRequest;
+      const dto = { vehicleType: "car" as const, plateNumber: "AS-1234-21" };
+
+      expect(await controller.updateProfile(req, dto)).toEqual(result);
+      expect(mockService.updateProfile).toHaveBeenCalledWith("user-1", dto);
     });
   });
 

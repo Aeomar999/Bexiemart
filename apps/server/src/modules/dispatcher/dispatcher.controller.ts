@@ -1,4 +1,15 @@
-import { Controller, Get, Post, Body, Param, UseGuards, Req, Put, Query } from "@nestjs/common";
+import {
+  Controller,
+  Get,
+  Post,
+  Patch,
+  Body,
+  Param,
+  UseGuards,
+  Req,
+  Put,
+  Query,
+} from "@nestjs/common";
 import { ApiTags, ApiOperation, ApiBearerAuth } from "@nestjs/swagger";
 import { AuthGuard } from "../../guards/auth.guard";
 import { DispatcherGuard } from "../../guards/dispatcher.guard";
@@ -7,6 +18,7 @@ import { AuthenticatedRequest } from "../../types/request.types";
 import {
   CreateDispatcherDto,
   ToggleStatusDto,
+  UpdateDispatcherProfileDto,
   UpdateLocationDto,
   UpdateTaskStatusDto,
 } from "./dto/dispatcher.dto";
@@ -29,6 +41,13 @@ export class DispatcherController {
   @Post("profile")
   createProfile(@Req() req: AuthenticatedRequest, @Body() dto: CreateDispatcherDto) {
     return this.dispatcherService.createProfile(req.user.id, dto);
+  }
+
+  @ApiOperation({ summary: "Update vehicle type and/or plate number" })
+  @Patch("profile")
+  @UseGuards(DispatcherGuard)
+  updateProfile(@Req() req: AuthenticatedRequest, @Body() dto: UpdateDispatcherProfileDto) {
+    return this.dispatcherService.updateProfile(req.user.id, dto);
   }
 
   @ApiOperation({ summary: "Toggle online status" })

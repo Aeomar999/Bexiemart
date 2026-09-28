@@ -1,43 +1,62 @@
 import { BackButton } from "@/components/ui/BackButton";
-import { View, Text, ScrollView, Alert, Pressable, ActivityIndicator } from "react-native";
-import { Image } from "expo-image";
+import { View, Text, ScrollView, Alert, Pressable } from "react-native";
 import { useRouter, useLocalSearchParams } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { useCreateProduct, useUpdateProduct } from "@/lib/hooks/use-vendor";
+import { useCreateProduct, useUpdateProduct, useVendorProduct } from "@/lib/hooks/use-vendor";
 import { Input } from "@/components/ui/Input";
 import { Button } from "@/components/ui/Button";
-import { Icon } from "@/components/ui/Icon";
-import { PhotoPicker } from "@/components/ui/PhotoPicker";
+import { PhotoPicker, type PickerImage } from "@/components/ui/PhotoPicker";
+import { DetailSkeleton } from "@/components/ui/Skeleton";
 import { useState } from "react";
-import { uploadApi } from "@/lib/api/upload";
+import { uploadApi, uploadErrorMessage } from "@/lib/api/upload";
 import { useFormValidation } from "@/lib/hooks/use-form-validation";
 import { productSchema } from "@/lib/validation/schemas";
 
 export default function AddProductScreen() {
   const router = useRouter();
   const { mode, id } = useLocalSearchParams<{ mode?: string; id?: string }>();
-  const isEdit = mode === "edit";
+  const isEdit = mode === "edit" && !!id;
 
   const createMutation = useCreateProduct();
   const updateMutation = useUpdateProduct();
+  const { data: existing, isLoading: isLoadingExisting } = useVendorProduct(
+    isEdit ? id : undefined
+  );
 
   const insets = useSafeAreaInsets();
-  const [name, setName] = useState(isEdit ? "Wireless Earbuds Pro" : "");
-  const [category, setCategory] = useState(isEdit ? "Electronics" : "");
-  const [description, setDescription] = useState(
-    isEdit ? "High-quality wireless earbuds with active noise cancellation." : ""
-  );
-  const [price, setPrice] = useState(isEdit ? "124.99" : "");
+  const [name, setName] = useState("");
+  const [category, setCategory] = useState("");
+  const [description, setDescription] = useState("");
+  const [price, setPrice] = useState("");
   const [comparePrice, setComparePrice] = useState("");
-  const [quantity, setQuantity] = useState(isEdit ? "45" : "");
-  const [sku, setSku] = useState(isEdit ? "EB-001" : "");
+  const [quantity, setQuantity] = useState("");
+  const [sku, setSku] = useState("");
   const [shippingRequired, setShippingRequired] = useState(true);
 
-  const [localImages, setLocalImages] = useState<
-    { uri: string; type: string; name: string; url?: string; file?: any }[]
-  >([]);
+  const [localImages, setLocalImages] = useState<PickerImage[]>([]);
   const [uploadingImages, setUploadingImages] = useState(false);
   const { validate, errors } = useFormValidation(productSchema);
+
+  // Prefill once the product loads (state adjusted during render, per the
+  // React docs, rather than in an effect). Already-uploaded photos carry their
+  // `url` so they are kept as-is instead of being uploaded again.
+  const [prefilledFrom, setPrefilledFrom] = useState<unknown>(null);
+  if (existing && prefilledFrom !== existing) {
+    setPrefilledFrom(existing);
+    setName(existing.name ?? "");
+    setCategory(existing.category?.name ?? "");
+    setDescription(existing.description ?? "");
+    setPrice(existing.price != null ? String(Number(existing.price)) : "");
+    setQuantity(existing.stock != null ? String(existing.stock) : "");
+    setLocalImages(
+      (existing.images ?? []).map((img: { url: string }, i: number) => ({
+        uri: img.url,
+        url: img.url,
+        type: "image/jpeg",
+        name: `image-${i}.jpg`,
+      }))
+    );
+  }
 
   const loading = createMutation.isPending || updateMutation.isPending || uploadingImages;
 
@@ -58,59 +77,64 @@ export default function AddProductScreen() {
       return;
     }
 
+    let uploadedImages: { url: string }[];
     try {
       setUploadingImages(true);
-      const uploadedImages = [];
-      for (const img of localImages) {
-        if (img.url) {
-          uploadedImages.push({ url: img.url });
-        } else {
-          const res = await uploadApi.uploadFile({
-            uri: img.uri,
-            name: img.name,
-            type: img.type,
-            file: img.file,
-          });
-          uploadedImages.push({ url: res.url });
-        }
-      }
-
-      const formData = {
-        name,
-        category,
-        description,
-        price: parseFloat(price),
-        stock: quantity ? parseInt(quantity, 10) : 0,
-        images: uploadedImages,
-      };
-
-      if (isEdit) {
-        updateMutation.mutate(
-          { ...formData, id: id! },
-          {
-            onSuccess: () => {
-              Alert.alert("Updated", "Product updated successfully!");
-              router.back();
-            },
-            onError: () => Alert.alert("Error", "Failed to update product."),
-            onSettled: () => setUploadingImages(false),
-          }
-        );
-      } else {
-        createMutation.mutate(formData, {
-          onSuccess: () => {
-            Alert.alert("Published", "Product published successfully!");
-            router.back();
-          },
-          onError: () => Alert.alert("Error", "Failed to create product."),
-          onSettled: () => setUploadingImages(false),
-        });
-      }
+      // Upload new photos in parallel, keeping the order the vendor arranged.
+      uploadedImages = await Promise.all(
+        localImages.map(async (img) =>
+          img.url ? { url: img.url } : { url: (await uploadApi.uploadFile(img)).url }
+        )
+      );
     } catch (error) {
       setUploadingImages(false);
-      Alert.alert("Error", "Failed to upload images. Please try again.");
+      Alert.alert(
+        "Upload Failed",
+        uploadErrorMessage(error, "Failed to upload images. Please try again.")
+      );
+      return;
+    }
+
+    const formData = {
+      name,
+      category,
+      description,
+      price: priceNum,
+      stock: stockNum,
+      images: uploadedImages,
+    };
+
+    if (isEdit) {
+      updateMutation.mutate(
+        { ...formData, id: id! },
+        {
+          onSuccess: () => {
+            Alert.alert("Updated", "Product updated successfully!");
+            router.back();
+          },
+          onError: () => Alert.alert("Error", "Failed to update product."),
+          onSettled: () => setUploadingImages(false),
+        }
+      );
+    } else {
+      createMutation.mutate(formData, {
+        onSuccess: () => {
+          Alert.alert("Published", "Product published successfully!");
+          router.back();
+        },
+        onError: () => Alert.alert("Error", "Failed to create product."),
+        onSettled: () => setUploadingImages(false),
+      });
     }
   };
+
+  if (isEdit && isLoadingExisting) {
+    return (
+      <View className="flex-1 bg-background items-center justify-center">
+        <DetailSkeleton />
+      </View>
+    );
+  }
 
   return (
     <View className="flex-1 bg-background">

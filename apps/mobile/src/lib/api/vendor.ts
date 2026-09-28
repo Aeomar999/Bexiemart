@@ -6,6 +6,7 @@ export const vendorApi = {
   getStats: () => apiClient.get("/vendor/stats"),
 
   getProducts: () => apiClient.get("/vendor/products"),
+  getProduct: (id: string) => apiClient.get(`/vendor/products/${id}`),
   createProduct: (data: any) => apiClient.post("/vendor/products", data),
   updateProduct: (id: string, data: any) => apiClient.put(`/vendor/products/${id}`, data),
   deleteProduct: (id: string) => apiClient.delete(`/vendor/products/${id}`),

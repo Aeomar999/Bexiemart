@@ -41,6 +41,12 @@ const androidRest = (appJson.expo.android as Record<string, unknown>) || {};
 export default {
   expo: {
     ...appJson.expo,
+    extra: {
+      ...(appJson.expo.extra as Record<string, unknown> | undefined),
+      // ios.config is stripped from the runtime manifest, so tell the app
+      // whether Google tiles will render or it should fall back to Apple Maps.
+      iosGoogleMapsEnabled: !!googleMapsIOSKey,
+    },
     ios: {
       ...iosRest,
       config: iosConfig,

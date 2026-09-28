@@ -2,6 +2,7 @@ import { Injectable, NotFoundException, BadRequestException } from "@nestjs/comm
 import { PrismaService } from "../../prisma/prisma.service";
 import { UserRole } from "@prisma/client";
 import { DeliveryService } from "../delivery/delivery.service";
+import { UpdateDispatcherProfileDto } from "./dto/dispatcher.dto";
 
 @Injectable()
 export class DispatcherService {
@@ -45,6 +46,18 @@ export class DispatcherService {
         vehicleType: data.vehicleType || "bike",
         plateNumber: data.plateNumber || "UNKNOWN",
         drivingLicense: data.drivingLicense,
+      },
+    });
+  }
+
+  async updateProfile(userId: string, data: UpdateDispatcherProfileDto) {
+    const profile = await this.getProfile(userId);
+    return this.prisma.dispatcherProfile.update({
+      where: { id: profile.id },
+      data: {
+        vehicleType: data.vehicleType,
+        // Plates are shown to customers at pickup; store one canonical form.
+        plateNumber: data.plateNumber?.trim().replace(/\s+/g, " ").toUpperCase(),
       },
     });
   }

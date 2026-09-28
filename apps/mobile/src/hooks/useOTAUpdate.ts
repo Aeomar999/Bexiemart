@@ -28,7 +28,9 @@ export const useOTAStore = create<OTAUpdateState>()((set, get) => ({
   error: null,
 
   checkForUpdate: async () => {
-    if (__DEV__) return "skipped";
+    // Updates.isEnabled is false in dev clients and in binaries built without
+    // EAS Update configured; the native calls reject there.
+    if (__DEV__ || !Updates.isEnabled) return "skipped";
     if (get().isUpdateReady) return "update-ready";
     if (get().isChecking) return "skipped";
 
@@ -36,12 +38,16 @@ export const useOTAStore = create<OTAUpdateState>()((set, get) => ({
       set({ isChecking: true, error: null });
       const update = await Updates.checkForUpdateAsync();
 
-      if (!update.isAvailable) return "up-to-date";
+      // A roll-back-to-embedded directive reports isAvailable: false but still
+      // has to be fetched and applied like a regular update.
+      if (!update.isAvailable && !update.isRollBackToEmbedded) return "up-to-date";
 
       set({ isUpdateAvailable: true, isDownloading: true });
-      posthog?.capture("ota_update_available");
+      posthog?.capture("ota_update_available", {
+        rollback: update.isRollBackToEmbedded,
+      });
       const fetchResult = await Updates.fetchUpdateAsync();
-      if (!fetchResult.isNew) return "up-to-date";
+      if (!fetchResult.isNew && !fetchResult.isRollBackToEmbedded) return "up-to-date";
 
       set({ isUpdateReady: true });
       posthog?.capture("ota_update_downloaded");
@@ -59,7 +65,7 @@ export const useOTAStore = create<OTAUpdateState>()((set, get) => ({
   },
 
   applyUpdate: async () => {
-    if (__DEV__ || !get().isUpdateReady) return;
+    if (__DEV__ || !Updates.isEnabled || !get().isUpdateReady) return;
     try {
       await Updates.reloadAsync();
     } catch (err: any) {
@@ -79,7 +85,7 @@ export function useOTAUpdate({ autoCheck = false }: { autoCheck?: boolean } = {}
   const appState = useRef(AppState.currentState);
 
   useEffect(() => {
-    if (__DEV__ || !autoCheck) return;
+    if (__DEV__ || !Updates.isEnabled || !autoCheck) return;
     const { checkForUpdate } = useOTAStore.getState();
 
     setTimeout(() => {

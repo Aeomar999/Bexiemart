@@ -19,7 +19,14 @@ import { TableSkeleton } from "../../../../components/ui/Skeleton";
 import { EmptyState } from "../../../../components/ui/EmptyState";
 import { ConfirmModal } from "../../../../components/ui/ConfirmModal";
 import { HugeiconsIcon } from "@hugeicons/react";
-import { ImageIcon, PlusIcon, PencilIcon, TrashIcon, UploadIcon, LoaderIcon } from "@hugeicons/core-free-icons";
+import {
+  ImageIcon,
+  PlusIcon,
+  PencilIcon,
+  TrashIcon,
+  UploadIcon,
+  LoaderIcon,
+} from "@hugeicons/core-free-icons";
 import { toast } from "sonner";
 import {
   useBanners,
@@ -28,7 +35,7 @@ import {
   useDeleteBanner,
 } from "../../../../lib/hooks/use-banners";
 import { Banner, BannerPlacement, BannerPayload } from "../../../../lib/api/banners";
-import { uploadFile } from "../../../../lib/api/auth";
+import { uploadFile, UploadError, UPLOAD_ACCEPT } from "../../../../lib/api/auth";
 
 const PLACEMENTS: { value: BannerPlacement; label: string }[] = [
   { value: "HOME", label: "Home" },
@@ -100,10 +107,16 @@ export default function BannersPage() {
     try {
       const result = await uploadFile(file);
       if (result?.url) setForm((f) => ({ ...f, imageUrl: result.url }));
-    } catch {
-      toast.error("We couldn't upload your image. Please ensure it's a valid format and try again.");
+    } catch (error) {
+      toast.error(
+        error instanceof UploadError
+          ? error.message
+          : "We couldn't upload your image. Please try again."
+      );
     } finally {
       setIsUploading(false);
+      // Allow re-selecting the same file after a failure.
+      e.target.value = "";
     }
   };
 
@@ -176,7 +189,12 @@ export default function BannersPage() {
               </div>
             ) : banners.length === 0 ? (
               <EmptyState
-                icon={<HugeiconsIcon icon={ImageIcon} className="h-10 w-10 text-[var(--color-text-muted)]" />}
+                icon={
+                  <HugeiconsIcon
+                    icon={ImageIcon}
+                    className="h-10 w-10 text-[var(--color-text-muted)]"
+                  />
+                }
                 title="No banners yet"
                 description="Create a promotional banner to feature on the customer app."
                 action={<Button onClick={openCreate}>Create Banner</Button>}
@@ -211,7 +229,9 @@ export default function BannersPage() {
                       <TableCell className="font-medium">
                         {banner.title}
                         {banner.subtitle && (
-                          <p className="text-xs text-[var(--color-text-muted)]">{banner.subtitle}</p>
+                          <p className="text-xs text-[var(--color-text-muted)]">
+                            {banner.subtitle}
+                          </p>
                         )}
                       </TableCell>
                       <TableCell>
@@ -225,7 +245,12 @@ export default function BannersPage() {
                       <TableCell>{banner.sortOrder}</TableCell>
                       <TableCell>
                         <div className="flex items-center justify-end gap-2">
-                          <Button variant="ghost" size="icon" onClick={() => openEdit(banner)} aria-label="Edit banner">
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            onClick={() => openEdit(banner)}
+                            aria-label="Edit banner"
+                          >
                             <HugeiconsIcon icon={PencilIcon} className="h-4 w-4" />
                           </Button>
                           <Button
@@ -234,7 +259,10 @@ export default function BannersPage() {
                             onClick={() => setDeleteTarget(banner)}
                             aria-label="Delete banner"
                           >
-                            <HugeiconsIcon icon={TrashIcon} className="h-4 w-4 text-[var(--color-error)]" />
+                            <HugeiconsIcon
+                              icon={TrashIcon}
+                              className="h-4 w-4 text-[var(--color-error)]"
+                            />
                           </Button>
                         </div>
                       </TableCell>
@@ -245,7 +273,12 @@ export default function BannersPage() {
             )}
 
             {!isLoading && banners.length > 0 && (
-              <Pagination page={page} totalPages={totalPages} total={total} onPageChange={setPage} />
+              <Pagination
+                page={page}
+                totalPages={totalPages}
+                total={total}
+                onPageChange={setPage}
+              />
             )}
           </CardContent>
         </Card>
@@ -254,7 +287,9 @@ export default function BannersPage() {
       {isModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
           <div className="max-h-[90vh] w-full max-w-lg overflow-y-auto rounded-lg border border-[var(--color-border)] bg-[var(--color-card)] p-6 text-[var(--color-text)] ">
-            <h2 className="mb-4 text-xl font-bold">{editingId ? "Edit Banner" : "Create Banner"}</h2>
+            <h2 className="mb-4 text-xl font-bold">
+              {editingId ? "Edit Banner" : "Create Banner"}
+            </h2>
             <form onSubmit={handleSubmit} className="space-y-4">
               {/* Image upload + preview */}
               <div>
@@ -268,11 +303,16 @@ export default function BannersPage() {
                       className="h-full w-full object-cover"
                     />
                   ) : (
-                    <span className="text-xs text-[var(--color-text-muted)]">No image selected</span>
+                    <span className="text-xs text-[var(--color-text-muted)]">
+                      No image selected
+                    </span>
                   )}
                   {isUploading && (
                     <div className="absolute inset-0 flex items-center justify-center bg-black/50">
-                      <HugeiconsIcon icon={LoaderIcon} className="h-6 w-6 animate-spin text-white" />
+                      <HugeiconsIcon
+                        icon={LoaderIcon}
+                        className="h-6 w-6 animate-spin text-white"
+                      />
                     </div>
                   )}
                   <label className="absolute bottom-2 right-2 flex cursor-pointer items-center gap-1 rounded-md bg-[var(--color-primary)] px-3 py-1.5 text-xs font-medium text-white">
@@ -280,7 +320,7 @@ export default function BannersPage() {
                     Upload
                     <input
                       type="file"
-                      accept="image/png,image/jpeg,image/webp"
+                      accept={UPLOAD_ACCEPT}
                       className="hidden"
                       onChange={handleImageUpload}
                     />
@@ -368,7 +408,8 @@ export default function BannersPage() {
                   placeholder="/(customer)/flash-sales"
                 />
                 <p className="mt-1 text-xs text-[var(--color-text-muted)]">
-                  Where tapping the banner sends the customer. Leave blank for a non-tappable banner.
+                  Where tapping the banner sends the customer. Leave blank for a non-tappable
+                  banner.
                 </p>
               </div>
 

@@ -1,9 +1,6 @@
 import { tokens } from "@/theme/tokens";
-import { View, Text, ScrollView, Pressable, ActivityIndicator } from "react-native";
+import { View, Text, ScrollView, Pressable } from "react-native";
 import { useRouter } from "expo-router";
-import * as Application from "expo-application";
-import * as Updates from "expo-updates";
-import { useOTAUpdate } from "@/hooks/useOTAUpdate";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Icon } from "@/components/ui/Icon";
 import { useCurrentUser } from "@/lib/hooks/use-auth";
@@ -12,6 +9,7 @@ import { useAuthEnabled } from "@/lib/feature-flags";
 import Toast from "@/lib/toast-polyfill";
 import { Avatar } from "@/components/ui/Avatar";
 import { ThemeControl } from "@/components/ui/ThemeControl";
+import { UpdateCheckRow } from "@/components/ui/UpdateCheckRow";
 import { useDarkModeEnabled } from "@/lib/feature-flags";
 
 type ProfileItem = {
@@ -141,7 +139,6 @@ export default function ProfileScreen() {
   const { logout, isAuthenticated } = useAuthStore();
   const { authEnabled } = useAuthEnabled();
   const { darkModeEnabled } = useDarkModeEnabled();
-  const { checkForUpdate, isChecking } = useOTAUpdate();
 
   const handleLogout = async () => {
     await logout();
@@ -293,6 +290,10 @@ export default function ProfileScreen() {
                       );
                     }
 
+                    if (item.isUpdateCheck) {
+                      return <UpdateCheckRow key={item.id} tint={item.color} last={isLast} />;
+                    }
+
                     const guestLocked = !!item.requiresAuth && !isAuthenticated;
                     return (
                       <Pressable
@@ -308,24 +309,7 @@ export default function ProfileScreen() {
                         }
                         style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
                         className={`flex-row items-center justify-between h-[52px] px-4 ${!isLast ? "border-b border-border" : ""}`}
-                        onPress={async () => {
-                          if (item.isUpdateCheck) {
-                            const result = await checkForUpdate();
-                            if (result === "up-to-date") {
-                              Toast.show({
-                                type: "success",
-                                text1: "Up to date",
-                                text2: "You are on the latest version of BexieMart.",
-                              });
-                            } else if (result === "error") {
-                              Toast.show({
-                                type: "error",
-                                text1: "Couldn't check for updates",
-                                text2: "Please try again later.",
-                              });
-                            }
-                            return;
-                          }
+                        onPress={() => {
                           if (item.comingSoon) {
                             Toast.show({
                               type: "info",
@@ -356,21 +340,7 @@ export default function ProfileScreen() {
                         </View>
 
                         <View className="flex-row items-center gap-2">
-                          {item.isUpdateCheck && isChecking && (
-                            <ActivityIndicator
-                              size="small"
-                              color={tokens.primary}
-                              style={{ marginRight: 4 }}
-                            />
-                          )}
-                          {item.isUpdateCheck && !isChecking && (
-                            <Text className="text-[12px] text-muted-foreground mr-1">
-                              {Updates.updateId
-                                ? Updates.updateId.substring(0, 7)
-                                : Application.nativeApplicationVersion}
-                            </Text>
-                          )}
-                          {item.value && !item.isUpdateCheck && (
+                          {item.value && (
                             <Text className="text-[12px] text-muted-foreground mr-1">
                               {item.value}
                             </Text>

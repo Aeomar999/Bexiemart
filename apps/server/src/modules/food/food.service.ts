@@ -208,7 +208,18 @@ export class FoodService {
       where: { userId },
       include: {
         items: {
-          include: { foodItem: { select: { imageUrl: true, prepTime: true } } },
+          include: {
+            foodItem: {
+              select: {
+                imageUrl: true,
+                prepTime: true,
+                isActive: true,
+                isAvailable: true,
+                price: true,
+                name: true,
+              },
+            },
+          },
         },
         vendor: {
           select: { id: true, shopName: true, logo: true, latitude: true, longitude: true },
@@ -220,16 +231,21 @@ export class FoodService {
       return { items: [], itemCount: 0, subtotal: 0 };
     }
 
-    const items = cart.items.map((item) => ({
-      id: item.id,
-      foodItemId: item.foodItemId,
-      name: item.name,
-      price: Number(item.price),
-      quantity: item.quantity,
-      specialInstructions: item.specialInstructions,
-      imageUrl: item.foodItem?.imageUrl ?? null,
-      prepTime: item.foodItem?.prepTime ?? 0,
-    }));
+    const items = cart.items.map((item) => {
+      const currentPrice = item.foodItem?.price ? Number(item.foodItem.price) : Number(item.price);
+      const currentName = item.foodItem?.name ?? item.name;
+      return {
+        id: item.id,
+        foodItemId: item.foodItemId,
+        name: currentName,
+        price: currentPrice,
+        quantity: item.quantity,
+        specialInstructions: item.specialInstructions,
+        imageUrl: item.foodItem?.imageUrl ?? null,
+        prepTime: item.foodItem?.prepTime ?? 0,
+        isAvailable: item.foodItem?.isActive === true && item.foodItem?.isAvailable === true,
+      };
+    });
 
     return {
       vendor: cart.vendor,
@@ -297,33 +313,70 @@ export class FoodService {
       throw new BadRequestException("Cart is empty");
     }
 
-    const subtotal = cart.items.reduce((s, i) => s + Number(i.price) * i.quantity, 0);
-
-    // Distance-based delivery fee from the unified pricing engine, falling back
-    // to free delivery when there's no destination (e.g. pickup) or no maps key.
-    let deliveryFee = 0;
-    try {
-      const quote = await this.delivery.quoteForOrderDraft({
-        vendorId: cart.vendorId,
-        dropoff: {
-          latitude: dto.deliveryLat,
-          longitude: dto.deliveryLng,
-          addressParts: [dto.deliveryAddress ?? null],
-        },
-        vehicleType: dto.vehicleType,
-      });
-      if (quote) deliveryFee = quote.customerFee;
-    } catch {
-      deliveryFee = 0;
-    }
-
-    const total = subtotal + deliveryFee;
+    const foodItemIds = cart.items.map((item) => item.foodItemId);
     const orderNumber = `FOOD-${Date.now()}-${Math.floor(Math.random() * 900) + 100}`;
 
-    // Create the order and clear the cart atomically. If either fails the whole
-    // thing rolls back, so we can't end up with a placed order whose cart was
-    // never emptied (which would let the user re-checkout the same items).
+    // Create the order and clear the cart atomically. Inside the transaction we
+    // re-read the current FoodItem rows to validate availability and use live
+    // prices. If any item is no longer available/active, we abort with a clear
+    // error listing the unavailable items. Delivery fee is quoted after the
+    // availability check to avoid wasted Maps API calls on rejected checkouts.
     const order = await this.prisma.$transaction(async (tx) => {
+      const foodItems = await tx.foodItem.findMany({
+        where: { id: { in: foodItemIds } },
+        select: { id: true, name: true, price: true, isActive: true, isAvailable: true },
+      });
+
+      const foodItemMap = new Map(foodItems.map((fi) => [fi.id, fi]));
+      const unavailable: string[] = [];
+
+      for (const item of cart.items) {
+        const fi = foodItemMap.get(item.foodItemId);
+        if (!fi || !fi.isActive || !fi.isAvailable) {
+          unavailable.push(item.name);
+        }
+      }
+
+      if (unavailable.length > 0) {
+        throw new BadRequestException(
+          `The following items are no longer available: ${unavailable.join(", ")}`
+        );
+      }
+
+      // Build order items from current FoodItem prices
+      const orderItemsData = cart.items.map((item) => {
+        const fi = foodItemMap.get(item.foodItemId)!;
+        const price = Number(fi.price);
+        return {
+          foodItemId: item.foodItemId,
+          name: fi.name,
+          price: fi.price,
+          quantity: item.quantity,
+          total: price * item.quantity,
+        };
+      });
+
+      const subtotal = orderItemsData.reduce((s, i) => s + i.total, 0);
+
+      // Quote delivery fee inside the transaction (after availability check)
+      let deliveryFee = 0;
+      try {
+        const quote = await this.delivery.quoteForOrderDraft({
+          vendorId: cart.vendorId,
+          dropoff: {
+            latitude: dto.deliveryLat,
+            longitude: dto.deliveryLng,
+            addressParts: [dto.deliveryAddress ?? null],
+          },
+          vehicleType: dto.vehicleType,
+        });
+        if (quote) deliveryFee = quote.customerFee;
+      } catch {
+        deliveryFee = 0;
+      }
+
+      const total = subtotal + deliveryFee;
+
       const created = await tx.foodOrder.create({
         data: {
           orderNumber,
@@ -336,18 +389,11 @@ export class FoodService {
           deliveryAddress: dto.deliveryAddress,
           deliveryLat: dto.deliveryLat,
           deliveryLng: dto.deliveryLng,
-          items: {
-            create: cart.items.map((item) => ({
-              foodItemId: item.foodItemId,
-              name: item.name,
-              price: item.price,
-              quantity: item.quantity,
-              total: Number(item.price) * item.quantity,
-            })),
-          },
+          items: { create: orderItemsData },
         },
         include: { items: true, vendor: { select: { id: true, shopName: true, logo: true } } },
       });
+
       await tx.foodCartItem.deleteMany({ where: { cartId: cart.id } });
       return created;
     });
