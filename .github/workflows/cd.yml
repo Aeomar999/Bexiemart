@@ -4,8 +4,21 @@ on:
   push:
     branches: [main]
     paths:
-      - 'apps/mobile/**'
-      - 'packages/shared/**'
+      - "apps/mobile/**"
+      - "packages/shared/**"
+  # Production is promoted by hand ("Run workflow") so a merge to main can never
+  # push untested JS to store users.
+  workflow_dispatch:
+    inputs:
+      channel:
+        description: "EAS Update channel to publish to"
+        type: choice
+        options: [preview, production, mock]
+        default: preview
+
+concurrency:
+  group: mobile-ota-${{ inputs.channel || 'preview' }}
+  cancel-in-progress: false
 
 jobs:
   deploy-mobile-update:
@@ -17,15 +30,19 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: 20
-          cache: 'npm'
+          # eas-cli requires Node >= 22.
+          node-version: 22
+          cache: "npm"
           cache-dependency-path: apps/mobile/package-lock.json
       - uses: expo/expo-github-action@v8
         with:
           eas-version: latest
           token: ${{ secrets.EXPO_TOKEN }}
       - run: npm ci
-      - name: Publish OTA Update to Preview / Production
+      # The wrapper bundles the channel's build-profile env from eas.json (plain
+      # `eas update` doesn't) and warns if no installed build can receive the update.
+      - name: Publish OTA update
         env:
-          COMMIT_MESSAGE: ${{ github.event.head_commit.message || 'Automated update' }}
-        run: eas update --auto --message "$COMMIT_MESSAGE" --non-interactive
+          CHANNEL: ${{ inputs.channel || 'preview' }}
+          COMMIT_MESSAGE: ${{ github.event.head_commit.message || 'Manual OTA update' }}
+        run: node scripts/publish-update.mjs "$CHANNEL" --message "${COMMIT_MESSAGE%%$'\n'*}"

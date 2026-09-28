@@ -2,11 +2,18 @@
 
 import React, { useState, useRef } from "react";
 import Image from "next/image";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "../../../../components/ui/Card";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+} from "../../../../components/ui/Card";
 import { Button } from "../../../../components/ui/Button";
 import { Input } from "../../../../components/ui/Input";
 import { useAuthStore } from "../../../../lib/stores/auth-store";
 import { useUpdateProfile, useUploadAvatar } from "../../../../lib/hooks/use-profile";
+import { UPLOAD_ACCEPT } from "../../../../lib/api/auth";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { UserIcon, UploadIcon, LoaderIcon } from "@hugeicons/core-free-icons";
 import { Skeleton } from "../../../../components/ui/Skeleton";
@@ -35,14 +42,18 @@ function ProfileSettingsForm({ user }: { user: any }) {
   const [image, setImage] = useState(user.image || "");
   const fileInputRef = useRef<HTMLInputElement>(null);
 
+  const trimmedName = name.trim();
+  const isDirty = trimmedName !== (user.name || "").trim() || image !== (user.image || "");
+  const canSave = isDirty && trimmedName.length > 0 && !isUploading;
+
   const handleSave = () => {
     updateProfile(
-      { name, image },
+      { name: trimmedName, image },
       {
         onSuccess: () => {
           // Update the local auth store so the header reflects changes immediately
           if (user) {
-            setAuth({ ...user, name, image } as any);
+            setAuth({ ...user, name: trimmedName, image } as any);
           }
         },
       }
@@ -51,6 +62,7 @@ function ProfileSettingsForm({ user }: { user: any }) {
 
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
+    e.target.value = "";
     if (!file) return;
 
     try {
@@ -72,20 +84,30 @@ function ProfileSettingsForm({ user }: { user: any }) {
         </CardHeader>
         <CardContent className="space-y-6">
           <div className="flex items-center space-x-6">
-            <div className="relative group cursor-pointer" onClick={() => fileInputRef.current?.click()}>
+            <div
+              className="relative group cursor-pointer"
+              onClick={() => fileInputRef.current?.click()}
+            >
               <div className="h-24 w-24 rounded-full bg-(--color-bg) border-2 border-dashed border-(--color-border) flex items-center justify-center overflow-hidden relative">
                 {image ? (
-                  <Image src={image} alt="Avatar" width={96} height={96} className="h-full w-full object-cover" unoptimized />
+                  <Image
+                    src={image}
+                    alt="Avatar"
+                    width={96}
+                    height={96}
+                    className="h-full w-full object-cover"
+                    unoptimized
+                  />
                 ) : (
                   <HugeiconsIcon icon={UserIcon} className="h-10 w-10 text-(--color-text-muted)" />
                 )}
-                
+
                 {isUploading && (
                   <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
                     <HugeiconsIcon icon={LoaderIcon} className="h-6 w-6 text-white animate-spin" />
                   </div>
                 )}
-                
+
                 {!isUploading && (
                   <div className="absolute inset-0 bg-black/50 flex flex-col items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
                     <HugeiconsIcon icon={UploadIcon} className="h-5 w-5 text-white mb-1" />
@@ -93,36 +115,46 @@ function ProfileSettingsForm({ user }: { user: any }) {
                   </div>
                 )}
               </div>
-              <input 
-                type="file" 
-                ref={fileInputRef} 
-                className="hidden" 
-                accept="image/png, image/jpeg, image/webp" 
+              <input
+                type="file"
+                ref={fileInputRef}
+                className="hidden"
+                accept={UPLOAD_ACCEPT}
                 onChange={handleFileChange}
               />
             </div>
             <div className="space-y-1">
-              <h3 className="text-sm font-medium text-(--color-text)">Profile Picture</h3>
+              <h3 className="text-sm font-medium text-(--color-text)">Profile picture</h3>
               <p className="text-sm text-(--color-text-muted)">
                 We support PNGs, JPEGs and WebP under 5MB
               </p>
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                className="mt-2"
+                onClick={() => fileInputRef.current?.click()}
+                disabled={isUploading}
+              >
+                {isUploading ? "Uploading…" : "Change photo"}
+              </Button>
             </div>
           </div>
 
           <div className="grid grid-cols-1 gap-4 max-w-md">
             <div className="space-y-2">
               <label className="text-sm font-medium text-(--color-text)">Full Name</label>
-              <Input 
-                value={name} 
-                onChange={(e) => setName(e.target.value)} 
+              <Input
+                value={name}
+                onChange={(e) => setName(e.target.value)}
                 placeholder="John Doe"
               />
             </div>
             <div className="space-y-2">
               <label className="text-sm font-medium text-(--color-text)">Email Address</label>
-              <Input 
-                value={user?.email || ""} 
-                disabled 
+              <Input
+                value={user?.email || ""}
+                disabled
                 className="bg-(--color-bg-hover) text-(--color-text-muted) cursor-not-allowed"
                 title="Email addresses cannot be changed here."
               />
@@ -135,8 +167,8 @@ function ProfileSettingsForm({ user }: { user: any }) {
       </Card>
 
       <div className="pt-2">
-        <Button onClick={handleSave} isLoading={isUpdating} disabled={isUpdating || isUploading}>
-          Save Profile
+        <Button onClick={handleSave} isLoading={isUpdating} disabled={!canSave}>
+          Save profile
         </Button>
       </div>
     </div>

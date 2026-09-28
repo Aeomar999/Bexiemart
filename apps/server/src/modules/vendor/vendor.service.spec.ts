@@ -183,6 +183,25 @@ describe("VendorService", () => {
     });
   });
 
+  describe("getProduct", () => {
+    it("returns the vendor's own product with images and category", async () => {
+      prisma.vendorProfile.findUnique.mockResolvedValue({ id: "vp1", userId: "u1" });
+      const product = { id: "p1", images: [{ url: "https://cdn/a.jpg" }] };
+      prisma.product.findFirst.mockResolvedValue(product);
+
+      await expect(service.getProduct("u1", "p1")).resolves.toEqual(product);
+      expect(prisma.product.findFirst).toHaveBeenCalledWith(
+        expect.objectContaining({ where: { id: "p1", vendorId: "vp1", isDeleted: false } })
+      );
+    });
+
+    it("throws NotFoundException for another vendor's or a deleted product", async () => {
+      prisma.vendorProfile.findUnique.mockResolvedValue({ id: "vp1", userId: "u1" });
+      prisma.product.findFirst.mockResolvedValue(null);
+      await expect(service.getProduct("u1", "p1")).rejects.toThrow(NotFoundException);
+    });
+  });
+
   describe("updateProduct", () => {
     it("throws NotFoundException if product not found", async () => {
       prisma.vendorProfile.findUnique.mockResolvedValue({ id: "vp1", userId: "u1" });
@@ -203,6 +222,27 @@ describe("VendorService", () => {
       expect(prisma.product.update).toHaveBeenCalledWith(
         expect.objectContaining({ where: { id: "p1" } })
       );
+      // No images in the payload → existing images untouched.
+      expect(prisma.product.update.mock.calls[0][0].data.images).toBeUndefined();
+    });
+
+    it("replaces the image set in the same write when images are sent", async () => {
+      prisma.vendorProfile.findUnique.mockResolvedValue({ id: "vp1", userId: "u1" });
+      prisma.product.findFirst.mockResolvedValue({ id: "p1", name: "Old" });
+      prisma.product.update.mockResolvedValue({ id: "p1" });
+
+      const dto = Object.assign(new UpdateProductDto(), {
+        images: [{ url: "https://cdn/a.jpg" }, { url: "https://cdn/b.jpg" }],
+      });
+      await service.updateProduct("u1", "p1", dto);
+
+      expect(prisma.product.update.mock.calls[0][0].data.images).toEqual({
+        deleteMany: {},
+        create: [
+          { url: "https://cdn/a.jpg", order: 0, isPrimary: true },
+          { url: "https://cdn/b.jpg", order: 1, isPrimary: false },
+        ],
+      });
     });
   });
 

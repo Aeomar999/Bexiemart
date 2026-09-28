@@ -1,54 +1,107 @@
-import { tokens } from "@/theme/tokens";
 import { BackButton } from "@/components/ui/BackButton";
-import { View, Text, ScrollView, Alert, Pressable, Switch } from "react-native";
+import { View, Text, ScrollView, Alert, Pressable } from "react-native";
 import { useRouter, useLocalSearchParams } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { useCreateService, useUpdateService } from "@/lib/hooks/use-vendor-services";
+import {
+  useCreateService,
+  useUpdateService,
+  useVendorServices,
+} from "@/lib/hooks/use-vendor-services";
 import { Input } from "@/components/ui/Input";
 import { Button } from "@/components/ui/Button";
-import { Icon } from "@/components/ui/Icon";
+import { PhotoPicker, type PickerImage } from "@/components/ui/PhotoPicker";
+import { uploadApi, uploadErrorMessage } from "@/lib/api/upload";
 import { useState } from "react";
 
 export default function AddServiceScreen() {
   const router = useRouter();
   const { mode, id } = useLocalSearchParams<{ mode?: string; id?: string }>();
-  const isEdit = mode === "edit";
+  const isEdit = mode === "edit" && !!id;
 
   const createMutation = useCreateService();
   const updateMutation = useUpdateService();
+  const { data: services } = useVendorServices();
+  const existing = isEdit
+    ? (Array.isArray(services) ? services : []).find((s: any) => s.id === id)
+    : undefined;
 
   const insets = useSafeAreaInsets();
-  const [name, setName] = useState(isEdit ? "Deep Tissue Massage" : "");
-  const [category, setCategory] = useState(isEdit ? "Wellness" : "");
-  const [description, setDescription] = useState(isEdit ? "Professional deep tissue massage." : "");
-  const [price, setPrice] = useState(isEdit ? "200.00" : "");
-  const [pricingModel, setPricingModel] = useState<"fixed" | "hourly" | "starting_at">(
-    isEdit ? "fixed" : "fixed"
-  );
-  const [duration, setDuration] = useState(isEdit ? "60 mins" : "");
+  const [name, setName] = useState("");
+  const [category, setCategory] = useState("");
+  const [description, setDescription] = useState("");
+  const [price, setPrice] = useState("");
+  const [pricingModel, setPricingModel] = useState<"fixed" | "hourly">("fixed");
+  const [duration, setDuration] = useState("");
+  const [coverImages, setCoverImages] = useState<PickerImage[]>([]);
+  const [isUploading, setIsUploading] = useState(false);
 
   // Toggles
-  const [locationType, setLocationType] = useState<"in_person" | "remote">(
-    isEdit ? "in_person" : "in_person"
-  );
+  const [locationType, setLocationType] = useState<"in_person" | "remote">("in_person");
 
-  const loading = createMutation.isPending || updateMutation.isPending;
+  // Prefill once the service loads (state adjusted during render, per the
+  // React docs); the existing cover keeps its url so it isn't uploaded again.
+  const [prefilledFrom, setPrefilledFrom] = useState<unknown>(null);
+  if (existing && prefilledFrom !== existing) {
+    setPrefilledFrom(existing);
+    setName(existing.name ?? "");
+    setCategory(existing.category ?? "");
+    setDescription(existing.description ?? "");
+    setPrice(existing.price != null ? String(Number(existing.price)) : "");
+    if (existing.priceDisplay?.includes("/hr")) setPricingModel("hourly");
+    if (existing.imageUrl) {
+      setCoverImages([
+        { uri: existing.imageUrl, url: existing.imageUrl, type: "image/jpeg", name: "cover.jpg" },
+      ]);
+    }
+  }
 
-  const handleSubmit = (status: "active" | "draft") => {
-    if (!name || !price) {
+  const loading = createMutation.isPending || updateMutation.isPending || isUploading;
+
+  const handleSubmit = async () => {
+    const priceNum = parseFloat(price);
+    if (!name.trim() || isNaN(priceNum)) {
       Alert.alert("Required", "Service name and price are required.");
       return;
     }
+    const cover = coverImages[0];
+    if (!cover) {
+      Alert.alert("Cover photo required", "Add a cover photo so customers can see your service.");
+      return;
+    }
+
+    let imageUrl = cover.url;
+    if (!imageUrl) {
+      setIsUploading(true);
+      try {
+        imageUrl = (await uploadApi.uploadFile(cover)).url;
+      } catch (error) {
+        Alert.alert(
+          "Upload Failed",
+          uploadErrorMessage(error, "Could not upload your cover photo. Please try again.")
+        );
+        return;
+      } finally {
+        setIsUploading(false);
+      }
+    }
+
+    // Only fields the API accepts: pricing model and duration are folded into
+    // the display price customers see.
+    const priceDisplay = [
+      `GH₵ ${priceNum.toFixed(2)}${pricingModel === "hourly" ? "/hr" : ""}`,
+      duration.trim(),
+    ]
+      .filter(Boolean)
+      .join(" · ");
     const formData = {
-      name,
-      category,
-      description,
-      price: parseFloat(price),
-      pricingModel,
-      duration,
-      locationType,
-      status,
+      name: name.trim(),
+      category: category.trim(),
+      description: description.trim(),
+      price: priceNum,
+      priceDisplay,
+      imageUrl,
     };
+
     if (isEdit) {
       updateMutation.mutate(
         { ...formData, id: id! },
@@ -90,19 +143,13 @@ export default function AddServiceScreen() {
         keyboardShouldPersistTaps="handled"
         showsVerticalScrollIndicator={false}
       >
-        {/* Image Upload Area */}
-        <Pressable
-          style={({ pressed }) => [{ opacity: pressed ? 0.8 : 1 }]}
-          className="w-full h-48 bg-muted rounded-2xl items-center justify-center border-2 border-dashed border-border mb-8"
-        >
-          <View className="w-14 h-14 bg-card rounded-full items-center justify-center mb-3">
-            <Icon name="camera" size={24} color={tokens.textMuted} />
-          </View>
-          <Text className="text-body-md font-bold text-muted-foreground">Add Cover Photo</Text>
-          <Text className="text-body-sm text-muted-foreground mt-1">
-            Make your service stand out
-          </Text>
-        </Pressable>
+        {/* Cover Photo */}
+        <PhotoPicker
+          images={coverImages}
+          onChange={setCoverImages}
+          maxSelections={1}
+          allowsMultipleSelection={false}
+        />
 
         <View className="gap-5">
           <View className="bg-card p-5 rounded-2xl border border-border">
@@ -210,18 +257,14 @@ export default function AddServiceScreen() {
 
           <View className="mt-6 gap-3">
             <Button
-              title={isEdit ? "Update Service" : "Publish Service"}
+              title={
+                isUploading ? "Uploading Photo..." : isEdit ? "Update Service" : "Publish Service"
+              }
               size="lg"
               loading={loading}
-              onPress={() => handleSubmit("active")}
+              onPress={handleSubmit}
               className="w-full"
             />
-            <Pressable
-              onPress={() => handleSubmit("draft")}
-              className="w-full py-4 items-center rounded-full border border-border bg-card"
-            >
-              <Text className="text-body-lg font-bold text-muted-foreground">Save as Draft</Text>
-            </Pressable>
           </View>
         </View>
       </ScrollView>

@@ -21,6 +21,7 @@ import { Avatar } from "@/components/ui/Avatar";
 import { useAuthStore } from "@/lib/stores/auth-store";
 import { useUpdateProfile } from "@/lib/hooks/use-users";
 import { useUpload } from "@/lib/hooks/use-upload";
+import { uploadErrorMessage } from "@/lib/api/upload";
 import { useImagePicker } from "@/lib/hooks/use-image-picker";
 
 export function EditProfileScreen() {
@@ -95,10 +96,10 @@ export function EditProfileScreen() {
     const file = Array.isArray(result) ? result[0] : result;
     setIsUploading(true);
     try {
-      const res = await upload.mutateAsync(file);
-      setAvatarUrl((res as any).url || (res as any).publicId);
-    } catch {
-      Alert.alert("Upload Failed", "Could not upload image. Try again.");
+      const { url } = await upload.mutateAsync(file);
+      setAvatarUrl(url);
+    } catch (e) {
+      Alert.alert("Upload Failed", uploadErrorMessage(e, "Could not upload image. Try again."));
     } finally {
       setIsUploading(false);
     }

@@ -1,7 +1,12 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { dispatcherApi, CreateDispatcherProfileDto } from "../api/dispatcher";
+import {
+  dispatcherApi,
+  CreateDispatcherProfileDto,
+  UpdateDispatcherProfileDto,
+} from "../api/dispatcher";
 
 export const DISPATCHER_KEYS = {
+  profile: ["dispatcher", "profile"],
   availableTasks: ["dispatcher", "tasks", "available"],
   myTasks: (status: string) => ["dispatcher", "tasks", "my", status],
 };
@@ -19,7 +24,7 @@ export interface DispatcherProfile {
 
 export function useDispatcherProfile() {
   return useQuery({
-    queryKey: ["dispatcher", "profile"],
+    queryKey: DISPATCHER_KEYS.profile,
     queryFn: async () => {
       const { data } = await dispatcherApi.getProfile();
       return data as DispatcherProfile;
@@ -30,6 +35,34 @@ export function useDispatcherProfile() {
 export function useCreateDispatcherProfile() {
   return useMutation({
     mutationFn: (data: CreateDispatcherProfileDto) => dispatcherApi.createProfile(data),
+  });
+}
+
+export function useUpdateDispatcherProfile() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (data: UpdateDispatcherProfileDto) => {
+      const { data: profile } = await dispatcherApi.updateProfile(data);
+      return profile as DispatcherProfile;
+    },
+    onSuccess: (profile) => {
+      queryClient.setQueryData(DISPATCHER_KEYS.profile, profile);
+    },
+  });
+}
+
+// The server is the source of truth for online/offline: the updated profile
+// replaces the cached one only once the change has actually been saved.
+export function useSetDispatcherStatus() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (status: "ONLINE" | "OFFLINE") => {
+      const { data: profile } = await dispatcherApi.updateStatus(status);
+      return profile as DispatcherProfile;
+    },
+    onSuccess: (profile) => {
+      queryClient.setQueryData(DISPATCHER_KEYS.profile, profile);
+    },
   });
 }
 

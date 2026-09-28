@@ -46,6 +46,34 @@ describe("DispatcherService", () => {
     expect(result.vehicleType).toBe("bike");
   });
 
+  it("should update vehicle details, normalising the plate", async () => {
+    prisma.dispatcherProfile.findUnique.mockResolvedValue({ id: "dp-1" } as any);
+    prisma.dispatcherProfile.update.mockResolvedValue({ id: "dp-1" } as any);
+    await service.updateProfile("user-1", { vehicleType: "car", plateNumber: "  as-1234   21 " });
+    expect(prisma.dispatcherProfile.update).toHaveBeenCalledWith({
+      where: { id: "dp-1" },
+      data: { vehicleType: "car", plateNumber: "AS-1234 21" },
+    });
+  });
+
+  it("should leave omitted vehicle fields untouched", async () => {
+    prisma.dispatcherProfile.findUnique.mockResolvedValue({ id: "dp-1" } as any);
+    prisma.dispatcherProfile.update.mockResolvedValue({ id: "dp-1" } as any);
+    await service.updateProfile("user-1", { plateNumber: "GR-55-24" });
+    expect(prisma.dispatcherProfile.update).toHaveBeenCalledWith({
+      where: { id: "dp-1" },
+      data: { vehicleType: undefined, plateNumber: "GR-55-24" },
+    });
+  });
+
+  it("should reject a vehicle update when the profile is missing", async () => {
+    prisma.dispatcherProfile.findUnique.mockResolvedValue(null);
+    await expect(service.updateProfile("bad", { vehicleType: "van" })).rejects.toThrow(
+      "Dispatcher profile not found"
+    );
+    expect(prisma.dispatcherProfile.update).not.toHaveBeenCalled();
+  });
+
   it("should update status", async () => {
     prisma.dispatcherProfile.findUnique.mockResolvedValue({ id: "dp-1" } as any);
     prisma.dispatcherProfile.update.mockResolvedValue({ status: "ONLINE" } as any);

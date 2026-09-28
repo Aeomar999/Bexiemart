@@ -1,4 +1,4 @@
-import { IsString, IsNotEmpty, IsNumber, IsIn, IsOptional } from "class-validator";
+import { IsString, IsNotEmpty, IsNumber, IsIn, IsOptional, Matches } from "class-validator";
 import { ApiProperty } from "@nestjs/swagger";
 
 export class CreateDispatcherDto {
@@ -26,6 +26,23 @@ export class CreateDispatcherDto {
   @IsString()
   @IsOptional()
   vehicleColor?: string;
+}
+
+export const DISPATCHER_VEHICLE_TYPES = ["bike", "car", "van"] as const;
+
+export class UpdateDispatcherProfileDto {
+  @ApiProperty({ enum: DISPATCHER_VEHICLE_TYPES, required: false })
+  @IsOptional()
+  @IsIn(DISPATCHER_VEHICLE_TYPES)
+  vehicleType?: (typeof DISPATCHER_VEHICLE_TYPES)[number];
+
+  @ApiProperty({ required: false, example: "AS-1234-21" })
+  @IsOptional()
+  @IsString()
+  @Matches(/^\s*[A-Za-z0-9][A-Za-z0-9 -]{1,18}[A-Za-z0-9]\s*$/, {
+    message: "plateNumber must be 3-20 letters, numbers, spaces or dashes",
+  })
+  plateNumber?: string;
 }
 
 export class ToggleStatusDto {

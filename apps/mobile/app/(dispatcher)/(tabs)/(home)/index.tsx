@@ -1,16 +1,30 @@
 import { tokens } from "@/theme/tokens";
-import { View, Text, Switch, Pressable, Platform, Linking } from "react-native";
-import { useState, useRef, useEffect } from "react";
+import {
+  View,
+  Text,
+  Pressable,
+  Platform,
+  Linking,
+  AppState,
+  Animated,
+  ActivityIndicator,
+  useWindowDimensions,
+} from "react-native";
+import { useState, useRef, useEffect, useCallback } from "react";
 import MapView, { Marker, Polyline, PROVIDER_GOOGLE } from "react-native-maps";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import * as Location from "expo-location";
+import Constants from "expo-constants";
+import { useRouter } from "expo-router";
 import { Icon } from "@/components/ui/Icon";
-import { ListSkeleton } from "@/components/ui/Skeleton";
+import { Button } from "@/components/ui/Button";
 import { SwipeButton } from "@/components/ui/SwipeButton";
 import { darkMapStyle } from "@/lib/constants/map-style";
 import { Image } from "expo-image";
 import Toast from "@/lib/toast-polyfill";
 import {
+  useDispatcherProfile,
+  useSetDispatcherStatus,
   useAvailableTasks,
   useMyTasks,
   useAcceptTask,
@@ -21,6 +35,8 @@ import { useBalanceVisibility } from "@/lib/stores/balance-visibility-store";
 import { displayMoney } from "@/lib/balance";
 import { formatMoney } from "@/lib/money";
 import { dispatcherApi } from "@/lib/api/dispatcher";
+import { useNavigationApp } from "@/lib/stores/navigation-app-store";
+import { getNavigationAppLabel, openDirections } from "@/lib/navigation-apps";
 import { deliverySocketService } from "@/lib/delivery-socket";
 
 // Default KNUST coordinates
@@ -31,70 +47,114 @@ const defaultRegion = {
   longitudeDelta: 0.05,
 };
 
+// iOS only draws Google tiles when the build was made with a Maps key; without
+// one the map is a blank grey canvas, so fall back to Apple Maps there.
+const iosGoogleMapsEnabled = Constants.expoConfig?.extra?.iosGoogleMapsEnabled === true;
+const mapProvider = Platform.OS === "ios" && !iosGoogleMapsEnabled ? undefined : PROVIDER_GOOGLE;
+
 export default function DispatcherMap() {
-  const [isOnline, setIsOnline] = useState(false);
   const [userLocation, setUserLocation] = useState<{ latitude: number; longitude: number } | null>(
     null
   );
+  const [locationBlocked, setLocationBlocked] = useState(false);
+  const [sheetHeight, setSheetHeight] = useState(0);
   const insets = useSafeAreaInsets();
+  const { width } = useWindowDimensions();
+  const router = useRouter();
   const mapRef = useRef<MapView>(null);
+  const watchRef = useRef<Location.LocationSubscription | null>(null);
   const { data: earnings, isSuccess: earningsLoaded } = useDispatcherEarnings();
   const balancesHidden = useBalanceVisibility((s) => s.hidden);
+  const navigationApp = useNavigationApp((s) => s.app);
 
-  // Sync online status with backend + connect the live dispatch socket.
-  useEffect(() => {
-    dispatcherApi.updateStatus(isOnline ? "ONLINE" : "OFFLINE").catch(() => {
-      Toast.show({
-        type: "error",
-        text1: "We couldn't update your online status. Please check your connection.",
-      });
+  // Phones stack the tab bar under this screen and it already clears the home
+  // indicator; only the tablet sidebar layout leaves the bottom inset to us.
+  const bottomInset = width >= 768 ? insets.bottom : 0;
+
+  // Online status lives on the server so it survives app restarts; the toggle
+  // only flips once the change has been saved.
+  const { data: profile, isPending: statusLoading } = useDispatcherProfile();
+  const setStatus = useSetDispatcherStatus();
+  const isOnline = profile?.status === "ONLINE" || profile?.status === "BUSY";
+
+  const changeStatus = (next: "ONLINE" | "OFFLINE") => {
+    setStatus.mutate(next, {
+      onError: () =>
+        Toast.show({
+          type: "error",
+          text1: next === "ONLINE" ? "Couldn't go online" : "Couldn't go offline",
+          text2: "Check your connection and try again.",
+        }),
     });
+  };
+
+  useEffect(() => {
     if (isOnline) deliverySocketService.connect();
   }, [isOnline]);
 
-  // Request Location permissions and track location
-  useEffect(() => {
-    (async () => {
-      const { status } = await Location.requestForegroundPermissionsAsync();
-      if (status !== "granted") {
-        Toast.show({
-          type: "error",
-          text1: "Permission Denied",
-          text2: "Please enable location services to use the map.",
-        });
-        return;
-      }
-
-      // Get initial location
+  const startTracking = useCallback(async () => {
+    try {
       const location = await Location.getCurrentPositionAsync({});
       const coords = { latitude: location.coords.latitude, longitude: location.coords.longitude };
       setUserLocation(coords);
-
-      // Center map on user
+      setLocationBlocked(false);
       mapRef.current?.animateToRegion(
-        {
-          ...coords,
-          latitudeDelta: 0.01,
-          longitudeDelta: 0.01,
-        },
+        { ...coords, latitudeDelta: 0.01, longitudeDelta: 0.01 },
         1000
       );
 
-      // Track location changes
-      Location.watchPositionAsync(
-        {
-          accuracy: Location.Accuracy.High,
-          distanceInterval: 10,
-          timeInterval: 5000,
-        },
+      watchRef.current?.remove();
+      watchRef.current = await Location.watchPositionAsync(
+        { accuracy: Location.Accuracy.High, distanceInterval: 10, timeInterval: 5000 },
         (newLoc) => {
           setUserLocation({ latitude: newLoc.coords.latitude, longitude: newLoc.coords.longitude });
         }
       );
-    })();
+    } catch {
+      // Permission is granted but the phone's location services are switched off.
+      setLocationBlocked(true);
+    }
   }, []);
 
-  const { data: availableData, isLoading: loadingAvailable } = useAvailableTasks(isOnline);
+  useEffect(() => {
+    Location.requestForegroundPermissionsAsync()
+      .then(({ status }) => (status === "granted" ? startTracking() : setLocationBlocked(true)))
+      .catch(() => setLocationBlocked(true));
+    return () => watchRef.current?.remove();
+  }, [startTracking]);
+
+  // Coming back from Settings: resume tracking if location was allowed there.
+  useEffect(() => {
+    if (!locationBlocked) return;
+    const sub = AppState.addEventListener("change", (state) => {
+      if (state !== "active") return;
+      Location.getForegroundPermissionsAsync()
+        .then(({ status }) => {
+          if (status === "granted") startTracking();
+        })
+        // Best effort — the notice's "Turn on" button still works if this fails.
+        .catch(() => {});
+    });
+    return () => sub.remove();
+  }, [locationBlocked, startTracking]);
+
+  const handleEnableLocation = async () => {
+    const { status } = await Location.requestForegroundPermissionsAsync();
+    if (status === "granted" && (await Location.hasServicesEnabledAsync())) {
+      startTracking();
+      return;
+    }
+    // Once denied, the OS won't prompt again — Settings is the only way back.
+    Linking.openSettings().catch(() => {
+      Toast.show({
+        type: "error",
+        text1: "Couldn't open Settings",
+        text2: "Turn on location for Bexiemart in your phone's settings.",
+      });
+    });
+  };
+
+  const { data: availableData } = useAvailableTasks(isOnline);
   const { data: activeData, isLoading: loadingActive } = useMyTasks("active");
   const acceptTask = useAcceptTask();
   const updateStatus = useUpdateTaskStatus();
@@ -130,7 +190,8 @@ export default function DispatcherMap() {
     dispatcherApi.updateLocation(userLocation.latitude, userLocation.longitude).catch(() => {
       Toast.show({
         type: "error",
-        text1: "We're having trouble updating your location. Please check your GPS settings.",
+        text1: "Location not updating",
+        text2: "Check your GPS signal and connection.",
       });
     });
   }, [isOnline, userLocation?.latitude, userLocation?.longitude, activeRide?.id]);
@@ -148,7 +209,7 @@ export default function DispatcherMap() {
 
       setTimeout(() => {
         mapRef.current?.fitToCoordinates(coords, {
-          edgePadding: { top: 100, right: 50, bottom: 400, left: 50 },
+          edgePadding: { top: 100, right: 50, bottom: sheetHeight + 40, left: 50 },
           animated: true,
         });
       }, 500);
@@ -160,10 +221,27 @@ export default function DispatcherMap() {
       Linking.openURL(`tel:${displayRide.customer.phoneNumber}`).catch(() => {
         Toast.show({
           type: "error",
-          text1: "We couldn't open your phone's dialer. Please try calling manually.",
+          text1: "Couldn't start the call",
+          text2: "Try calling the customer manually.",
         });
       });
     }
+  };
+
+  // Hand the current leg to the rider's chosen turn-by-turn app.
+  const handleNavigate = () => {
+    if (!displayRide) return;
+    const toPickup = taskStatus === "accepted";
+    const lat = toPickup ? displayRide.pickupLat : displayRide.dropoffLat;
+    const lng = toPickup ? displayRide.pickupLng : displayRide.dropoffLng;
+    if (lat == null || lng == null) return;
+    openDirections(navigationApp, { latitude: Number(lat), longitude: Number(lng) }).catch(() => {
+      Toast.show({
+        type: "error",
+        text1: "Couldn't open directions",
+        text2: "Please try again.",
+      });
+    });
   };
 
   const renderRoute = () => {
@@ -216,54 +294,76 @@ export default function DispatcherMap() {
   };
 
   const renderBottomSheet = () => {
+    if (statusLoading && !activeRide) {
+      return (
+        <View className="flex-row items-center justify-center gap-3 px-5 py-8">
+          <ActivityIndicator color={tokens.primary} />
+          <Text className="text-foreground-secondary font-body text-body-md">
+            Checking your status…
+          </Text>
+        </View>
+      );
+    }
+
     if (!isOnline && !activeRide) {
       return (
-        <View
-          className="absolute bottom-0 w-full bg-card rounded-t-3xl border-t border-border p-6 items-center"
-          style={{ paddingBottom: Math.max(insets.bottom, 20) + 24 }}
-        >
-          <View className="w-16 h-16 bg-slate-100 rounded-full items-center justify-center mb-4">
-            <Icon name="moon" size={24} color={tokens.textMuted} />
+        <View className="px-5 pt-6 pb-6 gap-5">
+          <View className="flex-row items-center gap-4">
+            <View className="w-12 h-12 rounded-2xl bg-muted border border-border items-center justify-center">
+              <Icon name="moon" size={22} color={tokens.textSecondary} />
+            </View>
+            <View className="flex-1">
+              <Text className="text-foreground font-heading font-bold text-heading-md">
+                {"You're offline"}
+              </Text>
+              <Text className="text-foreground-secondary font-body text-body-md mt-0.5">
+                Go online to get ride requests and deliveries around campus.
+              </Text>
+            </View>
           </View>
-          <Text className="text-foreground font-bold text-heading-md font-heading mb-2">
-            You are offline
-          </Text>
-          <Text className="text-muted-foreground text-center font-body">
-            Go online to start receiving ride requests and food deliveries around campus.
-          </Text>
+          {locationBlocked && <LocationNotice onEnable={handleEnableLocation} />}
+          <Button
+            title="Go online"
+            size="lg"
+            loading={setStatus.isPending}
+            onPress={() => changeStatus("ONLINE")}
+            leftIcon={<Icon name="power" size={20} color={tokens.primaryText} />}
+            accessibilityHint="Start receiving ride and delivery requests"
+          />
         </View>
       );
     }
 
     if (taskStatus === "idle") {
       return (
-        <View
-          className="absolute bottom-0 w-full bg-card rounded-t-3xl border-t border-border p-6 items-center"
-          style={{ paddingBottom: Math.max(insets.bottom, 20) + 24 }}
-        >
-          {loadingAvailable ? (
-            <ListSkeleton />
-          ) : (
-            <View className="w-16 h-16 bg-emerald-50 rounded-full items-center justify-center mb-4 border border-emerald-100">
-              <Icon name="radio" size={24} color={tokens.success} />
+        <View className="px-5 pt-6 pb-6 gap-5">
+          <View className="flex-row items-center gap-4">
+            <SearchingPulse />
+            <View className="flex-1">
+              <Text className="text-foreground font-heading font-bold text-heading-md">
+                Finding tasks near you
+              </Text>
+              <Text className="text-foreground-secondary font-body text-body-md mt-0.5">
+                Stay near busy spots like Commercial Area to get requests faster.
+              </Text>
             </View>
-          )}
-          <Text className="text-foreground font-bold text-heading-md font-heading mb-2">
-            Looking for tasks...
-          </Text>
-          <Text className="text-muted-foreground text-center font-body">
-            Stay in high-demand areas (like Commercial Area) to get pings faster.
-          </Text>
+          </View>
+          {locationBlocked && <LocationNotice onEnable={handleEnableLocation} />}
+          <Button
+            title="Go offline"
+            variant="outline"
+            size="lg"
+            loading={setStatus.isPending}
+            onPress={() => changeStatus("OFFLINE")}
+            accessibilityHint="Stop receiving new requests"
+          />
         </View>
       );
     }
 
     if (taskStatus === "available" && displayRide) {
       return (
-        <View
-          className="absolute bottom-0 w-full bg-card rounded-t-3xl border-t border-border"
-          style={{ paddingBottom: Math.max(insets.bottom, 20) }}
-        >
+        <View>
           <View className="w-12 h-1.5 bg-slate-200 rounded-full self-center my-3" />
           <View className="px-5 pb-5 pt-2">
             <View className="mb-4">
@@ -340,10 +440,7 @@ export default function DispatcherMap() {
     // Active Task States (accepted, arrived, delivering)
     if (displayRide) {
       return (
-        <View
-          className="absolute bottom-0 w-full bg-card rounded-t-3xl border-t border-border"
-          style={{ paddingBottom: Math.max(insets.bottom, 20) }}
-        >
+        <View>
           <View className="w-12 h-1.5 bg-slate-200 rounded-full self-center my-3" />
 
           <View className="px-5 pb-5 pt-2">
@@ -398,28 +495,30 @@ export default function DispatcherMap() {
             </View>
 
             {/* Location Info */}
-            <View className="gap-4 mb-6 mt-2">
-              {taskStatus === "accepted" ? (
-                <View>
-                  <Text className="text-muted-foreground text-body-sm mb-1">Pick up from</Text>
-                  <Text
-                    className="text-foreground text-[15px] font-semibold font-body"
-                    numberOfLines={1}
-                  >
-                    {displayRide.pickupAddress}
-                  </Text>
-                </View>
-              ) : (
-                <View>
-                  <Text className="text-muted-foreground text-body-sm mb-1">Drop off at</Text>
-                  <Text
-                    className="text-foreground text-[15px] font-semibold font-body"
-                    numberOfLines={1}
-                  >
-                    {displayRide.dropoffAddress}
-                  </Text>
-                </View>
-              )}
+            <View className="flex-row items-center gap-3 mb-6 mt-2">
+              <View className="flex-1">
+                <Text className="text-muted-foreground text-body-sm mb-1">
+                  {taskStatus === "accepted" ? "Pick up from" : "Drop off at"}
+                </Text>
+                <Text
+                  className="text-foreground text-[15px] font-semibold font-body"
+                  numberOfLines={1}
+                >
+                  {taskStatus === "accepted"
+                    ? displayRide.pickupAddress
+                    : displayRide.dropoffAddress}
+                </Text>
+              </View>
+              <Pressable
+                accessibilityRole="button"
+                accessibilityLabel={`Navigate with ${getNavigationAppLabel(navigationApp)}`}
+                onPress={handleNavigate}
+                style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
+                className="h-10 px-4 rounded-full bg-primary-subtle flex-row items-center gap-2"
+              >
+                <Icon name="navigation" size={16} color={tokens.primary} />
+                <Text className="text-[14px] font-bold text-primary">Navigate</Text>
+              </Pressable>
             </View>
 
             {/* Action Buttons */}
@@ -474,13 +573,23 @@ export default function DispatcherMap() {
     }
   };
 
+  const status = activeRide
+    ? { label: "On a job", dot: "bg-primary" }
+    : statusLoading
+      ? { label: "Checking…", dot: "bg-muted-foreground" }
+      : isOnline
+        ? { label: "Online", dot: "bg-success" }
+        : { label: "Offline", dot: "bg-muted-foreground" };
+  const todayEarnings = displayMoney(Number(earnings?.todayRevenue ?? 0), balancesHidden);
+
   return (
     <View className="flex-1 bg-background">
       <MapView
         ref={mapRef}
         style={{ width: "100%", height: "100%", position: "absolute" }}
-        provider={PROVIDER_GOOGLE}
+        provider={mapProvider}
         customMapStyle={darkMapStyle}
+        userInterfaceStyle="dark"
         initialRegion={defaultRegion}
         showsUserLocation={false} // We are rendering our own custom marker below
         showsMyLocationButton={false}
@@ -499,62 +608,119 @@ export default function DispatcherMap() {
         )}
       </MapView>
 
-      {/* Floating Header */}
+      {/* Floating status + today's earnings */}
       <View
-        className="absolute w-full flex-row justify-center z-10 pointer-events-box-none px-5"
+        pointerEvents="box-none"
+        className="absolute left-0 right-0 z-10 px-5 flex-row items-center justify-between"
         style={{ top: Math.max(insets.top, 12) + 12 }}
       >
-        <View className="bg-card rounded-2xl px-4 h-[52px] w-full flex-row items-center justify-between border border-border shadow-sm pointer-events-auto">
-          <View className="justify-center">
-            <View className="flex-row items-center gap-2">
-              <View
-                className={`w-2 h-2 rounded-full ${isOnline ? "bg-emerald-500" : "bg-slate-400"}`}
-              />
-              <Text className="text-foreground font-bold text-[14px] font-heading">
-                {isOnline ? "Online" : "Offline"}
-              </Text>
-            </View>
-            {isOnline && earningsLoaded && (
-              <Text className="text-muted-foreground text-caption font-bold mt-0.5 ml-4">
-                {`${displayMoney(Number(earnings?.todayRevenue ?? 0), balancesHidden)} today`}
-              </Text>
-            )}
-          </View>
-          <Switch
-            value={isOnline}
-            onValueChange={setIsOnline}
-            trackColor={{ false: "#e2e8f0", true: tokens.success }}
-            thumbColor={tokens.primaryText}
-            disabled={!!activeRide}
-            style={{ transform: [{ scaleX: 0.8 }, { scaleY: 0.8 }] }}
-          />
+        <View
+          accessible
+          accessibilityLabel={`Status: ${status.label}`}
+          className="h-11 px-4 rounded-full bg-card border border-border flex-row items-center gap-2"
+        >
+          <View className={`w-2.5 h-2.5 rounded-full ${status.dot}`} />
+          <Text className="text-foreground font-heading font-bold text-body-md">
+            {status.label}
+          </Text>
         </View>
+
+        {earningsLoaded && (
+          <Pressable
+            accessibilityRole="button"
+            accessibilityLabel={`Today's earnings: ${balancesHidden ? "hidden" : todayEarnings}`}
+            accessibilityHint="Opens your earnings"
+            onPress={() => router.push("/(dispatcher)/(tabs)/(earnings)")}
+            style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
+            className="h-11 px-4 rounded-full bg-card border border-border flex-row items-center gap-2"
+          >
+            <Icon name="wallet" size={16} color={tokens.primary} />
+            <Text className="text-foreground font-heading font-bold text-body-md">
+              {todayEarnings}
+            </Text>
+            <Text className="text-foreground-secondary font-body text-body-sm">today</Text>
+          </Pressable>
+        )}
       </View>
 
-      {/* Re-center Map Button */}
-      <Pressable
-        accessibilityRole="button"
-        accessibilityLabel="Open navigation"
-        onPress={() => {
-          if (userLocation) {
+      {/* Re-center map — rides just above whichever sheet is showing */}
+      {sheetHeight > 0 && (
+        <Pressable
+          accessibilityRole="button"
+          accessibilityLabel="Center map on your location"
+          accessibilityState={{ disabled: !userLocation }}
+          disabled={!userLocation}
+          onPress={() => {
+            if (!userLocation) return;
             mapRef.current?.animateToRegion(
-              {
-                latitude: userLocation.latitude,
-                longitude: userLocation.longitude,
-                latitudeDelta: 0.01,
-                longitudeDelta: 0.01,
-              },
+              { ...userLocation, latitudeDelta: 0.01, longitudeDelta: 0.01 },
               500
             );
-          }
-        }}
-        className="absolute right-5 bg-card p-3 rounded-full border border-border shadow-sm"
-        style={{ bottom: Math.max(insets.bottom, 20) + 300 }}
-      >
-        <Icon name="navigation" size={20} color={tokens.primary} />
-      </Pressable>
+          }}
+          style={({ pressed }) => [{ bottom: sheetHeight + 16, opacity: pressed ? 0.7 : 1 }]}
+          className={`absolute right-5 w-12 h-12 rounded-full bg-card border border-border items-center justify-center ${userLocation ? "" : "opacity-50"}`}
+        >
+          <Icon name="crosshair" size={22} color={tokens.primary} />
+        </Pressable>
+      )}
 
-      {renderBottomSheet()}
+      <View
+        testID="dispatcher-sheet"
+        onLayout={(e) => setSheetHeight(e.nativeEvent.layout.height)}
+        className="absolute bottom-0 left-0 right-0 bg-card rounded-t-3xl border-t border-border"
+        style={{ paddingBottom: bottomInset }}
+      >
+        {renderBottomSheet()}
+      </View>
+    </View>
+  );
+}
+
+// Soft ping around the icon so "online and waiting" reads as alive, not stuck.
+function SearchingPulse() {
+  const [pulse] = useState(() => new Animated.Value(0));
+
+  useEffect(() => {
+    const loop = Animated.loop(
+      Animated.timing(pulse, { toValue: 1, duration: 1600, useNativeDriver: true })
+    );
+    loop.start();
+    return () => loop.stop();
+  }, [pulse]);
+
+  return (
+    <View className="w-12 h-12">
+      <Animated.View
+        className="absolute inset-0 rounded-2xl border-2 border-success"
+        style={{
+          opacity: pulse.interpolate({ inputRange: [0, 1], outputRange: [0.6, 0] }),
+          transform: [{ scale: pulse.interpolate({ inputRange: [0, 1], outputRange: [1, 1.4] }) }],
+        }}
+      />
+      <View className="w-12 h-12 rounded-2xl bg-success-light items-center justify-center">
+        <Icon name="radio" size={22} color={tokens.success} />
+      </View>
+    </View>
+  );
+}
+
+function LocationNotice({ onEnable }: { onEnable: () => void }) {
+  return (
+    <View className="flex-row items-center gap-3 rounded-2xl bg-warning-light p-3">
+      <Icon name="map-pin" size={20} color={tokens.warning} />
+      <View className="flex-1">
+        <Text className="text-foreground font-heading font-bold text-body-md">Location is off</Text>
+        <Text className="text-foreground-secondary font-body text-body-sm">
+          {"Customers can't find you without it."}
+        </Text>
+      </View>
+      <Button
+        title="Turn on"
+        variant="outline"
+        size="sm"
+        onPress={onEnable}
+        accessibilityLabel="Turn on location"
+      />
     </View>
   );
 }

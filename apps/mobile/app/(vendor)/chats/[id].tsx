@@ -20,7 +20,7 @@ import { useAuthStore } from "@/lib/stores/auth-store";
 import { useSocketStore } from "@/lib/stores/socket-store";
 import { useState, useRef, useEffect } from "react";
 import * as ImagePicker from "expo-image-picker";
-import { uploadApi } from "@/lib/api/upload";
+import { uploadApi, uploadErrorMessage } from "@/lib/api/upload";
 import { format } from "date-fns";
 import { BackButton } from "@/components/ui/BackButton";
 import { DetailSkeleton } from "@/components/ui/Skeleton";
@@ -57,7 +57,7 @@ export default function ChatDetailScreen() {
 
   const handlePickImage = async () => {
     const result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      mediaTypes: ["images"],
       allowsEditing: true,
       quality: 0.8,
     });
@@ -71,14 +71,15 @@ export default function ChatDetailScreen() {
         const { url } = await uploadApi.uploadFile({
           uri: asset.uri,
           name: filename,
-          type: "image/jpeg",
+          type: asset.mimeType ?? "image/jpeg",
+          file: (asset as any).file, // web
         });
 
         // send message
         sendMessage.mutate({ type: "IMAGE", mediaUrl: url });
       } catch (e) {
         logger.error("Upload failed", e);
-        alert("Failed to upload image.");
+        alert(uploadErrorMessage(e, "Failed to upload image."));
       } finally {
         setIsUploading(false);
       }

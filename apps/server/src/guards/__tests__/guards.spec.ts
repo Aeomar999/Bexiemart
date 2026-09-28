@@ -183,13 +183,21 @@ describe("Guards", () => {
         dispatcherGuard = new DispatcherGuard(prismaService);
       });
 
-      it("should return true if active profile is found", async () => {
+      it("allows a dispatcher whose profile exists (DispatcherProfile has no isActive)", async () => {
         const context = mockExecutionContext({}, { id: "disp_1", role: UserRole.DISPATCHER });
         (prismaService.dispatcherProfile.findUnique as jest.Mock).mockResolvedValue({
-          isActive: true,
+          id: "dp_1",
+          userId: "disp_1",
+          status: "OFFLINE",
         });
         const result = await dispatcherGuard.canActivate(context);
         expect(result).toBe(true);
+      });
+
+      it("throws ForbiddenException if the dispatcher has no profile", async () => {
+        const context = mockExecutionContext({}, { id: "disp_1", role: UserRole.DISPATCHER });
+        (prismaService.dispatcherProfile.findUnique as jest.Mock).mockResolvedValue(null);
+        await expect(dispatcherGuard.canActivate(context)).rejects.toThrow(ForbiddenException);
       });
     });
 

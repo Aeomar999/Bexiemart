@@ -6,7 +6,7 @@ import { useLocalSearchParams, useRouter } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useVendorProducts, useDeleteProduct } from "@/lib/hooks/use-vendor";
 import { useFoodItems } from "@/lib/hooks/use-food";
-import { useVendorServices } from "@/lib/hooks/use-vendor-services";
+import { useVendorServices, useDeleteService } from "@/lib/hooks/use-vendor-services";
 import { Icon } from "@/components/ui/Icon";
 import { Button } from "@/components/ui/Button";
 import { DetailSkeleton } from "@/components/ui/Skeleton";
@@ -20,17 +20,26 @@ export default function ListingDetailsScreen() {
   const { data: foodItems = [], isLoading: foodLoading } = useFoodItems({});
   const { data: services = [], isLoading: servicesLoading } = useVendorServices();
   const deleteMutation = useDeleteProduct();
+  const deleteServiceMutation = useDeleteService();
+
+  const asList = (data: unknown): any[] => (Array.isArray(data) ? data : []);
+  // IDs are cuids with no type prefix, so resolve the listing by looking it up.
+  const product = asList(products).find((x) => x.id === id);
+  const food = product ? undefined : asList(foodItems).find((x) => x.id === id);
+  const service = product || food ? undefined : asList(services).find((x) => x.id === id);
+
+  const categoryName = (c: unknown) =>
+    typeof c === "string" ? c : ((c as { name?: string } | null)?.name ?? "-");
 
   const getItemData = () => {
-    if (id?.startsWith?.("PROD")) {
-      const p = products.find((x: any) => x.id === id);
-      if (!p) return null;
+    if (product) {
+      const p = product;
       return {
         type: "Product",
         name: p.name,
-        price: p.price,
-        status: p.status,
-        category: p.category,
+        price: Number(p.price) || 0,
+        status: p.status ?? (p.isActive === false ? "inactive" : "active"),
+        category: categoryName(p.category),
         details: [
           { label: "Stock", value: String(p.stock ?? "-") },
           { label: "SKU", value: p.sku ?? "-" },
@@ -40,15 +49,14 @@ export default function ListingDetailsScreen() {
         images: p.images ?? [],
       };
     }
-    if (id?.startsWith?.("FOOD")) {
-      const f = foodItems.find((x: any) => x.id === id);
-      if (!f) return null;
+    if (food) {
+      const f = food;
       return {
         type: "Food",
         name: f.name,
-        price: f.price,
-        status: f.status,
-        category: f.category,
+        price: Number(f.price) || 0,
+        status: f.status ?? (f.isAvailable === false ? "sold_out" : "available"),
+        category: categoryName(f.category),
         details: [
           { label: "Prep Time", value: f.prepTime ?? "-" },
           { label: "Dietary", value: f.dietaryTags?.join?.(", ") ?? "-" },
@@ -57,18 +65,17 @@ export default function ListingDetailsScreen() {
         images: f.imageUrl ? [{ url: f.imageUrl }] : [],
       };
     }
-    if (id?.startsWith?.("SERV")) {
-      const s = services.find((x: any) => x.id === id);
-      if (!s) return null;
+    if (service) {
+      const s = service;
       return {
         type: "Service",
         name: s.name,
-        price: s.price,
-        status: s.status,
-        category: s.category,
+        price: Number(s.price) || 0,
+        status: s.status ?? (s.isActive === false ? "inactive" : "active"),
+        category: categoryName(s.category),
         details: [
           { label: "Duration", value: s.duration ?? "-" },
-          { label: "Pricing Model", value: s.pricingModel ?? "Fixed" },
+          { label: "Pricing Model", value: s.priceDisplay ?? s.pricingModel ?? "Fixed" },
           { label: "Location", value: s.locationType === "remote" ? "Remote" : "In-Person" },
         ],
         description: s.description ?? "",
@@ -79,13 +86,16 @@ export default function ListingDetailsScreen() {
   };
 
   const item = getItemData();
-  const isLoading = id?.startsWith?.("PROD")
-    ? productsLoading
-    : id?.startsWith?.("FOOD")
-      ? foodLoading
-      : servicesLoading;
+  const isLoading = !item && (productsLoading || foodLoading || servicesLoading);
 
   const handleDelete = () => {
+    const onDeleted = (label: string) => ({
+      onSuccess: () => {
+        Alert.alert("Deleted", `${label} has been removed.`);
+        router.back();
+      },
+      onError: () => Alert.alert("Error", `Failed to delete ${label.toLowerCase()}.`),
+    });
     Alert.alert(
       "Delete Listing",
       `Are you sure you want to delete "${item?.name}"? This action cannot be undone.`,
@@ -95,17 +105,12 @@ export default function ListingDetailsScreen() {
           text: "Delete",
           style: "destructive",
           onPress: () => {
-            if (id?.startsWith?.("PROD") && deleteMutation) {
-              deleteMutation.mutate(id, {
-                onSuccess: () => {
-                  Alert.alert("Deleted", "Product has been removed.");
-                  router.back();
-                },
-                onError: () => Alert.alert("Error", "Failed to delete product."),
-              });
+            if (item?.type === "Product") {
+              deleteMutation.mutate(id, onDeleted("Product"));
+            } else if (item?.type === "Service") {
+              deleteServiceMutation.mutate(id, onDeleted("Service"));
             } else {
-              Alert.alert("Deleted", "Listing has been removed.");
-              router.back();
+              Alert.alert("Not available", "Food items can't be deleted from the app yet.");
             }
           },
         },

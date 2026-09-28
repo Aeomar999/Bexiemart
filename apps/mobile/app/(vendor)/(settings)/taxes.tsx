@@ -14,6 +14,53 @@ import {
 } from "@/lib/hooks/use-vendor-documents";
 import { useVendorProfile, useUpdateTaxInfo } from "@/lib/hooks/use-vendor";
 import { DetailSkeleton } from "@/components/ui/Skeleton";
+import * as ImagePicker from "expo-image-picker";
+import * as DocumentPicker from "expo-document-picker";
+import { uploadApi, uploadErrorMessage } from "@/lib/api/upload";
+import type { UploadableFile } from "@/lib/upload/prepare-image";
+
+const MAX_DOCUMENT_BYTES = 10 * 1024 * 1024;
+type DocumentSource = "photo" | "library" | "file";
+
+async function pickDocument(
+  source: DocumentSource
+): Promise<(UploadableFile & { size?: number }) | null> {
+  if (source === "file") {
+    const result = await DocumentPicker.getDocumentAsync({
+      type: ["application/pdf", "image/*"],
+      copyToCacheDirectory: true,
+    });
+    if (result.canceled || !result.assets?.[0]) return null;
+    const asset = result.assets[0];
+    return {
+      uri: asset.uri,
+      name: asset.name,
+      type: asset.mimeType ?? "application/pdf",
+      file: asset.file,
+      size: asset.size,
+    };
+  }
+
+  if (source === "photo") {
+    const { status } = await ImagePicker.requestCameraPermissionsAsync();
+    if (status !== "granted") {
+      Alert.alert("Permission needed", "Camera permission is required to photograph documents.");
+      return null;
+    }
+  }
+  const launch =
+    source === "photo" ? ImagePicker.launchCameraAsync : ImagePicker.launchImageLibraryAsync;
+  const result = await launch({ mediaTypes: ["images"], quality: 0.9 });
+  if (result.canceled || !result.assets?.[0]) return null;
+  const asset = result.assets[0];
+  return {
+    uri: asset.uri,
+    name: asset.fileName ?? `document_${Date.now()}.jpg`,
+    type: asset.mimeType ?? "image/jpeg",
+    file: asset.file,
+    size: asset.fileSize,
+  };
+}
 
 export default function TaxesDocumentsScreen() {
   const router = useRouter();
@@ -37,20 +84,35 @@ export default function TaxesDocumentsScreen() {
     }
   }, [profile?.taxId]);
 
-  const handleUploadOption = (type: string) => {
+  const handleUploadOption = async (source: DocumentSource) => {
+    let picked: Awaited<ReturnType<typeof pickDocument>>;
+    try {
+      picked = await pickDocument(source);
+    } catch {
+      Alert.alert("Error", "Could not open the picker. Please try again.");
+      return;
+    }
+    if (!picked) return;
+    // Photos are shrunk before upload; PDFs go as-is, so check them up front.
+    if (picked.type === "application/pdf" && picked.size && picked.size > MAX_DOCUMENT_BYTES) {
+      Alert.alert("File too large", "Documents must be under 10MB.");
+      return;
+    }
+
     setIsUploading(true);
-    uploadDocument.mutate(
-      { source: type, name: `document_${Date.now()}.pdf` },
-      {
-        onSettled: () => {
-          setIsUploading(false);
-          setUploadModalVisible(false);
-        },
-        onSuccess: () => {
-          Alert.alert("Success", "Document uploaded successfully.");
-        },
-      }
-    );
+    try {
+      const { url } = await uploadApi.uploadDocument(picked);
+      await uploadDocument.mutateAsync({ name: picked.name, url, type: "business_document" });
+      setUploadModalVisible(false);
+      Alert.alert("Success", "Document uploaded successfully.");
+    } catch (error) {
+      Alert.alert(
+        "Upload Failed",
+        uploadErrorMessage(error, "Could not upload your document. Please try again.")
+      );
+    } finally {
+      setIsUploading(false);
+    }
   };
 
   const removeDocument = (id: string) => {

@@ -6,6 +6,13 @@ export interface CreateDispatcherProfileDto {
   licenseNumber: string;
 }
 
+export type DispatcherVehicleType = "bike" | "car" | "van";
+
+export interface UpdateDispatcherProfileDto {
+  vehicleType?: DispatcherVehicleType;
+  plateNumber?: string;
+}
+
 export const dispatcherApi = {
   getProfile: () => apiClient.get("/dispatcher/profile"),
   createProfile: (data: CreateDispatcherProfileDto) =>
@@ -14,6 +21,8 @@ export const dispatcherApi = {
       plateNumber: data.licensePlate,
       drivingLicense: data.licenseNumber,
     }),
+  updateProfile: (data: UpdateDispatcherProfileDto) => apiClient.patch("/dispatcher/profile", data),
+
   getAvailableTasks: () => apiClient.get("/dispatcher/tasks/available"),
 
   getMyTasks: (status: "active" | "completed") =>

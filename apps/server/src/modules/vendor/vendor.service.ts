@@ -1,11 +1,21 @@
 import { Injectable, NotFoundException, Logger } from "@nestjs/common";
 import { PrismaService } from "../../prisma/prisma.service";
 import { OnboardVendorDto } from "./dto/onboard-vendor.dto";
-import { CreateProductDto } from "./dto/create-product.dto";
+import { CreateProductDto, ProductImageDto } from "./dto/create-product.dto";
 import { UpdateProductDto } from "./dto/update-product.dto";
 import { UpdateShopDto } from "./dto/update-shop.dto";
 import { RoutesService } from "../maps/routes.service";
 import { AdminGateway } from "../admin/admin.gateway";
+
+// Keep the client's order and make the first image the cover unless the
+// client said otherwise.
+function toImageRows(images: ProductImageDto[]) {
+  return images.map((img, i) => ({
+    url: img.url,
+    order: img.order ?? i,
+    isPrimary: img.isPrimary ?? i === 0,
+  }));
+}
 
 @Injectable()
 export class VendorService {
@@ -139,6 +149,19 @@ export class VendorService {
     return { data, meta: { total, page, limit, totalPages: Math.ceil(total / limit) } };
   }
 
+  async getProduct(userId: string, id: string) {
+    const profile = await this.getVendorProfile(userId);
+    const product = await this.prisma.product.findFirst({
+      where: { id, vendorId: profile.id, isDeleted: false },
+      include: {
+        images: { orderBy: { order: "asc" } },
+        category: { select: { id: true, name: true } },
+      },
+    });
+    if (!product) throw new NotFoundException("Product not found");
+    return product;
+  }
+
   async createProduct(userId: string, data: CreateProductDto) {
     const profile = await this.getVendorProfile(userId);
 
@@ -174,7 +197,7 @@ export class VendorService {
         stock: data.stock ?? 0,
         categoryId: categoryId,
         vendorId: profile.id,
-        images: data.images ? { create: data.images } : undefined,
+        images: data.images ? { create: toImageRows(data.images) } : undefined,
       },
       include: { images: { orderBy: { order: "asc" } } },
     });
@@ -208,8 +231,15 @@ export class VendorService {
     const updateData: any = { ...rest };
     delete updateData.categoryId; // remove to use connect instead
     if (categoryId) updateData.category = { connect: { id: categoryId } };
+    // images is the full desired set: replace in the same write so a failed
+    // update can't leave a product with no photos.
+    if (images) updateData.images = { deleteMany: {}, create: toImageRows(images) };
 
-    return this.prisma.product.update({ where: { id }, data: updateData });
+    return this.prisma.product.update({
+      where: { id },
+      data: updateData,
+      include: { images: { orderBy: { order: "asc" } } },
+    });
   }
 
   async deleteProduct(userId: string, id: string) {

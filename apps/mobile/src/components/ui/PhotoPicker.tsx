@@ -37,7 +37,7 @@ export function PhotoPicker({
         text: "Camera",
         onPress: async () => {
           const result = await ImagePicker.launchCameraAsync({
-            mediaTypes: ImagePicker.MediaTypeOptions.Images,
+            mediaTypes: ["images"],
             quality: 0.8,
           });
           handleImageResult(result);
@@ -47,7 +47,7 @@ export function PhotoPicker({
         text: "Gallery",
         onPress: async () => {
           const result = await ImagePicker.launchImageLibraryAsync({
-            mediaTypes: ImagePicker.MediaTypeOptions.Images,
+            mediaTypes: ["images"],
             allowsMultipleSelection,
             selectionLimit: maxSelections - images.length,
             quality: 0.8,

@@ -1,7 +1,7 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { getUserFriendlyErrorMessage } from "@/lib/error-utils";
-import { updateProfile, updatePassword, uploadFile } from "../api/auth";
+import { updateProfile, updatePassword, uploadFile, UploadError } from "../api/auth";
 
 export const useUpdateProfile = () => {
   const queryClient = useQueryClient();
@@ -13,20 +13,28 @@ export const useUpdateProfile = () => {
       toast.success("Profile updated successfully");
     },
     onError: (error: any) => {
-      toast.error(getUserFriendlyErrorMessage(error, "We couldn't save your profile changes. Please try again."));
-    }
+      toast.error(
+        getUserFriendlyErrorMessage(
+          error,
+          "We couldn't save your profile changes. Please try again."
+        )
+      );
+    },
   });
 };
 
 export const useUpdatePassword = () => {
   return useMutation({
-    mutationFn: (payload: { currentPassword?: string; newPassword?: string }) => updatePassword(payload),
+    mutationFn: (payload: { currentPassword?: string; newPassword?: string }) =>
+      updatePassword(payload),
     onSuccess: () => {
       toast.success("Password updated successfully");
     },
     onError: (error: any) => {
-      toast.error(getUserFriendlyErrorMessage(error, "We couldn't update your password. Please try again."));
-    }
+      toast.error(
+        getUserFriendlyErrorMessage(error, "We couldn't update your password. Please try again.")
+      );
+    },
   });
 };
 
@@ -37,7 +45,11 @@ export const useUploadAvatar = () => {
       toast.success("Avatar uploaded successfully");
     },
     onError: (error: any) => {
-      toast.error(getUserFriendlyErrorMessage(error, "Your photo couldn't be uploaded. Please try a smaller image file."));
-    }
+      toast.error(
+        error instanceof UploadError
+          ? error.message
+          : getUserFriendlyErrorMessage(error, "Your photo couldn't be uploaded. Please try again.")
+      );
+    },
   });
 };

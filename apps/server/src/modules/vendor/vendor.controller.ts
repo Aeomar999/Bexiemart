@@ -63,6 +63,13 @@ export class VendorController {
     return this.vendorService.getProducts(req.user.id, Number(page) || 1, Number(limit) || 20);
   }
 
+  @ApiOperation({ summary: "Get one of the vendor's products" })
+  @Get("products/:id")
+  @UseGuards(VendorGuard)
+  getProduct(@Req() req: AuthenticatedRequest, @Param("id") id: string) {
+    return this.vendorService.getProduct(req.user.id, id);
+  }
+
   @ApiOperation({ summary: "Create a product" })
   @Post("products")
   @UseGuards(VendorGuard)

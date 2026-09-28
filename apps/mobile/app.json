@@ -102,8 +102,9 @@
       [
         "expo-image-picker",
         {
-          "photosPermission": "Select product images for your BexieMart listings.",
-          "cameraPermission": "Take photos of your products for BexieMart."
+          "photosPermission": "Choose photos and videos for your profile, store, product listings, reels and business documents on BexieMart.",
+          "cameraPermission": "Take photos and videos for your profile, store, product listings, reels and business documents on BexieMart.",
+          "microphonePermission": "Record sound when you film a reel to post on BexieMart."
         }
       ],
       [
@@ -150,7 +151,7 @@
       "url": "https://u.expo.dev/a830e794-6932-47fd-9779-9b1317c59f3f"
     },
     "runtimeVersion": {
-      "policy": "appVersion"
+      "policy": "fingerprint"
     },
     "owner": "amoahjerry835"
   }
