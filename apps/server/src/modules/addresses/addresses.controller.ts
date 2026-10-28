@@ -9,6 +9,8 @@ import {
   Param,
   UseGuards,
   Req,
+  HttpCode,
+  HttpStatus,
 } from "@nestjs/common";
 import { ApiTags, ApiOperation, ApiBody, ApiParam, ApiBearerAuth } from "@nestjs/swagger";
 import { AuthGuard } from "../../guards/auth.guard";
@@ -33,6 +35,7 @@ export class AddressesController {
   @ApiOperation({ summary: "Create a new address" })
   @ApiBody({ type: CreateAddressDto })
   @Post()
+  @HttpCode(HttpStatus.OK)
   create(@Req() req: AuthenticatedRequest, @Body() dto: CreateAddressDto) {
     return this.addressesService.create(req.user.id, dto);
   }

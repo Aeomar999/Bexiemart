@@ -1,0 +1,38 @@
+appId: com.bexiemart.app
+---
+- launchApp:
+    clearState: true
+
+# LOGIN AS VENDOR
+- extendedWaitUntil:
+    visible: "Sign In"
+    timeout: 15000
+- tapOn:
+    id: "email-input"
+    optional: true
+- inputText: "vendor@bexiemart.com"
+- tapOn:
+    id: "password-input"
+    optional: true
+- inputText: "Password123!"
+- tapOn: "Sign In"
+
+# VENDOR EARNINGS
+- tapOn: "Vendor" # Navigate to vendor tab
+- extendedWaitUntil:
+    visible: "Earnings"
+    timeout: 10000
+- tapOn: "Earnings"
+- assertVisible: "Available Balance"
+
+# VENDOR WITHDRAWAL
+- tapOn: "Withdraw Earnings"
+- extendedWaitUntil:
+    visible: "Amount"
+    timeout: 10000
+- tapOn: "Amount"
+- inputText: "200"
+- tapOn: "Select payout method"
+- tapOn: "Bank Transfer"
+- tapOn: "Withdraw"
+- assertVisible: "Withdrawal Requested"

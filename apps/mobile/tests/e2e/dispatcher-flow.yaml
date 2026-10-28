@@ -1,0 +1,36 @@
+appId: com.bexiemart.app
+---
+- launchApp:
+    clearState: true
+
+# LOGIN AS DISPATCHER
+- extendedWaitUntil:
+    visible: "Sign In"
+    timeout: 15000
+- tapOn:
+    id: "email-input"
+    optional: true
+- inputText: "dispatcher@bexiemart.com"
+- tapOn:
+    id: "password-input"
+    optional: true
+- inputText: "Password123!"
+- tapOn: "Sign In"
+
+# DISPATCHER TASKS
+- tapOn: "Dispatcher" # Navigate to dispatcher tab
+- extendedWaitUntil:
+    visible: "Available Tasks"
+    timeout: 10000
+- tapOn: "Available Tasks"
+
+# ACCEPT TASK
+- tapOn: "Accept Task" # Accept first available task
+- extendedWaitUntil:
+    visible: "Task Accepted"
+    timeout: 10000
+
+# UPDATE TASK STATUS
+- tapOn: "Mark as Picked Up"
+- tapOn: "Mark as Delivered"
+- assertVisible: "Task Completed"

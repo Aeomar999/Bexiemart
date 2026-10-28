@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Req, UseGuards } from "@nestjs/common";
+import { Controller, Get, Post, Body, Req, UseGuards, HttpCode, HttpStatus } from "@nestjs/common";
 import { AuthGuard } from "../../guards/auth.guard";
 import { ReferralsService } from "./referrals.service";
 import { GenerateReferralDto } from "./dto/generate-referral.dto";
@@ -16,6 +16,7 @@ export class ReferralsController {
   @Post("generate")
   @ApiOperation({ summary: "Generate a referral code" })
   @ApiBody({ type: GenerateReferralDto })
+  @HttpCode(HttpStatus.OK)
   generate(@Req() req: AuthenticatedRequest, @Body() body: GenerateReferralDto) {
     return this.referralsService.generate(req.user.id);
   }
@@ -29,6 +30,7 @@ export class ReferralsController {
   @Post("apply")
   @ApiOperation({ summary: "Apply a referral code" })
   @ApiBody({ type: ApplyReferralDto })
+  @HttpCode(HttpStatus.OK)
   apply(@Req() req: AuthenticatedRequest, @Body() body: ApplyReferralDto) {
     return this.referralsService.apply(req.user.id, body.code);
   }

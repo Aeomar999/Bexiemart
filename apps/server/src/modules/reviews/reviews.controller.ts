@@ -1,4 +1,15 @@
-import { Controller, Get, Post, Delete, Body, Param, UseGuards, Req } from "@nestjs/common";
+import {
+  Controller,
+  Get,
+  Post,
+  Delete,
+  Body,
+  Param,
+  UseGuards,
+  Req,
+  HttpCode,
+  HttpStatus,
+} from "@nestjs/common";
 import { ApiTags, ApiOperation, ApiBody, ApiBearerAuth } from "@nestjs/swagger";
 import { AuthGuard } from "../../guards/auth.guard";
 import { ReviewsService } from "./reviews.service";
@@ -14,6 +25,7 @@ export class ReviewsController {
   @ApiOperation({ summary: "Create a review" })
   @ApiBody({ type: CreateReviewDto })
   @Post()
+  @HttpCode(HttpStatus.OK)
   @UseGuards(AuthGuard)
   create(@Req() req: AuthenticatedRequest, @Body() dto: CreateReviewDto) {
     return this.reviewsService.create(req.user.id, dto);

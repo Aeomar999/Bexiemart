@@ -180,7 +180,7 @@ export default function WithdrawFundsScreen() {
           </Text>
           <Button
             title="Add payout account"
-            onPress={() => router.push("/(customer)/wallet/link-account/momo")}
+            onPress={() => router.push("/(vendor)/(settings)/payment")}
           />
         </View>
       ) : !pinStatus?.hasPin ? (
@@ -283,7 +283,7 @@ export default function WithdrawFundsScreen() {
                 <Pressable
                   className="mt-2 p-4 flex-row items-center justify-center border-t border-dashed border-border"
                   style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
-                  onPress={() => router.push("/(customer)/wallet/link-account/momo")}
+                  onPress={() => router.push("/(vendor)/(settings)/payment")}
                 >
                   <Icon name="plus" size={18} color={tokens.primary} style={{ marginRight: 8 }} />
                   <Text className="text-body-lg font-bold text-primary">Add Payment Method</Text>

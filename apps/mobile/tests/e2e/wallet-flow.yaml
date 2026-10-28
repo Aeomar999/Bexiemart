@@ -1,0 +1,43 @@
+appId: com.bexiemart.app
+---
+- launchApp:
+    clearState: true
+
+# LOGIN FIRST
+- extendedWaitUntil:
+    visible: "Sign In"
+    timeout: 15000
+- tapOn:
+    id: "email-input"
+    optional: true
+- inputText: "testuser@bexiemart.com"
+- tapOn:
+    id: "password-input"
+    optional: true
+- inputText: "Password123!"
+- tapOn: "Sign In"
+
+# WALLET TOP-UP
+- tapOn: "Wallet" # Navigate to wallet tab
+- extendedWaitUntil:
+    visible: "Top Up"
+    timeout: 10000
+- tapOn: "Top Up"
+- tapOn: "Amount"
+- inputText: "500"
+- tapOn: "Mobile Money"
+- tapOn: "Continue"
+- assertVisible: "Paystack" # Paystack webview
+
+# WALLET WITHDRAWAL
+- tapOn: "Wallet"
+- tapOn: "Withdraw"
+- extendedWaitUntil:
+    visible: "Amount"
+    timeout: 10000
+- tapOn: "Amount"
+- inputText: "100"
+- tapOn: "Select payout method"
+- tapOn: "MTN Mobile Money"
+- tapOn: "Withdraw"
+- assertVisible: "Withdrawal Requested"

@@ -199,10 +199,7 @@ export default function WithdrawFundsScreen() {
           <Text className="text-body-sm text-muted-foreground text-center mb-4">
             Your 4-digit PIN authorizes every payout.
           </Text>
-          <Button
-            title="Set up PIN"
-            onPress={() => router.push("/(vendor)/(settings)/change-pin")}
-          />
+          <Button title="Set up PIN" onPress={() => router.push("/(dispatcher)/change-pin")} />
         </View>
       ) : (
         <>

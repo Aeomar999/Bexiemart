@@ -86,6 +86,18 @@ jobs:
       - name: Run Tests with Coverage Gate
         run: npm run test:cov -- --maxWorkers=2 --workerIdleMemoryLimit=512MB
 
+      # E2E tests with Maestro (optional - requires device/emulator).
+      - name: Run Maestro E2E tests
+        if: always()
+        continue-on-error: true
+        run: |
+          if command -v maestro &> /dev/null; then
+            maestro test tests/e2e
+          else
+            echo "Maestro not installed — skipping E2E tests."
+          fi
+        working-directory: apps/mobile
+
   admin:
     needs: shared
     runs-on: ubuntu-latest

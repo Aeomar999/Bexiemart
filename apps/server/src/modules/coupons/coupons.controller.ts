@@ -1,4 +1,4 @@
-import { Controller, Post, Body, UseGuards } from "@nestjs/common";
+import { Controller, Post, Body, UseGuards, HttpCode, HttpStatus } from "@nestjs/common";
 import { ApiTags, ApiOperation, ApiBody, ApiBearerAuth } from "@nestjs/swagger";
 import { CouponsService } from "./coupons.service";
 import { ValidateCouponDto } from "./dto/validate-coupon.dto";
@@ -17,6 +17,7 @@ export class CouponsController {
   @ApiBody({ type: ValidateCouponDto })
   @Throttle({ default: { limit: 5, ttl: 60000 } })
   @Post("validate")
+  @HttpCode(HttpStatus.OK)
   validate(@Body() dto: ValidateCouponDto) {
     return this.couponsService.validate(dto.code, dto.orderAmount);
   }

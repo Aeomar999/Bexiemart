@@ -1,4 +1,14 @@
-import { Controller, Get, Post, Param, Body, UseGuards, Req } from "@nestjs/common";
+import {
+  Controller,
+  Get,
+  Post,
+  Param,
+  Body,
+  UseGuards,
+  Req,
+  HttpCode,
+  HttpStatus,
+} from "@nestjs/common";
 import { AuthGuard } from "../../guards/auth.guard";
 import { EscrowService } from "./escrow.service";
 import { ApiTags, ApiOperation, ApiBearerAuth } from "@nestjs/swagger";
@@ -26,6 +36,7 @@ export class EscrowController {
   }
 
   @Post(":id/dispute")
+  @HttpCode(HttpStatus.OK)
   @UseGuards(AuthGuard)
   @ApiOperation({ summary: "Open a dispute on an escrow" })
   dispute(
@@ -37,6 +48,7 @@ export class EscrowController {
   }
 
   @Post(":id/release")
+  @HttpCode(HttpStatus.OK)
   @UseGuards(AuthGuard)
   @ApiOperation({ summary: "Release funds from escrow" })
   release(@Req() req: AuthenticatedRequest, @Param("id") id: string) {
@@ -44,6 +56,7 @@ export class EscrowController {
   }
 
   @Post(":id/refund")
+  @HttpCode(HttpStatus.OK)
   @UseGuards(AuthGuard)
   @ApiOperation({ summary: "Refund funds from escrow" })
   refund(@Req() req: AuthenticatedRequest, @Param("id") id: string) {

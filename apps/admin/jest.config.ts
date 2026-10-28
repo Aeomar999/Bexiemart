@@ -9,6 +9,15 @@ const config = {
   testEnvironment: "node",
   setupFilesAfterEnv: ["<rootDir>/jest.setup.ts"],
   testMatch: ["<rootDir>/src/**/*.test.ts", "<rootDir>/src/**/*.test.tsx"],
+  collectCoverageFrom: ["src/**/*.{ts,tsx}", "!src/**/*.test.{ts,tsx}"],
+  coverageThreshold: {
+    global: {
+      branches: 5,
+      functions: 3,
+      lines: 5,
+      statements: 5,
+    },
+  },
 };
 
 export default createJestConfig(config);

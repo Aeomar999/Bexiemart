@@ -4,6 +4,7 @@ export default function DispatcherLayout() {
   return (
     <Stack screenOptions={{ headerShown: false }}>
       <Stack.Screen name="(tabs)" />
+      <Stack.Screen name="change-pin" />
     </Stack>
   );
 }

@@ -1,0 +1,35 @@
+appId: com.bexiemart.app
+---
+- launchApp:
+    clearState: true
+
+# REGISTRATION
+- extendedWaitUntil:
+    visible: "Sign In"
+    timeout: 15000
+- tapOn: "Create account" # Or "Register" / "Sign up"
+- extendedWaitUntil:
+    visible: "Full name"
+    timeout: 10000
+- tapOn: "Full name"
+- inputText: "Test User"
+- tapOn: "Email"
+- inputText: "e2e-test@bexiemart.com"
+- tapOn: "Phone number"
+- inputText: "0240000000"
+- tapOn: "Password"
+- inputText: "Password123!"
+- tapOn: "Confirm password"
+- inputText: "Password123!"
+- tapOn: "Create account"
+
+# EMAIL VERIFICATION (if required)
+- extendedWaitUntil:
+    visible: "Verify your email"
+    timeout: 5000
+    optional: true
+
+# LOGIN AFTER REGISTRATION
+- extendedWaitUntil:
+    visible: "Home"
+    timeout: 15000

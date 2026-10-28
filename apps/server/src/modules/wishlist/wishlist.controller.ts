@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Param, UseGuards, Req } from "@nestjs/common";
+import { Controller, Get, Post, Param, UseGuards, Req, HttpCode, HttpStatus } from "@nestjs/common";
 import { ApiTags, ApiOperation, ApiBearerAuth } from "@nestjs/swagger";
 import { WishlistService } from "./wishlist.service";
 import { AuthGuard } from "../../guards/auth.guard";
@@ -19,6 +19,7 @@ export class WishlistController {
 
   @ApiOperation({ summary: "Toggle product in wishlist" })
   @Post(":productId/toggle")
+  @HttpCode(HttpStatus.OK)
   toggleWishlist(@Req() req: AuthenticatedRequest, @Param("productId") productId: string) {
     return this.wishlistService.toggleWishlist(req.user.id, productId);
   }

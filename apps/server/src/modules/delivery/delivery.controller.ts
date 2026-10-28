@@ -1,4 +1,15 @@
-import { Controller, Get, Post, Body, Param, Query, Req, UseGuards } from "@nestjs/common";
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Param,
+  Query,
+  Req,
+  UseGuards,
+  HttpCode,
+  HttpStatus,
+} from "@nestjs/common";
 import { ApiTags, ApiOperation, ApiBearerAuth } from "@nestjs/swagger";
 import { AuthGuard } from "../../guards/auth.guard";
 import { DeliveryService } from "./delivery.service";
@@ -14,6 +25,7 @@ export class DeliveryController {
 
   @ApiOperation({ summary: "Quote a delivery (all vehicle types unless one is specified)" })
   @Post("quote")
+  @HttpCode(HttpStatus.OK)
   quote(@Body() dto: QuoteDeliveryDto) {
     const pickup = { lat: dto.pickupLat, lng: dto.pickupLng };
     const dropoff = { lat: dto.dropoffLat, lng: dto.dropoffLng };
@@ -25,6 +37,7 @@ export class DeliveryController {
 
   @ApiOperation({ summary: "Create a parcel/ride delivery job" })
   @Post("jobs")
+  @HttpCode(HttpStatus.OK)
   createJob(@Req() req: AuthenticatedRequest, @Body() dto: CreateParcelJobDto) {
     return this.deliveryService.createParcelJob(req.user.id, dto);
   }
@@ -51,12 +64,14 @@ export class DeliveryController {
 
   @ApiOperation({ summary: "Confirm receipt — clears the driver's held payout" })
   @Post("jobs/:id/confirm")
+  @HttpCode(HttpStatus.OK)
   confirm(@Req() req: AuthenticatedRequest, @Param("id") id: string) {
     return this.deliveryService.confirmDelivery(req.user.id, id);
   }
 
   @ApiOperation({ summary: "Cancel a job (before pickup)" })
   @Post("jobs/:id/cancel")
+  @HttpCode(HttpStatus.OK)
   cancel(@Req() req: AuthenticatedRequest, @Param("id") id: string) {
     return this.deliveryService.cancelJob(req.user.id, id);
   }

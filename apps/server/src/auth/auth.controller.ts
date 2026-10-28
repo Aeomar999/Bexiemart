@@ -8,6 +8,8 @@ import {
   HttpStatus,
   UnauthorizedException,
   InternalServerErrorException,
+  BadRequestException,
+  NotFoundException,
   UseGuards,
   All,
   Res,
@@ -29,7 +31,10 @@ import { ResetPasswordDto } from "./dto/reset-password.dto";
 import { ResendVerificationDto } from "./dto/resend-verification.dto";
 import { CheckAvailabilityDto } from "./dto/check-availability.dto";
 import { VerifyEmailOtpDto } from "./dto/verify-email-otp.dto";
+import { ChangePasswordDto } from "./dto/change-password.dto";
+import { RevokeSessionDto } from "./dto/revoke-session.dto";
 import { AuthenticatedRequest } from "../types/request.types";
+import * as bcrypt from "bcryptjs";
 
 @ApiTags("Auth")
 @ApiBearerAuth()
@@ -263,6 +268,45 @@ export class AuthController {
     return { message: "Password reset successfully." };
   }
 
+  @Throttle({ default: { limit: 3, ttl: 60000 } })
+  @ApiOperation({ summary: "Change password for an authenticated session" })
+  @Post("change-password")
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth()
+  @HttpCode(HttpStatus.OK)
+  async changePassword(@Req() req: AuthenticatedRequest, @Body() body: ChangePasswordDto) {
+    const user = req.user;
+    if (!user) {
+      throw new UnauthorizedException("User not found");
+    }
+
+    // better-auth stores the email/password credential in the Account table
+    // (provider = "credential", providerId = email, password = bcrypt hash).
+    const account = await this.prisma.account.findFirst({
+      where: {
+        userId: user.id,
+        password: { not: null },
+      },
+    });
+
+    if (!account?.password) {
+      throw new BadRequestException("No password-based credential found for this account");
+    }
+
+    const valid = await bcrypt.compare(body.currentPassword, account.password);
+    if (!valid) {
+      throw new UnauthorizedException("Current password is incorrect");
+    }
+
+    const newHash = await bcrypt.hash(body.newPassword, 10);
+    await this.prisma.account.update({
+      where: { id: account.id },
+      data: { password: newHash },
+    });
+
+    return { message: "Password changed successfully" };
+  }
+
   @Throttle({ default: { limit: 10, ttl: 60000 } })
   @ApiOperation({ summary: "Check if email or phone is available" })
   @Post("check-availability")
@@ -324,6 +368,69 @@ export class AuthController {
 
     this.logger.log(`Email verified via OTP for: ${email}`);
     return { message: "Email verified successfully." };
+  }
+
+  @Throttle({ default: { limit: 10, ttl: 60000 } })
+  @ApiOperation({ summary: "List active sessions for the current user" })
+  @Get("list-sessions")
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth()
+  @HttpCode(HttpStatus.OK)
+  async listSessions(@Req() req: AuthenticatedRequest) {
+    const currentToken = req.headers.authorization?.split(" ")[1];
+    const sessions = await this.prisma.session.findMany({
+      where: { userId: req.user.id },
+      select: {
+        id: true,
+        token: true,
+        expiresAt: true,
+        ipAddress: true,
+        userAgent: true,
+        createdAt: true,
+        updatedAt: true,
+      },
+      orderBy: { createdAt: "desc" },
+    });
+    return {
+      sessions: sessions.map((s) => ({
+        ...s,
+        isCurrent: s.token === currentToken,
+      })),
+    };
+  }
+
+  @Throttle({ default: { limit: 10, ttl: 60000 } })
+  @ApiOperation({ summary: "Revoke a specific session" })
+  @Post("revoke-session")
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth()
+  @HttpCode(HttpStatus.OK)
+  async revokeSession(@Req() req: AuthenticatedRequest, @Body() body: RevokeSessionDto) {
+    const session = await this.prisma.session.findUnique({
+      where: { id: body.sessionId },
+    });
+    if (!session || session.userId !== req.user.id) {
+      throw new NotFoundException("Session not found");
+    }
+    await this.prisma.session.delete({ where: { id: body.sessionId } });
+    return { message: "Session revoked" };
+  }
+
+  @Throttle({ default: { limit: 10, ttl: 60000 } })
+  @ApiOperation({ summary: "Revoke all other sessions except the current one" })
+  @Post("revoke-other-sessions")
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth()
+  @HttpCode(HttpStatus.OK)
+  async revokeOtherSessions(@Req() req: AuthenticatedRequest) {
+    const currentToken = req.headers.authorization?.split(" ")[1];
+    await this.prisma.session.deleteMany({
+      where: {
+        userId: req.user.id,
+        ...(currentToken ? { token: { not: currentToken } } : {}),
+      },
+    });
+    return { message: "All other sessions revoked" };
   }
 
   @All("/*")

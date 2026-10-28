@@ -1,4 +1,16 @@
-import { Controller, Get, Post, Delete, Param, Body, Query, Req, UseGuards } from "@nestjs/common";
+import {
+  Controller,
+  Get,
+  Post,
+  Delete,
+  Param,
+  Body,
+  Query,
+  Req,
+  UseGuards,
+  HttpCode,
+  HttpStatus,
+} from "@nestjs/common";
 import { AuthGuard } from "../../guards/auth.guard";
 import { CustomerServicesService } from "./customer-services.service";
 import { BookServiceDto } from "./dto/book-service.dto";
@@ -47,6 +59,7 @@ export class CustomerServicesController {
   @UseGuards(AuthGuard)
   @ApiOperation({ summary: "Book a service" })
   @ApiBody({ type: BookServiceDto })
+  @HttpCode(HttpStatus.OK)
   book(@Req() req: AuthenticatedRequest, @Param("id") id: string, @Body() body: BookServiceDto) {
     return this.service.book(req.user.id, id, body);
   }

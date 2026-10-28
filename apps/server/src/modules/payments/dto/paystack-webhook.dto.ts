@@ -1,9 +1,9 @@
-import { IsObject, IsNotEmpty } from "class-validator";
+import { IsString, IsObject, IsNotEmpty } from "class-validator";
 import { ApiProperty } from "@nestjs/swagger";
 
 export class PaystackWebhookDto {
-  @ApiProperty({ description: "Paystack event payload" })
-  @IsObject()
+  @ApiProperty({ description: "Paystack event type" })
+  @IsString()
   @IsNotEmpty()
   event!: string;
 

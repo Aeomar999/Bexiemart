@@ -1,6 +1,7 @@
 import { Test, TestingModule } from "@nestjs/testing";
 import { INestApplication, ValidationPipe, VersioningType } from "@nestjs/common";
 import * as request from "supertest";
+import * as express from "express";
 import { AppModule } from "../src/app.module";
 import { PrismaService } from "../src/prisma/prisma.service";
 import { GlobalExceptionFilter } from "../src/filters/global-exception.filter";
@@ -49,6 +50,8 @@ export function createMockPrisma(): any {
       findFirst: jest.fn(),
       create: jest.fn(),
       update: jest.fn(),
+      upsert: jest.fn(),
+      updateMany: jest.fn(),
       count: jest.fn(),
     },
     product: {
@@ -92,6 +95,7 @@ export function createMockPrisma(): any {
       create: jest.fn(),
       update: jest.fn(),
       upsert: jest.fn(),
+      updateMany: jest.fn(),
     },
     orderItem: {
       findUnique: jest.fn(),
@@ -113,6 +117,7 @@ export function createMockPrisma(): any {
       findFirst: jest.fn(),
       create: jest.fn(),
       update: jest.fn(),
+      upsert: jest.fn(),
       count: jest.fn(),
       aggregate: jest
         .fn()
@@ -438,6 +443,14 @@ export async function setupTestApp() {
     .compile();
 
   const app = moduleFixture.createNestApplication();
+  // Mirror main.ts rawBody: true so webhook HMAC verification works in tests.
+  app.use(
+    express.json({
+      verify: (req: any, _res, buf: Buffer) => {
+        req.rawBody = buf;
+      },
+    })
+  );
   app.useGlobalPipes(
     new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true, transform: true })
   );

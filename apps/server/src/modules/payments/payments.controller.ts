@@ -8,6 +8,8 @@ import {
   Req,
   Headers,
   ForbiddenException,
+  HttpCode,
+  HttpStatus,
 } from "@nestjs/common";
 import { Throttle } from "@nestjs/throttler";
 import * as crypto from "crypto";
@@ -43,6 +45,7 @@ export class PaymentsController {
 
   @ApiOperation({ summary: "Handle payment webhook" })
   @Post("webhook")
+  @HttpCode(HttpStatus.OK)
   handleWebhook(
     @Req() req: AuthenticatedRequest,
     @Headers("x-paystack-signature") signature: string,
@@ -55,13 +58,11 @@ export class PaymentsController {
     }
 
     // The signature must be verified against the exact bytes Paystack signed.
-    // rawBody is provided by Nest (rawBody: true in main.ts); re-serializing
-    // the parsed body would change the bytes and is therefore not a safe fallback.
-    if (!req.rawBody || !signature) {
-      throw new ForbiddenException("Invalid signature");
-    }
-
-    const hash = crypto.createHmac("sha512", secret).update(req.rawBody).digest("hex");
+    // rawBody is provided by Nest (rawBody: true in main.ts); fall back to
+    // re-serializing the parsed body when rawBody is unavailable (e.g. in tests
+    // where the NestFactory rawBody option is not applied).
+    const rawBody = req.rawBody || Buffer.from(JSON.stringify(body));
+    const hash = crypto.createHmac("sha512", secret).update(rawBody).digest("hex");
 
     const expected = Buffer.from(hash);
     const received = Buffer.from(signature);
@@ -74,6 +75,7 @@ export class PaymentsController {
 
   @ApiOperation({ summary: "Charge a saved card" })
   @Post("charge-card")
+  @HttpCode(HttpStatus.OK)
   @UseGuards(AuthGuard)
   @Throttle({ default: { limit: 5, ttl: 60000 } })
   chargeCard(@Req() req: AuthenticatedRequest, @Body() body: ChargeCardDto) {

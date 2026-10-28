@@ -1,4 +1,14 @@
-import { Controller, Get, Post, Param, UseGuards, Req, Query } from "@nestjs/common";
+import {
+  Controller,
+  Get,
+  Post,
+  Param,
+  UseGuards,
+  Req,
+  Query,
+  HttpCode,
+  HttpStatus,
+} from "@nestjs/common";
 import { ApiTags, ApiOperation, ApiParam, ApiQuery, ApiBearerAuth } from "@nestjs/swagger";
 import { AuthGuard } from "../../guards/auth.guard";
 import { NotificationsService } from "./notifications.service";
@@ -30,12 +40,14 @@ export class NotificationsController {
   @ApiOperation({ summary: "Mark a notification as read" })
   @ApiParam({ name: "id", type: "string" })
   @Post(":id/read")
+  @HttpCode(HttpStatus.OK)
   markAsRead(@Req() req: AuthenticatedRequest, @Param("id") id: string) {
     return this.notificationsService.markAsRead(req.user.id, id);
   }
 
   @ApiOperation({ summary: "Mark all notifications as read" })
   @Post("read-all")
+  @HttpCode(HttpStatus.OK)
   markAllAsRead(@Req() req: AuthenticatedRequest) {
     return this.notificationsService.markAllAsRead(req.user.id);
   }
